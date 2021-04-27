@@ -14,6 +14,9 @@ namespace BHelp.Models
         [DisplayName("Street Name")]
         public string StreetName { get; set; }
 
+        [DisplayName("Address 2")]
+        public string Address2 { get; set; }
+
         [Required]
         [DisplayName("City")]
         public string City { get; set; }
