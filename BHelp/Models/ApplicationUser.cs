@@ -12,6 +12,9 @@ namespace BHelp.Models
     [JsonObject(MemberSerialization.OptIn)]
     public class ApplicationUser : IdentityUser
     {
+        [JsonProperty, DisplayName("Active")]
+        public bool Active { get; set; }    // Added PER 04/30/2021
+
         [JsonProperty, DisplayName("First Name")]
         public string FirstName { get; set; }
 

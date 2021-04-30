@@ -1,21 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
 namespace BHelp.Models
 {
     public class Client
     {
         public int Id { get; set; }
+        public bool Active { get; set; }
 
-        [DisplayName("First Name")]
+        [DisplayName("Client First Name")]
         public string FirstName { get; set; }
 
-        [DisplayName("Last Name")]
+        [DisplayName("Client Last Name")]
         public string LastName { get; set; }
 
         [DisplayName("Date of Birth")]
@@ -23,7 +21,24 @@ namespace BHelp.Models
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DateOfBirth { get; set; }
 
-        public Location LocationID { get; set; }
- 
+        [Required]
+        [DisplayName("Street Number")]
+        public string StreetNumber { get; set; }
+
+        [Required]
+        [DisplayName("Street Name")]
+        public string StreetName { get; set; }
+
+        [Required]
+        [DisplayName("City")]
+        public string City { get; set; }
+
+        [Required]
+        [DisplayName("Zip Code")]
+        public string Zip { get; set; }
+
+        public string Phone { get; set; }
+
+        public string Notes { get; set; }
     }
 }
