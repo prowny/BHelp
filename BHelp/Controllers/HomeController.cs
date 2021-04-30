@@ -2,7 +2,6 @@
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
-using BHelp.ViewModels;
 
 namespace BHelp.Controllers
 {
@@ -17,6 +16,7 @@ namespace BHelp.Controllers
         {
             return RedirectToAction("Index", "Home");
         }
+
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
@@ -33,22 +33,29 @@ namespace BHelp.Controllers
 
         public ActionResult Logout()
         {
-            //AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             Session.Abandon();
             Session.RemoveAll();
             return RedirectToAction("Login", "Account");
         }
+
+        public ActionResult LogOut()
+        {
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            Session.Abandon();
+            Session.RemoveAll();
+            return RedirectToAction("Login", "Account");
+        }
+
+        private IAuthenticationManager AuthenticationManager
+        {
+            get { return HttpContext.GetOwinContext().Authentication; }
+        }
+
+        public ActionResult UploadClients()
+        {
+            Utilities.UploadClients();
+            return RedirectToAction("Index", "Home");
+        }
     }
-
-    //public ActionResult LogOut()
-    //{
-    //    AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-    //    Session.Abandon();
-    //    Session.RemoveAll();
-    //    return RedirectToAction("Login", "Account");
-
-    //private IAuthenticationManager AuthenticationManager
-    //{
-    //    get { return HttpContext.GetOwinContext().Authentication; }
-    //}
 }
