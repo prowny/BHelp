@@ -171,13 +171,21 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="BethesdaHelp.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="DataAccessLayer\BHelpContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202104300202399_InitialCreate.cs" />
+    <Compile Include="Migrations\202104300202399_InitialCreate.designer.cs">
+      <DependentUpon>202104300202399_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202104301946232_AddSomeTables.cs" />
+    <Compile Include="Migrations\202104301946232_AddSomeTables.designer.cs">
+      <DependentUpon>202104301946232_AddSomeTables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Client.cs" />
     <Compile Include="Models\Login.cs" />
@@ -257,6 +265,14 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202104300202399_InitialCreate.resx">
+      <DependentUpon>202104300202399_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202104301946232_AddSomeTables.resx">
+      <DependentUpon>202104301946232_AddSomeTables.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
