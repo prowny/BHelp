@@ -1,5 +1,4 @@
-﻿using System;
-using System.Web;
+﻿using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
@@ -34,7 +33,10 @@ namespace BHelp.Controllers
 
         public ActionResult Logout()
         {
-            throw new NotImplementedException();
+            //AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            Session.Abandon();
+            Session.RemoveAll();
+            return RedirectToAction("Login", "Account");
         }
     }
 

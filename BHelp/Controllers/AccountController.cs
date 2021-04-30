@@ -168,7 +168,7 @@ namespace BHelp.Controllers
             // Add block to non-Administrators 08/26/2020:
             if (!User.IsInRole("Administrator"))
             {
-                return RedirectToAction("Login", "Account");
+                //return RedirectToAction("Login", "Account");
             }
 
             return View();
