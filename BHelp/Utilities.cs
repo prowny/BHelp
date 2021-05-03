@@ -15,7 +15,7 @@ namespace BHelp
 
         public static Boolean UploadClients()
         {
-            //using (var context = new BHelpContext())
+            var db = new BHelpContext();
             //{
             //    List<ApplicationUser> userList = context.Users.ToList();
             //}
@@ -59,16 +59,22 @@ namespace BHelp
 
             foreach (DataRow row in csvtable.Rows)
             {
-                foreach (DataColumn column in csvtable.Columns)
-                {
-                    var x = row[0];
-                    var y = row[1];
-                    var z = row[13];
-                    System.Diagnostics.Debug.WriteLine(row[column]);
-                }
-                
-                string dummy = "";
+                Client client = new Client();
+                client.Active = true;
+                client.FirstName = row[0].ToString();
+                client.LastName = row[1].ToString();
+                client.StreetName = row[2].ToString();
+                client.StreetName = row[3].ToString();
+                client.City = row[4].ToString();
+                client.Zip = row[5].ToString();
+                client.Phone = row[6].ToString();
+                client.Notes = row[13].ToString();
+                db.Clients.Add(client);
+                db.SaveChanges();
+                //System.Diagnostics.Debug.WriteLine(client.FirstName, client.LastName);
             }
+            
+
             // open the file "data.csv" which is a CSV file with headers
             //using (CachedCsvReader csv = new
             //    CachedCsvReader(new StreamReader(filePath), true))
