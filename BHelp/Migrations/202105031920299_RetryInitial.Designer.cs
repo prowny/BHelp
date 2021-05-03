@@ -7,13 +7,13 @@ namespace BHelp.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class AddSomeTables : IMigrationMetadata
+    public sealed partial class RetryInitial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddSomeTables));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(RetryInitial));
         
         string IMigrationMetadata.Id
         {
-            get { return "202104301946232_AddSomeTables"; }
+            get { return "202105031920299_RetryInitial"; }
         }
         
         string IMigrationMetadata.Source

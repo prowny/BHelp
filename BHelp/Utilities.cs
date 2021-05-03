@@ -59,16 +59,18 @@ namespace BHelp
 
             foreach (DataRow row in csvtable.Rows)
             {
-                Client client = new Client();
-                client.Active = true;
-                client.FirstName = row[0].ToString();
-                client.LastName = row[1].ToString();
-                client.StreetName = row[2].ToString();
-                client.StreetName = row[3].ToString();
-                client.City = row[4].ToString();
-                client.Zip = row[5].ToString();
-                client.Phone = row[6].ToString();
-                client.Notes = row[13].ToString();
+                Client client = new Client()
+                {
+                    Active = true,
+                    FirstName = row[0].ToString(),
+                    LastName = row[1].ToString(),
+                    StreetNumber = row[2].ToString(),
+                    StreetName = row[3].ToString(),
+                    City = row[4].ToString(),
+                    Zip = row[5].ToString(),
+                    Phone = row[6].ToString(),
+                    Notes = row[13].ToString()
+                };
                 db.Clients.Add(client);
                 db.SaveChanges();
                 //System.Diagnostics.Debug.WriteLine(client.FirstName, client.LastName);

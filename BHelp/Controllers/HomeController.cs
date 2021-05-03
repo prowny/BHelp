@@ -31,15 +31,7 @@ namespace BHelp.Controllers
             return View();
         }
 
-        public ActionResult Logout()
-        {
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            Session.Abandon();
-            Session.RemoveAll();
-            return RedirectToAction("Login", "Account");
-        }
-
-        public ActionResult LogOut()
+      public ActionResult LogOut()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             Session.Abandon();

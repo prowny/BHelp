@@ -180,13 +180,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202104300202399_InitialCreate.cs" />
-    <Compile Include="Migrations\202104300202399_InitialCreate.designer.cs">
-      <DependentUpon>202104300202399_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202104301946232_AddSomeTables.cs" />
-    <Compile Include="Migrations\202104301946232_AddSomeTables.designer.cs">
-      <DependentUpon>202104301946232_AddSomeTables.cs</DependentUpon>
+    <Compile Include="Migrations\202105031920299_RetryInitial.cs" />
+    <Compile Include="Migrations\202105031920299_RetryInitial.designer.cs">
+      <DependentUpon>202105031920299_RetryInitial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -270,11 +266,8 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202104300202399_InitialCreate.resx">
-      <DependentUpon>202104300202399_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202104301946232_AddSomeTables.resx">
-      <DependentUpon>202104301946232_AddSomeTables.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202105031920299_RetryInitial.resx">
+      <DependentUpon>202105031920299_RetryInitial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
