@@ -1,13 +1,9 @@
 ﻿using BHelp.DataAccessLayer;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using BHelp.Models;
 using LumenWorks.Framework.IO.Csv;
 using System.Data;
-using DocumentFormat.OpenXml.Drawing.Charts;
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using DataTable = System.Data.DataTable;
 
 namespace BHelp
@@ -46,8 +42,6 @@ namespace BHelp
                 //System.Diagnostics.Debug.WriteLine(client.FirstName, client.LastName);
             }
 
-
-
             return true;
         }
 
@@ -63,59 +57,72 @@ namespace BHelp
 
             int i = 0;
             foreach (DataRow row in csvtable.Rows)
-            {
+            { 
                 i ++;
-                string _adults = row[10].ToString();
-                List<FamilyMember> adults = new List<FamilyMember>();
+                //string _adults = row[10].ToString(); // Adults  
+                string _adults = row[11].ToString();  // Kids
                 string[] adultsArray = _adults.Split(',');
                 foreach (var nameAge in adultsArray)
                 {
-                    if (nameAge.Contains(row[0].ToString() ) && nameAge.Contains(row[1].ToString())) // First and Last Name
+                    if (i > 0)  // to reset if errors occured
                     {
-                        //Don't add to FamilyMembers - just capture the age & update the client DoB
-                        int ageIndex = nameAge.IndexOf('/');
-                        if (ageIndex > 0)
+                        if (nameAge.Contains(row[0].ToString() ) && nameAge.Contains(row[1].ToString())) // First and Last Name))
                         {
-                            var years = nameAge.Substring(nameAge.IndexOf('/') +1);
-                            //System.Diagnostics.Debug.WriteLine(i.ToString() + ' ' + row[0].ToString() + ' ' + row[1].ToString() + ' ' + years);
-                          
-                          if (int.TryParse(years, out int yy))
-                          {
-                              // Everybody born on April 1st
-                              DateTime doB = new DateTime(2021-yy, 4, 1);
-                              var original = db.Clients.Find(i);
-                              if (original != null)
+                            //Don't add to FamilyMembers - just capture the age & update the client DoB
+                            int ageIndex = nameAge.IndexOf('/');
+                            if (ageIndex > 0)
+                            {
+                                var years = nameAge.Substring(nameAge.IndexOf('/') +1);
+                                //System.Diagnostics.Debug.WriteLine(i.ToString() + ' ' + row[0].ToString() + ' ' + row[1].ToString() + ' ' + years);
+                              
+                              if (int.TryParse(years, out int yy))
                               {
-                                  original.DateOfBirth = doB;
-                                  db.SaveChanges();
-                              }
+                                  // Everybody born on April 1st
+                                  DateTime doB = new DateTime(2021-yy, 4, 1);
+                                  var original = db.Clients.Find(i);
+                                  if (original != null)
+                                  {
+                                      original.DateOfBirth = doB;
+                                      db.SaveChanges();
+                                  }
+                                }
+                            }
+                        }
+                        else // not a client - add a family member =================
+                        {
+                            string nameAgeTrim = nameAge.Trim();
+                            var years = nameAge.Substring(nameAge.IndexOf('/') + 1);
+                            if (int.TryParse(years, out int yy))
+                            {
+                                DateTime doB = new DateTime(2021 - yy, 4, 1);
+                                string fullName = nameAgeTrim.Substring(0, nameAgeTrim.IndexOf('/'));
+                                string firstName;
+                                string lastName;
+                                if (fullName.IndexOf(' ') <= 0)
+                                {
+                                    firstName = fullName;
+                                    lastName = "";
+                                }
+                                else
+                                {
+                                    firstName = fullName.Substring(0, fullName.IndexOf(' '));
+                                    lastName = fullName.Substring(fullName.IndexOf(' ') + 1);
+                                }
+
+                                FamilyMember newAdult = new FamilyMember()
+                                {
+                                    Active = true,
+                                    ClientId = i,
+                                    FirstName = firstName,
+                                    LastName = lastName,
+                                    DateOfBirth = doB
+                                };
+                                db.FamilyMembers.Add(newAdult);
+                                db.SaveChanges();
                             }
                         }
                     }
-                    else // not a client -add a family member =================
-                    {
-                        string nameAgeTrim = nameAge.Trim();
-                        var years = nameAge.Substring(nameAge.IndexOf('/') + 1);
-                        if (int.TryParse(years, out int yy))
-                        {
-                            DateTime doB = new DateTime(2021 - yy, 4, 1);
-                            string fullName = nameAgeTrim.Substring(0, nameAgeTrim.IndexOf('/'));
-                            string firstName = fullName.Substring(0, fullName.IndexOf(' '));
-                            string lastName = fullName.Substring(fullName.IndexOf(' ') + 1);
-                            FamilyMember newAdult =new FamilyMember()
-                            {
-                                Active = true,
-                                ClientId = i,
-                                FirstName = firstName,
-                                LastName = lastName,
-                                DateOfBirth = doB
-                            };
-                            db.FamilyMembers.Add(newAdult);
-                            db.SaveChanges();
-                        }
-                    }
                 }
-
                 
                 //System.Diagnostics.Debug.WriteLine(client.FirstName, client.LastName);
             }
