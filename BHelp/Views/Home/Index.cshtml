@@ -14,7 +14,6 @@
         p.indent {
             padding-left: 1em
         }
-
         div {
             padding-left: 10px
         }
@@ -40,8 +39,12 @@
     <a href="@Url.Action("UploadClients", "Home")">Upload Clients Utility</a><br />
     <a href="@Url.Action("UploadAdults", "Home")">Upload Adults Utility</a><br />
 </div>
-
 <br/>
+<div>
+    <strong>Staff Menu</strong><br />
+    <a href="@Url.Action("Index", "Clients")">Maintain Clients</a><br />
+    <a href="@Url.Action("Index", "FamilyMembers")">Maintain Household Members</a><br />
+</div>
 
 <div>
     @Html.AntiForgeryToken()

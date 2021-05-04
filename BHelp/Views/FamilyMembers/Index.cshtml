@@ -1,0 +1,85 @@
+﻿@model IEnumerable<BHelp.Models.FamilyMember>
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <style>
+        p.indent {
+            padding-left: 1em
+        }
+
+        div {
+            padding-left: 10px
+        }
+    </style>
+</head>
+
+<body>
+    <table class="table">
+        <tr>
+            <td>
+                &nbsp;&nbsp; User Name:&nbsp; @User.Identity.Name
+            </td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <td>
+                @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+            </td>
+        </tr>
+    </table>
+<h4>Maintain Household Members)</h4>
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ClientId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateOfBirth)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClientId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateOfBirth)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new {id = item.Id})
+            </td>
+        </tr>
+    }
+</table>
+
+<br/>
+<div id="ReturnToDashboard">
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new {})
+</div>
+</body>
+</html>
