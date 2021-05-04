@@ -188,6 +188,10 @@
     <Compile Include="Migrations\202105032031435_AddFamilyMembers.designer.cs">
       <DependentUpon>202105032031435_AddFamilyMembers.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202105040105068_AddFamilyForeignKey.cs" />
+    <Compile Include="Migrations\202105040105068_AddFamilyForeignKey.designer.cs">
+      <DependentUpon>202105040105068_AddFamilyForeignKey.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Client.cs" />
@@ -276,6 +280,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202105032031435_AddFamilyMembers.resx">
       <DependentUpon>202105032031435_AddFamilyMembers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202105040105068_AddFamilyForeignKey.resx">
+      <DependentUpon>202105040105068_AddFamilyForeignKey.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

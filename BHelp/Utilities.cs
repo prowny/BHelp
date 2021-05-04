@@ -61,7 +61,7 @@ namespace BHelp
             using (CsvReader csvReader = new CsvReader(new StreamReader(filePath), true))
             { csvtable.Load(csvReader); }
 
-            int i = -1;
+            int i = 0;
             foreach (DataRow row in csvtable.Rows)
             {
                 i ++;
@@ -87,29 +87,31 @@ namespace BHelp
                               if (original != null)
                               {
                                   original.DateOfBirth = doB;
-                                  //db.SaveChanges();
+                                  db.SaveChanges();
                               }
                             }
                         }
                     }
                     else // not a client -add a family member =================
                     {
+                        string nameAgeTrim = nameAge.Trim();
                         var years = nameAge.Substring(nameAge.IndexOf('/') + 1);
                         if (int.TryParse(years, out int yy))
                         {
                             DateTime doB = new DateTime(2021 - yy, 4, 1);
-                            string fullName = nameAge.Substring(0, nameAge.IndexOf('/') - 1);
-                            string firstName = fullName.Substring(0, nameAge.IndexOf(' ') - 1);
-                            string lastName = fullName.Substring(nameAge.IndexOf(' ') + 1);
+                            string fullName = nameAgeTrim.Substring(0, nameAgeTrim.IndexOf('/'));
+                            string firstName = fullName.Substring(0, fullName.IndexOf(' '));
+                            string lastName = fullName.Substring(fullName.IndexOf(' ') + 1);
                             FamilyMember newAdult =new FamilyMember()
                             {
                                 Active = true,
+                                ClientId = i,
                                 FirstName = firstName,
                                 LastName = lastName,
                                 DateOfBirth = doB
                             };
                             db.FamilyMembers.Add(newAdult);
-                            //db.SaveChanges();
+                            db.SaveChanges();
                         }
                     }
                 }
