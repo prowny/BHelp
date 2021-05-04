@@ -27,6 +27,8 @@ namespace BHelp.DataAccessLayer
       
         public DbSet<Login> Logins { get; set; }
 
+        public DbSet <FamilyMember> FamilyMembers { get; set;}
+
         //public DbSet<Staff> StaffMembers { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

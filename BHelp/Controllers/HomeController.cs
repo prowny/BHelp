@@ -49,5 +49,10 @@ namespace BHelp.Controllers
             Utilities.UploadClients();
             return RedirectToAction("Index", "Home");
         }
+        public ActionResult UploadAdults()
+        {
+            Utilities.UploadAdults();
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

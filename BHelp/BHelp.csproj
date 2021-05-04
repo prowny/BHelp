@@ -184,9 +184,14 @@
     <Compile Include="Migrations\202105031920299_RetryInitial.designer.cs">
       <DependentUpon>202105031920299_RetryInitial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202105032031435_AddFamilyMembers.cs" />
+    <Compile Include="Migrations\202105032031435_AddFamilyMembers.designer.cs">
+      <DependentUpon>202105032031435_AddFamilyMembers.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Client.cs" />
+    <Compile Include="Models\FamilyMember.cs" />
     <Compile Include="Models\Login.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -268,6 +273,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202105031920299_RetryInitial.resx">
       <DependentUpon>202105031920299_RetryInitial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202105032031435_AddFamilyMembers.resx">
+      <DependentUpon>202105032031435_AddFamilyMembers.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
