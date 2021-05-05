@@ -5,9 +5,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
 
-namespace BHelp.Models
+namespace BHelp.ViewModels
 {
-    public class FamilyMember
+    public class FamilyViewModel
+
     {
         public int Id { get; set; }
         public int ClientId { get; set; }
@@ -26,7 +27,7 @@ namespace BHelp.Models
 
         [NotMapped]
         public int Age { get; set; }
-
-        public virtual IEnumerable<SelectListItem> FamilyMembers { get; set; }
+        public List<FamilyViewModel> FamilyMembers { get; set; }
+        //public virtual IEnumerable<SelectListItem> FamilyMembers { get; set; }
     }
 }

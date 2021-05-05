@@ -4,12 +4,13 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
+using BHelp.Models;
 
-namespace BHelp.Models
+namespace BHelp.ViewModels
 {
-    public class Client
+    public class HouseholdViewModel
     {
-        public int Id { get; set; }
+        public int ClientId { get; set; }
         public bool Active { get; set; }
 
         [DisplayName("Client First Name")]
@@ -23,19 +24,15 @@ namespace BHelp.Models
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DateOfBirth { get; set; }
 
-        [Required]
         [DisplayName("Street Number")]
         public string StreetNumber { get; set; }
-
-        [Required]
+        
         [DisplayName("Street Name")]
         public string StreetName { get; set; }
 
-        [Required]
         [DisplayName("City")]
         public string City { get; set; }
 
-        [Required]
         [DisplayName("Zip Code")]
         public string Zip { get; set; }
 
@@ -43,12 +40,8 @@ namespace BHelp.Models
 
         public string Notes { get; set; }
 
-        [NotMapped]
-        public string FullName
-        {
-            get { return string.Format("{0} {1}", FirstName, LastName); }
-        }
-        [NotMapped]
-        public IEnumerable<SelectListItem> HouseholdMembers { get; set; }
-      }
+        public int Age { get; set; }
+        public List<FamilyViewModel> FamilyMembers { get; set; }
+        //public IEnumerable<FamilyMember> FamilyMembers { get; set; }
+    }
 }
