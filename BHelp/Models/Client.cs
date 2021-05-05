@@ -49,6 +49,7 @@ namespace BHelp.Models
             get { return string.Format("{0} {1}", FirstName, LastName); }
         }
         [NotMapped]
-        public IEnumerable<SelectListItem> HouseholdMembers { get; set; }
+        public List<FamilyMember> FamilyMembers { get; set; }
+       // public IEnumerable<SelectListItem> HouseholdMembers { get; set; }
       }
 }

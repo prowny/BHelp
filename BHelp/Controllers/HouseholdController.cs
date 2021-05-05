@@ -16,34 +16,32 @@ namespace BHelp.Controllers
         public ActionResult Index()
         {
             var householdView = new List<HouseholdViewModel>();
-            //List<HouseholdViewModel> households;
 
             List<Client> clientList =
-                db.Clients.Where(a => a.Active == true).OrderBy(n => n.LastName).ToList();
+                db.Clients.Where(a => a.Active).OrderBy(n => n.LastName).ToList();
             foreach (var client in clientList)
             {
-                //List<FamilyMember> familyMembers;
-                //List<FamilyMember> familyList =
-
-                var x =
-                    db.FamilyMembers.Where(c => c.Active == true && c.ClientId == client.Id).ToList();
-                var familyList = new List<FamilyViewModel>();
-                var headOfHousehold = new FamilyViewModel()
+                var sqlString = "SELECT * FROM FamilyMembers ";
+                sqlString += "WHERE Active > 0 AND ClientId =" + client.Id;
+                var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
+                
+                FamilyMember headOfHousehold = new FamilyMember()
                 {
-                    FirstName = client.FirstName,
-                    LastName = client.LastName,
+                 // ! sql result reversed Firt and Last Names!
+                    FirstName = client.LastName,
+                    LastName = client.FirstName,
                     DateOfBirth = client.DateOfBirth,
                 };
                 familyList.Add(headOfHousehold);
-                //familyMembers.Add(headOfHousehold);
                 var familyMembers = new List<SelectListItem>();
-                foreach (FamilyViewModel member in familyList)
+                foreach (FamilyMember member in familyList)
                 {
                     member.Age = AppRoutines.GetAge(member.DateOfBirth, DateTime.Today);
-                    SelectListItem selListItem = new SelectListItem() {Value = member.FirstName, Text = member.FirstName };
+                    var text = member.FirstName + " " + member.LastName + "/" + member.Age;
+                    SelectListItem selListItem = new SelectListItem() {Value = member.FirstName, Text = text };
                     familyMembers.Add(selListItem);
                 }
-
+                
                 var household = new HouseholdViewModel()
                     {
                         ClientId = client.Id,
@@ -51,15 +49,33 @@ namespace BHelp.Controllers
                         LastName = client.LastName,
                         StreetNumber = client.StreetNumber,
                         StreetName = client.StreetName,
+                        StreetToolTip = client.StreetName.Replace(" ", "\u00a0"),
                         City = client.City,
+                        CityToolTip = client.City.Replace(" ", "\u00a0"),
                         Zip = client.Zip,
                         Phone = client.Phone,
+                        PhoneToolTip = client.Phone.Replace(" ", "\u00a0"),
                         FamilyMembers = familyMembers,
-                        Notes = client.Notes
+                        Notes = client.Notes, 
+                        // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
+                        NotesToolTip = client.Notes.Replace(" ", "\u00a0"),
                     };
-                    householdView.Add(household);
+                
+                var s = household.StreetName;// For display, abbreviate to 10 characters:           
+                s = s.Length <= 10 ? s : s.Substring(0, 10) + "...";
+                household.StreetName = s;
+                s = household.City;// For display, abbreviate to 11 characters:           
+                s = s.Length <= 11 ? s : s.Substring(0, 11) + "...";
+                household.City = s;
+                s = household.Phone;// For display, abbreviate to 12 characters:           
+                s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                household.Phone = s;
+                s = household.Notes;// For display, abbreviate to 12 characters:           
+                s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                household.Notes = s;
+
+                householdView.Add(household);
             }
-            
             return View(householdView);
         }
 

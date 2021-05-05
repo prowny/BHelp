@@ -1,4 +1,5 @@
-﻿@model BHelp.Models.ApplicationUser
+﻿@using DocumentFormat.OpenXml.Drawing.Charts
+@model BHelp.Models.ApplicationUser
 
 @{
     Layout = null;
@@ -28,7 +29,7 @@
         </tr>
         <tr>
             <td>
-                <p style="text-decoration:underline" class="indent"><strong>Bethesda Help Food Delivey Program Dashboard</strong></p>
+                <p style="text-decoration:underline" class="indent"><strong>Bethesda Help Food Delivery Program Dashboard</strong></p>
             </td>
         </tr>
     </table>
@@ -45,6 +46,7 @@
     <a href="@Url.Action("Index", "Clients")">Maintain Clients (Head of Household)</a><br />
     <a href="@Url.Action("Index", "FamilyMembers")">Maintain Household Members (Family)</a><br />
     <a href="@Url.Action("Index", "Household")">Maintain Households</a><br />
+    <br/>
 </div>
 
 <div>

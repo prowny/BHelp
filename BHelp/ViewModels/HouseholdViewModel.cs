@@ -38,10 +38,18 @@ namespace BHelp.ViewModels
 
         public string Phone { get; set; }
 
+        [DisplayName("Notes")]
+        [DataType(DataType.MultilineText)]
         public string Notes { get; set; }
-
+        
+        // For display use:
         public int Age { get; set; }
-        public List<FamilyViewModel> FamilyMembers { get; set; }
-        //public IEnumerable<FamilyMember> FamilyMembers { get; set; }
+        public IEnumerable<SelectListItem> FamilyMembers { get; set; }
+        public string StreetToolTip { get; set; }
+        public string CityToolTip { get; set; }
+        public string PhoneToolTip { get; set; }
+        public string NotesToolTip { get; set; }
+
+
     }
 }
