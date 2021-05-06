@@ -10,70 +10,99 @@
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
     <style>
-        p.indent {padding-left: 1em}
-        div {padding-left: 10px}
+        p.indent {
+            padding-left: 1em
+        }
+        div {
+            padding-left: 10px
+        }
     </style>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
+    @*Put page javascript in a separate .js file where breaks can be set during debugging:*@
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
 </head>
 
 <body>
+<h3>Call Log</h3>
 <table class="table">
-    <tr>
-        <td><b>Call Log</b></td>
-    </tr>
     <tr>
         <td><b>OD Name:</b>&nbsp;@Session["CurrentUserFullName"]</td>
         <td>&nbsp;&nbsp;<b>Log Date:</b></td>
+        <td>@Html.TextBox("Log Date", @Session["CallLogDate"].ToString(),
+                new { id = "CallLogDate", style = "width: 75px;" })
+            <span style="color:darkmagenta">&#8592;Click to change</span></td> @*Html left-arrow*@
     </tr>
 </table>
 <p>
-    @Html.ActionLink("Return To Dashboard", "ReturnToDashboard", new { })
+    @Html.ActionLink("Return To Dashboard", "ReturnToDashboard", new {})
     <br/>
-   @* @Html.ActionLink("Create New", "Create")*@
+    @* @Html.ActionLink("Create New", "Create")*@
 </p>
 <table class="table">
     <tr>
-        <th><div style="width : 100px"> @Html.DisplayNameFor(model => model.LastName)</div></th>
-        <th><div style="width : 100px"> @Html.DisplayNameFor(model => model.FirstName)</div></th>
-        <th><div style="width : 50px">@Html.DisplayNameFor(model => model.StreetNumber)</div></th>
+        <th>
+            <div style="width: 100px"> @Html.DisplayNameFor(model => model.LastName)</div></th>
+        <th>
+            <div style="width: 100px"> @Html.DisplayNameFor(model => model.FirstName)</div></th>
+        <th>
+            <div style="width: 50px">@Html.DisplayNameFor(model => model.StreetNumber)</div></th>
         <th>@Html.DisplayNameFor(model => model.StreetName)</th>
-        <th><div style ="width : 100px"> @Html.DisplayNameFor(model => model.City)</div></th>
+        <th>
+            <div style="width: 100px"> @Html.DisplayNameFor(model => model.City)</div></th>
         <th>@Html.DisplayNameFor(model => model.Zip)</th>
-        <th><div style ="width : 100px"> @Html.DisplayNameFor(model => model.Phone)</div ></th>
+        <th>
+            <div style="width: 100px"> @Html.DisplayNameFor(model => model.Phone)</div ></th>
         <th>@Html.DisplayNameFor(model => model.FamilyMembers)</th>
-        <th><div style="width : 60px"> @Html.DisplayNameFor(model => model.Notes)</div></th>
+        <th>
+            <div style="width: 60px"> @Html.DisplayNameFor(model => model.Notes)</div></th>
         <th></th>
     </tr>
 
     @foreach (var item in Model)
     {
-    <tr>
-        <td><div style="width : 100px"> @Html.DisplayFor(modelItem => item.FirstName) </div></td>
-        <td><div style="width : 100px"> @Html.DisplayFor(modelItem => item.LastName) </div></td>
-        <td>@Html.DisplayFor(modelItem => item.StreetNumber)</td>
-        <td title=@item.StreetToolTip>
-            @Html.DisplayFor(modelItem => item.StreetName)
-        </td>
-        <td title = @item.CityToolTip>
-            @Html.DisplayFor(modelItem => item.City)
+        <tr>
+            <td>
+                <div style="width: 100px"> @Html.DisplayFor(modelItem => item.FirstName) </div></td>
+            <td>
+                <div style="width: 100px"> @Html.DisplayFor(modelItem => item.LastName) </div></td>
+            <td>@Html.DisplayFor(modelItem => item.StreetNumber)</td>
+            <td title=@item.StreetToolTip>
+                @Html.DisplayFor(modelItem => item.StreetName)
             </td>
-        <td>@Html.DisplayFor(modelItem => item.Zip)
+            <td title=@item.CityToolTip>
+                @Html.DisplayFor(modelItem => item.City)
             </td>
-        <td title=@item.PhoneToolTip>
-            @Html.DisplayFor(modelItem => item.Phone)
-        </td>
-        @*Use Phone as dummy string for display-only DropDownList*@
-        <td>@Html.DropDownListFor(modelitem => item.Phone,new SelectList(item.FamilyMembers, "Value", "Text"), new {style="width: 120px"} )</td>
-        <td title=@item.NotesToolTip> @*The length of the tool tip message depends on the browser.*@
-            @Html.DisplayFor(modelItem => item.Notes)
-        </td>
-       @* <td><div style="width : 40px"> @Html.ActionLink("Edit", "Edit", new { id = item.ClientId })</div></td>*@
-    </tr>
+            <td>@Html.DisplayFor(modelItem => item.Zip)
+            </td>
+            <td title=@item.PhoneToolTip>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            @*Use Phone as dummy string for display-only DropDownList*@
+            <td>@Html.DropDownListFor(modelitem => item.Phone, new SelectList(item.FamilyMembers, "Value", "Text"), new {style = "width: 120px"})</td>
+            <td title=@item.NotesToolTip> @*The length of the tool tip message depends on the browser.*@
+                @Html.DisplayFor(modelItem => item.Notes)
+            </td>
+            @* <td><div style="width : 40px"> @Html.ActionLink("Edit", "Edit", new { id = item.ClientId })</div></td>*@
+        </tr>
     }
 </table>
 
 <br/>
 <div>
-    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new {})
 </div>
 </body>
 </html>
+
+<script>
+    $(function () {
+        window.$("#CallLogDate").datepicker();
+    });
+</script>
+<script type="text/javascript">
+    $("#CallLogDate").change(function () {
+        UpdateCallLogDate(window.$('#CallLogDate').val());
+    });
+</script>
