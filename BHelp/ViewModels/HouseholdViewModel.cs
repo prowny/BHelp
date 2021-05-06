@@ -49,6 +49,7 @@ namespace BHelp.ViewModels
         public string CityToolTip { get; set; }
         public string PhoneToolTip { get; set; }
         public string NotesToolTip { get; set; }
+        public string UserFullName { get; set; }
 
 
     }

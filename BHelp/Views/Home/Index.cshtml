@@ -46,9 +46,13 @@
     <a href="@Url.Action("Index", "Clients")">Maintain Clients (Head of Household)</a><br />
     <a href="@Url.Action("Index", "FamilyMembers")">Maintain Household Members (Family)</a><br />
     <a href="@Url.Action("Index", "Household")">Maintain Households</a><br />
-    <br/>
 </div>
-
+<br />
+<div>
+    <strong>Officer of the Day Menu</strong><br />
+    <a href="@Url.Action("Index", "OD")">Call Log</a><br />
+</div>
+<br />
 <div>
     @Html.AntiForgeryToken()
     <a href="@Url.Action("Logout", "Home")">LogOut</a>

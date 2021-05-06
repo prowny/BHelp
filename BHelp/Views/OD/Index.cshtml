@@ -1,0 +1,79 @@
+﻿@using System.Web.Mvc.Html
+@model IEnumerable<BHelp.ViewModels.HouseholdViewModel>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <style>
+        p.indent {padding-left: 1em}
+        div {padding-left: 10px}
+    </style>
+</head>
+
+<body>
+<table class="table">
+    <tr>
+        <td><b>Call Log</b></td>
+    </tr>
+    <tr>
+        <td><b>OD Name:</b>&nbsp;@Session["CurrentUserFullName"]</td>
+        <td>&nbsp;&nbsp;<b>Log Date:</b></td>
+    </tr>
+</table>
+<p>
+    @Html.ActionLink("Return To Dashboard", "ReturnToDashboard", new { })
+    <br/>
+   @* @Html.ActionLink("Create New", "Create")*@
+</p>
+<table class="table">
+    <tr>
+        <th><div style="width : 100px"> @Html.DisplayNameFor(model => model.LastName)</div></th>
+        <th><div style="width : 100px"> @Html.DisplayNameFor(model => model.FirstName)</div></th>
+        <th><div style="width : 50px">@Html.DisplayNameFor(model => model.StreetNumber)</div></th>
+        <th>@Html.DisplayNameFor(model => model.StreetName)</th>
+        <th><div style ="width : 100px"> @Html.DisplayNameFor(model => model.City)</div></th>
+        <th>@Html.DisplayNameFor(model => model.Zip)</th>
+        <th><div style ="width : 100px"> @Html.DisplayNameFor(model => model.Phone)</div ></th>
+        <th>@Html.DisplayNameFor(model => model.FamilyMembers)</th>
+        <th><div style="width : 60px"> @Html.DisplayNameFor(model => model.Notes)</div></th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+    <tr>
+        <td><div style="width : 100px"> @Html.DisplayFor(modelItem => item.FirstName) </div></td>
+        <td><div style="width : 100px"> @Html.DisplayFor(modelItem => item.LastName) </div></td>
+        <td>@Html.DisplayFor(modelItem => item.StreetNumber)</td>
+        <td title=@item.StreetToolTip>
+            @Html.DisplayFor(modelItem => item.StreetName)
+        </td>
+        <td title = @item.CityToolTip>
+            @Html.DisplayFor(modelItem => item.City)
+            </td>
+        <td>@Html.DisplayFor(modelItem => item.Zip)
+            </td>
+        <td title=@item.PhoneToolTip>
+            @Html.DisplayFor(modelItem => item.Phone)
+        </td>
+        @*Use Phone as dummy string for display-only DropDownList*@
+        <td>@Html.DropDownListFor(modelitem => item.Phone,new SelectList(item.FamilyMembers, "Value", "Text"), new {style="width: 120px"} )</td>
+        <td title=@item.NotesToolTip> @*The length of the tool tip message depends on the browser.*@
+            @Html.DisplayFor(modelItem => item.Notes)
+        </td>
+       @* <td><div style="width : 40px"> @Html.ActionLink("Edit", "Edit", new { id = item.ClientId })</div></td>*@
+    </tr>
+    }
+</table>
+
+<br/>
+<div>
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+</div>
+</body>
+</html>

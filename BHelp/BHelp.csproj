@@ -182,6 +182,7 @@
     <Compile Include="Controllers\FamilyMembersController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HouseholdController.cs" />
+    <Compile Include="Controllers\ODController.cs" />
     <Compile Include="DataAccessLayer\BHelpContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -272,6 +273,7 @@
     <Content Include="Views\FamilyMembers\Edit.cshtml" />
     <Content Include="Views\FamilyMembers\Index.cshtml" />
     <Content Include="Views\Household\Index.cshtml" />
+    <Content Include="Views\OD\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
