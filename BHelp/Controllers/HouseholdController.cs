@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
@@ -98,8 +99,16 @@ namespace BHelp.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
             return View(client);
+        }
+
+        public ActionResult Edit(int? Id)
+        {
+            if (Id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            return RedirectToAction("Index");
         }
         public ActionResult ReturnToDashboard()
         {

@@ -31,29 +31,32 @@
 </p>
 <table class="table">
     <tr>
-        <th>@Html.DisplayNameFor(model => model.LastName)</th>
-        <th>@Html.DisplayNameFor(model => model.FirstName)</th>
-        <th>@Html.DisplayNameFor(model => model.StreetNumber)</th>
+        <th><div style="width : 100px"> @Html.DisplayNameFor(model => model.LastName)</div></th>
+        <th><div style="width : 100px"> @Html.DisplayNameFor(model => model.FirstName)</div></th>
+        <th><div style="width : 50px">@Html.DisplayNameFor(model => model.StreetNumber)</div></th>
         <th>@Html.DisplayNameFor(model => model.StreetName)</th>
         <th><div style ="width : 100px"> @Html.DisplayNameFor(model => model.City)</div></th>
         <th>@Html.DisplayNameFor(model => model.Zip)</th>
         <th><div style ="width : 100px"> @Html.DisplayNameFor(model => model.Phone)</div ></th>
         <th>@Html.DisplayNameFor(model => model.FamilyMembers)</th>
-        <th>@Html.DisplayNameFor(model => model.Notes)</th>
+        <th><div style="width : 60px"> @Html.DisplayNameFor(model => model.Notes)</div></th>
         <th></th>
     </tr>
 
     @foreach (var item in Model)
     {
     <tr>
-        <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
-        <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+        <td><div style="width : 100px"> @Html.DisplayFor(modelItem => item.FirstName) </div></td>
+        <td><div style="width : 100px"> @Html.DisplayFor(modelItem => item.LastName) </div></td>
         <td>@Html.DisplayFor(modelItem => item.StreetNumber)</td>
         <td title=@item.StreetToolTip>
             @Html.DisplayFor(modelItem => item.StreetName)
         </td>
-        <td>@Html.DisplayFor(modelItem => item.City)</td>
-        <td>@Html.DisplayFor(modelItem => item.Zip)</td>
+        <td title = @item.CityToolTip>
+            @Html.DisplayFor(modelItem => item.City)
+            </td>
+        <td>@Html.DisplayFor(modelItem => item.Zip)
+            </td>
         <td title=@item.PhoneToolTip>
             @Html.DisplayFor(modelItem => item.Phone)
         </td>
@@ -62,9 +65,7 @@
         <td title=@item.NotesToolTip> @*The length of the tool tip message depends on the browser.*@
             @Html.DisplayFor(modelItem => item.Notes)
         </td>
-        <td>
-            @*@Html.ActionLink("Edit", "Edit", new {id = item.Id})*@
-        </td>
+        <td><div style="width : 40px"> @Html.ActionLink("Edit", "Edit", new { id = item.ClientId })</div></td>
     </tr>
     }
 </table>
