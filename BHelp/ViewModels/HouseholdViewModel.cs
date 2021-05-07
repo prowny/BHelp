@@ -50,7 +50,6 @@ namespace BHelp.ViewModels
         public string PhoneToolTip { get; set; }
         public string NotesToolTip { get; set; }
         public string UserFullName { get; set; }
-
-
+        public string SearchString { get; set; }    // for household lookup
     }
 }

@@ -20,7 +20,7 @@ namespace BHelp.Controllers
         {
             if (callLogDate.IsNullOrEmpty())
             {
-                DateTime cdt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day); 
+                DateTime cdt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day +1); 
                 var cdts = cdt.ToString("MM/dd/yyyy");
                 Session["CallLogDate"] = cdts;
             }
@@ -31,10 +31,17 @@ namespace BHelp.Controllers
             
             var userIid = System.Web.HttpContext.Current.User.Identity.GetUserId();
             var user = db.Users.Find(userIid);
-            Session["CurrentUserFullName"] = user.FullName;
+            //!!!Session["CurrentUserFullName"] = user.FullName;
             var householdView = new List<HouseholdViewModel>();
             return View(householdView);
         }
+
+        public ActionResult SearchHouseholds(string searchString)
+        {
+            string dummy = "";
+            return View();
+        }
+
         public ActionResult ReturnToDashboard()
         {
             return RedirectToAction("Index", "Home");

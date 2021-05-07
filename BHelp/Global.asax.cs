@@ -19,7 +19,7 @@ namespace BHelp
         protected void Session_Start(Object sender, EventArgs e)
         {
             HttpContext.Current.Session.Add("CurrentUserFullName", "");  // (initialize variable)
-            DateTime cdt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);  // (initialize variable)
+            DateTime cdt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day +1);  // (initialize variable)
             var callLogDate = cdt.ToString("MM/dd/yyyy");
             HttpContext.Current.Session.Add("CallLogDate", callLogDate); 
         }

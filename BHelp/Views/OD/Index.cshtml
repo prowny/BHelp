@@ -1,4 +1,6 @@
 ﻿@using System.Web.Mvc.Html
+@using DocumentFormat.OpenXml.Drawing.Charts
+@using DocumentFormat.OpenXml.Wordprocessing
 @model IEnumerable<BHelp.ViewModels.HouseholdViewModel>
 @{
     Layout = null;
@@ -28,16 +30,36 @@
 <h3>Call Log</h3>
 <table class="table">
     <tr>
-        <td><b>OD Name:</b>&nbsp;@Session["CurrentUserFullName"]</td>
-        <td>&nbsp;&nbsp;<b>Log Date:</b></td>
-        <td>@Html.TextBox("Log Date", @Session["CallLogDate"].ToString(),
-                new { id = "CallLogDate", style = "width: 75px;" })
-            <span style="color:darkmagenta">&#8592;Click to change</span></td> @*Html left-arrow*@
-    </tr>
+    <td><b>OD Name:</b>&nbsp;@Session["CurrentUserFullName"]</td>
+    <td>&nbsp;&nbsp;<b>Delivery Date:</b></td>
+    <td>@Html.TextBox("Delivery Date", @Session["CallLogDate"].ToString(),
+            new { id = "CallLogDate", style = "width: 75px;" })
+        <span style="color:darkmagenta">&#8592;Click to change</span></td> @*Html left-arrow*@
+    <tr>
 </table>
+<table>
+    <tr>
+    <td><b>Search for Client:</b></td>
+        <td>
+            <input type="text" id="searchField" name="searchFieldText" size="8"/>
+        </td>
+        <td>
+            <input type="submit" style="color: black; background-color: lightblue" value="Search" onclick="submitClick()"/>
+        </td>
+    </tr>
+
+</table>
+
+@*<b>Search for Client:</b>
+<input type="text" id="searchstring"/>
+<input type="button" id="btnGet" value="Search" />*@
+
+@*<div>
+        @Html.Label(“Enter Your Name”)
+        @Html.TextBox(“txtName“,"")
+        <input type=”submit” id=”btnSubmit” name=”Submit” />
+  </div>*@
 <p>
-    @Html.ActionLink("Return To Dashboard", "ReturnToDashboard", new {})
-    <br/>
     @* @Html.ActionLink("Create New", "Create")*@
 </p>
 <table class="table">
@@ -105,4 +127,17 @@
     $("#CallLogDate").change(function () {
         UpdateCallLogDate(window.$('#CallLogDate').val());
     });
+</script>
+<script>
+    function submitClick()
+    {
+        $.ajax({
+            url: "../OD/SearchHouseholds?searchString=" + $('#searchField').val(),
+            type: "GET",
+            success: function (data) {
+                debugger;
+                // your custom code
+            }
+        });
+    }
 </script>
