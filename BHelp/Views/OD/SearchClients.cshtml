@@ -1,0 +1,75 @@
+﻿@using System.Web.Mvc.Html
+
+@model BHelp.ViewModels.ClientViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<meta name="viewport" content="width=device-width" />
+<title>Index</title>
+<style>
+    p.indent {padding-left: 1em}
+    div {padding-left: 10px}
+</style>
+<head>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
+    @*Put page javascript in a separate .js file where breaks can be set during debugging:*@
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
+</head>
+<body>
+    <h3>Call Log</h3>
+    @*@using (Html.BeginForm())
+    {*@
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        </div>
+        <table class="table">
+            <tr>
+                <td><b>OD Name:</b>&nbsp;@Session["CurrentUserFullName"].ToString()</td>
+                <td>&nbsp;&nbsp;<b>Delivery Date:</b></td>
+                <td>
+                    @Html.TextBox("Delivery Date", @Session["CallLogDate"].ToString(),
+                        new { id = "CallLogDate", style = "width: 75px;" })
+                    <span style="color:darkmagenta">&#8592;Click to change</span>
+                </td> @*Html left-arrow*@
+            <tr>
+        </table>
+        @*<table>
+                <tr>
+                    <td><b>Search for Client:</b></td>
+                    <td>
+                        @Html.ActionLink("Search", "Index", "OD", null, new { id = "myLink" })
+                        @Html.EditorFor(model => model.SearchString, "", new
+                            { id = "SearchText", style = "width: 50px;",
+                             Title = "Tip: Enter full or partial Phone# OR First Name OR Last Name."})
+                    </td>
+                </tr>
+            </table>*@
+        <div class="form-group">
+            <div class="col-md-10">
+                <label><b>Search:</b></label>
+                @Html.EditorFor(model => model.SearchString, new { id = "SearchText", style = "width: 50px;",
+                    Title = "Tip: Enter full or partial Phone# OR First Name OR Last Name." } )
+                @Html.ValidationMessageFor(model => model.SearchString, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    @*}*@
+    <br />
+    <div>
+        @Html.ActionLink("Return to Dashboard", "ReturntoDashboard")
+    </div>
+</body>
+</html>
+<script>
+    $(function () {
+        window.$("#CallLogDate").datepicker();
+    });
+</script> @*//CallLogDate datepicker*@
+<script type="text/javascript">
+    $("#CallLogDate").change(function () {
+        UpdateCallLogDate(window.$('#CallLogDate').val());
+    });
+</script> @*// CallLogDate change*@
