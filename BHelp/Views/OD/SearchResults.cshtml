@@ -1,0 +1,35 @@
+﻿@model IEnumerable<BHelp.ViewModels.HouseholdViewModel>
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body>
+
+<table class="table">
+    <tr>
+        <th>
+            <div style="width: 100px"> @Html.DisplayNameFor(model => model.LastName)</div>
+        </th>
+        <th>
+            <div style="width: 100px"> @Html.DisplayNameFor(model => model.FirstName)</div>
+        </th>
+    </tr>
+    @*@foreach (var item in Model)
+    {
+        <tr>
+            @Html.DisplayFor(modelItem => item.FirstName)
+            @Html.DisplayFor(modelItem => item.LastName)
+        </tr>
+    }*@
+</table>
+    
+<br />
+<div>
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+</div>
+</body>
+</html>

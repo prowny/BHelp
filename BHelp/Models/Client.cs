@@ -59,5 +59,16 @@ namespace BHelp.Models
 
         [NotMapped]
         public string CurrentUserFullName { get; set; }
+        [NotMapped]
+        public string StreetToolTip { get; set; }
+        [NotMapped]
+        public string CityToolTip { get; set; }
+        [NotMapped]
+        public string PhoneToolTip { get; set; }
+        [NotMapped]
+        public string NotesToolTip { get; set; }
+       
+        [NotMapped]
+        public IEnumerable<Client> SearchResults { get; set; }
     }
 }

@@ -44,6 +44,8 @@ namespace BHelp.ViewModels
         
         // For display use:
         public int Age { get; set; }
+
+        [DisplayName("Family Members")]
         public IEnumerable<SelectListItem> FamilyMembers { get; set; }
         public string StreetToolTip { get; set; }
         public string CityToolTip { get; set; }
@@ -51,5 +53,6 @@ namespace BHelp.ViewModels
         public string NotesToolTip { get; set; }
         public string UserFullName { get; set; }
         public string SearchString { get; set; }    // for household lookup
+        public  List<HouseholdViewModel> SearchResults { get; set; }
     }
 }

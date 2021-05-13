@@ -18,11 +18,11 @@ function SearchClients(text) {
             url: "/OD/SearchHouseholds",
             data: { searchString: $("#SearchText").val() },
             type: "POST",
-            dataType: "JSON",
+            //dataType: "JSON",
             success: function (data) {
                 var dummy = "";
-                $("#SearchResults").show();
-                $("SearchResults").html(data);
+                //$("#SearchResults").show();
+                //$("SearchResults").html(data);
                 //location.reload(true);
                 //$("body").html(data);
             },
