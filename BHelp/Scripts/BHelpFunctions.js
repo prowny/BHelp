@@ -18,13 +18,8 @@ function SearchClients(text) {
             url: "/OD/SearchHouseholds",
             data: { searchString: $("#SearchText").val() },
             type: "POST",
-            //dataType: "JSON",
             success: function (data) {
                 var dummy = "";
-                //$("#SearchResults").show();
-                //$("SearchResults").html(data);
-                //location.reload(true);
-                //$("body").html(data);
             },
             error: function (jqxhr, status, exception) {
                 alert('Exception:', exception);
@@ -32,4 +27,21 @@ function SearchClients(text) {
             }
         });
     }
+
+function SearchHouseholds(text) {
+    $.ajax({
+        url: "/OD/Index",
+        data:
+        { searchString: text },
+        type: "POST",
+        success: function (result) {
+            // After success, update # of records found label           
+            //var dummy = "";
+            $('body').html(result);
+        },
+        Error: function () {
+            //var dummy = "";
+        }
+    });
+}
 

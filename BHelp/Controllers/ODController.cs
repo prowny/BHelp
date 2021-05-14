@@ -6,7 +6,6 @@ using BHelp.DataAccessLayer;
 using BHelp.Models;
 using Castle.Core.Internal;
 using BHelp.ViewModels;
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
@@ -16,7 +15,7 @@ namespace BHelp.Controllers
         private BHelpContext db = new BHelpContext();
 
         // GET: Household
-        public ActionResult Index(string callLogDate, string searchString)
+        public ActionResult Index(string callLogDate, string searchString, int? selectedId)
         {
             if (callLogDate.IsNullOrEmpty())
             {
@@ -29,14 +28,8 @@ namespace BHelp.Controllers
                 Session["CallLogDate"] = callLogDate;
             }
 
-            //var searchList = (HouseholdViewModel[]) TempData["SearchResults"];
-            //var householdView = new List<HouseholdViewModel>();
             if (searchString != null)
-            {
-                TempData["SearchResults"] = SearchHouseholds(searchString);
-                //ViewData["SearchResults"] = TempData["SearchResults"] as IEnumerable<HouseholdViewModel>;
-            }
-
+            { TempData["SearchResults"] = SearchHouseholds(searchString); }
             var userIid = System.Web.HttpContext.Current.User.Identity.GetUserId();
             if (userIid != null)
             {
@@ -58,15 +51,6 @@ namespace BHelp.Controllers
             return View();
         }
 
-        public ActionResult SearchClients()
-        {
-            var userIid = System.Web.HttpContext.Current.User.Identity.GetUserId();
-            if(userIid != null)
-            { var user = db.Users.Find(userIid);
-                Session["CurrentUserFullName"] = user.FullName;}
-            return View();
-        }
-
         static List<HouseholdViewModel> SearchHouseholds(string searchString)
         {
             if (searchString == null)
@@ -75,10 +59,21 @@ namespace BHelp.Controllers
             }
 
             var householdView = new List<HouseholdViewModel>();
+
             using (var db = new BHelpContext())
             {
-                List<Client> clientList =
-                    db.Clients.Where(c => c.Active && c.Phone.Contains(searchString)).OrderBy(c => c.LastName).ToList();
+                List<Client> clientList = new List<Client>();
+                if (searchString.Any(char.IsDigit))
+                {
+                    clientList = db.Clients.Where(c => c.Active && c.Phone.Contains(searchString))
+                        .OrderBy(c => c.LastName).ToList();
+                }
+                else
+                {
+                    clientList = db.Clients.Where(c => c.Active && c.LastName.Contains(searchString))
+                        .OrderBy(c => c.LastName).ToList();
+                }
+
                 foreach (var client in clientList)
                 {
                     var sqlString = "SELECT * FROM FamilyMembers ";
@@ -87,18 +82,18 @@ namespace BHelp.Controllers
                     FamilyMember headOfHousehold = new FamilyMember()
                     {
                         // ! sql result reversed First and Last Names!
-                        FirstName = client.LastName,
-                        LastName = client.FirstName,
+                        FirstName = client.FirstName,
+                        LastName = client.LastName,
                         DateOfBirth = client.DateOfBirth,
                     };
-
+                
                     familyList.Add(headOfHousehold);
                     var familyMembers = new List<SelectListItem>();
                     foreach (FamilyMember member in familyList)
                     {
                         member.Age = AppRoutines.GetAge(member.DateOfBirth, DateTime.Today);
                         var text = member.FirstName + " " + member.LastName + "/" + member.Age;
-                        SelectListItem selListItem = new SelectListItem() { Value = member.FirstName, Text = text };
+                        SelectListItem selListItem = new SelectListItem() {Value = member.FirstName, Text = text};
                         familyMembers.Add(selListItem);
                     }
 
@@ -120,7 +115,6 @@ namespace BHelp.Controllers
                         // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
                         NotesToolTip = client.Notes.Replace(" ", "\u00a0"),
                     };
-
 
                     var s = household.StreetName; // For display, abbreviate to 10 characters:           
                     s = s.Length <= 10 ? s : s.Substring(0, 10) + "...";

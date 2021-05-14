@@ -6,14 +6,19 @@
 @{ Layout = null; }
 <!DOCTYPE html>
 @{ ViewBag.Title = "Index"; }
-@{ var searchResults = (IEnumerable<HouseholdViewModel>) TempData["SearchResults"]; }
+@{ var searchResults = (IEnumerable<HouseholdViewModel>)TempData["SearchResults"]; }
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
     <style>
-        p.indent {padding-left: 1em}
-        div {padding-left: 10px}
+        p.indent {
+            padding-left: 1em
+        }
+
+        div {
+            padding-left: 10px
+        }
     </style>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
@@ -41,71 +46,81 @@
                 <td><b>Search for Existing Client:</b></td>
                 <td>
                     @Html.TextBox("SearchText", "", new
-                    { id = "SearchText", style = "width: 50px;",
-                    Title = "Tip: Enter full or partial Phone# OR First Name OR Last Name."})
+                    { id = "SearchText", style = "width: 50px;" , onkeypress = "KeyPressHandler()" ,
+                   Title = "Tip: Enter full or partial Phone# OR First Name OR Last Name."})
+
                 </td>
                 <td>
-                    <a href=@Url.Action( "Index","OD"  , new{searchString ="2310"})><span>Search</span></a>
-                    &nbsp;@searchResults.Count() Found
-                    </td>
+                    <a href="#" id="SearchString"><span>Search</span></a>
+                    @*if(searchResults != null)
+                        {
+                        &nbsp;@searchResults.Count() Found
+                        }
+                        else
+                        {0 Found}*@
+                </td>
             </tr>
         </table>
         <p>
             @* @Html.ActionLink("Create New", "Create")*@
         </p>
     </div>
-<div id="SearchResults">
-    @if (searchResults != null)
-    {
-    <table class="table">
-        <tr>
-            <th><div style="width: 100px">@Html.DisplayNameFor(model => model.LastName)</div></th>
-            <th><div style="width: 100px">@Html.DisplayNameFor(model => model.FirstName)</div></th>
-            <th><div style="width: 30px">@Html.DisplayNameFor(model => model.StreetNumber)</div></th>
-            <th><div style="width: 50px">@Html.DisplayNameFor(model => model.StreetName)</div></th>
-            <th><div style="width: 50px"> @Html.DisplayNameFor(model => model.City)</div></th>
-            <th><div style="width: 25px">@Html.DisplayNameFor(model => model.Zip)</div></th>
-            <th><div style="width: 60px"> @Html.DisplayNameFor(model => model.Phone)</div></th>
-            <th>@Html.DisplayNameFor(model => model.FamilyMembers)</th>
-            <th><div style="width: 60px"> @Html.DisplayNameFor(model => model.Notes)</div></th>
-            <th></th>
-        </tr>
-
-        @foreach (var item in searchResults)
+    <div id="SearchResults">
+        @if (searchResults != null)
         {
-            <tr>
-                <td>
-                     @Html.DisplayFor(modelItem => item.FirstName) 
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastName)</td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StreetNumber)
-                </td>
-                <td title=@item.StreetToolTip>
-                    @Html.DisplayFor(modelItem => item.StreetName)
-                </td>
-                <td title=@item.CityToolTip>
-                    @Html.DisplayFor(modelItem => item.City)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Zip)
-                </td>
-                <td title=@item.PhoneToolTip>
-                    @Html.DisplayFor(modelItem => item.Phone)
-                </td>
-                <td>
-                    @Html.DropDownListFor(modelitem => item.Phone, new SelectList(item.FamilyMembers, "Value", "Text"), new {style = "width: 120px"})
-                </td>
-                <td title=@item.NotesToolTip>
-                    @Html.DisplayFor(modelItem => item.Notes)
-                </td>
-                @* <td><div style="width : 40px"> @Html.ActionLink("Edit", "Edit", new { id = item.ClientId })</div></td>*@
-            </tr>
+            <table class="table">
+                <tr>
+                    <th><div style="width: 100px">@Html.DisplayNameFor(model => model.LastName)</div></th>
+                    <th><div style="width: 100px">@Html.DisplayNameFor(model => model.FirstName)</div></th>
+                    <th><div style="width: 40px">@Html.DisplayNameFor(model => model.StreetNumber)</div></th>
+                    <th><div style="width: 50px">@Html.DisplayNameFor(model => model.StreetName)</div></th>
+                    <th><div style="width: 50px"> @Html.DisplayNameFor(model => model.City)</div></th>
+                    <th><div style="width: 25px">@Html.DisplayNameFor(model => model.Zip)</div></th>
+                    <th><div style="width: 60px"> @Html.DisplayNameFor(model => model.Phone)</div></th>
+                    <th>@Html.DisplayNameFor(model => model.FamilyMembers)</th>
+                    <th><div style="width: 60px"> @Html.DisplayNameFor(model => model.Notes)</div></th>
+                    <th></th>
+                </tr>
+
+                @foreach (var item in searchResults)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FirstName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StreetNumber)
+                        </td>
+                        <td title=@item.StreetToolTip>
+                            @Html.DisplayFor(modelItem => item.StreetName)
+                        </td>
+                        <td title=@item.CityToolTip>
+                            @Html.DisplayFor(modelItem => item.City)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Zip)
+                        </td>
+                        <td title=@item.PhoneToolTip>
+                            @Html.DisplayFor(modelItem => item.Phone)
+                        </td>
+                        <td>
+                            @Html.DropDownListFor(modelitem => item.Phone, new SelectList(item.FamilyMembers, "Value", "Text"), new { style = "width: 120px" })
+                        </td>
+                        <td title=@item.NotesToolTip>
+                            @Html.DisplayFor(modelItem => item.Notes)
+                        </td>
+
+                        <td>
+                            <a href=@Url.Action( "Index","OD"  , new{selectedId = new{id = item.ClientId }})><span>Select</span></a>
+                        </td>
+                    </tr>
+                }
+            </table>
         }
-    </table>
-    }
-</div>
+    </div>
     <br />
     <div>
         @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
@@ -117,29 +132,36 @@
     $(function () {
         window.$("#CallLogDate").datepicker();
     });
-</script> @*//CallLogDate datepicker*@
+</script> @*CallLogDate datepicker*@
 <script type="text/javascript">
     $("#CallLogDate").change(function () {
         UpdateCallLogDate(window.$('#CallLogDate').val());
     });
-</script> @*// CallLogDate change*@
-@*<script>
-        function submitClick()
-        {
-            $.ajax({
-                url: "../OD/SearchHouseholds?searchString=" + $('#searchField').val(),
-                type: "GET",
-                success: function (data) {
-                    //debugger;
-                    // your custom code
-                    location.reload(true);
-                }
-            });
-        }
-    </script>*@
+</script> @*CallLogDate change*@
 <script type="text/javascript">
-    $("#SearchClients").click(function () {
-        var text = $("#SearchText");
-        SearchClients(text);
+    $("#SearchString").click(function () {
+        var text = $("#SearchText").val();
+        SearchHouseholds(text);
     });
-</script>
+</script> @*SearchHouseholds*@
+<script type=text/javascript>
+    function KeyPressHandler(SearchText, e) {
+        //the purpose of this function is to allow the enter key to
+        //point to the correct button to click.
+        var key;
+
+        if (window.event)
+            key = window.event.keyCode;     //IE
+        else
+            key = e.which;     //firefox
+
+        if (key === 13) {
+            //Get the button the user wants to have clicked
+            var btn = document.getElementById("SearchString");
+            if (btn != null) { //If we find the button click it
+                btn.click();
+                event.keyCode = 0;
+            }
+        }
+    }
+</script> @*KeyPressHandler*@

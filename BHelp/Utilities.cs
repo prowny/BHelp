@@ -4,6 +4,7 @@ using System.IO;
 using BHelp.Models;
 using LumenWorks.Framework.IO.Csv;
 using System.Data;
+using System.Linq;
 using DataTable = System.Data.DataTable;
 
 namespace BHelp
@@ -125,6 +126,20 @@ namespace BHelp
                 }
                 
                 //System.Diagnostics.Debug.WriteLine(client.FirstName, client.LastName);
+            }
+
+            return true;
+        }
+
+        public static Boolean ReverseNames()
+        {
+            var db = new BHelpContext();
+            foreach (Client client in db.Clients.ToList())
+            {
+                var oldLastName = client.LastName;
+                client.LastName = client.FirstName;
+                client.FirstName = oldLastName;
+                db.SaveChanges();
             }
 
             return true;

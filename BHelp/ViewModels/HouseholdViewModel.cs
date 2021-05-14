@@ -24,7 +24,7 @@ namespace BHelp.ViewModels
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DateOfBirth { get; set; }
 
-        [DisplayName("Street Number")]
+        [DisplayName("Street No.")]
         public string StreetNumber { get; set; }
         
         [DisplayName("Street Name")]

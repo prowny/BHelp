@@ -40,5 +40,10 @@ namespace BHelp.Controllers
             Utilities.UploadAdults();
             return RedirectToAction("Index", "Home");
         }
+        public ActionResult ReverseNames()
+        {
+            Utilities.ReverseNames();
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
