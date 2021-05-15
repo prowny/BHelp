@@ -12,13 +12,8 @@
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
     <style>
-        p.indent {
-            padding-left: 1em
-        }
-
-        div {
-            padding-left: 10px
-        }
+        p.indent {padding-left: 1em}
+        div {padding-left: 5px}
     </style>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
@@ -47,8 +42,7 @@
                 <td>
                     @Html.TextBox("SearchText", "", new
                     { id = "SearchText", style = "width: 50px;" , onkeypress = "KeyPressHandler()" ,
-                   Title = "Tip: Enter full or partial Phone# OR First Name OR Last Name."})
-
+                   Title = "Tip: Enter full or partial Phone# OR Last Name."})
                 </td>
                 <td>
                     <a href="#" id="SearchString"><span>Search</span></a>
@@ -70,15 +64,15 @@
         {
             <table class="table">
                 <tr>
-                    <th><div style="width: 100px">@Html.DisplayNameFor(model => model.LastName)</div></th>
-                    <th><div style="width: 100px">@Html.DisplayNameFor(model => model.FirstName)</div></th>
-                    <th><div style="width: 40px">@Html.DisplayNameFor(model => model.StreetNumber)</div></th>
-                    <th><div style="width: 50px">@Html.DisplayNameFor(model => model.StreetName)</div></th>
-                    <th><div style="width: 50px"> @Html.DisplayNameFor(model => model.City)</div></th>
-                    <th><div style="width: 25px">@Html.DisplayNameFor(model => model.Zip)</div></th>
-                    <th><div style="width: 60px"> @Html.DisplayNameFor(model => model.Phone)</div></th>
+                    <th><div style="width: 100px", align="left">@Html.DisplayNameFor(model => model.LastName)</div></th>
+                    <th><div style="width: 100px", align="left">@Html.DisplayNameFor(model => model.FirstName)</div></th>
+                    <th><div style="width: 40px", align="left">@Html.DisplayNameFor(model => model.StreetNumber)</div></th>
+                    <th><div style="width: 50px", align="left">@Html.DisplayNameFor(model => model.StreetName)</div></th>
+                    <th><div style="width: 50px", align="left"> @Html.DisplayNameFor(model => model.City)</div></th>
+                    <th><div style="width: 25px", align="left">@Html.DisplayNameFor(model => model.Zip)</div></th>
+                    <th><div style="width: 60px", align="left"> @Html.DisplayNameFor(model => model.Phone)</div></th>
                     <th>@Html.DisplayNameFor(model => model.FamilyMembers)</th>
-                    <th><div style="width: 60px"> @Html.DisplayNameFor(model => model.Notes)</div></th>
+                    <th><div style="width: 60px", align="left"> @Html.DisplayNameFor(model => model.Notes)</div></th>
                     <th></th>
                 </tr>
 
