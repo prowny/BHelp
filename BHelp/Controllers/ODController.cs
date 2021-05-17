@@ -73,9 +73,10 @@ namespace BHelp.Controllers
                     clientList = db.Clients.Where(c => c.Active && c.LastName.Contains(searchString))
                         .OrderBy(c => c.LastName).ToList();
                 }
-
+                
                 foreach (var client in clientList)
                 {
+                    client.FamilyMembers = GetFamilyMembers(client.Id);
                     var sqlString = "SELECT * FROM FamilyMembers ";
                     sqlString += "WHERE Active > 0 AND ClientId =" + client.Id;
                     var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
@@ -131,10 +132,40 @@ namespace BHelp.Controllers
                     householdView.Add(household);
                 }
             }
-            
             return (householdView);
         }
 
+        private static List<FamilyMember> GetFamilyMembers(int clientId)
+        {
+            var familyMembers = new List<FamilyMember>();
+            using (var db = new BHelpContext())
+            {
+                var client = db.Clients.Find(clientId);
+                var sqlString = "SELECT * FROM FamilyMembers ";
+                sqlString += "WHERE Active > 0 AND ClientId =" + clientId;
+                var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
+                if (client != null)
+                {
+                    FamilyMember headOfHousehold = new FamilyMember()
+                    {
+                        FirstName = client.FirstName,
+                        LastName = client.LastName,
+                        DateOfBirth = client.DateOfBirth,
+                    };
+
+                    familyList.Add(headOfHousehold);
+                }
+
+                foreach (FamilyMember member in familyList)
+                {
+                    member.Age = AppRoutines.GetAge(member.DateOfBirth, DateTime.Today);
+                    var text = member.FirstName + " " + member.LastName + "/" + member.Age;
+                    SelectListItem selListItem = new SelectListItem() {Value = member.FirstName, Text = text};
+                    familyMembers.Add(member);
+                }
+            }
+            return familyMembers;
+        }
         public ActionResult UpdateHousehold(int Id)
         {
             Client client = db.Clients.Find(Id);
