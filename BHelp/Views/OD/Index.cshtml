@@ -106,9 +106,8 @@
                         <td title=@item.NotesToolTip>
                             @Html.DisplayFor(modelItem => item.Notes)
                         </td>
-
                         <td>
-                            <a href=@Url.Action( "Index","OD"  , new{selectedId = new{id = item.ClientId }})><span>Select</span></a>
+                            @Html.ActionLink("Select", "UpdateHousehold", new {id = item.ClientId})
                         </td>
                     </tr>
                 }

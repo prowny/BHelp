@@ -1,4 +1,5 @@
-﻿using BHelp.DataAccessLayer;
+﻿// Utilities used by deeveloper //
+using BHelp.DataAccessLayer;
 using System;
 using System.IO;
 using BHelp.Models;
@@ -131,7 +132,7 @@ namespace BHelp
             return true;
         }
 
-        public static Boolean ReverseNames()
+        public static Boolean ReverseNames() // Initial load had First & Last Names revesed
         {
             var db = new BHelpContext();
             foreach (Client client in db.Clients.ToList())

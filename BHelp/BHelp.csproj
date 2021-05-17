@@ -320,8 +320,7 @@
     <Content Include="Views\FamilyMembers\Index.cshtml" />
     <Content Include="Views\Household\Index.cshtml" />
     <Content Include="Views\OD\Index.cshtml" />
-    <Content Include="Views\OD\SearchClients.cshtml" />
-    <Content Include="Views\OD\SearchResults.cshtml" />
+    <Content Include="Views\OD\UpdateHousehold.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

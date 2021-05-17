@@ -62,7 +62,7 @@ namespace BHelp.Controllers
 
             using (var db = new BHelpContext())
             {
-                List<Client> clientList = new List<Client>();
+                List<Client> clientList;
                 if (searchString.Any(char.IsDigit))
                 {
                     clientList = db.Clients.Where(c => c.Active && c.Phone.Contains(searchString))
@@ -81,7 +81,6 @@ namespace BHelp.Controllers
                     var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
                     FamilyMember headOfHousehold = new FamilyMember()
                     {
-                        // ! sql result reversed First and Last Names!
                         FirstName = client.FirstName,
                         LastName = client.LastName,
                         DateOfBirth = client.DateOfBirth,
@@ -133,13 +132,36 @@ namespace BHelp.Controllers
                 }
             }
             
-            //TempData["SearchResults"] = householdView;
             return (householdView);
-
-            //return RedirectToAction("Index", "OD");
-            //return RedirectToAction("SearchResults", "OD");
         }
 
+        public ActionResult UpdateHousehold(int Id)
+        {
+            Client client = db.Clients.Find(Id);
+            if (client == null)
+            { RedirectToAction("Index"); }
+
+            HouseholdViewModel houseHold = new HouseholdViewModel()
+            {
+                ClientId = Id,
+                // ReSharper disable once PossibleNullReferenceException
+                LastName = client.LastName,
+                FirstName = client.FirstName,
+                Active =client.Active,
+                Age=AppRoutines.GetAge(client.DateOfBirth, DateTime.Today),
+                StreetNumber = client.StreetNumber,
+                StreetName = client.StreetName,
+                City = client.City,
+                Zip = client.Zip,
+                Notes = client.Notes
+            };
+            ////client.FamilyMembers
+        
+
+            //var dummy = "";
+            return View(houseHold);
+         
+        }
         public ActionResult ReturnToDashboard()
         {
             return RedirectToAction("Index", "Home");
