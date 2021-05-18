@@ -25,21 +25,19 @@ namespace BHelp.Controllers
                 var sqlString = "SELECT * FROM FamilyMembers ";
                 sqlString += "WHERE Active > 0 AND ClientId =" + client.Id;
                 var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
-                
                 FamilyMember headOfHousehold = new FamilyMember()
                 {
-                 // ! sql result reversed Firt and Last Names!
                     FirstName = client.LastName,
                     LastName = client.FirstName,
                     DateOfBirth = client.DateOfBirth,
                 };
                 familyList.Add(headOfHousehold);
-                var familyMembers = new List<SelectListItem>();
+                var familyMembers =new List<SelectListItem>();
                 foreach (FamilyMember member in familyList)
                 {
                     member.Age = AppRoutines.GetAge(member.DateOfBirth, DateTime.Today);
                     var text = member.FirstName + " " + member.LastName + "/" + member.Age;
-                    SelectListItem selListItem = new SelectListItem() {Value = member.FirstName, Text = text };
+                    SelectListItem selListItem = new SelectListItem() {Value = member.FirstName, Text = text};
                     familyMembers.Add(selListItem);
                 }
                 

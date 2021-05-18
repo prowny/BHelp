@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
-using BHelp.Models;
 
 namespace BHelp.ViewModels
 {
@@ -51,8 +50,5 @@ namespace BHelp.ViewModels
         public string CityToolTip { get; set; }
         public string PhoneToolTip { get; set; }
         public string NotesToolTip { get; set; }
-        public string UserFullName { get; set; }
-        public string SearchString { get; set; }    // for household lookup
-        public  List<HouseholdViewModel> SearchResults { get; set; }
     }
 }

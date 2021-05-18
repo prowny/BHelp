@@ -77,25 +77,26 @@ namespace BHelp.Controllers
                 foreach (var client in clientList)
                 {
                     client.FamilyMembers = GetFamilyMembers(client.Id);
-                    var sqlString = "SELECT * FROM FamilyMembers ";
-                    sqlString += "WHERE Active > 0 AND ClientId =" + client.Id;
-                    var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
-                    FamilyMember headOfHousehold = new FamilyMember()
-                    {
-                        FirstName = client.FirstName,
-                        LastName = client.LastName,
-                        DateOfBirth = client.DateOfBirth,
-                    };
+
+                    //var sqlString = "SELECT * FROM FamilyMembers ";
+                    //sqlString += "WHERE Active > 0 AND ClientId =" + client.Id;
+                    //var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
+                    //FamilyMember headOfHousehold = new FamilyMember()
+                    //{
+                    //    FirstName = client.FirstName,
+                    //    LastName = client.LastName,
+                    //    DateOfBirth = client.DateOfBirth,
+                    //};
                 
-                    familyList.Add(headOfHousehold);
-                    var familyMembers = new List<SelectListItem>();
-                    foreach (FamilyMember member in familyList)
-                    {
-                        member.Age = AppRoutines.GetAge(member.DateOfBirth, DateTime.Today);
-                        var text = member.FirstName + " " + member.LastName + "/" + member.Age;
-                        SelectListItem selListItem = new SelectListItem() {Value = member.FirstName, Text = text};
-                        familyMembers.Add(selListItem);
-                    }
+                    //familyList.Add(headOfHousehold);
+                    //var familyMembers = new List<SelectListItem>();
+                    //foreach (FamilyMember member in familyList)
+                    //{
+                    //    member.Age = AppRoutines.GetAge(member.DateOfBirth, DateTime.Today);
+                    //    var text = member.FirstName + " " + member.LastName + "/" + member.Age;
+                    //    SelectListItem selListItem = new SelectListItem() {Value = member.FirstName, Text = text};
+                    //    familyMembers.Add(selListItem);
+                    //}
 
                     var household = new HouseholdViewModel()
                     {
@@ -110,7 +111,7 @@ namespace BHelp.Controllers
                         Zip = client.Zip,
                         Phone = client.Phone,
                         PhoneToolTip = client.Phone.Replace(" ", "\u00a0"),
-                        FamilyMembers = familyMembers,
+                        FamilyMembers =client.FamilyMembers,
                         Notes = client.Notes,
                         // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
                         NotesToolTip = client.Notes.Replace(" ", "\u00a0"),
@@ -135,9 +136,9 @@ namespace BHelp.Controllers
             return (householdView);
         }
 
-        private static List<FamilyMember> GetFamilyMembers(int clientId)
+        private static List<SelectListItem> GetFamilyMembers(int clientId)
         {
-            var familyMembers = new List<FamilyMember>();
+            var familyMembers = new List<SelectListItem>();
             using (var db = new BHelpContext())
             {
                 var client = db.Clients.Find(clientId);
@@ -160,8 +161,8 @@ namespace BHelp.Controllers
                 {
                     member.Age = AppRoutines.GetAge(member.DateOfBirth, DateTime.Today);
                     var text = member.FirstName + " " + member.LastName + "/" + member.Age;
-                    SelectListItem selListItem = new SelectListItem() {Value = member.FirstName, Text = text};
-                    familyMembers.Add(member);
+                    SelectListItem selListItem = new SelectListItem() {Value=member.FirstName, Text = text};
+                    familyMembers.Add(selListItem);
                 }
             }
             return familyMembers;
@@ -184,6 +185,7 @@ namespace BHelp.Controllers
                 StreetName = client.StreetName,
                 City = client.City,
                 Zip = client.Zip,
+                Phone = client.Phone,
                 Notes = client.Notes
             };
             ////client.FamilyMembers
