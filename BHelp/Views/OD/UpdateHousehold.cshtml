@@ -113,8 +113,24 @@
                         @Html.ValidationMessageFor(model => model.Notes, "", new {@class = "text-danger"})
                     </td>
                 </tr>
+                
+                    
+                    @for (int i = 0; i < Model.FamilyMembers.Count(); i++)
+                    {
+                        <tr class=" i % 2 == 0 ? ">
+                            <td><b>Family Members:</b></td>
+                            <td>@Html.LabelFor(mbr => mbr.FirstName)</td>
+                            <td>@Html.EditorFor(mbr => mbr.FirstName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.LabelFor(mbr => mbr.LastName)</td>
+                            <td>@Html.EditorFor(mbr => mbr.LastName)</td>
+                        </tr>
+                        //var member= Model.FamilyMembers.ElementAt(i);
+                        <td></td>
+                    }
+                
             </table>
         </div>
+
         <br/>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

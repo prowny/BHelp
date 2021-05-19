@@ -25,5 +25,8 @@ namespace BHelp.Models
 
         [NotMapped]
         public int Age { get; set; }
+
+        [NotMapped]
+        public string NameAge { get; set; }
     }
 }

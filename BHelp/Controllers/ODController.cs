@@ -24,9 +24,7 @@ namespace BHelp.Controllers
                 Session["CallLogDate"] = cdts;
             }
             else
-            {
-                Session["CallLogDate"] = callLogDate;
-            }
+            { Session["CallLogDate"] = callLogDate; }
 
             if (searchString != null)
             { TempData["SearchResults"] = SearchHouseholds(searchString); }
@@ -36,7 +34,9 @@ namespace BHelp.Controllers
                 var user = db.Users.Find(userIid);
                 Session["CurrentUserFullName"] = user.FullName;
             };
-            return View();
+            HouseholdViewModel houseHoldView = new HouseholdViewModel();
+
+            return View(houseHoldView);
         }
 
         public ActionResult SearchResults()
@@ -53,13 +53,9 @@ namespace BHelp.Controllers
 
         static List<HouseholdViewModel> SearchHouseholds(string searchString)
         {
-            if (searchString == null)
-            {
-                return null;
-            }
+            if (searchString == null) { return null; }
 
             var householdView = new List<HouseholdViewModel>();
-
             using (var db = new BHelpContext())
             {
                 List<Client> clientList;
@@ -77,27 +73,6 @@ namespace BHelp.Controllers
                 foreach (var client in clientList)
                 {
                     client.FamilyMembers = GetFamilyMembers(client.Id);
-
-                    //var sqlString = "SELECT * FROM FamilyMembers ";
-                    //sqlString += "WHERE Active > 0 AND ClientId =" + client.Id;
-                    //var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
-                    //FamilyMember headOfHousehold = new FamilyMember()
-                    //{
-                    //    FirstName = client.FirstName,
-                    //    LastName = client.LastName,
-                    //    DateOfBirth = client.DateOfBirth,
-                    //};
-                
-                    //familyList.Add(headOfHousehold);
-                    //var familyMembers = new List<SelectListItem>();
-                    //foreach (FamilyMember member in familyList)
-                    //{
-                    //    member.Age = AppRoutines.GetAge(member.DateOfBirth, DateTime.Today);
-                    //    var text = member.FirstName + " " + member.LastName + "/" + member.Age;
-                    //    SelectListItem selListItem = new SelectListItem() {Value = member.FirstName, Text = text};
-                    //    familyMembers.Add(selListItem);
-                    //}
-
                     var household = new HouseholdViewModel()
                     {
                         ClientId = client.Id,
@@ -130,15 +105,23 @@ namespace BHelp.Controllers
                     s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
                     household.Notes = s;
 
+                    household.FamilySelectList = new List<SelectListItem>();
+                    foreach (var mbr in client.FamilyMembers)
+                    {
+                        var text = mbr.FirstName + " " + mbr.LastName + "/" + AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
+                        var selListItem = new SelectListItem() { Value = mbr.FirstName, Text = text };
+                        household.FamilySelectList.Add(selListItem);
+                    }
                     householdView.Add(household);
                 }
             }
             return (householdView);
         }
 
-        private static List<SelectListItem> GetFamilyMembers(int clientId)
-        {
-            var familyMembers = new List<SelectListItem>();
+        private static List<FamilyMember> GetFamilyMembers(int clientId)
+        { 
+            var familySelectList = new List<SelectListItem>();  // For display in drop-down box
+            var familyMembers = new List<FamilyMember>();   // For editiing
             using (var db = new BHelpContext())
             {
                 var client = db.Clients.Find(clientId);
@@ -153,16 +136,21 @@ namespace BHelp.Controllers
                         LastName = client.LastName,
                         DateOfBirth = client.DateOfBirth,
                     };
-
                     familyList.Add(headOfHousehold);
+
+                    var text = client.FirstName + " " + client.LastName + "/" + AppRoutines.GetAge( client.DateOfBirth, DateTime.Today);
+                    SelectListItem selListItem = new SelectListItem() {Value=client.FullName, Text = text};
+                    familySelectList.Add(selListItem); // client = Head of Household
                 }
 
                 foreach (FamilyMember member in familyList)
                 {
                     member.Age = AppRoutines.GetAge(member.DateOfBirth, DateTime.Today);
-                    var text = member.FirstName + " " + member.LastName + "/" + member.Age;
-                    SelectListItem selListItem = new SelectListItem() {Value=member.FirstName, Text = text};
-                    familyMembers.Add(selListItem);
+                    member.NameAge = member.FirstName + " " + member.LastName + "/" + member.Age;
+                    familyMembers.Add(member);
+
+                    SelectListItem selListItem = new SelectListItem() { Value = member.FirstName, Text = member.NameAge };
+                    familySelectList.Add(selListItem);
                 }
             }
             return familyMembers;
@@ -186,10 +174,10 @@ namespace BHelp.Controllers
                 City = client.City,
                 Zip = client.Zip,
                 Phone = client.Phone,
-                Notes = client.Notes
+                Notes = client.Notes,
+                FamilyMembers = GetFamilyMembers(client.Id)
             };
-            ////client.FamilyMembers
-        
+
 
             //var dummy = "";
             return View(houseHold);

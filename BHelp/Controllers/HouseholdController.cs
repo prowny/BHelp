@@ -32,13 +32,15 @@ namespace BHelp.Controllers
                     DateOfBirth = client.DateOfBirth,
                 };
                 familyList.Add(headOfHousehold);
-                var familyMembers =new List<SelectListItem>();
+                //var familyMembers =new List<SelectListItem>();
+                var familyMembers = new List<FamilyMember>();
                 foreach (FamilyMember member in familyList)
                 {
                     member.Age = AppRoutines.GetAge(member.DateOfBirth, DateTime.Today);
-                    var text = member.FirstName + " " + member.LastName + "/" + member.Age;
-                    SelectListItem selListItem = new SelectListItem() {Value = member.FirstName, Text = text};
-                    familyMembers.Add(selListItem);
+                    //var text = member.FirstName + " " + member.LastName + "/" + member.Age;
+                    //SelectListItem selListItem = new SelectListItem() {Value = member.FirstName, Text = text};
+
+                    familyMembers.Add(member);
                 }
                 
                 var household = new HouseholdViewModel()

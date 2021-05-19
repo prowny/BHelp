@@ -1,7 +1,7 @@
 ﻿@using System.Web.Mvc.Html
 @using BHelp.ViewModels
 
-@model IEnumerable<HouseholdViewModel>
+@model HouseholdViewModel
 @*@model BHelp.ViewModels.HouseholdViewModel*@
 @{ Layout = null; }
 <!DOCTYPE html>
@@ -101,7 +101,7 @@
                             @Html.DisplayFor(modelItem => item.Phone)
                         </td>
                         <td>
-                            @Html.DropDownListFor(modelitem => item.Phone, new SelectList(item.FamilyMembers, "Value", "Text"), new { style = "width: 120px" })
+                            @Html.DropDownListFor(modelitem =>item.Phone,item.FamilySelectList)
                         </td>
                         <td title=@item.NotesToolTip>
                             @Html.DisplayFor(modelItem => item.Notes)

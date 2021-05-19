@@ -14,8 +14,7 @@ namespace BHelp
             TimeSpan span = today - dob;
             // Because we start at year 1 for the Gregorian
             // calendar, we must subtract a year here.
-            DateTime zeroTime = new DateTime(1, 1, 1);
-            int years = (zeroTime + span).Year - 1;
+            int years = (DateTime.MinValue + span).Year - 1;
             return years;
         }
     }

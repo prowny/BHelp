@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
+using BHelp.Models;
 
 namespace BHelp.ViewModels
 {
@@ -45,7 +46,9 @@ namespace BHelp.ViewModels
         public int Age { get; set; }
 
         [DisplayName("Family Members")]
-        public IEnumerable<SelectListItem> FamilyMembers { get; set; }
+        public List<SelectListItem> FamilySelectList { get; set; }  // For display onlly
+        [DisplayName("Family Members")]
+        public List<FamilyMember> FamilyMembers { get; set; }  // For editing
         public string StreetToolTip { get; set; }
         public string CityToolTip { get; set; }
         public string PhoneToolTip { get; set; }

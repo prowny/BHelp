@@ -37,7 +37,7 @@
                     <div class="form-group focus">
                         @Html.LabelFor(m => m.UserName, new { @class = "col-md-2" })
                         <div class="form-group">
-                            @Html.TextBoxFor(m => m.UserName, new { autofocus = true})
+                            @Html.TextBoxFor(m => m.UserName, new { autofocus = "autofocus" })
                             @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
                         </div>
                     </div>
@@ -84,4 +84,12 @@
 
 </body>
 </html>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(function () {
+            $('#UserName').focus();
+        });
+    });
 
+
+</script>
