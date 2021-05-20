@@ -149,12 +149,13 @@ namespace BHelp.Controllers
                     member.NameAge = member.FirstName + " " + member.LastName + "/" + member.Age;
                     familyMembers.Add(member);
 
-                    SelectListItem selListItem = new SelectListItem() { Value = member.FirstName, Text = member.NameAge };
+                    SelectListItem selListItem = new SelectListItem() { Value = member.Id.ToString(), Text = member.NameAge };
                     familySelectList.Add(selListItem);
                 }
             }
             return familyMembers;
         }
+
         public ActionResult UpdateHousehold(int Id)
         {
             Client client = db.Clients.Find(Id);
@@ -177,11 +178,7 @@ namespace BHelp.Controllers
                 Notes = client.Notes,
                 FamilyMembers = GetFamilyMembers(client.Id)
             };
-
-
-            //var dummy = "";
-            return View(houseHold);
-         
+            return View(houseHold); // Launches page UpdateHousehold.cshtml
         }
         public ActionResult ReturnToDashboard()
         {
