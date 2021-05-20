@@ -87,8 +87,8 @@ namespace BHelp.Controllers
             var client = db.Clients.Find(household.ClientId);
             if (client != null)
             {
-                client.FirstName = household.FirstName;
-                client.LastName = household.LastName;
+                //client.FirstName = household.FirstName;
+                //client.LastName = household.LastName;
                 // check age in list of FamilyMembers
                 client.StreetNumber = household.StreetNumber;
                 client.StreetName = household.StreetName;
@@ -117,7 +117,7 @@ namespace BHelp.Controllers
                     }
                 }
                 db.SaveChanges();
-                return RedirectToAction("UpdateHousehold", "OD", new { clientId = client.Id });
+                return RedirectToAction("UpdateHousehold", "OD", new { Id = client.Id });
             }
             return null;
         }

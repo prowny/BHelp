@@ -119,8 +119,8 @@ namespace BHelp.Controllers
         }
 
         private static List<FamilyMember> GetFamilyMembers(int clientId)
-        { 
-            var familySelectList = new List<SelectListItem>();  // For display in drop-down box
+        {
+            //var familySelectList = new List<SelectListItem>();
             var familyMembers = new List<FamilyMember>();   // For editiing
             using (var db = new BHelpContext())
             {
@@ -138,9 +138,9 @@ namespace BHelp.Controllers
                     };
                     familyList.Add(headOfHousehold);
 
-                    var text = client.FirstName + " " + client.LastName + "/" + AppRoutines.GetAge( client.DateOfBirth, DateTime.Today);
-                    SelectListItem selListItem = new SelectListItem() {Value=client.FullName, Text = text};
-                    familySelectList.Add(selListItem); // client = Head of Household
+                    //var text = client.FirstName + " " + client.LastName + "/" + AppRoutines.GetAge( client.DateOfBirth, DateTime.Today);
+                    //SelectListItem selListItem = new SelectListItem() {Value=client.FullName, Text = text};
+                    //familySelectList.Add(selListItem); // client = Head of Household
                 }
 
                 foreach (FamilyMember member in familyList)
@@ -149,8 +149,8 @@ namespace BHelp.Controllers
                     member.NameAge = member.FirstName + " " + member.LastName + "/" + member.Age;
                     familyMembers.Add(member);
 
-                    SelectListItem selListItem = new SelectListItem() { Value = member.Id.ToString(), Text = member.NameAge };
-                    familySelectList.Add(selListItem);
+                    //SelectListItem selListItem = new SelectListItem() { Value = member.Id.ToString(), Text = member.NameAge };
+                    //familySelectList.Add(selListItem);
                 }
             }
             return familyMembers;
@@ -158,7 +158,7 @@ namespace BHelp.Controllers
 
         public ActionResult UpdateHousehold(int Id)
         {
-            Client client = db.Clients.Find(Id);
+            Client client = db.Clients.Find( Id);
             if (client == null)
             { RedirectToAction("Index"); }
 
