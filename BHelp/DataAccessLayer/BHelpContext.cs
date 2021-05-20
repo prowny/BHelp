@@ -29,7 +29,7 @@ namespace BHelp.DataAccessLayer
 
         public DbSet <FamilyMember> FamilyMembers { get; set;}
 
-        //public DbSet<Staff> StaffMembers { get; set; }
+        public DbSet<Delivery> Deliveries { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
