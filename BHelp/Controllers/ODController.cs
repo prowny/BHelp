@@ -120,7 +120,6 @@ namespace BHelp.Controllers
 
         private static List<FamilyMember> GetFamilyMembers(int clientId)
         {
-            //var familySelectList = new List<SelectListItem>();
             var familyMembers = new List<FamilyMember>();   // For editiing
             using (var db = new BHelpContext())
             {
