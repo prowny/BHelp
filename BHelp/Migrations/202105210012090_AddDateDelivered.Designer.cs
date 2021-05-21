@@ -7,13 +7,13 @@ namespace BHelp.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class CreateDeliveriesTable : IMigrationMetadata
+    public sealed partial class AddDateDelivered : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(CreateDeliveriesTable));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(AddDateDelivered));
         
         string IMigrationMetadata.Id
         {
-            get { return "202105201910419_CreateDeliveriesTable"; }
+            get { return "202105210012090_AddDateDelivered"; }
         }
         
         string IMigrationMetadata.Source

@@ -24,7 +24,7 @@
             @Html.ValidationSummary(true, "", new {@class = "text-danger"})
             @Html.HiddenFor(model => model.ClientId)
 
-            @*<div class="form-group">
+            @*<div class="form-group" id="Active Flag">
                     @Html.LabelFor(model => model.Active, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         <div class="checkbox">
@@ -34,7 +34,6 @@
                     </div>
                 </div>*@
 
-            @*<div class="form-group", id="Address">*@
             <div id="Address">
                 <table>
                     <tr>
@@ -98,7 +97,6 @@
                         <td><b>Last Name</b></td>
                         <td><b>Age</b></td>
                     </tr>
-                    @*@foreach (var mbr in Model.FamilyMembers)*@
                     @for (int i=0; i < Model.FamilyMembers.Count; i++)
                     {
                         @Html.HiddenFor(mbr => Model.FamilyMembers[i].Id)
@@ -120,6 +118,9 @@
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="submit" value="Save Changes" class="btn btn-default" id="SaveButton"/>
+                </div>
+                <div>
+                    @Html.ActionLink("Create a Delivery", "AddDelivery", "OD", new{clientId = Model.ClientId}, null)
                 </div>
             </div>
         </div>

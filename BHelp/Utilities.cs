@@ -30,8 +30,8 @@ namespace BHelp
                 Client client = new Client()
                 {
                     Active = true,
-                    FirstName = row[0].ToString(),
-                    LastName = row[1].ToString(),
+                    LastName = row[0].ToString(),
+                    FirstName = row[1].ToString(),
                     StreetNumber = row[2].ToString(),
                     StreetName = row[3].ToString(),
                     City = row[4].ToString(),

@@ -199,9 +199,25 @@
     <Compile Include="Migrations\202105040105068_AddFamilyForeignKey.designer.cs">
       <DependentUpon>202105040105068_AddFamilyForeignKey.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202105201910419_CreateDeliveriesTable.cs" />
-    <Compile Include="Migrations\202105201910419_CreateDeliveriesTable.designer.cs">
-      <DependentUpon>202105201910419_CreateDeliveriesTable.cs</DependentUpon>
+    <Compile Include="Migrations\202105201945047_RedoDeliveriesMigration.cs" />
+    <Compile Include="Migrations\202105201945047_RedoDeliveriesMigration.designer.cs">
+      <DependentUpon>202105201945047_RedoDeliveriesMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202105202151257_AddODIdToTable.cs" />
+    <Compile Include="Migrations\202105202151257_AddODIdToTable.designer.cs">
+      <DependentUpon>202105202151257_AddODIdToTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202105202216114_RemoveODId.cs" />
+    <Compile Include="Migrations\202105202216114_RemoveODId.designer.cs">
+      <DependentUpon>202105202216114_RemoveODId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202105202223500_RdoODIdAsString.cs" />
+    <Compile Include="Migrations\202105202223500_RdoODIdAsString.designer.cs">
+      <DependentUpon>202105202223500_RdoODIdAsString.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202105210012090_AddDateDelivered.cs" />
+    <Compile Include="Migrations\202105210012090_AddDateDelivered.designer.cs">
+      <DependentUpon>202105210012090_AddDateDelivered.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -217,6 +233,7 @@
     <Compile Include="ViewModels\ClientViewModel.cs" />
     <Compile Include="ViewModels\FamilyViewModel.cs" />
     <Compile Include="ViewModels\HouseholdViewModel.cs" />
+    <Compile Include="Controllers\DeliveriesController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -285,6 +302,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Views\Home\About.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -293,7 +311,6 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Views\Web.config" />
-    <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
@@ -327,6 +344,11 @@
     <Content Include="Views\Household\Index.cshtml" />
     <Content Include="Views\OD\Index.cshtml" />
     <Content Include="Views\OD\UpdateHousehold.cshtml" />
+    <Content Include="Views\Deliveries\Create.cshtml" />
+    <Content Include="Views\Deliveries\Delete.cshtml" />
+    <Content Include="Views\Deliveries\Details.cshtml" />
+    <Content Include="Views\Deliveries\Edit.cshtml" />
+    <Content Include="Views\Deliveries\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -359,8 +381,20 @@
     <EmbeddedResource Include="Migrations\202105040105068_AddFamilyForeignKey.resx">
       <DependentUpon>202105040105068_AddFamilyForeignKey.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202105201910419_CreateDeliveriesTable.resx">
-      <DependentUpon>202105201910419_CreateDeliveriesTable.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202105201945047_RedoDeliveriesMigration.resx">
+      <DependentUpon>202105201945047_RedoDeliveriesMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202105202151257_AddODIdToTable.resx">
+      <DependentUpon>202105202151257_AddODIdToTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202105202216114_RemoveODId.resx">
+      <DependentUpon>202105202216114_RemoveODId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202105202223500_RdoODIdAsString.resx">
+      <DependentUpon>202105202223500_RdoODIdAsString.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202105210012090_AddDateDelivered.resx">
+      <DependentUpon>202105210012090_AddDateDelivered.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

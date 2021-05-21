@@ -137,10 +137,6 @@ namespace BHelp.Controllers
                         DateOfBirth = client.DateOfBirth,
                     };
                     familyList.Add(headOfHousehold);
-
-                    //var text = client.FirstName + " " + client.LastName + "/" + AppRoutines.GetAge( client.DateOfBirth, DateTime.Today);
-                    //SelectListItem selListItem = new SelectListItem() {Value=client.FullName, Text = text};
-                    //familySelectList.Add(selListItem); // client = Head of Household
                 }
 
                 foreach (FamilyMember member in familyList)
@@ -148,12 +144,24 @@ namespace BHelp.Controllers
                     member.Age = AppRoutines.GetAge(member.DateOfBirth, DateTime.Today);
                     member.NameAge = member.FirstName + " " + member.LastName + "/" + member.Age;
                     familyMembers.Add(member);
-
-                    //SelectListItem selListItem = new SelectListItem() { Value = member.Id.ToString(), Text = member.NameAge };
-                    //familySelectList.Add(selListItem);
                 }
             }
             return familyMembers;
+        }
+
+        public ActionResult AddDelivery(int clientId)
+        {
+            var userIid = System.Web.HttpContext.Current.User.Identity.GetUserId();
+
+            Delivery delivery = new Delivery()
+            {
+                ODId = userIid,
+                ClientId = clientId,
+                DeliveryDate = Convert.ToDateTime(Session["CallLogDate"])
+            };
+            db.Deliveries.Add(delivery);
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         public ActionResult UpdateHousehold(int Id)
