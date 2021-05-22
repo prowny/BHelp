@@ -60,9 +60,9 @@ namespace BHelp
             int i = 0;
             foreach (DataRow row in csvtable.Rows)
             { 
-                i ++;
-                //string _adults = row[10].ToString(); // Adults  
-                string _adults = row[11].ToString();  // Kids
+                i ++;   // Switch for  Kids / Adults:
+                string _adults = row[10].ToString(); // Adults  
+                //string _adults = row[11].ToString();  // Kids
                 string[] adultsArray = _adults.Split(',');
                 foreach (var nameAge in adultsArray)
                 {
@@ -125,10 +125,8 @@ namespace BHelp
                         }
                     }
                 }
-                
                 //System.Diagnostics.Debug.WriteLine(client.FirstName, client.LastName);
             }
-
             return true;
         }
 

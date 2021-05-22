@@ -1,77 +1,81 @@
-﻿@model IEnumerable<BHelp.Models.Delivery>
-
-@{
-    Layout = null;
-}
-
+﻿@using System.Web.Mvc.Html
+@model IEnumerable<BHelp.ViewModels.DeliveryViewModel>
+@{ Layout = null; }
 <!DOCTYPE html>
 
 <html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
+<head><meta name="viewport" content="width=device-width" /><title>Index</title>
+    <style>
+        .col25 {width: 25px;text-align: center}
+        .col40 {width: 40px;text-align: left}
+        .col50 {width: 50px;text-align: left}
+        .col60 {width: 60px;text-align: left}
+        .col100{ width: 100px; text-align: left;}
+    </style>
 </head>
+
 <body>
-    <p>
-        @Html.ActionLink("Create New", "Create")
-    </p>
-    <table class="table">
+<p><b>Open Deliveries</b></p>
+<p>@Html.ActionLink("Create New", "Create")</p>
+<table class="table">
+    <tr>
+        <th>@Html.Label("Date")</th>
+        <th>
+            <div class="col100">@Html.Label("OD Name")</div></th>
+        <th>
+            <div class="col100">@Html.Label("Client Last Name")</div></th>
+        <th><div class="col100">@Html.Label("First Name")</div></th>
+        <th><div class="col50">@Html.Label("Street No")</div></th>
+        <th><div class="col100">@Html.Label("Street Name")</div></th>
+        <th><div class="col100">@Html.Label("City")</div></th>
+        <th><div class="col25">@Html.Label("Zip Code")</div></th>
+        <th><div class="col100">@Html.Label("Client Phone")</div></th>
+        <th><div class="col25">@Html.Label("#C")</div></th>
+        <th><div class="col25">@Html.Label("#A")</div></th>
+        <th><div class="col25">@Html.Label("#S")</div></th>
+        <th><div class="col100">@Html.Label("Names/Age ALL in HH")</div></th>
+        <th><div class="col40">@Html.Label("Gift Cards Eligible")</div></th>
+        <th><div class="col100">@Html.Label("Driver Name ")</div></th>
+        <th><div class="col40">@Html.Label("Full Bags")</div></th>
+        <th><div class="col40">@Html.Label("Half Bags")</div></th>
+        <th><div class="col40">@Html.Label("Kids Snack")</div></th>
+        <th><div class="col40">@Html.Label("Giant Gift Cards")</div></th>
+        <th><div class="col100">@Html.Label("Driver Notes ")</div></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ClientId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DeliveryDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Notes)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FullBags)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HalfBags)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.KIdSnacks)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GiftCards)
-            </th>
-            <th></th>
-        </tr>
-    
-    @foreach (var item in Model) {
-        <tr>
+            <td>@Html.DisplayFor(modelItem => item.DeliveryDate)</td>
+            <td>@Html.DisplayFor(modelItem => item.User.FullName, new {style = "width:150px"})</td>
+            <td>@Html.DisplayFor(modelItem => item.Client.LastName)</td>
+            <td>@Html.DisplayFor(modelItem => item.Client.FirstName)</td>
+            <td>@Html.DisplayFor(modelItem => item.Client.StreetNumber)</td>
+            <td>@Html.DisplayFor(modelItem => item.Client.StreetName)</td>
+            <td>@Html.DisplayFor(modelItem => item.Client.City)</td>
+            <td>@Html.DisplayFor(modelItem => item.Client.Zip)</td>
+            <td>@Html.DisplayFor(modelItem => item.Client.Phone)</td>
+            <td>@Html.DisplayFor(modelItem => item.KidsCount)</td>
+            <td>@Html.DisplayFor(modelItem => item.AdultsCount)</td>
+            <td>@Html.DisplayFor(modelItem => item.SeniorsCount)</td>
+            <td>@Html.DropDownListFor(modelItem => item.Notes, item.FamilySelectList)</td>
+            <td>@Html.DisplayFor(modelItem => item.GiftCardsEligible)</td>
+            <td>@Html.DisplayFor(modelItem => item.DriverName)</td>
+            <td>@Html.DisplayFor(modelItem => item.FullBags)</td>
+            <td>@Html.DisplayFor(modelItem => item.HalfBags)</td>
+            <td>@Html.DisplayFor(modelItem => item.KIdSnacks)</td>
+            <td>@Html.DisplayFor(modelItem => item.GiftCards)</td>
+            <td>@Html.DisplayFor(modelItem => item.DriverNotes)</td>
             <td>
-                @Html.DisplayFor(modelItem => item.ClientId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DeliveryDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Notes)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FullBags)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HalfBags)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.KIdSnacks)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GiftCards)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+                @Html.ActionLink("Edit", "Edit", new {id = item.Id})
+                @*@Html.ActionLink("Details", "Details", new { id = item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.Id })*@
             </td>
         </tr>
     }
-    
-    </table>
+</table>
+<div>
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new {})
+</div>
 </body>
 </html>

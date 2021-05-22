@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
@@ -21,43 +19,65 @@ namespace BHelp.Controllers
         public ActionResult Index()
         {
             var listDeliveries =new List<Delivery>(db.Deliveries.Where(d => d.DateDelivered == null)).ToList();
-           
-                var deliveriesView = new List<DeliveryViewModel>();
-                foreach (var delivery in listDeliveries)
+            var listDeliveryViewModels=new List<DeliveryViewModel>();
+            foreach (var delivery in listDeliveries)
+            {
+                var client = db.Clients.Find(delivery.ClientId);
+                if (client != null)
                 {
-                    
-                    var client = db.Clients.Find(delivery.ClientId);
-                    if (client != null)
+                    var deliveryView = new DeliveryViewModel();
+                    deliveryView.ClientId = client.Id;
+                    deliveryView.Client = client;
+                    deliveryView.DeliveryDate = Convert.ToDateTime(Session["CallLogDate"]);
+                    deliveryView.FamilyMembers = GetFamilyMembers(client.Id);
+                    deliveryView.FamilySelectList = GetFamilySelectList(client.Id);
+                    deliveryView.Kids = new List<FamilyMember>();
+                    deliveryView.Adults = new List<FamilyMember>();
+                    deliveryView.Seniors = new List<FamilyMember>();
+                    foreach (var mbr in deliveryView.FamilyMembers)
                     {
-                        var deliveryView = new DeliveryViewModel();
-                        deliveryView.ClientId = client.Id;
-                        deliveryView.DeliveryDate = Convert.ToDateTime(Session["CallLogDate"]);
-                        deliveryView.FamilyMembers = GetFamilyMembers(client.Id);
-                        foreach (var mbr in deliveryView.FamilyMembers)
+                        mbr.Age = AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
+                        if (mbr.Age < 18)
                         {
-                            mbr.Age = AppRoutines.GetAge(DateTime.Today, mbr.DateOfBirth);
-                            if (mbr.Age < 18) { deliveryView.Kids.Add(mbr); }
-                            if (mbr.Age >= 18 && mbr.Age < 60) { deliveryView.Adults.Add(mbr); }
-                            if(mbr.Age >= 60) { deliveryView.Seniors.Add(mbr);}
+                            deliveryView.Kids.Add(mbr);
+                            deliveryView.KidsCount += 1;
                         }
-                        deliveryView.FullBags = 0;
-                        deliveryView.HalfBags = 0;
-                        deliveryView.KIdSnacks = 0;
-                        deliveryView.GiftCards = 0;
-                        deliveryView.GiftCardsEligible = 0;     // !!! calculate this value
-                        deliveryView.DateLastDelivery = DateTime.Today.AddDays(-7); // !!! calculate this value
-                        deliveryView.DateLastGiftCard = DateTime.Today.AddDays(-7); // !!! calculate this value
-                        var userIid = System.Web.HttpContext.Current.User.Identity.GetUserId();
-                        if (userIid != null)
+
+                        if (mbr.Age >= 18 && mbr.Age < 60)
                         {
-                            var user = db.Users.Find(userIid);
-                            deliveryView.User = user;
-                        };
+                            deliveryView.Adults.Add(mbr);
+                            deliveryView.AdultsCount += 1;
+                        }
+
+                        if (mbr.Age >= 60)
+                        {
+                            deliveryView.Seniors.Add(mbr);
+                            deliveryView.SeniorsCount += 1;
+                        }
+                    }
+
+                    deliveryView.KidsCount = deliveryView.Kids.Count();
+                    deliveryView.AdultsCount = deliveryView.Adults.Count();
+                    deliveryView.SeniorsCount = deliveryView.Seniors.Count();
+                    deliveryView.FullBags = 0;
+                    deliveryView.HalfBags = 0;
+                    deliveryView.KIdSnacks = 0;
+                    deliveryView.GiftCards = 0;
+                    deliveryView.GiftCardsEligible = 0;     // !!! calculate this value
+                    deliveryView.DateLastDelivery = DateTime.Today.AddDays(-7); // !!! calculate this value
+                    deliveryView.DateLastGiftCard = DateTime.Today.AddDays(-7); // !!! calculate this value
+                    deliveryView.DriverName = "";    // !!! calculate this value   
+                    var userIid = System.Web.HttpContext.Current.User.Identity.GetUserId();
+                    if (userIid != null)
+                    {
+                        var user = db.Users.Find(userIid);
+                        deliveryView.User = user;
+                    };
+                    listDeliveryViewModels.Add(deliveryView);
                 }
             }
-
-                return View(listDeliveries);
-            }
+            return View(listDeliveryViewModels);
+        }
         private static List<FamilyMember> GetFamilyMembers(int clientId)
         {
             var familyMembers = new List<FamilyMember>();   // For editiing
@@ -88,26 +108,47 @@ namespace BHelp.Controllers
             return familyMembers;
         }
 
+        private static List<SelectListItem> GetFamilySelectList(int clientId)
+        {
+            List<SelectListItem> householdList = new List<SelectListItem>();
+            using (var db = new BHelpContext())
+            {
+                var client = db.Clients.Find(clientId);
+                if (client != null)
+                {
+                    client.FamilyMembers = GetFamilyMembers(clientId);
+                    foreach (var mbr in client.FamilyMembers)
+                    {
+                        var text = mbr.FirstName + " " + mbr.LastName + "/" +
+                                   AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
+                        var selListItem = new SelectListItem() {Value = mbr.FirstName, Text = text};
+                        householdList.Add(selListItem);
+                    }
+                }
+                return (householdList);
+            }
+        }
+
         // GET: Deliveries/Details/5
         public ActionResult Details(int? id)
-    {
-        if (id == null)
         {
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Delivery delivery = db.Deliveries.Find(id);
+            if (delivery == null)
+            {
+                return HttpNotFound();
+            }
+            return View(delivery);
         }
-        Delivery delivery = db.Deliveries.Find(id);
-        if (delivery == null)
-        {
-            return HttpNotFound();
-        }
-        return View(delivery);
-    }
 
-    // GET: Deliveries/Create
-    public ActionResult Create()
-        {
-            return View();
-        }
+        // GET: Deliveries/Create
+        public ActionResult Create()
+            {
+                return View();
+            }
 
         // POST: Deliveries/Create
         [HttpPost]
@@ -176,11 +217,14 @@ namespace BHelp.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Delivery delivery = db.Deliveries.Find(id);
-            db.Deliveries.Remove(delivery);
+            if (delivery != null) db.Deliveries.Remove(delivery);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
-
+        public ActionResult ReturnToDashboard()
+        {
+            return RedirectToAction("Index", "Home");
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
