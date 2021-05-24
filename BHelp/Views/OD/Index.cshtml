@@ -23,7 +23,7 @@
 </head>
 
 <body>
-    <h3>Call Log</h3>
+    <h3>Call Log - set delivery date, find and select household</h3>
     <div id="Header">
         <table class="table">
             <tr>
@@ -44,7 +44,10 @@
                     { id = "SearchText", style = "width: 50px;" , onkeypress = "KeyPressHandler()" ,
                    Title = "Tip: Enter full or partial Phone# OR Last Name.", autofocus = true})
                 </td>
-                <td><a href="#" id="SearchString"><span>Search</span></a></td>
+                <td>
+                    <a href="#" id="SearchString"><span>Search</span></a>
+                    <span style="color:darkmagenta">&#8592; (Enter full or partial Phone# OR Last Name)</span>
+                </td>
             </tr>
         </table>
         @*<p>
@@ -57,54 +60,38 @@
             <table class="table">
                 <tr><td> found:@searchResults.Count()</td></tr>
                 <tr id="Column Headers">
-                    <th>
-                        <div style="width: 100px", align="left">@Html.DisplayNameFor(model => model.LastName)</div></th>
-                    <th>
-                        <div style="width: 100px", align="left">@Html.DisplayNameFor(model => model.FirstName)</div></th>
-                    <th>
-                        <div style="width: 40px", align="left">@Html.DisplayNameFor(model => model.StreetNumber)</div></th>
-                    <th>
-                        <div style="width: 50px", align="left">@Html.DisplayNameFor(model => model.StreetName)</div></th>
-                    <th>
-                        <div style="width: 50px", align="left"> @Html.DisplayNameFor(model => model.City)</div></th>
-                    <th>
-                        <div style="width: 25px", align="left">@Html.DisplayNameFor(model => model.Zip)</div></th>
-                    <th>
-                        <div style="width: 60px", align="left"> @Html.DisplayNameFor(model => model.Phone)</div></th>
-                    <th>@Html.DisplayNameFor(model => model.FamilyMembers)</th>
-                    <th>
-                        <div style="width: 60px", align="left"> @Html.DisplayNameFor(model => model.Notes)</div></th>
+                    <th><div style="width: 100px", align="left">@Html.DisplayNameFor(model => model.LastName)</div></th>
+                    <th><div style="width: 100px", align="left">@Html.DisplayNameFor(model => model.FirstName)</div></th>
+                    <th><div style="width: 40px", align="left">@Html.DisplayNameFor(model => model.StreetNumber)</div></th>
+                    <th><div style="width: 50px", align="left">@Html.DisplayNameFor(model => model.StreetName)</div></th>
+                    <th><div style="width: 50px", align="left"> @Html.DisplayNameFor(model => model.City)</div></th>
+                    <th><div style="width: 25px", align="left">@Html.DisplayNameFor(model => model.Zip)</div></th>
+                    <th><div style="width: 60px", align="left"> @Html.DisplayNameFor(model => model.Phone)</div></th>
+                    @*<th>@Html.DisplayNameFor(model => model.FamilyMembers)</th>*@
+                    <th><div style="width: 60px", align="left"> @Html.DisplayNameFor(model => model.Notes)</div></th>
                     <th></th>
                 </tr>
 
                 @foreach (var item in searchResults)
                 {
                     <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.LastName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.FirstName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.StreetNumber)
-                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.StreetNumber)</td>
                         <td title=@item.StreetToolTip>
                             @Html.DisplayFor(modelItem => item.StreetName)
                         </td>
                         <td title=@item.CityToolTip>
                             @Html.DisplayFor(modelItem => item.City)
                         </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Zip)
-                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.Zip)</td>
                         <td title=@item.PhoneToolTip>
                             @Html.DisplayFor(modelItem => item.Phone)
                         </td>
-                        <td>
+                        @*<td>
                             @Html.DropDownListFor(modelitem => item.Phone, item.FamilySelectList)
                             (@item.FamilyMembers.Count)
-                        </td>
+                        </td>*@
                         <td title=@item.NotesToolTip>
                             @Html.DisplayFor(modelItem => item.Notes)
                         </td>
@@ -117,6 +104,9 @@
         }
     </div>
     <br />
+    <div>
+        @Html.ActionLink("Create New Household", "CreateNewHousehold", new { })
+    </div>
     <div>
         @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
     </div>

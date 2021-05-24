@@ -72,7 +72,7 @@ namespace BHelp.Controllers
                 
                 foreach (var client in clientList)
                 {
-                    client.FamilyMembers = GetFamilyMembers(client.Id);
+                    //client.FamilyMembers = GetFamilyMembers(client.Id);
                     var household = new HouseholdViewModel()
                     {
                         ClientId = client.Id,
@@ -105,13 +105,13 @@ namespace BHelp.Controllers
                     s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
                     household.Notes = s;
 
-                    household.FamilySelectList = new List<SelectListItem>();
-                    foreach (var mbr in client.FamilyMembers)
-                    {
-                        var text = mbr.FirstName + " " + mbr.LastName + "/" + AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
-                        var selListItem = new SelectListItem() { Value = mbr.FirstName, Text = text };
-                        household.FamilySelectList.Add(selListItem);
-                    }
+                    //household.FamilySelectList = new List<SelectListItem>();
+                    //foreach (var mbr in client.FamilyMembers)
+                    //{
+                    //    var text = mbr.FirstName + " " + mbr.LastName + "/" + AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
+                    //    var selListItem = new SelectListItem() { Value = mbr.FirstName, Text = text };
+                    //    household.FamilySelectList.Add(selListItem);
+                    //}
                     householdView.Add(household);
                 }
             }
@@ -163,7 +163,7 @@ namespace BHelp.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult UpdateHousehold(int Id)
+        public ActionResult UpdateHousehold(int Id) //Launches 2nd page of OD call log
         {
             Client client = db.Clients.Find( Id);
             if (client == null)
@@ -185,7 +185,15 @@ namespace BHelp.Controllers
                 Notes = client.Notes,
                 FamilyMembers = GetFamilyMembers(client.Id)
             };
+            var newMember = new FamilyMember();
+            houseHold.FamilyMembers.Add(newMember);  // Blank line for adding new member.
+            newMember.ClientId = -1;
             return View(houseHold); // Launches page UpdateHousehold.cshtml
+        }
+
+        public ActionResult CreateNewHousehold()
+        {
+            return null;
         }
         public ActionResult ReturnToDashboard()
         {

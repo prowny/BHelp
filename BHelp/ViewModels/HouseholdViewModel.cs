@@ -38,7 +38,7 @@ namespace BHelp.ViewModels
 
         public string Phone { get; set; }
 
-        [DisplayName("Notes")]
+        [DisplayName("Household Notes")]
         [DataType(DataType.MultilineText)]
         public string Notes { get; set; }
         

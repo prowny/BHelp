@@ -81,29 +81,39 @@ namespace BHelp.Controllers
         // POST: Household
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Index(HouseholdViewModel household)
+        public ActionResult Index(HouseholdViewModel household, int deleteId)
         {
             // Check Client data
             var client = db.Clients.Find(household.ClientId);
             if (client != null)
             {
-                //client.FirstName = household.FirstName;
-                //client.LastName = household.LastName;
-                // check age in list of FamilyMembers
                 client.StreetNumber = household.StreetNumber;
                 client.StreetName = household.StreetName;
                 client.City = household.City;
                 client.Zip = household.Zip;
                 client.Notes = household.Notes;
                 client.Phone = household.Phone;
-                
+
                 foreach (var member in household.FamilyMembers)
                 {
-                    if (member.Id == 0) // is Head of Household
+                    if (member.Id == 0 && member.ClientId == 0) // is Head of Household
                     {
                         client.FirstName = member.FirstName;
                         client.LastName = member.LastName;
                         client.DateOfBirth = DateTime.Today.AddYears(-member.Age);
+                    }
+                    else if (member.Id == 0 && member.ClientId < 0)     //Adding new member (ClientId = -1)
+                    {
+                        var  familyMember = new FamilyMember();
+                        if (member.FirstName != null || member.LastName !=null)
+                        {
+                            familyMember.ClientId = client.Id;
+                            familyMember.Active = true;
+                            familyMember.FirstName = member.FirstName;
+                            familyMember.LastName = member.LastName;
+                            familyMember.DateOfBirth=DateTime.Today.AddYears(-member.Age);
+                            db.FamilyMembers.Add(familyMember);
+                        }
                     }
                     else
                     {
@@ -112,10 +122,18 @@ namespace BHelp.Controllers
                         {
                             familyMember.FirstName = member.FirstName;
                             familyMember.LastName = member.LastName;
-                            familyMember.DateOfBirth=DateTime.Today.AddYears(-member.Age);
+                            familyMember.DateOfBirth = DateTime.Today.AddYears(-member.Age);
                         }
                     }
                 }
+
+                if (deleteId > 0)
+                {
+                    var familyMember = new FamilyMember();
+                    familyMember.Id = deleteId;
+                    db.FamilyMembers.Remove(familyMember);
+                }
+
                 db.SaveChanges();
                 return RedirectToAction("UpdateHousehold", "OD", new { Id = client.Id });
             }

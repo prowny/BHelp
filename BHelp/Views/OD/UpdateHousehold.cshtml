@@ -20,7 +20,6 @@
         @Html.AntiForgeryToken()
         <div class="form-horizontal">
             <h3>Household</h3>
-            @*<hr />*@
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             @Html.HiddenFor(model => model.ClientId)
 
@@ -33,7 +32,8 @@
                     </div>
                 </div>
             </div>*@
-
+            
+            <h3>Call Log - check/edit client info, then create a delivery</h3>
             <div id="Address">
                 <table>
                     <tr>
@@ -101,23 +101,41 @@
                     {
                         @Html.HiddenFor(mbr => Model.FamilyMembers[i].Id)
                         @Html.HiddenFor(mbr => Model.FamilyMembers[i].ClientId)
-                        <tr>
-                            <td></td>
+                    <tr>
+                        <td></td>
+                        @if (Model.FamilyMembers[i].Id > 0)
+                        {
                             <td>@Html.EditorFor(mbr => Model.FamilyMembers[i].FirstName, new { htmlAttributes = new { @class = "form-control" } })</td>
                             <td>@Html.EditorFor(m => Model.FamilyMembers[i].LastName, new { htmlAttributes = new { @class = "form-control" } })</td>
                             <td>@Html.EditorFor(m => Model.FamilyMembers[i].Age, new { htmlAttributes = new { type = "number", min = "0", max = "110" } }) </td>
-                            @if (Model.FamilyMembers[i].ClientId == 0) // HH was added to FamilyMembers list with no Id
-                            {
-                                <td>Head of Household</td>
-                            }
-                        </tr>
+                            <td>Remove member</td>
+                        }
+                        @if (Model.FamilyMembers[i].Id == 0 && Model.FamilyMembers[i].ClientId == 0) // HH was added to FamilyMembers list with no Id
+                        {
+                            <td>@Html.EditorFor(mbr => Model.FamilyMembers[i].FirstName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.EditorFor(m => Model.FamilyMembers[i].LastName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.EditorFor(m => Model.FamilyMembers[i].Age, new { htmlAttributes = new { type = "number", min = "0", max = "110" } }) </td>
+                            <td>Head of Household</td>}
+                        @if (Model.FamilyMembers[i].ClientId < 0) // AdfdNew household member was added with ClientId = -1
+                        {
+                            <tr>
+                                <td></td>
+                                <td>@Html.EditorFor(mbr => Model.FamilyMembers[i].FirstName, new {htmlAttributes = new {@class = "form-control"}})</td>
+                                <td>@Html.EditorFor(m => Model.FamilyMembers[i].LastName, new {htmlAttributes = new {@class = "form-control"}})</td>
+                                <td>@Html.EditorFor(m => Model.FamilyMembers[i].Age, new {htmlAttributes = new {type = "number", min = "0", max = "110"}}) </td>
+                                <td>Add new member</td>}
+                            </tr>
+                        }
+                    </tr>
                     }
                 </table>
             </div>
             <br />
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Save Changes" class="btn btn-default" id="SaveButton" />
+                    @*Redirects to HouseholdController/Index POST:*@
+                    <input type="submit" value="Save Changes" class="btn btn-default" id="SaveButton"/>
+                    <span style="color: darkmagenta">&#8592;Click this first if you made ANY changes</span>
                 </div>
                 <div>
                     @Html.ActionLink("Create a Delivery", "AddDelivery", "OD", new { clientId = Model.ClientId }, null)
