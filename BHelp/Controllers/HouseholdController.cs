@@ -124,19 +124,12 @@ namespace BHelp.Controllers
                             familyMember.FirstName = member.FirstName;
                             familyMember.LastName = member.LastName;
                             familyMember.DateOfBirth = DateTime.Today.AddYears(-member.Age);
-                            if (familyMember.Delete == true)
+                            if (member.Delete == true)
                             {
-                                var dummy = "";
+                                db.FamilyMembers.Remove(familyMember);
                             }
                         }
                     }
-                }
-
-                if (deleteId != "0")
-                {
-                    var familyMember = new FamilyMember();
-                    familyMember.Id = Convert.ToInt32(deleteId);
-                    db.FamilyMembers.Remove(familyMember);
                 }
 
                 db.SaveChanges();
