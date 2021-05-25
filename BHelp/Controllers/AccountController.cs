@@ -166,10 +166,10 @@ namespace BHelp.Controllers
         public ActionResult Register()
         {
             // Add block to non-Administrators 08/26/2020:
-            if (!User.IsInRole("Administrator"))
-            {
-                return RedirectToAction("Login", "Account");
-            }
+            //if (!User.IsInRole("Administrator"))
+            //{
+            //    return RedirectToAction("Login", "Account");
+            //}
 
             return View();
         }
@@ -180,15 +180,6 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-
-            // Add block to Ukranian bots: username or last name ends with 'GP'
-            if (model.UserName.Contains("GP") || model.UserName.Contains("usa")
-                || model.FirstName.Contains("GP") || model.FirstName.Contains("usa")
-                 || model.LastName.Contains("GP") || model.LastName.Contains("usa"))
-            {
-                return View(model);
-            }
-
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.UserName, FirstName = model.FirstName, LastName = model.LastName, PhoneNumber = model.PhoneNumber, Email = model.Email };

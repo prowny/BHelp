@@ -86,7 +86,7 @@ namespace BHelp.Controllers
                         Zip = client.Zip,
                         Phone = client.Phone,
                         PhoneToolTip = client.Phone.Replace(" ", "\u00a0"),
-                        FamilyMembers =client.FamilyMembers,
+                        //FamilyMembers =client.FamilyMembers,
                         Notes = client.Notes,
                         // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
                         NotesToolTip = client.Notes.Replace(" ", "\u00a0"),
@@ -142,6 +142,7 @@ namespace BHelp.Controllers
                 {
                     member.Age = AppRoutines.GetAge(member.DateOfBirth, DateTime.Today);
                     member.NameAge = member.FirstName + " " + member.LastName + "/" + member.Age;
+                    member.Delete = false;
                     familyMembers.Add(member);
                 }
             }
@@ -188,6 +189,7 @@ namespace BHelp.Controllers
             var newMember = new FamilyMember();
             houseHold.FamilyMembers.Add(newMember);  // Blank line for adding new member.
             newMember.ClientId = -1;
+            newMember.Delete = false;
             return View(houseHold); // Launches page UpdateHousehold.cshtml
         }
 

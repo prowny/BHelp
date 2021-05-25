@@ -81,7 +81,7 @@ namespace BHelp.Controllers
         // POST: Household
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Index(HouseholdViewModel household, int deleteId)
+        public ActionResult Index(HouseholdViewModel household, string deleteId)
         {
             // Check Client data
             var client = db.Clients.Find(household.ClientId);
@@ -109,6 +109,7 @@ namespace BHelp.Controllers
                         {
                             familyMember.ClientId = client.Id;
                             familyMember.Active = true;
+                            familyMember.Delete = false;
                             familyMember.FirstName = member.FirstName;
                             familyMember.LastName = member.LastName;
                             familyMember.DateOfBirth=DateTime.Today.AddYears(-member.Age);
@@ -123,14 +124,18 @@ namespace BHelp.Controllers
                             familyMember.FirstName = member.FirstName;
                             familyMember.LastName = member.LastName;
                             familyMember.DateOfBirth = DateTime.Today.AddYears(-member.Age);
+                            if (familyMember.Delete == true)
+                            {
+                                var dummy = "";
+                            }
                         }
                     }
                 }
 
-                if (deleteId > 0)
+                if (deleteId != "0")
                 {
                     var familyMember = new FamilyMember();
-                    familyMember.Id = deleteId;
+                    familyMember.Id = Convert.ToInt32(deleteId);
                     db.FamilyMembers.Remove(familyMember);
                 }
 

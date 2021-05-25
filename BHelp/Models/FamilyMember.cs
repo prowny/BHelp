@@ -27,5 +27,8 @@ namespace BHelp.Models
 
         [NotMapped]
         public string NameAge { get; set; }
+
+        [NotMapped]
+        public bool Delete { get; set; }
     }
 }
