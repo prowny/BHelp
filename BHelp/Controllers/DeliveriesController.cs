@@ -18,7 +18,9 @@ namespace BHelp.Controllers
         // GET: Deliveries
         public ActionResult Index()
         {
-            var listDeliveries =new List<Delivery>(db.Deliveries.Where(d => d.DateDelivered == null)).ToList();
+            var listDeliveries =new List<Delivery>(db.Deliveries
+                .Where(d => d.DateDelivered == null).OrderBy(d => d.DeliveryDate).ToList());
+            // to add order .ThenBy(Zip) means storing the Zip in Client.cs AND Delivery/cs
             var listDeliveryViewModels=new List<DeliveryViewModel>();
             foreach (var delivery in listDeliveries)
             {
@@ -73,6 +75,49 @@ namespace BHelp.Controllers
                         var user = db.Users.Find(userIid);
                         deliveryView.User = user;
                     };
+                    deliveryView.FirstName = client.FirstName;
+                    deliveryView.LastName = client.LastName;
+                    deliveryView.StreetNumber = client.StreetNumber;
+                    deliveryView.StreetName = client.StreetName;
+                    deliveryView.StreetToolTip = client.StreetName.Replace(" ", "\u00a0");
+                    deliveryView.City = client.City;
+                    deliveryView.CityToolTip = client.City.Replace(" ", "\u00a0");
+                    deliveryView.Zip = client.Zip;
+                    deliveryView.Phone = client.Phone;
+                    deliveryView.PhoneToolTip = client.Phone.Replace(" ", "\u00a0");
+                    deliveryView.Notes = client.Notes;
+                    // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
+                    deliveryView.NotesToolTip = client.Notes.Replace(" ", "\u00a0");
+                    deliveryView.ODNotesToolTip = delivery.ODNotes.Replace(" ", "\u00a0");
+                    //deliveryView.DriverNotesToolTip = delivery.DriverNotes.Replace(" ", "\u00a0");
+                    var s = deliveryView.StreetName; // For display, abbreviate to 10 characters:           
+                    s = s.Length <= 10 ? s : s.Substring(0, 10) + "...";
+                    deliveryView.StreetName = s;
+                    s = deliveryView.City; // For display, abbreviate to 11 characters:           
+                    s = s.Length <= 11 ? s : s.Substring(0, 11) + "...";
+                    deliveryView.City = s;
+                    s = deliveryView.Phone; // For display, abbreviate to 12 characters:           
+                    s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                    deliveryView.Phone = s;
+                    if (deliveryView.Notes != null)
+                    {
+                        s = deliveryView.Notes; // For display, abbreviate to 12 characters:           
+                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                        deliveryView.Notes = s;
+                    }
+                    if (deliveryView.ODNotes != null)
+                    {
+                        s = deliveryView.ODNotes; // For display, abbreviate to 12 characters:           
+                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                        deliveryView.ODNotes = s;
+                    }
+                    if (deliveryView.DriverNotes != null)
+                    {
+                        s = deliveryView.DriverNotes; // For display, abbreviate to 12 characters:           
+                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                        deliveryView.DriverNotes = s;
+                    }
+
                     listDeliveryViewModels.Add(deliveryView);
                 }
             }

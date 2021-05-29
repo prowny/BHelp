@@ -89,7 +89,7 @@ namespace BHelp.Controllers
                         //FamilyMembers =client.FamilyMembers,
                         Notes = client.Notes,
                         // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
-                        NotesToolTip = client.Notes.Replace(" ", "\u00a0"),
+                        NotesToolTip = client.Notes.Replace(" ", "\u00a0")
                     };
 
                     var s = household.StreetName; // For display, abbreviate to 10 characters:           

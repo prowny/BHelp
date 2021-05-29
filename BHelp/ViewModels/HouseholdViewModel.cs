@@ -52,6 +52,6 @@ namespace BHelp.ViewModels
         public string StreetToolTip { get; set; }
         public string CityToolTip { get; set; }
         public string PhoneToolTip { get; set; }
-        public string NotesToolTip { get; set; }
+        public string NotesToolTip { get; set; }  // Household/Client notes
     }
 }

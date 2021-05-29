@@ -21,8 +21,8 @@
     <tr>
         <th>@Html.Label("Date")</th>
         <th><div class="col100">@Html.Label("OD Name")</div></th>
-        <th><div class="col100">@Html.Label("Client Last Name")</div></th>
-        <th><div class="col100">@Html.Label("First Name")</div></th>
+        <th><div class="col25">@Html.Label("Last Name")</div></th>
+        <th><div class="col25">@Html.Label("First Name")</div></th>
         <th><div class="col50">@Html.Label("Street No")</div></th>
         <th><div class="col100">@Html.Label("Street Name")</div></th>
         <th><div class="col100">@Html.Label("City")</div></th>
@@ -34,7 +34,7 @@
         <th><div class="col25">@Html.Label("#S")</div></th>
         <th><div class="col100">@Html.Label("Names/Age ALL in HH")</div></th>
         <th><div class="col40">@Html.Label("Gift Cards Eligible")</div></th>
-        <th><div class="col100">@Html.Label("Driver Name ")</div></th>
+        <th><div class="col100">@Html.Label("Driver")</div></th>
         <th><div class="col40">@Html.Label("Full Bags")</div></th>
         <th><div class="col40">@Html.Label("Half Bags")</div></th>
         <th><div class="col40">@Html.Label("Kids Snack")</div></th>
@@ -44,33 +44,40 @@
 
     @foreach (var item in Model)
     {
-        <tr>
-            <td>@Html.DisplayFor(modelItem => item.DeliveryDate)</td>
-            <td>@Html.DisplayFor(modelItem => item.User.FullName, new {style = "width:150px"})</td>
-            <td>@Html.DisplayFor(modelItem => item.Client.LastName)</td>
-            <td>@Html.DisplayFor(modelItem => item.Client.FirstName)</td>
-            <td>@Html.DisplayFor(modelItem => item.Client.StreetNumber)</td>
-            <td>@Html.DisplayFor(modelItem => item.Client.StreetName)</td>
-            <td>@Html.DisplayFor(modelItem => item.Client.City)</td>
-            <td>@Html.DisplayFor(modelItem => item.Client.Zip)</td>
-            <td>@Html.DisplayFor(modelItem => item.Client.Phone)</td>
-            <td>@Html.DisplayFor(modelItem => item.KidsCount)</td>
-            <td>@Html.DisplayFor(modelItem => item.AdultsCount)</td>
-            <td>@Html.DisplayFor(modelItem => item.SeniorsCount)</td>
-            <td>@Html.DropDownListFor(modelItem => item.Notes, item.FamilySelectList)</td>
-            <td>@Html.DisplayFor(modelItem => item.GiftCardsEligible)</td>
-            <td>@Html.DisplayFor(modelItem => item.DriverName)</td>
-            <td>@Html.DisplayFor(modelItem => item.FullBags)</td>
-            <td>@Html.DisplayFor(modelItem => item.HalfBags)</td>
-            <td>@Html.DisplayFor(modelItem => item.KIdSnacks)</td>
-            <td>@Html.DisplayFor(modelItem => item.GiftCards)</td>
-            <td>@Html.DisplayFor(modelItem => item.DriverNotes)</td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new {id = item.Id})
-                @*@Html.ActionLink("Details", "Details", new { id = item.Id }) |
+    <tr>
+        <td>@Html.DisplayFor(modelItem => item.DeliveryDate)</td>
+        <td>@Html.DisplayFor(modelItem => item.User.FullName, new { style = "width:100px" })</td>
+        <td>@Html.DisplayFor(modelItem => item.Client.LastName)</td>
+        <td>@Html.DisplayFor(modelItem => item.Client.FirstName)</td>
+        <td>@Html.DisplayFor(modelItem => item.Client.StreetNumber)</td>
+        <td title=@item.StreetToolTip>
+            @Html.DisplayFor(modelItem => item.StreetName)
+        </td>
+        <td title=@item.CityToolTip>
+            @Html.DisplayFor(modelItem => item.City)
+        </td>
+        <td>@Html.DisplayFor(modelItem => item.Client.Zip)</td>
+        <td title=@item.PhoneToolTip>
+            @Html.DisplayFor(modelItem => item.Phone)
+        </td>
+        <td style="text-align: center">@Html.DisplayFor(modelItem => item.KidsCount)</td>
+        <td style="text-align: center">@Html.DisplayFor(modelItem => item.AdultsCount)</td>
+        <td style="text-align: center">@Html.DisplayFor(modelItem => item.SeniorsCount)</td>
+        <td>@Html.DropDownListFor(modelItem => item.Notes, item.FamilySelectList)</td>
+        <td>@Html.DisplayFor(modelItem => item.GiftCardsEligible)</td>
+        <td title=@item.ODNotesToolTip>@Html.DisplayFor(modelItem => item.ODNotes)</td>
+        <td>@Html.DisplayFor(modelItem => item.DriverName)</td>
+        <td style="text-align: center">@Html.DisplayFor(modelItem => item.FullBags)</td>
+        <td style="text-align: center">@Html.DisplayFor(modelItem => item.HalfBags)</td>
+        <td style="text-align: center">@Html.DisplayFor(modelItem => item.KIdSnacks)</td>
+        <td style="text-align: center">@Html.DisplayFor(modelItem => item.GiftCards)</td>
+        <td>@Html.DisplayFor(modelItem => item.DriverNotes)</td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+            @*@Html.ActionLink("Details", "Details", new { id = item.Id }) |
             @Html.ActionLink("Delete", "Delete", new { id = item.Id })*@
-            </td>
-        </tr>
+        </td>
+    </tr>
     }
 </table>
 <div>

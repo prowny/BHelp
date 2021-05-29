@@ -18,7 +18,9 @@ namespace BHelp.ViewModels
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DeliveryDate { get; set; }
 
-        public string Notes { get; set; }
+        public string Notes { get; set; }   // Delivery Notes
+        public string ODNotes { get; set; }
+        public string DriverNotes { get; set; }
         public int GiftCardsEligible { get; set; }
         public int FullBags { get; set; }
         public int HalfBags { get; set; }
@@ -43,6 +45,20 @@ namespace BHelp.ViewModels
         public DateTime DateLastGiftCard { get; set; }
         public string DriverId { get; set; }
         public string DriverName { get; set; }
-        public string DriverNotes { get; set; }
+
+        //For Delivery List display:
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string StreetNumber { get; set; }
+        public string StreetName { get; set; }
+        public string City { get; set; }
+        public string Zip { get; set; }
+        public string Phone { get; set; }
+        public string StreetToolTip { get; set; }
+        public string CityToolTip { get; set; }
+        public string PhoneToolTip { get; set; }
+        public string NotesToolTip { get; set; }  // Household/Client notes
+        public string ODNotesToolTip { get; set; }  // OD notes
+        public string DriverNotesToolTip { get; set; }  // Driver notes
     }
 }
