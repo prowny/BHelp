@@ -25,5 +25,6 @@ namespace BHelp.Models
         public string ODId { get; set; }
 
         public DateTime? DateDelivered { get; set; }
+        public string ODNotes { get; set; }
     }
 }

@@ -219,6 +219,10 @@
     <Compile Include="Migrations\202105210012090_AddDateDelivered.designer.cs">
       <DependentUpon>202105210012090_AddDateDelivered.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202105291413141_AddODnotes.cs" />
+    <Compile Include="Migrations\202105291413141_AddODnotes.designer.cs">
+      <DependentUpon>202105291413141_AddODnotes.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Client.cs" />
@@ -395,6 +399,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202105210012090_AddDateDelivered.resx">
       <DependentUpon>202105210012090_AddDateDelivered.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202105291413141_AddODnotes.resx">
+      <DependentUpon>202105291413141_AddODnotes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
