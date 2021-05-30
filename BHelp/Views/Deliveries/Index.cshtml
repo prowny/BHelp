@@ -28,7 +28,7 @@
         <th><div class="col100">@Html.Label("City")</div></th>
         <th><div class="col25">@Html.Label("Zip Code")</div></th>
         <th><div class="col100">@Html.Label("Client Phone")</div></th>
-
+        <th><div class="col100">@Html.Label("OD Notes")</div></th>
         <th><div class="col25">@Html.Label("#C")</div></th>
         <th><div class="col25">@Html.Label("#A")</div></th>
         <th><div class="col25">@Html.Label("#S")</div></th>
@@ -59,6 +59,9 @@
         <td>@Html.DisplayFor(modelItem => item.Client.Zip)</td>
         <td title=@item.PhoneToolTip>
             @Html.DisplayFor(modelItem => item.Phone)
+        </td>
+        <td title=@item.ODNotesToolTip>
+            @Html.DisplayFor(modelItem => item.ODNotes)
         </td>
         <td style="text-align: center">@Html.DisplayFor(modelItem => item.KidsCount)</td>
         <td style="text-align: center">@Html.DisplayFor(modelItem => item.AdultsCount)</td>

@@ -26,5 +26,6 @@ namespace BHelp.Models
 
         public DateTime? DateDelivered { get; set; }
         public string ODNotes { get; set; }
+        public string DriverNotes { get; set; }
     }
 }

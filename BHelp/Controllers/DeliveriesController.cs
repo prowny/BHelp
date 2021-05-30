@@ -18,10 +18,10 @@ namespace BHelp.Controllers
         // GET: Deliveries
         public ActionResult Index()
         {
-            var listDeliveries =new List<Delivery>(db.Deliveries
+            var listDeliveries = new List<Delivery>(db.Deliveries
                 .Where(d => d.DateDelivered == null).OrderBy(d => d.DeliveryDate).ToList());
             // to add order .ThenBy(Zip) means storing the Zip in Client.cs AND Delivery/cs
-            var listDeliveryViewModels=new List<DeliveryViewModel>();
+            var listDeliveryViewModels = new List<DeliveryViewModel>();
             foreach (var delivery in listDeliveries)
             {
                 var client = db.Clients.Find(delivery.ClientId);
@@ -65,32 +65,58 @@ namespace BHelp.Controllers
                     deliveryView.HalfBags = 0;
                     deliveryView.KIdSnacks = 0;
                     deliveryView.GiftCards = 0;
-                    deliveryView.GiftCardsEligible = 0;     // !!! calculate this value
+                    deliveryView.GiftCardsEligible = 0; // !!! calculate this value
                     deliveryView.DateLastDelivery = DateTime.Today.AddDays(-7); // !!! calculate this value
                     deliveryView.DateLastGiftCard = DateTime.Today.AddDays(-7); // !!! calculate this value
-                    deliveryView.DriverName = "";    // !!! calculate this value   
+                    deliveryView.DriverName = ""; // !!! calculate this value   
                     var userIid = System.Web.HttpContext.Current.User.Identity.GetUserId();
                     if (userIid != null)
                     {
                         var user = db.Users.Find(userIid);
                         deliveryView.User = user;
-                    };
+                    }
+
+                    ;
                     deliveryView.FirstName = client.FirstName;
                     deliveryView.LastName = client.LastName;
                     deliveryView.StreetNumber = client.StreetNumber;
                     deliveryView.StreetName = client.StreetName;
+                    // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
                     deliveryView.StreetToolTip = client.StreetName.Replace(" ", "\u00a0");
                     deliveryView.City = client.City;
                     deliveryView.CityToolTip = client.City.Replace(" ", "\u00a0");
                     deliveryView.Zip = client.Zip;
                     deliveryView.Phone = client.Phone;
                     deliveryView.PhoneToolTip = client.Phone.Replace(" ", "\u00a0");
-                    deliveryView.Notes = client.Notes;
-                    // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
-                    deliveryView.NotesToolTip = client.Notes.Replace(" ", "\u00a0");
-                    deliveryView.ODNotesToolTip = delivery.ODNotes.Replace(" ", "\u00a0");
-                    deliveryView.DriverNotesToolTip = deliveryView.DriverNotes.Replace(" ", "\u00a0");
-                    var s = deliveryView.StreetName; // For display, abbreviate to 10 characters:           
+                    string s;
+                    if (client.Notes != null)
+                    {
+                        deliveryView.Notes = client.Notes;
+                        deliveryView.NotesToolTip = client.Notes.Replace(" ", "\u00a0");
+                        s = deliveryView.Notes;
+                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                        deliveryView.Notes = s;
+                    }
+
+                    if (delivery.ODNotes != null)
+                    {
+                        deliveryView.ODNotes = delivery.ODNotes;
+                        deliveryView.ODNotesToolTip = delivery.ODNotes.Replace(" ", "\u00a0");
+                        s = deliveryView.ODNotes;
+                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                        deliveryView.ODNotes = s;
+                    }
+
+                    if (delivery.DriverNotes != null)
+                    {
+                        deliveryView.DriverNotes = delivery.DriverNotes;
+                        deliveryView.DriverNotesToolTip = deliveryView.DriverNotes.Replace(" ", "\u00a0");
+                        s = deliveryView.DriverNotes; // For display, abbreviate to 12 characters:           
+                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                        deliveryView.DriverNotes = s;
+                    }
+
+                    s = deliveryView.StreetName;
                     s = s.Length <= 10 ? s : s.Substring(0, 10) + "...";
                     deliveryView.StreetName = s;
                     s = deliveryView.City; // For display, abbreviate to 11 characters:           
@@ -99,25 +125,6 @@ namespace BHelp.Controllers
                     s = deliveryView.Phone; // For display, abbreviate to 12 characters:           
                     s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
                     deliveryView.Phone = s;
-                    if (deliveryView.Notes != null)
-                    {
-                        s = deliveryView.Notes; // For display, abbreviate to 12 characters:           
-                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
-                        deliveryView.Notes = s;
-                    }
-                    if (deliveryView.ODNotes != null)
-                    {
-                        s = deliveryView.ODNotes; // For display, abbreviate to 12 characters:           
-                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
-                        deliveryView.ODNotes = s;
-                    }
-                    if (deliveryView.DriverNotes != null)
-                    {
-                        s = deliveryView.DriverNotes; // For display, abbreviate to 12 characters:           
-                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
-                        deliveryView.DriverNotes = s;
-                    }
-
                     listDeliveryViewModels.Add(deliveryView);
                 }
             }
@@ -125,7 +132,7 @@ namespace BHelp.Controllers
         }
         private static List<FamilyMember> GetFamilyMembers(int clientId)
         {
-            var familyMembers = new List<FamilyMember>();   // For editiing
+            var familyMembers = new List<FamilyMember>(); // For editiing
             using (var db = new BHelpContext())
             {
                 var client = db.Clients.Find(clientId);
@@ -150,6 +157,7 @@ namespace BHelp.Controllers
                     familyMembers.Add(member);
                 }
             }
+
             return familyMembers;
         }
 
@@ -170,6 +178,7 @@ namespace BHelp.Controllers
                         householdList.Add(selListItem);
                     }
                 }
+
                 return (householdList);
             }
         }
@@ -181,24 +190,28 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Delivery delivery = db.Deliveries.Find(id);
             if (delivery == null)
             {
                 return HttpNotFound();
             }
+
             return View(delivery);
         }
 
         // GET: Deliveries/Create
         public ActionResult Create()
-            {
-                return View();
-            }
+        {
+            return View();
+        }
 
         // POST: Deliveries/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,ClientId,DeliveryDate,Notes,FullBags,HalfBags,KIdSnacks,GiftCards")] Delivery delivery)
+        public ActionResult Create(
+            [Bind(Include = "Id,ClientId,DeliveryDate,Notes,FullBags,HalfBags,KIdSnacks,GiftCards")]
+            Delivery delivery)
         {
             if (ModelState.IsValid)
             {
@@ -217,11 +230,13 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Delivery delivery = db.Deliveries.Find(id);
             if (delivery == null)
             {
                 return HttpNotFound();
             }
+
             return View(delivery);
         }
 
@@ -230,7 +245,9 @@ namespace BHelp.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,ClientId,DeliveryDate,Notes,FullBags,HalfBags,KIdSnacks,GiftCards")] Delivery delivery)
+        public ActionResult Edit(
+            [Bind(Include = "Id,ClientId,DeliveryDate,Notes,FullBags,HalfBags,KIdSnacks,GiftCards")]
+            Delivery delivery)
         {
             if (ModelState.IsValid)
             {
@@ -238,6 +255,7 @@ namespace BHelp.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+
             return View(delivery);
         }
 
@@ -248,11 +266,13 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Delivery delivery = db.Deliveries.Find(id);
             if (delivery == null)
             {
                 return HttpNotFound();
             }
+
             return View(delivery);
         }
 
@@ -266,17 +286,21 @@ namespace BHelp.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+
         public ActionResult ReturnToDashboard()
         {
             return RedirectToAction("Index", "Home");
         }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 db.Dispose();
             }
+
             base.Dispose(disposing);
         }
     }
 }
+
