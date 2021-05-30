@@ -89,7 +89,7 @@ namespace BHelp.Controllers
                     // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
                     deliveryView.NotesToolTip = client.Notes.Replace(" ", "\u00a0");
                     deliveryView.ODNotesToolTip = delivery.ODNotes.Replace(" ", "\u00a0");
-                    //deliveryView.DriverNotesToolTip = delivery.DriverNotes.Replace(" ", "\u00a0");
+                    deliveryView.DriverNotesToolTip = deliveryView.DriverNotes.Replace(" ", "\u00a0");
                     var s = deliveryView.StreetName; // For display, abbreviate to 10 characters:           
                     s = s.Length <= 10 ? s : s.Substring(0, 10) + "...";
                     deliveryView.StreetName = s;

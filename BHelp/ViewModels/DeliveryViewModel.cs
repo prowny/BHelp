@@ -18,7 +18,7 @@ namespace BHelp.ViewModels
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DeliveryDate { get; set; }
 
-        public string Notes { get; set; }   // Delivery Notes
+        public string Notes { get; set; }   // Client/Household Notes
         public string ODNotes { get; set; }
         public string DriverNotes { get; set; }
         public int GiftCardsEligible { get; set; }
