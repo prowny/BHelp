@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
+using BHelp.DataAccessLayer;
+using BHelp.Models;
 using Castle.Core.Internal;
 
 namespace BHelp
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class AppRoutines
     {
         public static int GetAge(DateTime dob, [Optional] DateTime today)
@@ -16,6 +21,36 @@ namespace BHelp
             // calendar, we must subtract a year here.
             int years = (DateTime.MinValue + span).Year - 1;
             return years;
+        }
+
+        public static List<FamilyMember> GetFamilyMembers(int clientId)
+        {
+            var familyMembers = new List<FamilyMember>(); // For editiing
+            using (var db = new BHelpContext())
+            {
+                var client = db.Clients.Find(clientId);
+                var sqlString = "SELECT * FROM FamilyMembers ";
+                sqlString += "WHERE Active > 0 AND ClientId =" + clientId;
+                var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
+                if (client != null)
+                {
+                    FamilyMember headOfHousehold = new FamilyMember()
+                    {
+                        FirstName = client.FirstName,
+                        LastName = client.LastName,
+                        DateOfBirth = client.DateOfBirth,
+                    };
+                    familyList.Add(headOfHousehold);
+                }
+
+                foreach (FamilyMember member in familyList)
+                {
+                    member.Age = GetAge(member.DateOfBirth, DateTime.Today);
+                    member.NameAge = member.FirstName + " " + member.LastName + "/" + member.Age;
+                    familyMembers.Add(member);
+                }
+            }
+            return familyMembers;
         }
     }
 }

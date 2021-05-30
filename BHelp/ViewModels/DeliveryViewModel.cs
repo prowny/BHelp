@@ -60,5 +60,8 @@ namespace BHelp.ViewModels
         public string NotesToolTip { get; set; }  // Household/Client notes
         public string ODNotesToolTip { get; set; }  // OD notes
         public string DriverNotesToolTip { get; set; }  // Driver notes
+
+        public string ClientNameAddress { get; set; }
+
     }
 }

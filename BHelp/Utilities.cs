@@ -1,4 +1,4 @@
-﻿// Utilities used by deeveloper //
+﻿// Utilities used by developer //
 using BHelp.DataAccessLayer;
 using System;
 using System.IO;

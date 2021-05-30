@@ -72,7 +72,6 @@ namespace BHelp.Controllers
                 
                 foreach (var client in clientList)
                 {
-                    //client.FamilyMembers = GetFamilyMembers(client.Id);
                     var household = new HouseholdViewModel()
                     {
                         ClientId = client.Id,
@@ -86,7 +85,6 @@ namespace BHelp.Controllers
                         Zip = client.Zip,
                         Phone = client.Phone,
                         PhoneToolTip = client.Phone.Replace(" ", "\u00a0"),
-                        //FamilyMembers =client.FamilyMembers,
                         Notes = client.Notes,
                         // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
                         NotesToolTip = client.Notes.Replace(" ", "\u00a0")
@@ -104,49 +102,10 @@ namespace BHelp.Controllers
                     s = household.Notes; // For display, abbreviate to 12 characters:           
                     s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
                     household.Notes = s;
-
-                    //household.FamilySelectList = new List<SelectListItem>();
-                    //foreach (var mbr in client.FamilyMembers)
-                    //{
-                    //    var text = mbr.FirstName + " " + mbr.LastName + "/" + AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
-                    //    var selListItem = new SelectListItem() { Value = mbr.FirstName, Text = text };
-                    //    household.FamilySelectList.Add(selListItem);
-                    //}
                     householdView.Add(household);
                 }
             }
             return (householdView);
-        }
-
-        private static List<FamilyMember> GetFamilyMembers(int clientId)
-        {
-            var familyMembers = new List<FamilyMember>();   // For editiing
-            using (var db = new BHelpContext())
-            {
-                var client = db.Clients.Find(clientId);
-                var sqlString = "SELECT * FROM FamilyMembers ";
-                sqlString += "WHERE Active > 0 AND ClientId =" + clientId;
-                var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
-                if (client != null)
-                {
-                    FamilyMember headOfHousehold = new FamilyMember()
-                    {
-                        FirstName = client.FirstName,
-                        LastName = client.LastName,
-                        DateOfBirth = client.DateOfBirth,
-                    };
-                    familyList.Add(headOfHousehold);
-                }
-
-                foreach (FamilyMember member in familyList)
-                {
-                    member.Age = AppRoutines.GetAge(member.DateOfBirth, DateTime.Today);
-                    member.NameAge = member.FirstName + " " + member.LastName + "/" + member.Age;
-                    member.Delete = false;
-                    familyMembers.Add(member);
-                }
-            }
-            return familyMembers;
         }
 
         public ActionResult AddDelivery(int clientId)
@@ -184,7 +143,7 @@ namespace BHelp.Controllers
                 Zip = client.Zip,
                 Phone = client.Phone,
                 Notes = client.Notes,
-                FamilyMembers = GetFamilyMembers(client.Id)
+                FamilyMembers = AppRoutines.GetFamilyMembers(client.Id)
             };
             var newMember = new FamilyMember();
             houseHold.FamilyMembers.Add(newMember);  // Blank line for adding new member.

@@ -28,10 +28,11 @@ namespace BHelp.Controllers
                 if (client != null)
                 {
                     var deliveryView = new DeliveryViewModel();
+                    deliveryView.Id = delivery.Id;
                     deliveryView.ClientId = client.Id;
                     deliveryView.Client = client;
                     deliveryView.DeliveryDate = Convert.ToDateTime(Session["CallLogDate"]);
-                    deliveryView.FamilyMembers = GetFamilyMembers(client.Id);
+                    deliveryView.FamilyMembers = AppRoutines.GetFamilyMembers(client.Id);
                     deliveryView.FamilySelectList = GetFamilySelectList(client.Id);
                     deliveryView.Kids = new List<FamilyMember>();
                     deliveryView.Adults = new List<FamilyMember>();
@@ -130,37 +131,7 @@ namespace BHelp.Controllers
             }
             return View(listDeliveryViewModels);
         }
-        private static List<FamilyMember> GetFamilyMembers(int clientId)
-        {
-            var familyMembers = new List<FamilyMember>(); // For editiing
-            using (var db = new BHelpContext())
-            {
-                var client = db.Clients.Find(clientId);
-                var sqlString = "SELECT * FROM FamilyMembers ";
-                sqlString += "WHERE Active > 0 AND ClientId =" + clientId;
-                var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
-                if (client != null)
-                {
-                    FamilyMember headOfHousehold = new FamilyMember()
-                    {
-                        FirstName = client.FirstName,
-                        LastName = client.LastName,
-                        DateOfBirth = client.DateOfBirth,
-                    };
-                    familyList.Add(headOfHousehold);
-                }
-
-                foreach (FamilyMember member in familyList)
-                {
-                    member.Age = AppRoutines.GetAge(member.DateOfBirth, DateTime.Today);
-                    member.NameAge = member.FirstName + " " + member.LastName + "/" + member.Age;
-                    familyMembers.Add(member);
-                }
-            }
-
-            return familyMembers;
-        }
-
+     
         private static List<SelectListItem> GetFamilySelectList(int clientId)
         {
             List<SelectListItem> householdList = new List<SelectListItem>();
@@ -169,7 +140,7 @@ namespace BHelp.Controllers
                 var client = db.Clients.Find(clientId);
                 if (client != null)
                 {
-                    client.FamilyMembers = GetFamilyMembers(clientId);
+                    client.FamilyMembers = AppRoutines.GetFamilyMembers(clientId);
                     foreach (var mbr in client.FamilyMembers)
                     {
                         var text = mbr.FirstName + " " + mbr.LastName + "/" +
@@ -236,8 +207,27 @@ namespace BHelp.Controllers
             {
                 return HttpNotFound();
             }
+            var viewModel = new DeliveryViewModel()
+            {
+                Id = delivery.Id,
+                DeliveryDate = delivery.DeliveryDate,
+                ODNotes = delivery.ODNotes,
+                DriverNotes = delivery.DriverNotes,
+                DateDelivered = delivery.DateDelivered
+            };
+            var client = db.Clients.Find(delivery.ClientId);
+            if (client != null)
+            {
+                viewModel.ClientNameAddress = client.LastName + ", " + client.FirstName
+                                              + " " + client.StreetNumber + " " + client.StreetName + " " + client.Zip;
+                viewModel.Notes = client.Notes;
+            }
 
-            return View(delivery);
+            if (delivery.FullBags != null) viewModel.FullBags = (int) delivery.FullBags;
+            if (delivery.HalfBags != null) viewModel.HalfBags = (int) delivery.HalfBags;
+            if (delivery.KIdSnacks != null) viewModel.KIdSnacks = (int) delivery.KIdSnacks;
+
+            return View(viewModel);
         }
 
         // POST: Deliveries/Edit/5
@@ -247,7 +237,7 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(
             [Bind(Include = "Id,ClientId,DeliveryDate,Notes,FullBags,HalfBags,KIdSnacks,GiftCards")]
-            Delivery delivery)
+            DeliveryViewModel delivery)
         {
             if (ModelState.IsValid)
             {

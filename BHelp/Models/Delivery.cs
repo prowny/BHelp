@@ -19,12 +19,13 @@ namespace BHelp.Models
         public int? FullBags { get; set; }
         public int? HalfBags { get; set; }
         public int? KIdSnacks { get; set; }
+        public int? GiftCardsEligible { get; set; }
         public int? GiftCards { get; set; }
 
         [StringLength(128)]
         public string ODId { get; set; }
 
-        public DateTime? DateDelivered { get; set; }
+        public DateTime DateDelivered { get; set; }
         public string ODNotes { get; set; }
         public string DriverNotes { get; set; }
     }
