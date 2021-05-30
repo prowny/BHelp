@@ -227,6 +227,10 @@
     <Compile Include="Migrations\202105301541287_AddDriverNotes.designer.cs">
       <DependentUpon>202105301541287_AddDriverNotes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202105301953540_AddGiftCardsEligibleTpDelivery.cs" />
+    <Compile Include="Migrations\202105301953540_AddGiftCardsEligibleTpDelivery.designer.cs">
+      <DependentUpon>202105301953540_AddGiftCardsEligibleTpDelivery.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Client.cs" />
@@ -409,6 +413,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202105301541287_AddDriverNotes.resx">
       <DependentUpon>202105301541287_AddDriverNotes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202105301953540_AddGiftCardsEligibleTpDelivery.resx">
+      <DependentUpon>202105301953540_AddGiftCardsEligibleTpDelivery.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
