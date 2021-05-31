@@ -231,6 +231,14 @@
     <Compile Include="Migrations\202105301953540_AddGiftCardsEligibleTpDelivery.designer.cs">
       <DependentUpon>202105301953540_AddGiftCardsEligibleTpDelivery.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202105310048262_SetDeliveryDateNullable.cs" />
+    <Compile Include="Migrations\202105310048262_SetDeliveryDateNullable.designer.cs">
+      <DependentUpon>202105310048262_SetDeliveryDateNullable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202105310115064_AddDriverIdToDelivery.cs" />
+    <Compile Include="Migrations\202105310115064_AddDriverIdToDelivery.designer.cs">
+      <DependentUpon>202105310115064_AddDriverIdToDelivery.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Client.cs" />
@@ -416,6 +424,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202105301953540_AddGiftCardsEligibleTpDelivery.resx">
       <DependentUpon>202105301953540_AddGiftCardsEligibleTpDelivery.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202105310048262_SetDeliveryDateNullable.resx">
+      <DependentUpon>202105310048262_SetDeliveryDateNullable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202105310115064_AddDriverIdToDelivery.resx">
+      <DependentUpon>202105310115064_AddDriverIdToDelivery.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

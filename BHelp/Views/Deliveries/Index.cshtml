@@ -34,7 +34,7 @@
         <th><div class="col25">@Html.Label("#S")</div></th>
         <th><div class="col100">@Html.Label("Names/Age ALL in HH")</div></th>
         <th><div class="col40">@Html.Label("Gift Cards Eligible")</div></th>
-        <th><div class="col100">@Html.Label("Driver")</div></th>
+        <th><div class="col100" style="text-align: center">@Html.Label("Driver")</div></th>
         <th><div class="col40">@Html.Label("Full Bags")</div></th>
         <th><div class="col40">@Html.Label("Half Bags")</div></th>
         <th><div class="col40">@Html.Label("Kids Snack")</div></th>
@@ -60,15 +60,12 @@
         <td title=@item.PhoneToolTip>
             @Html.DisplayFor(modelItem => item.Phone)
         </td>
-        <td title=@item.ODNotesToolTip>
-            @Html.DisplayFor(modelItem => item.ODNotes)
-        </td>
+        <td title=@item.ODNotesToolTip>@Html.DisplayFor(modelItem => item.ODNotes)</td>
         <td style="text-align: center">@Html.DisplayFor(modelItem => item.KidsCount)</td>
         <td style="text-align: center">@Html.DisplayFor(modelItem => item.AdultsCount)</td>
         <td style="text-align: center">@Html.DisplayFor(modelItem => item.SeniorsCount)</td>
         <td>@Html.DropDownListFor(modelItem => item.Notes, item.FamilySelectList)</td>
-        <td>@Html.DisplayFor(modelItem => item.GiftCardsEligible)</td>
-        <td title=@item.ODNotesToolTip>@Html.DisplayFor(modelItem => item.ODNotes)</td>
+        <td style="text-align: center">@Html.DisplayFor(modelItem => item.GiftCardsEligible)</td>
         <td>@Html.DisplayFor(modelItem => item.DriverName)</td>
         <td style="text-align: center">@Html.DisplayFor(modelItem => item.FullBags)</td>
         <td style="text-align: center">@Html.DisplayFor(modelItem => item.HalfBags)</td>

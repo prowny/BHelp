@@ -31,7 +31,7 @@ namespace BHelp.ViewModels
         public ApplicationUser User { get; set; }
         
         public Client Client { get; set; }
-        public DateTime DateDelivered { get; set; }
+        public DateTime? DateDelivered { get; set; }
        
         public List<FamilyMember> FamilyMembers { get; set; }
         public List<SelectListItem> FamilySelectList { get; set; }  // For display onlly

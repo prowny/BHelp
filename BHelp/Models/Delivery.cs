@@ -25,7 +25,10 @@ namespace BHelp.Models
         [StringLength(128)]
         public string ODId { get; set; }
 
-        public DateTime DateDelivered { get; set; }
+        [StringLength(128)]
+        public string DriverId { get; set; }
+
+        public DateTime? DateDelivered { get; set; }
         public string ODNotes { get; set; }
         public string DriverNotes { get; set; }
     }
