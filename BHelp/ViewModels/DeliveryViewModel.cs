@@ -41,6 +41,7 @@ namespace BHelp.ViewModels
         public int AdultsCount { get; set; }
         public List<FamilyMember> Seniors { get; set; }
         public int SeniorsCount { get; set; }
+        public int HouseholdCount { get; set; }
         public DateTime DateLastDelivery { get; set; }
         public DateTime DateLastGiftCard { get; set; }
         public string DriverId { get; set; }

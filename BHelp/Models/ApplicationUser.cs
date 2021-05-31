@@ -90,6 +90,7 @@ namespace BHelp.Models
         public string FullName
         {
             get { return string.Format("{0} {1}", FirstName, LastName); }
+            set => throw new System.NotImplementedException();
         }
     }
 }

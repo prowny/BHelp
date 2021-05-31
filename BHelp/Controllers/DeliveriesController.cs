@@ -70,8 +70,16 @@ namespace BHelp.Controllers
                     deliveryView.GiftCardsEligible = 0; // !!! calculate this value
                     deliveryView.DateLastDelivery = DateTime.Today.AddDays(-7); // !!! calculate this value
                     deliveryView.DateLastGiftCard = DateTime.Today.AddDays(-7); // !!! calculate this value
-                   
-                    deliveryView.DriverName = ""; // !!! calculate this value   
+                    if (delivery.DriverId != null)
+                    {
+                        var driver = db.Users.Find(delivery.DriverId);
+                        if (driver != null) deliveryView.DriverName = driver.FullName;
+                    }
+                    else
+                    {
+                        deliveryView.DriverName = "(nobody yet)";  
+                    }
+
                     var userIid = System.Web.HttpContext.Current.User.Identity.GetUserId();
                     if (userIid != null)
                     {
@@ -118,10 +126,10 @@ namespace BHelp.Controllers
                     }
 
                     s = deliveryView.StreetName;
-                    s = s.Length <= 10 ? s : s.Substring(0, 10) + "...";
+                    s = s.Length <= 9 ? s : s.Substring(0, 9) + "...";
                     deliveryView.StreetName = s;
                     s = deliveryView.City; // For display, abbreviate to 11 characters:           
-                    s = s.Length <= 11 ? s : s.Substring(0, 11) + "...";
+                    s = s.Length <= 10 ? s : s.Substring(0, 10) + "...";
                     deliveryView.City = s;
                     s = deliveryView.Phone; // For display, abbreviate to 12 characters:           
                     s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
@@ -218,6 +226,7 @@ namespace BHelp.Controllers
             var client = db.Clients.Find(delivery.ClientId);
             if (client != null)
             {
+                viewModel.Client = client;
                 viewModel.ClientNameAddress = client.LastName + ", " + client.FirstName
                                               + " " + client.StreetNumber + " " + client.StreetName + " " + client.Zip;
                 viewModel.Notes = client.Notes;
@@ -227,6 +236,7 @@ namespace BHelp.Controllers
             if (delivery.HalfBags != null) viewModel.HalfBags = (int) delivery.HalfBags;
             if (delivery.KIdSnacks != null) viewModel.KIdSnacks = (int) delivery.KIdSnacks;
             if (delivery.GiftCardsEligible != null) viewModel.GiftCardsEligible = (int) delivery.GiftCardsEligible;
+
             return View(viewModel);
         }
 
