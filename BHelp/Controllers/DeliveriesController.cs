@@ -33,7 +33,7 @@ namespace BHelp.Controllers
                         Client = client,
                         DeliveryDate = Convert.ToDateTime(Session["CallLogDate"]),
                         FamilyMembers = AppRoutines.GetFamilyMembers(client.Id),
-                        FamilySelectList = GetFamilySelectList(client.Id),
+                        FamilySelectList = AppRoutines.GetFamilySelectList(client.Id),
                         Kids = new List<FamilyMember>(),
                         Adults = new List<FamilyMember>(),
                         Seniors = new List<FamilyMember>()
@@ -65,7 +65,7 @@ namespace BHelp.Controllers
                     deliveryView.SeniorsCount = deliveryView.Seniors.Count();
                     deliveryView.FullBags = 0;
                     deliveryView.HalfBags = 0;
-                    deliveryView.KIdSnacks = 0;
+                    deliveryView.KidSnacks = 0;
                     deliveryView.GiftCards = 0;
                     deliveryView.GiftCardsEligible = 0; // !!! calculate this value
                     deliveryView.DateLastDelivery = DateTime.Today.AddDays(-7); // !!! calculate this value
@@ -139,28 +139,7 @@ namespace BHelp.Controllers
             }
             return View(listDeliveryViewModels);
         }
-     
-        private static List<SelectListItem> GetFamilySelectList(int clientId)
-        {
-            List<SelectListItem> householdList = new List<SelectListItem>();
-            using (var db = new BHelpContext())
-            {
-                var client = db.Clients.Find(clientId);
-                if (client != null)
-                {
-                    client.FamilyMembers = AppRoutines.GetFamilyMembers(clientId);
-                    foreach (var mbr in client.FamilyMembers)
-                    {
-                        var text = mbr.FirstName + " " + mbr.LastName + "/" +
-                                   AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
-                        var selListItem = new SelectListItem() {Value = mbr.FirstName, Text = text};
-                        householdList.Add(selListItem);
-                    }
-                }
-
-                return (householdList);
-            }
-        }
+ 
 
         // GET: Deliveries/Details/5
         public ActionResult Details(int? id)
@@ -189,7 +168,7 @@ namespace BHelp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(
-            [Bind(Include = "Id,ClientId,DeliveryDate,Notes,FullBags,HalfBags,KIdSnacks,GiftCards")]
+            [Bind(Include = "Id,ClientId,DeliveryDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards")]
             Delivery delivery)
         {
             if (ModelState.IsValid)
@@ -218,11 +197,21 @@ namespace BHelp.Controllers
             var viewModel = new DeliveryViewModel()
             {
                 Id = delivery.Id,
+                ClientId = delivery.ClientId,
                 DeliveryDate = delivery.DeliveryDate,
                 ODNotes = delivery.ODNotes,
                 DriverNotes = delivery.DriverNotes,
-                DateDelivered = delivery.DateDelivered
+                DateDelivered = delivery.DateDelivered,
+                FamilyMembers = AppRoutines.GetFamilyMembers(delivery.ClientId),
+                FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId)
             };
+            foreach (var mbr in viewModel.FamilyMembers)
+            {
+                mbr.Age = AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
+                if (mbr.Age < 18) { viewModel.KidsCount += 1; }
+                if (mbr.Age >= 18 && mbr.Age < 60) { viewModel.AdultsCount += 1; }
+                if (mbr.Age >= 60) {viewModel.SeniorsCount += 1; }
+            }
             var client = db.Clients.Find(delivery.ClientId);
             if (client != null)
             {
@@ -234,7 +223,7 @@ namespace BHelp.Controllers
 
             if (delivery.FullBags != null) viewModel.FullBags = (int) delivery.FullBags;
             if (delivery.HalfBags != null) viewModel.HalfBags = (int) delivery.HalfBags;
-            if (delivery.KIdSnacks != null) viewModel.KIdSnacks = (int) delivery.KIdSnacks;
+            if (delivery.KidSnacks != null) viewModel.KidSnacks = (int) delivery.KidSnacks;
             if (delivery.GiftCardsEligible != null) viewModel.GiftCardsEligible = (int) delivery.GiftCardsEligible;
 
             return View(viewModel);
@@ -246,7 +235,7 @@ namespace BHelp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(
-            [Bind(Include = "Id,ClientId,DeliveryDate,Notes,FullBags,HalfBags,KIdSnacks,GiftCards,ODNotes,GiftCardsEligible")]
+            [Bind(Include = "Id,ClientId,DeliveryDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards,ODNotes,GiftCardsEligible")]
             DeliveryViewModel delivery)
         {
             if (ModelState.IsValid)

@@ -24,7 +24,7 @@ namespace BHelp.ViewModels
         public int GiftCardsEligible { get; set; }
         public int FullBags { get; set; }
         public int HalfBags { get; set; }
-        public int KIdSnacks { get; set; }
+        public int KidSnacks { get; set; }
         public int GiftCards { get; set; }
 
         [DisplayName("OD Name")]
