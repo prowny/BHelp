@@ -26,16 +26,29 @@ namespace BHelp.ViewModels
 
         [DataType(DataType.MultilineText)]
         public string DriverNotes { get; set; }
+
+        [Range(0, 20)]
         public int GiftCardsEligible { get; set; }
+
+        [Range(0,20)]
         public int FullBags { get; set; }
+
+        [Range(0, 20)]
         public int HalfBags { get; set; }
+
+        [Range(0, 20)]
         public int KidSnacks { get; set; }
+
+        [Range(0, 20)]
         public int GiftCards { get; set; }
 
         [DisplayName("OD Name")]
         public ApplicationUser User { get; set; }
         
         public Client Client { get; set; }
+
+        [Column(TypeName = "Date")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime? DateDelivered { get; set; }
        
         public List<FamilyMember> FamilyMembers { get; set; }

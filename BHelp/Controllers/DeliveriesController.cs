@@ -63,10 +63,10 @@ namespace BHelp.Controllers
                     deliveryView.KidsCount = deliveryView.Kids.Count();
                     deliveryView.AdultsCount = deliveryView.Adults.Count();
                     deliveryView.SeniorsCount = deliveryView.Seniors.Count();
-                    deliveryView.FullBags = 0;
-                    deliveryView.HalfBags = 0;
-                    deliveryView.KidSnacks = 0;
-                    deliveryView.GiftCards = 0;
+                    if (delivery.FullBags != null) deliveryView.FullBags = (int) delivery.FullBags;
+                    if (delivery.HalfBags != null) deliveryView.HalfBags = (int) delivery.HalfBags;
+                    if (delivery.KidSnacks != null) deliveryView.KidSnacks = (int) delivery.KidSnacks;
+                    if (delivery.GiftCards != null) deliveryView.GiftCards = (int) delivery.GiftCards;
                     deliveryView.GiftCardsEligible = 0; // !!! calculate this value
                     deliveryView.DateLastDelivery = DateTime.Today.AddDays(-7); // !!! calculate this value
                     deliveryView.DateLastGiftCard = DateTime.Today.AddDays(-7); // !!! calculate this value
@@ -201,10 +201,13 @@ namespace BHelp.Controllers
                 DeliveryDate = Convert.ToDateTime(delivery.DeliveryDate.ToString("MM/dd/yyyy")),
                 ODNotes = delivery.ODNotes,
                 DriverNotes = delivery.DriverNotes,
-                DateDelivered = delivery.DateDelivered,
                 FamilyMembers = AppRoutines.GetFamilyMembers(delivery.ClientId),
                 FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId)
             };
+  
+            if (delivery.DateDelivered != null) viewModel.DateDelivered = (DateTime) delivery.DateDelivered;
+
+
             foreach (var mbr in viewModel.FamilyMembers)
             {
                 mbr.Age = AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
@@ -235,16 +238,29 @@ namespace BHelp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(
-            [Bind(Include = "Id,ClientId,DeliveryDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards,ODNotes,GiftCardsEligible")]
+            [Bind(Include = "Id,ClientId,DeliveryDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards," +
+                            "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible")]
             DeliveryViewModel delivery)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(delivery).State = EntityState.Modified;
-                db.SaveChanges();
+                var updateData  = db.Deliveries.Find(delivery.Id);
+
+                if (updateData != null)
+                {
+                    updateData.DeliveryDate = delivery.DeliveryDate;
+                    updateData.FullBags = delivery.FullBags;
+                    updateData.HalfBags = delivery.HalfBags;
+                    updateData.KidSnacks = delivery.KidSnacks;
+                    updateData.GiftCards = delivery.GiftCards;
+                    updateData.ODNotes = delivery.ODNotes;
+                    updateData.DriverNotes = delivery.DriverNotes;
+                    updateData.DateDelivered = delivery.DateDelivered;
+                    db.Entry(updateData).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
                 return RedirectToAction("Index");
             }
-
             return View(delivery);
         }
 
