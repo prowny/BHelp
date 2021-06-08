@@ -18,8 +18,13 @@ namespace BHelp.ViewModels
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DeliveryDate { get; set; }
 
+        [DataType(DataType.MultilineText)]
         public string Notes { get; set; }   // Client/Household Notes
+
+        [DataType(DataType.MultilineText)]
         public string ODNotes { get; set; }
+
+        [DataType(DataType.MultilineText)]
         public string DriverNotes { get; set; }
         public int GiftCardsEligible { get; set; }
         public int FullBags { get; set; }

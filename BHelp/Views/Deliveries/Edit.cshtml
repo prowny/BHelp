@@ -4,24 +4,15 @@
 
 <html>
 <style>
-    #SaveButton {
-        background-color: blue;
-        color: white
-    }
-
-    #DeleteButton {
-        background-color: red;
-        color: white
-    }
-
-    #AddButton {
-        background-color: green;
-        color: white
-    }
+    #SaveButton {background-color: blue;color: white}
+    #DeleteButton {background-color: red;color: white}
+    #AddButton {background-color: green;color: white}
 </style>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Edit</title>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
     <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
 </head>
 <body>
@@ -37,25 +28,20 @@
                 {@Html.DropDownListFor(modelItem => Model.Notes, Model.FamilySelectList)}
             </span>
             <br />
-            <span><b>Children:</b>@Html.Label(Model.KidsCount.ToString())</span>&nbsp;
-            <span><b>Adults:</b>@Html.Label(Model.AdultsCount.ToString())</span>&nbsp;
-            <span><b>Seniors:</b>@Html.Label(Model.SeniorsCount.ToString())</span>&nbsp;
+            <span><b>Children:&nbsp;</b>@Html.Label(Model.KidsCount.ToString())</span>&nbsp;
+            <span><b>Adults:&nbsp;</b>@Html.Label(Model.AdultsCount.ToString())</span>&nbsp;
+            <span><b>Seniors:&nbsp;</b>@Html.Label(Model.SeniorsCount.ToString())</span>&nbsp;
             <span><b>Last Delivery:</b>&nbsp;</span>
             <span><b>Gift Cards Eligible:</b>&nbsp;@Html.Label(Model.GiftCardsEligible.ToString())</span>
             <hr />
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             @Html.HiddenFor(model => model.Id)
-
+        </div>
             <div class="form-group">
-                @Html.TextBox("Delivery Date", Model.DeliveryDate,
-                    new { id = "DeliveryDate", style = "width: 75px;" })
-                <span style="color:darkmagenta">&#8592;Click to change</span>  @*Html left-arrow*@
                 @Html.LabelFor(model => model.DeliveryDate, htmlAttributes: new { @class = "control-label col-md-2" })
-                @*<div class="col-md-10">
-                        @Html.EditorFor(model => model.DeliveryDate, new {htmlAttributes = new {@class = "form-control"}})
-                        @Html.ValidationMessageFor(model => model.DeliveryDate, "", new {@class = "text-danger"})
-                    </div>*@
-            </div>
+                @Html.TextBox("Delivery Date", Model.DeliveryDate.ToString("MM/dd/yyyy"),
+                    new {id = "DeliveryDate", style = "width: 75px;"})
+                <span style="color: darkmagenta">&#8592;Click to change</span> @*Html left-arrow*@
 
             <div class="form-group">
                 @Html.LabelFor(model => model.Notes, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -118,4 +104,13 @@
         window.$("#DeliveryDate").datepicker();
     });
 </script> @*DeliveryDate datepicker*@
+<script>
+    $(document).ready(function () {
+        $(".datepicker").datepicker({
+            dateFormat: "dd-mm-yy",
+            changemonth: true,
+            changeyear: true
+        });
+    });
+</script>
 

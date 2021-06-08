@@ -198,7 +198,7 @@ namespace BHelp.Controllers
             {
                 Id = delivery.Id,
                 ClientId = delivery.ClientId,
-                DeliveryDate = delivery.DeliveryDate,
+                DeliveryDate = Convert.ToDateTime(delivery.DeliveryDate.ToString("MM/dd/yyyy")),
                 ODNotes = delivery.ODNotes,
                 DriverNotes = delivery.DriverNotes,
                 DateDelivered = delivery.DateDelivered,
