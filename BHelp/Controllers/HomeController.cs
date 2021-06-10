@@ -11,6 +11,10 @@ namespace BHelp.Controllers
         {
             return View();
         }
+        public ActionResult MaintainUsers()
+        {
+            return RedirectToAction("Index", "Users");
+        }
 
         public ActionResult ReturnToDashboard()
         {
