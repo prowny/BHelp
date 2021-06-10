@@ -183,6 +183,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HouseholdController.cs" />
     <Compile Include="Controllers\ODController.cs" />
+    <Compile Include="Controllers\UserRolesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="DataAccessLayer\BHelpContext.cs" />
     <Compile Include="Global.asax.cs">
@@ -240,7 +241,12 @@
     <Compile Include="Migrations\202105310115064_AddDriverIdToDelivery.designer.cs">
       <DependentUpon>202105310115064_AddDriverIdToDelivery.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202106101808523_UserRolesUpgrade.cs" />
+    <Compile Include="Migrations\202106101808523_UserRolesUpgrade.designer.cs">
+      <DependentUpon>202106101808523_UserRolesUpgrade.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\ApplicationRole.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Client.cs" />
     <Compile Include="Models\Delivery.cs" />
@@ -250,6 +256,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
+    <Compile Include="ViewModels\AddEditUserRolesViewModel.cs" />
     <Compile Include="ViewModels\DeliveryViewModel.cs" />
     <Compile Include="ViewModels\ClientViewModel.cs" />
     <Compile Include="ViewModels\FamilyViewModel.cs" />
@@ -434,6 +441,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202105310115064_AddDriverIdToDelivery.resx">
       <DependentUpon>202105310115064_AddDriverIdToDelivery.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106101808523_UserRolesUpgrade.resx">
+      <DependentUpon>202106101808523_UserRolesUpgrade.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

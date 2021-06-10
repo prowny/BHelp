@@ -16,6 +16,10 @@ namespace BHelp.Controllers
             return RedirectToAction("Index", "Users");
         }
 
+        public ActionResult MaintainUserRoles()
+        {
+            return RedirectToAction("Index", "UserRoles");
+        }
         public ActionResult ReturnToDashboard()
         {
             return RedirectToAction("Index", "Home");
