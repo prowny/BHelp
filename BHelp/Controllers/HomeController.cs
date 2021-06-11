@@ -16,6 +16,14 @@ namespace BHelp.Controllers
             return RedirectToAction("Index", "Users");
         }
 
+        public ActionResult UpdateMyProfile()
+        {
+            return RedirectToAction("Edit", "UpdateMyProfile");
+        }
+        public ActionResult ChangeMyPassword()
+        {
+            return RedirectToAction("ResetPassword", "Account");
+        }
         public ActionResult MaintainUserRoles()
         {
             return RedirectToAction("Index", "UserRoles");

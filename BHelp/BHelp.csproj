@@ -183,6 +183,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HouseholdController.cs" />
     <Compile Include="Controllers\ODController.cs" />
+    <Compile Include="Controllers\UpdateMyProfileController.cs" />
     <Compile Include="Controllers\UserRolesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="DataAccessLayer\BHelpContext.cs" />
@@ -262,6 +263,7 @@
     <Compile Include="ViewModels\FamilyViewModel.cs" />
     <Compile Include="ViewModels\HouseholdViewModel.cs" />
     <Compile Include="Controllers\DeliveriesController.cs" />
+    <Compile Include="ViewModels\UpdateMyProfileViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -385,6 +387,7 @@
     <Content Include="Views\UserRoles\Delete.cshtml" />
     <Content Include="Views\UserRoles\Create.cshtml" />
     <Content Include="Views\Users\Edit.cshtml" />
+    <Content Include="Views\UpdateMyProfile\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

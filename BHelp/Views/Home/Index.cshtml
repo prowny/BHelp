@@ -1,9 +1,5 @@
 ﻿@model BHelp.Models.ApplicationUser
-
-@{
-    Layout = null;
-}
-
+@{ Layout = null; }
 <!DOCTYPE html>
 
 <html>
@@ -34,15 +30,24 @@
     </table>
 </div>
 
-<div>
-    <strong>Developer Menu</strong><br />
-    <a href="@Url.Action("UploadClients", "Home")">Upload Clients Utility</a><br />
-    <a href="@Url.Action("UploadAdults", "Home")">Upload Adults/Kids Utility</a><br />
-    <a href="@Url.Action("ReverseNames", "Home")">Reverse First & Last Names</a><br />
-    <a href="@Url.Action("MaintainUsers", "Home")">Maintain Website Users</a><br />
-    <a href="@Url.Action("MaintainUserRoles", "Home")">Maintain User Permissions (&quot;Roles&quot;)</a><br />
-    <br />
-</div>
+@if (User.IsInRole("Developer"))
+{
+    <div>
+        <strong>Developer Menu</strong><br/>
+        <a href="@Url.Action("UploadClients", "Home")">Upload Clients Utility</a><br/>
+        <a href="@Url.Action("UploadAdults", "Home")">Upload Adults/Kids Utility</a><br/>
+        <a href="@Url.Action("ReverseNames", "Home")">Reverse First & Last Names</a><br/>
+    </div>
+}
+
+@if (User.IsInRole("Administrator"))
+{
+    <div>
+        <a href="@Url.Action("MaintainUsers", "Home")">Maintain Website Users</a><br/>
+        <a href="@Url.Action("MaintainUserRoles", "Home")">Maintain User Permissions (&quot;Roles&quot;)</a><br/>
+        <br/>
+    </div>
+}
 
 <div>
     <strong>Staff Menu</strong><br />
@@ -52,12 +57,19 @@
     <a href="@Url.Action("Index", "Deliveries")">Maintain Deliveries</a><br />
 </div>
 <br />
-<div>
-    <strong>Officer of the Day Menu</strong><br />
-    <a href="@Url.Action("Index", "OD")">Call Log - OD Section</a><br />
-</div>
+
+@if (User.IsInRole("OfficerOfTheDay"))
+{
+    <div>
+        <strong>Officer of the Day Menu</strong><br/>
+        <a href="@Url.Action("Index", "OD")">Call Log - OD Section</a><br/>
+    </div>
+}
 <br />
 <div>
+    <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br />
+    <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br />
+    <br/>
     @Html.AntiForgeryToken()
     <a href="@Url.Action("Logout", "Home")">LogOut</a>
 </div>
