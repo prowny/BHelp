@@ -183,6 +183,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HouseholdController.cs" />
     <Compile Include="Controllers\ODController.cs" />
+    <Compile Include="Controllers\ResetAnyPasswordController.cs" />
     <Compile Include="Controllers\UpdateMyProfileController.cs" />
     <Compile Include="Controllers\UserRolesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
@@ -332,6 +333,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\ResetAnyPassword.js" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -388,6 +390,7 @@
     <Content Include="Views\UserRoles\Create.cshtml" />
     <Content Include="Views\Users\Edit.cshtml" />
     <Content Include="Views\UpdateMyProfile\Edit.cshtml" />
+    <Content Include="Views\ResetAnyPassword\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

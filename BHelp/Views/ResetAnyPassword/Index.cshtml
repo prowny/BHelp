@@ -1,0 +1,86 @@
+﻿@model BHelp.ViewModels.ResetAnyPasswordViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    @*<script src="~/Scripts/jquery-3.3.1.js"></script>*@
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    @*Put page javascript in a separate .js file where breaks can be set during debugging:*@
+    <script src="@Url.Content("/Scripts/ResetAnyPassword.js")"></script>
+    <style>
+        #userEmail {
+            color: blue;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="Main">
+        @* ReSharper disable once Mvc.ActionNotResolved *@
+        @using (Html.BeginForm("Index", "ResetAnyPassword", FormMethod.Post))
+        {
+            <table>
+                <tr>
+                    <td></td>
+                    <td style="text-decoration:underline"><strong>Reset Any User's Password</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Id:</strong></td>
+                    <td>@Html.DropDownList("user_Id", Model.UserNames)</td>
+                </tr>
+                <tr>
+                    <td id="userName"></td>
+                    <td id="userEmail"></td>
+                    <td id="userPhone"></td>
+                </tr>
+            </table>
+        }
+    </div>
+
+    <div id="EnterNewPasswordDiv" style="display:none">
+        <table>
+            <tr>
+                <td><strong>Enter New Password:&nbsp;</strong></td>
+                <td>
+                <td>
+                    @Html.TextBoxFor(model => model.Password, new { id = "newPassword" })
+                </td>
+                <td>
+                    <a href="#" id="SaveNewPassword"> <img src="~/Images/save-button.png" style="border:none" /> </a>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="ReturnToDashboard">
+        <br>
+        @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+        <br />
+        <a href="@Url.Action("Logout", "Home")">LogOut</a>
+    </div>
+
+    <script type="text/javascript">
+        $("#user_Id").change(GetUserResetInfo);
+    </script>
+
+    <script type="text/javascript">
+        $("#SaveNewPassword").click(function () {
+            SaveNewPassword();
+        });
+    </script>
+
+    <script type="text/javascript">
+        $("#userEmail").click(function () {
+            EmailToUser();
+        });
+    </script>
+
+</body>
+</html>
+"@Url.Action("ResetAnyPassword", "Account")">Reset Any Password<br />
