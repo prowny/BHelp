@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
+using BHelp.ViewModels;
 
 namespace BHelp.Controllers
 {
@@ -39,20 +40,58 @@ namespace BHelp.Controllers
         // GET: Clients/Create
         public ActionResult Create()
         {
-            return View();
+            var viewModel =new ClientViewModel();
+            // Empty family members:  
+            viewModel.FamilyMembers=new List<FamilyMember>();
+            for (int i = 0; i < 10; i++)
+            {
+                var newMember = new FamilyMember
+                { Id = i };
+                viewModel.FamilyMembers.Add(newMember);
+            }
+            return View(viewModel);
         }
 
         // POST: Clients/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Active,FirstName,LastName,DateOfBirth,StreetNumber,StreetName,City,Zip,Phone,Notes")] Client client)
+        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Age,StreetNumber,StreetName,City,Zip,Phone,Notes,FamilyMembers")] ClientViewModel client)
         {
             if (ModelState.IsValid)
             {
-                db.Clients.Add(client);
+                var newClient = new Client()
+                {
+                    Active = true,
+                    DateOfBirth = DateTime.Today.AddYears(-client.Age),
+                    FirstName = client.FirstName,
+                    LastName = client.LastName,
+                    StreetNumber = client.StreetNumber,
+                    StreetName = client.StreetName,
+                    Zip = client.Zip,
+                    Notes = client.Notes
+                };
+                
+                db.Clients.Add(newClient);
                 db.SaveChanges();
+                int clientId = newClient.Id;
+
+                foreach (var member in client.FamilyMembers)
+                {
+                    if (member.FirstName != null || member.LastName != null)
+                    {
+                        var newMember = new FamilyMember()
+                        {
+                            ClientId = clientId,
+                            FirstName = member.FirstName,
+                            LastName = member.LastName,
+                            DateOfBirth = DateTime.Today.AddYears(-member.Age),
+                            Active = true
+                        };
+                        db.FamilyMembers.Add(newMember);
+                        db.SaveChanges();
+                    }
+                }
+                
                 return RedirectToAction("Index");
             }
 

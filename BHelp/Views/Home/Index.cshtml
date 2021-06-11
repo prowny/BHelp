@@ -40,23 +40,27 @@
     </div>
 }
 
-@if (User.IsInRole("Administrator"))
+@if (User.IsInRole("Administrator") || User.IsInRole("Developer"))
 {
     <div>
+        <strong>Administrator Menu</strong><br/>
         <a href="@Url.Action("MaintainUsers", "Home")">Maintain Website Users</a><br/>
         <a href="@Url.Action("MaintainUserRoles", "Home")">Maintain User Permissions (&quot;Roles&quot;)</a><br/>
-        <a href="@Url.Action("ResetAnyPassword", "Account")">Reset Any Password</a><br />
+        <a href="@Url.Action("ResetAnyPassword", "Account")">Reset Any Password</a><br/>
         <br/>
     </div>
 }
 
-<div>
-    <strong>Staff Menu</strong><br />
-    <a href="@Url.Action("Index", "Clients")">Maintain Clients (Head of Household)</a><br />
-    <a href="@Url.Action("Index", "FamilyMembers")">Maintain Household Members (Family)</a><br />
-    <a href="@Url.Action("Index", "Household")">Maintain Households</a><br />
-    <a href="@Url.Action("Index", "Deliveries")">Maintain Deliveries</a><br />
-</div>
+@if (User.IsInRole("Staff") || User.IsInRole("Administrator"))
+{
+    <div>
+        <strong>Staff Menu</strong><br/>
+        <a href="@Url.Action("Index", "Clients")">Maintain Clients (Head of Household)</a><br/>
+        <a href="@Url.Action("Index", "FamilyMembers")">Maintain Household Members (Family)</a><br/>
+        <a href="@Url.Action("Index", "Household")">Maintain Households</a><br/>
+        <a href="@Url.Action("Index", "Deliveries")">Maintain Deliveries</a><br/>
+    </div>
+}
 <br />
 
 @if (User.IsInRole("OfficerOfTheDay"))

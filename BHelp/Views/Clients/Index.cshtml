@@ -1,7 +1,5 @@
 ﻿@model IEnumerable<BHelp.Models.Client>
-@{
-    Layout = null; 
-}
+@{ Layout = null; }
 <!DOCTYPE html>
 
 <html>
@@ -9,34 +7,20 @@
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
     <style>
-        p.indent {
-            padding-left: 1em
-        }
-
-        div {
-            padding-left: 10px
-        }
+        p.indent {padding-left: 1em}
+        div {padding-left: 10px}
     </style>
 </head>
 <body>
     <table class="table">
+        <tr><td>&nbsp;&nbsp; User Name:&nbsp; @User.Identity.Name</td></tr>
         <tr>
-            <td>
-                &nbsp;&nbsp; User Name:&nbsp; @User.Identity.Name
-            </td>
-        </tr>
-        <tr></tr>
-        <tr>
-            <td>
-                @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
-            </td>
-        </tr>
     </table>
     <h4>Maintain Clients (Households)</h4>
-
-<p>
-    @Html.ActionLink("Create New Client", "Create")
-</p>
+    <table>
+        <tr><td> @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })</td></tr>
+        <tr><td>@Html.ActionLink("Create New Client", "Create")</td></tr>
+    </table>
 
 <table class="table">
     <tr>

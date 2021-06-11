@@ -19,10 +19,10 @@ namespace BHelp.ViewModels
         [DisplayName("Client Last Name")]
         public string LastName { get; set; }
 
-        [DisplayName("Date of Birth")]
-        [Column(TypeName = "Date")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DateOfBirth { get; set; }
+
+        [DisplayName("Age")]
+        public int Age { get; set; }
         
         [DisplayName("Street Number")]
         public string StreetNumber { get; set; }
@@ -38,6 +38,7 @@ namespace BHelp.ViewModels
 
         public string Phone { get; set; }
 
+        [DataType(DataType.MultilineText)]
         public string Notes { get; set; }
         
         public string FullName
