@@ -1,0 +1,54 @@
+﻿@model BHelp.ViewModels.AddEditUserRolesViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title> 
+</head>
+<body>
+<table class="table">
+    <tr><td>&nbsp;&nbsp; User Name:&nbsp; @User.Identity.Name</td></tr>
+</table>
+<h4>Maintain User Permissions (&quot;Roles&quot;)</h4>
+<table>
+    <tr><td>@Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })</td></tr>
+    <tr><td>@Html.ActionLink("Grant New User Permission", "Create")</td></tr>
+</table>
+
+<table class="table">   
+    <tr>
+        <td><b>User Name: Name / Role</b></td>
+        <td></td>
+        <td>Email (to notify user)</td>
+    </tr>
+    @foreach (var item in Model.UserNameRoles)
+    { 
+        <tr>
+            <td>
+                @item.Name
+            </td> 
+            <td>
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })  |
+            </td>
+            @*<td id="UserEmail">
+                @if (item.Name.Contains("Active"))
+                {  
+                    <a href="mailto:@(item.Email)?Subject=Activation%20Notice%20-%20Seneca%20Heights%20Education%20Program%20/%20Healthy%20Food%20Every%20Day%20Program&Body=Your%20account%20has%20been%20activated.">@item.Email</a>
+                }
+            </td>*@
+        </tr>
+    }
+</table>
+<br />
+<table>
+    <tr>
+        <td>
+            @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+        </td>
+    </tr>
+</table> 
+
+</body>
+</html>

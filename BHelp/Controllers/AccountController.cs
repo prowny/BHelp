@@ -222,7 +222,8 @@ namespace BHelp.Controllers
                             }
                         }
                     }
-                    return RedirectToAction("Login", "Account");
+                    //return RedirectToAction("Login", "Account");
+                    return RedirectToAction("Index", "Users");
                 }
                 AddErrors(result);
             }

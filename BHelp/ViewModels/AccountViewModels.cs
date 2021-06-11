@@ -76,7 +76,7 @@ namespace BHelp.ViewModels
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
-        [Required]
+        //[Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
