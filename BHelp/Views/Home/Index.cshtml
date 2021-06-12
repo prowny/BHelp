@@ -39,7 +39,7 @@
         <a href="@Url.Action("ReverseNames", "Home")">Reverse First & Last Names</a><br/>
     </div>
 }
-
+    <br/>
 @if (User.IsInRole("Administrator") || User.IsInRole("Developer"))
 {
     <div>
@@ -63,7 +63,7 @@
 }
 <br />
 
-@if (User.IsInRole("OfficerOfTheDay"))
+@if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("Administrator"))
 {
     <div>
         <strong>Officer of the Day Menu</strong><br/>

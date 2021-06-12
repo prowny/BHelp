@@ -154,7 +154,7 @@ namespace BHelp.Controllers
 
         public ActionResult CreateNewHousehold()
         {
-            return null;
+            return RedirectToAction("Create", "Clients");
         }
         public ActionResult ReturnToDashboard()
         {

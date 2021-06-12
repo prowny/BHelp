@@ -17,13 +17,14 @@ namespace BHelp.Controllers
         // GET: Clients
         public ActionResult Index()
         {
-            var clientList = db.Clients.Where(c => c.Active).OrderBy(c => c.LastName).ToList();
+            var clientList = db.Clients.OrderBy(c => c.LastName).ToList();
             var clientView = new List<ClientViewModel>();
             foreach (var client in clientList)
             {
                 var household = new ClientViewModel()
                 {
                     Id = client.Id,
+                    Active = client.Active,
                     FirstName = client.FirstName,
                     LastName = client.LastName,
                     Age = AppRoutines.GetAge(client.DateOfBirth,DateTime.Today),
@@ -154,7 +155,7 @@ namespace BHelp.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Active,FirstName,LastName,DateOfBirth," +
+        public ActionResult Edit([Bind(Include = "Id,Active,FirstName,LastName,Age," +
                            "StreetNumber,StreetName,City,Zip,Phone,Notes")] Client client)
         {
             if (ModelState.IsValid)

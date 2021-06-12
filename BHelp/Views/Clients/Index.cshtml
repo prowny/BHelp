@@ -11,7 +11,7 @@
         .col25 {width: 25px;text-align: center}
         .col40 {width: 40px;text-align: left}
         .col50 {width: 50px;text-align: left}
-        .col60 {width: 60px;text-align: left}
+        .col75{width: 75px;text-align: left}
         .col100{ width: 100px; text-align: left;}
     </style>
 </head>
@@ -20,31 +20,32 @@
         <tr><td>&nbsp;&nbsp; User Name:&nbsp; @User.Identity.Name</td></tr>
         <tr>
     </table>
-    <h4>Maintain Clients (Households)</h4>
+    <h3>Add/Edit Clients</h3>
     <table>
-        <tr><td> @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })</td></tr>
-        <tr><td>@Html.ActionLink("Create New Client", "Create")</td></tr>
+        <tr>
+            <td>@Html.ActionLink("Create New Client", "Create")</td>
+            <td>&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })</td>
+        </tr>
     </table>
 
 <table class="table">
     <tr>
-        <th><div class="col25">@Html.Label("Active")</div></th>
-        <th><div class="col60">@Html.Label("Last Name")</div></th>
-        <th><div class="col60">@Html.Label("First Name")</div></th>
-        <th><div>@Html.Label("Age")</div></th>
-        <th><div class="col50">@Html.Label("St#")</div></th>
-        <th><div class="col100">@Html.Label("Street")</div></th>
-        <th><div class="col100">@Html.Label("City")</div></th>
-        <th><div class="col25">@Html.Label("Zip")</div></th>
-        <th><div class="col100">@Html.Label("Phone")</div></th>
-        <th><div class="col100">@Html.Label("Notes")</div></th>
-        <th></th>
+        <td><div class="col50">@Html.Label("Active")</div></td>
+        <td><div class="col75">@Html.Label("Last Name")</div></td>
+        <td><div class="col75">@Html.Label("First Name")</div></td>
+        <td><div>@Html.Label("Age")</div></td>
+        <td><div class="col50">@Html.Label("St#")</div></td>
+        <td><div class="col100">@Html.Label("Street")</div></td>
+        <td><div class="col100">@Html.Label("City")</div></td>
+        <td><div class="col25">@Html.Label("Zip")</div></td>
+        <td><div class="col100">@Html.Label("Phone")</div></td>
+        <td><div class="col100">@Html.Label("Notes")</div></td>
     </tr>
 
     @foreach (var item in Model)
     {
         <tr>
-            <td>@Html.DisplayFor(modelItem => item.Active)</td>
+            <td style="text-align: center">@Html.DisplayFor(modelItem => item.Active)</td>
             <td>@Html.DisplayFor(modelItem => item.LastName)</td>
             <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
             <td>@Html.DisplayFor(modelItem => item.Age)</td>
