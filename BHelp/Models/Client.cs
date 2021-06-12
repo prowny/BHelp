@@ -70,5 +70,8 @@ namespace BHelp.Models
        
         [NotMapped]
         public IEnumerable<Client> SearchResults { get; set; }
+
+        [NotMapped]
+        public int Age { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿@model IEnumerable<BHelp.Models.Client>
+﻿@using System.Web.Mvc.Html
+@model IEnumerable<BHelp.ViewModels.ClientViewModel>
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -7,8 +8,11 @@
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
     <style>
-        p.indent {padding-left: 1em}
-        div {padding-left: 10px}
+        .col25 {width: 25px;text-align: center}
+        .col40 {width: 40px;text-align: left}
+        .col50 {width: 50px;text-align: left}
+        .col60 {width: 60px;text-align: left}
+        .col100{ width: 100px; text-align: left;}
     </style>
 </head>
 <body>
@@ -24,64 +28,40 @@
 
 <table class="table">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LastName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateOfBirth)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.StreetNumber)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.StreetName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.City)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Zip)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Phone)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Notes)
-        </th>
+        <th><div class="col25">@Html.Label("Active")</div></th>
+        <th><div class="col60">@Html.Label("Last Name")</div></th>
+        <th><div class="col60">@Html.Label("First Name")</div></th>
+        <th><div>@Html.Label("Age")</div></th>
+        <th><div class="col50">@Html.Label("St#")</div></th>
+        <th><div class="col100">@Html.Label("Street")</div></th>
+        <th><div class="col100">@Html.Label("City")</div></th>
+        <th><div class="col25">@Html.Label("Zip")</div></th>
+        <th><div class="col100">@Html.Label("Phone")</div></th>
+        <th><div class="col100">@Html.Label("Notes")</div></th>
         <th></th>
     </tr>
 
     @foreach (var item in Model)
     {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateOfBirth)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StreetNumber)
-            </td>
-            <td>
+            <td>@Html.DisplayFor(modelItem => item.Active)</td>
+            <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+            <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+            <td>@Html.DisplayFor(modelItem => item.Age)</td>
+            <td>@Html.DisplayFor(modelItem => item.StreetNumber)</td>
+            <td title=@item.StreetToolTip>
                 @Html.DisplayFor(modelItem => item.StreetName)
             </td>
-            <td>
+            <td title=@item.CityToolTip>
                 @Html.DisplayFor(modelItem => item.City)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Zip)
             </td>
-            <td>
+            <td title=@item.PhoneToolTip>
                 @Html.DisplayFor(modelItem => item.Phone)
             </td>
-            <td>
+            <td title=@item.NotesToolTip>
                 @Html.DisplayFor(modelItem => item.Notes)
             </td>
             <td>
