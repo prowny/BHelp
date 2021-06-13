@@ -41,6 +41,7 @@ namespace BHelp.Models
 
         public string Phone { get; set; }
 
+        [DataType(DataType.MultilineText)]
         public string Notes { get; set; }
 
         [NotMapped]
@@ -48,6 +49,10 @@ namespace BHelp.Models
         {
             get { return string.Format("{0} {1}", FirstName, LastName); }
         }
+
+        [NotMapped]
+        public IEnumerable<SelectListItem> ZipCodes { get; set; }
+
         [NotMapped]
         public List<FamilyMember> FamilyMembers { get; set; }
 

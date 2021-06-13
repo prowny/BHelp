@@ -13,6 +13,22 @@ namespace BHelp
     // ReSharper disable once ClassNeverInstantiated.Global
     public class AppRoutines
     {
+        public static List<SelectListItem> GetZipCodes()
+        {
+            List<SelectListItem> zipCodeList = new List<SelectListItem>();
+            string[] lines =
+                System.IO.File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/BHelpZipCodes.txt");
+            foreach (var line in lines)
+            {
+                if (line.Substring(0, 1) != "/")
+                {
+                    var selListItem = new SelectListItem() { Value = line, Text = line };
+                    zipCodeList.Add(selListItem);
+                }
+            }
+            return zipCodeList;
+        }
+
         public static int GetAge(DateTime dob, [Optional] DateTime today)
         {
             if (today.ToString(CultureInfo.CurrentCulture).IsNullOrEmpty())
@@ -36,7 +52,7 @@ namespace BHelp
                     foreach (var mbr in client.FamilyMembers)
                     {
                         var text = mbr.FirstName + " " + mbr.LastName + "/" +
-                                   AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
+                                   GetAge(mbr.DateOfBirth, DateTime.Today);
                         var selListItem = new SelectListItem() { Value = mbr.FirstName, Text = text };
                         householdList.Add(selListItem);
                     }

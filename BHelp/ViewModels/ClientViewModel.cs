@@ -39,7 +39,9 @@ namespace BHelp.ViewModels
 
         [DataType(DataType.MultilineText)]
         public string Notes { get; set; }
-        
+
+        public IEnumerable<SelectListItem> ZipCodes { get; set; }
+
         public string FullName
         {
             get { return string.Format("{0} {1}", FirstName, LastName); }

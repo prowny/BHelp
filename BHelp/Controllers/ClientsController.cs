@@ -83,6 +83,7 @@ namespace BHelp.Controllers
                 { Id = i };
                 viewModel.FamilyMembers.Add(newMember);
             }
+            viewModel.ZipCodes = AppRoutines.GetZipCodes();
             return View(viewModel);
         }
 
@@ -145,6 +146,16 @@ namespace BHelp.Controllers
             if (client == null)
             {
                 return HttpNotFound();
+            }
+            client.ZipCodes = AppRoutines.GetZipCodes();
+            client.Age = AppRoutines.GetAge(client.DateOfBirth, DateTime.Today);
+            foreach (var item in client.ZipCodes)
+            {
+                if (item.Value == client.Zip)
+                {
+                    item.Selected = true;
+                    break;
+                }
             }
             return View(client);
         }

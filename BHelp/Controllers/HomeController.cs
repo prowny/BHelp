@@ -61,5 +61,11 @@ namespace BHelp.Controllers
             Utilities.ReverseNames();
             return RedirectToAction("Index", "Home");
         }
+
+        public ActionResult GetZipCodes()
+        {
+            AppRoutines.GetZipCodes();
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

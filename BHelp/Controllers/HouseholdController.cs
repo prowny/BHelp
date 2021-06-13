@@ -87,12 +87,12 @@ namespace BHelp.Controllers
             var client = db.Clients.Find(household.ClientId);
             if (client != null)
             {
-                client.StreetNumber = household.StreetNumber;
-                client.StreetName = household.StreetName;
-                client.City = household.City;
+                client.StreetNumber = household.StreetNumber + "";
+                client.StreetName = household.StreetName + "";
+                client.City = household.City + "";
                 client.Zip = household.Zip;
-                client.Notes = household.Notes;
-                client.Phone = household.Phone;
+                client.Notes = household.Notes + "";
+                client.Phone = household.Phone + "";
 
                 foreach (var member in household.FamilyMembers)
                 {
