@@ -51,6 +51,9 @@ namespace BHelp.Models
         }
 
         [NotMapped]
+        public string LastFirstName => $"{LastName + ", "} {FirstName}";
+
+        [NotMapped]
         public IEnumerable<SelectListItem> ZipCodes { get; set; }
 
         [NotMapped]

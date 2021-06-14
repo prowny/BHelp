@@ -29,5 +29,7 @@ namespace BHelp.ViewModels
         public int Age { get; set; }
         public List<FamilyViewModel> FamilyMembers { get; set; }
         //public virtual IEnumerable<SelectListItem> FamilyMembers { get; set; }
+
+        public IEnumerable<SelectListItem> Clients { get; set; }
     }
 }

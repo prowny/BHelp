@@ -1,9 +1,11 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
+using BHelp.ViewModels;
 
 namespace BHelp.Controllers
 {
@@ -14,7 +16,16 @@ namespace BHelp.Controllers
         // GET: FamilyMembers
         public ActionResult Index()
         {
-            return View(db.FamilyMembers.OrderBy(c => c.ClientId).ToList());
+            var familyView = new FamilyViewModel();
+            List<SelectListItem> clientList = new List<SelectListItem>();
+            var clients = db.Clients.OrderBy(c => c.LastName).ToList();
+            foreach (var client in clients)
+            {
+                var selectListItem = new SelectListItem() { Value = client.Id.ToString(), Text = client.LastFirstName};
+                clientList.Add(selectListItem);
+            }
+            familyView.Clients = clientList;
+            return View(familyView);
         }
 
         // GET: FamilyMembers/Details/5

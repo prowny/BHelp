@@ -1,8 +1,5 @@
-﻿@model IEnumerable<BHelp.Models.FamilyMember>
-
-@{
-    Layout = null;
-}
+﻿@model BHelp.ViewModels.FamilyViewModel
+@{ Layout = null; }
 <!DOCTYPE html>
 
 <html>
@@ -10,39 +7,33 @@
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
     <style>
-        p.indent {
-            padding-left: 1em
-        }
-
-        div {
-            padding-left: 10px
-        }
+        p.indent {padding-left: 1em}
+        div {padding-left: 10px}
     </style>
 </head>
 
 <body>
     <table class="table">
         <tr>
-            <td>
-                &nbsp;&nbsp; User Name:&nbsp; @User.Identity.Name
-            </td>
+            <td>&nbsp;&nbsp; User Name:&nbsp; @User.Identity.Name</td>
         </tr>
         <tr></tr>
         <tr>
-            <td>
-                @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
-            </td>
+            <td><b>Maintain Household Members</b></td>
         </tr>
     </table>
-<h4>Maintain Household Members)</h4>
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+
 <table class="table">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.ClientId)
-        </th>
+        <td style="font-size: small"><b>@Html.Label("Select Client")</b></td>
+    </tr>
+    <tr>
+        <td>@Html.DropDownList("client_Id", Model.Clients)</td>
+    </tr>
+</table>
+
+<table>
+    <tr>
         <th>
             @Html.DisplayNameFor(model => model.FirstName)
         </th>
@@ -55,7 +46,7 @@
         <th></th>
     </tr>
 
-    @foreach (var item in Model)
+    @*@foreach (var item in Model.FamilyMembers)
     {
         <tr>
             <td>
@@ -71,10 +62,9 @@
                 @Html.DisplayFor(modelItem => item.DateOfBirth)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new {id = item.Id})
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id })
             </td>
-        </tr>
-    }
+        </tr>*@
 </table>
 
 <br/>
