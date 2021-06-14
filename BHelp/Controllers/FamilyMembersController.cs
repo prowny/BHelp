@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -6,6 +7,7 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
+using Newtonsoft.Json;
 
 namespace BHelp.Controllers
 {
@@ -118,11 +120,24 @@ namespace BHelp.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             FamilyMember familyMember = db.FamilyMembers.Find(id);
-            db.FamilyMembers.Remove(familyMember);
+            if (familyMember != null) db.FamilyMembers.Remove(familyMember);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
 
+        public ActionResult GetFamilyDetails(int id /* drop down value */)
+        {
+            var members = db.FamilyMembers.Where(m => m.ClientId == id).ToList();
+            try
+            {
+                String json = JsonConvert.SerializeObject(members, Formatting.Indented);
+                return Content(json, "application/json");
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

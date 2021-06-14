@@ -13,20 +13,21 @@
     });
 }
 
-function SearchClients(text) {
-        $.ajax({
-            url: "/OD/SearchHouseholds",
-            data: { searchString: $("#SearchText").val() },
-            type: "POST",
-            success: function (data) {
-                var dummy = "";
-            },
-            error: function (jqxhr, status, exception) {
-                alert('Exception:', exception);
-                var dummy = "";       
-            }
-        });
-    }
+function SearchClients(text)
+{
+    $.ajax({
+        url: "/OD/SearchHouseholds",
+        data: { searchString: $("#SearchText").val() },
+        type: "POST",
+        success: function (data) {
+            var dummy = "";
+        },
+        error: function (jqxhr, status, exception) {
+            alert('Exception:', exception);
+            var dummy = "";       
+        }
+    });
+}
 
 function SearchHouseholds(text) {
     $.ajax({
@@ -43,5 +44,22 @@ function SearchHouseholds(text) {
             //var dummy = "";
         }
     });
+}
+
+function GetFamilyDetails(text)
+{
+    $.ajax({
+        url: "/FamilyMembers/GetFamilyDetails",
+        data: { Id: $("#client_Id").val() },
+        type: "GET",
+        success: function (data) {
+            var dummy = "";
+        },
+        error: function (jqxhr, status, exception) {
+            alert('Exception:', exception);
+            var dummy = "";
+        }
+    });
+
 }
 
