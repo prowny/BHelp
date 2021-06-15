@@ -7,7 +7,6 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
-using Newtonsoft.Json;
 
 namespace BHelp.Controllers
 {
@@ -27,6 +26,7 @@ namespace BHelp.Controllers
                 clientList.Add(selectListItem);
             }
             familyView.Clients = clientList;
+            familyView.FamilyMembers = new List<FamilyMember> {new FamilyMember()};
             return View(familyView);
         }
 
@@ -69,18 +69,15 @@ namespace BHelp.Controllers
         }
 
         // GET: FamilyMembers/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(int? Id) // Id contains Client.Id 
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            FamilyMember familyMember = db.FamilyMembers.Find(id);
-            if (familyMember == null)
-            {
-                return HttpNotFound();
-            }
-            return View(familyMember);
+            if (Id == null)
+            { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
+            var familyMembers = db.FamilyMembers.Where(m => m.ClientId == Id).ToList();
+            familyMembers.Add(new FamilyMember()); // One blank member
+            var familyView = new FamilyViewModel {FamilyMembers = familyMembers};
+
+            return View(familyView);
         }
 
         // POST: FamilyMembers/Edit/5
@@ -96,7 +93,8 @@ namespace BHelp.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(familyMember);
+
+            return null;  // View(familyMember);
         }
 
         // GET: FamilyMembers/Delete/5
@@ -128,10 +126,13 @@ namespace BHelp.Controllers
         public ActionResult GetFamilyDetails(int id /* drop down value */)
         {
             var members = db.FamilyMembers.Where(m => m.ClientId == id).ToList();
+            members.Add(new FamilyMember()); /*add a blank additional family member*/ 
+
             try
             {
-                String json = JsonConvert.SerializeObject(members, Formatting.Indented);
-                return Content(json, "application/json");
+                return RedirectToAction("UpdateHousehold", "OD", new {Id=id});
+                //String json = JsonConvert.SerializeObject(members, Formatting.Indented);
+                //return Content(json, "application/json");
             }
             catch (Exception)
             {

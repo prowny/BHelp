@@ -37,21 +37,27 @@
     </tr>
 </table>
 
-<table>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LastName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateOfBirth)
-        </th>
-        <th></th>
-    </tr>
+<div id="FamilyMembersDiv" style="display:none">
+    <table>
+        <tr>
+            <td><b>@Html.DisplayNameFor(model => model.FirstName)</b></td>
+            <td><b> @Html.DisplayNameFor(model => model.LastName)</b></td>
+            <td><b> @Html.DisplayNameFor(model => model.Age)</b></td>
+        </tr>
+        @for (int i = 0; i < Model.FamilyMembers.Count; i++)
+        {
+            @Html.HiddenFor(mbr => Model.FamilyMembers[i].Id)
+            @Html.HiddenFor(mbr => Model.FamilyMembers[i].ClientId)
+        <tr>
+            <td>@Html.EditorFor(modelItem => Model.FamilyMembers[i].FirstName)</td>
+            <td>@Html.EditorFor(modelItem => Model.FamilyMembers[i].LastName)</td>
+            <td>@Html.EditorFor(modelItem => Model.FamilyMembers[i].Age)</td>
+        </tr>
+    }
+    </table>
+</div>
 
-    @*@foreach (var item in Model.FamilyMembers)
+@*@foreach (var item in Model.FamilyMembers)
     {
         <tr>
             <td>
@@ -70,7 +76,7 @@
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id })
             </td>
         </tr>*@
-</table>
+
 
 <br/>
 <div id="ReturnToDashboard">

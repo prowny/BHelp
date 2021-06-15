@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
+using BHelp.Models;
 
 namespace BHelp.ViewModels
 {
@@ -19,17 +20,8 @@ namespace BHelp.ViewModels
 
         [DisplayName("Last Name")]
         public string LastName { get; set; }
-
-        [DisplayName("Date of Birth")]
-        [Column(TypeName = "Date")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateTime DateOfBirth { get; set; }
-
-        [NotMapped]
         public int Age { get; set; }
-        public List<FamilyViewModel> FamilyMembers { get; set; }
-        //public virtual IEnumerable<SelectListItem> FamilyMembers { get; set; }
-
+        public List<FamilyMember> FamilyMembers { get; set; }
         public IEnumerable<SelectListItem> Clients { get; set; }
     }
 }
