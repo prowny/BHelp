@@ -21,6 +21,9 @@ namespace BHelp.Controllers
             var clientView = new List<ClientViewModel>();
             foreach (var client in clientList)
             {
+                if (client.Phone == null)
+                {
+                    client.Phone = "";}
                 var household = new ClientViewModel()
                 {
                     Id = client.Id,
@@ -102,10 +105,10 @@ namespace BHelp.Controllers
                     LastName = client.LastName,
                     StreetNumber = client.StreetNumber,
                     StreetName = client.StreetName,
-                    Phone = client.Phone,
+                    Phone = client.Phone + "",
                     City = client.City,
                     Zip = client.Zip,
-                    Notes = client.Notes
+                    Notes = client.Notes + ""
                 };
                 
                 db.Clients.Add(newClient);
@@ -191,10 +194,8 @@ namespace BHelp.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Client client = db.Clients.Find(id);
-            if (client == null)
-            {
-                return HttpNotFound();
-            }
+            if (client == null) { return HttpNotFound(); }
+           
             return View(client);
         }
 
@@ -203,8 +204,15 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Client client = db.Clients.Find(id);
+            var openDeliveries = db.Deliveries.Where(d => d.ClientId == id && d.DateDelivered == null).ToList();
+            if (openDeliveries.Count > 0)
+            {
+                ModelState.AddModelError("", @"Client has open deliveries that must be removed first.");
+                return View();
+            }
+            var client = db.Clients.Find(id);
             if (client != null) db.Clients.Remove(client);
+            db.FamilyMembers.RemoveRange(db.FamilyMembers.Where(m => m.ClientId == id));
             db.SaveChanges();
             return RedirectToAction("Index");
         }

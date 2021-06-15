@@ -6,6 +6,7 @@
 <head>
     <style>
         #SaveButton {background-color: blue;color: white}
+        #DeleteButton {background-color: red;color: white}
         .agewidth {width: 10px}
     </style>
 </head>
@@ -18,6 +19,7 @@
         <hr/>
         @Html.ValidationSummary(true, "", new {@class = "text-danger"})
         @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model=> model.Delete, new {value = "0", id= "DeleteCheckboxHidden" })
 
         <div class="form-group">
             @Html.LabelFor(model => model.Active, htmlAttributes: new {@class = "control-label col-md-2"})
@@ -111,6 +113,5 @@
         @Html.ActionLink("Back to List", "Index")
     </div>
 }
-
 </body>
 </html>

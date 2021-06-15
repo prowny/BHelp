@@ -81,5 +81,8 @@ namespace BHelp.Models
 
         [NotMapped]
         public int Age { get; set; }
+
+        [NotMapped]
+        public bool Delete { get; set; }
     }
 }
