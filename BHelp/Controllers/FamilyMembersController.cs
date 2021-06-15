@@ -74,6 +74,10 @@ namespace BHelp.Controllers
             if (Id == null)
             { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
             var familyMembers = db.FamilyMembers.Where(m => m.ClientId == Id).ToList();
+            foreach (var mbr in familyMembers)
+            {
+                mbr.Age = AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
+            }
             familyMembers.Add(new FamilyMember()); // One blank member
             var familyView = new FamilyViewModel {FamilyMembers = familyMembers};
 

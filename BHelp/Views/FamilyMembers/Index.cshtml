@@ -18,15 +18,15 @@
 </head>
 
 <body>
-    <table class="table">
-        <tr>
-            <td>&nbsp;&nbsp; User Name:&nbsp; @User.Identity.Name</td>
-        </tr>
-        <tr></tr>
-        <tr>
-            <td><b>Maintain Household Members</b></td>
-        </tr>
-    </table>
+<table class="table">
+    <tr>
+        <td>&nbsp;&nbsp; User Name:&nbsp; @User.Identity.Name</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>Maintain Household Members</b></td>
+    </tr>
+</table>
 
 <table class="table">
     <tr>
@@ -48,12 +48,12 @@
         {
             @Html.HiddenFor(mbr => Model.FamilyMembers[i].Id)
             @Html.HiddenFor(mbr => Model.FamilyMembers[i].ClientId)
-        <tr>
-            <td>@Html.EditorFor(modelItem => Model.FamilyMembers[i].FirstName)</td>
-            <td>@Html.EditorFor(modelItem => Model.FamilyMembers[i].LastName)</td>
-            <td>@Html.EditorFor(modelItem => Model.FamilyMembers[i].Age)</td>
-        </tr>
-    }
+            <tr>
+                <td>@Html.EditorFor(modelItem => Model.FamilyMembers[i].FirstName)</td>
+                <td>@Html.EditorFor(modelItem => Model.FamilyMembers[i].LastName)</td>
+                <td>@Html.EditorFor(modelItem => Model.FamilyMembers[i].Age)</td>
+            </tr>
+        }
     </table>
 </div>
 
@@ -82,9 +82,8 @@
 <div id="ReturnToDashboard">
     @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new {})
 </div>
+</body>
+</html>
 <script type="text/javascript">
     $("#client_Id").change(GetFamilyDetails);
 </script>
-
-</body>
-</html>

@@ -20,22 +20,14 @@
     <div>
         @Html.AntiForgeryToken()
         <div class="form-horizontal">
-            <h3>Household</h3>
+            <h4>Household</h4>
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             @Html.HiddenFor(model => model.ClientId)
-
-            @*<div class="form-group" id="Active Flag">
-                @Html.LabelFor(model => model.Active, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    <div class="checkbox">
-                        @Html.EditorFor(model => model.Active)
-                        @Html.ValidationMessageFor(model => model.Active, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-            </div>*@
-            
-            <h3>Call Log - check/edit client info, then create a delivery</h3>
-            <div id="Address">
+            @if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("Administrator"))
+            {
+                <h4>Call Log - check/edit client info, then create a delivery</h4>
+            }
+                <div id="Address">
                 <table>
                     <tr>
                         <td><b>Household At:</b></td>
@@ -147,9 +139,12 @@
                     <input type="submit" value="Save Changes" class="btn btn-default" id="SaveButton"/>
                     <span style="color: darkmagenta">&#8592;Click this first if you made ANY changes</span>
                 </div>
-                <div>
-                    @Html.ActionLink( "Create a Delivery", "AddDelivery", "OD", new { clientId = Model.ClientId }, null)
-                </div>
+               @if (User.IsInRole("OfficerOfTheDay"))
+               {
+                   <div>
+                       @Html.ActionLink("Create a Delivery", "AddDelivery", "OD", new {clientId = Model.ClientId}, null)
+                   </div>
+               }
             </div>
         </div>
         <div>

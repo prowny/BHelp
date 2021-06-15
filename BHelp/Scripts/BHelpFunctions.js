@@ -1,6 +1,4 @@
-﻿var familyMembers = [];  // empty array
-
-function UpdateCallLogDate(callLogDate) {
+﻿function UpdateCallLogDate(callLogDate) {
     $.ajax({
         url: '/OD/Index',
         data: { callLogDate: callLogDate },
@@ -48,23 +46,18 @@ function SearchHouseholds(text) {
     });
 }
 
-function GetFamilyDetails(waitForMe) {
-    familyMembers = [];
+function GetFamilyDetails() {
     $.ajax({
         url: "/FamilyMembers/Edit",
         data: { Id: $("#client_Id").val() },
-        type: "GET",
+        type: "POST",
         success: function (data) {
-            data.forEach(function(FamilyMember) {
-                familyMembers.push(FamilyMember);
-            });
-            waitForMe();
             var dummy = "";
         },
-        error: function () {
-            var dummy = "";
+        error: function (jqxhr, status, exception) {
+            alert('Exception:', exception);
+            var dummy = ""; 
         }
     });
-
 }
 
