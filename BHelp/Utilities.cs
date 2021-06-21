@@ -143,5 +143,84 @@ namespace BHelp
 
             return true;
         }
+
+        public static Boolean UploadDeliveries()
+        {
+            //var db = new BHelpContext();
+            var count = 0;
+            var filePath = @"c:\TEMP\BH Call Log - April 2021.csv";
+            DataTable csvtable = new DataTable();
+            using (CsvReader csvReader = new CsvReader(new StreamReader(filePath), true))
+            { csvtable.Load(csvReader); }
+
+            foreach (DataRow row in csvtable.Rows)
+            {
+                Delivery delivery = new Delivery();
+                delivery.ClientId = GetClientId(row[2].ToString(), row[3].ToString());
+                delivery.ODId = GetUserId(row[1].ToString());
+                delivery.DriverId = GetUserId(row[16].ToString());
+                delivery.Notes = row[14].ToString();
+
+                if (IsDate(row[15].ToString()))/* && delivery.ClientId > 0)*/
+                {
+                    count++;
+                }
+
+                //db.Deliveries.Add(delivery);
+                //db.SaveChanges();
+                //System.Diagnostics.Debug.WriteLine(delivery.FirstName, delivery.LastName);
+            }
+            return true;
+        }
+
+        private static int GetClientId(string lastName, string firstName)
+        {
+            var db = new BHelpContext();
+            var client= db.Clients.FirstOrDefault(c => c.LastName == lastName 
+                                                       && c.FirstName == firstName);
+            if (client != null)
+            {
+                return client.Id;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        private static bool IsDate(string inputDate)
+        {
+            DateTime dat;
+            return DateTime.TryParse(inputDate, out dat);
+            //bool isDate = true;
+            //try
+            //{
+            //    DateTime dt = DateTime.Parse(inputDate);
+            //}
+            //catch
+            //{
+            //    isDate = false;
+            //}
+            //return isDate;
+        }
+
+        private static string GetUserId(string fullName)
+        {
+            if (fullName.Length < 5) { return ""; } //(Expect driver with only first name 'Jake')
+            string[] names = fullName.Split( ' ');
+            string firstName = names[0];
+            string lastName = names[1];
+                var db = new BHelpContext();
+            var user = db.Users.FirstOrDefault(u => u.FirstName == firstName
+                                                    && u.LastName == lastName);
+            if (user != null)
+            {
+                return user.Id;
+            }
+            else
+            {
+                return "";
+            }
+        }
     }
 }

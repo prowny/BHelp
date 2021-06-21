@@ -11,6 +11,7 @@ namespace BHelp.Controllers
         {
             return View();
         }
+
         public ActionResult MaintainUsers()
         {
             return RedirectToAction("Index", "Users");
@@ -20,20 +21,23 @@ namespace BHelp.Controllers
         {
             return RedirectToAction("Edit", "UpdateMyProfile");
         }
+
         public ActionResult ChangeMyPassword()
         {
             return RedirectToAction("ResetPassword", "Account");
         }
+
         public ActionResult MaintainUserRoles()
         {
             return RedirectToAction("Index", "UserRoles");
         }
+
         public ActionResult ReturnToDashboard()
         {
             return RedirectToAction("Index", "Home");
         }
-        
-      public ActionResult LogOut()
+
+        public ActionResult LogOut()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             Session.Abandon();
@@ -51,11 +55,13 @@ namespace BHelp.Controllers
             Utilities.UploadClients();
             return RedirectToAction("Index", "Home");
         }
+
         public ActionResult UploadAdults()
         {
             Utilities.UploadAdults();
             return RedirectToAction("Index", "Home");
         }
+
         public ActionResult ReverseNames()
         {
             Utilities.ReverseNames();
@@ -67,5 +73,12 @@ namespace BHelp.Controllers
             AppRoutines.GetZipCodes();
             return RedirectToAction("Index", "Home");
         }
+
+        public ActionResult UploadDeliveries()
+        {
+            Utilities.UploadDeliveries();
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
+
