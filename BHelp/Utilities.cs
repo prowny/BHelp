@@ -177,10 +177,11 @@ namespace BHelp
                     //db.SaveChanges();
                 }
 
-                if (IsDate(row[15].ToString()) && delivery.ClientId == 0)
+                if (IsDate(row[15].ToString()) && delivery.ClientId != 0)
                 {
                     // Create new delivery
                     count1++;
+                    delivery.DeliveryDate = Convert.ToDateTime(row[0].ToString());
                     delivery.ODId = GetUserId(row[1].ToString());
                     try { delivery.Children = Convert.ToInt32(row[9]); }
                     catch { delivery.Children = 0;}
