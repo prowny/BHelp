@@ -146,7 +146,7 @@ namespace BHelp
 
         public static Boolean UploadDeliveries()
         {
-            //var db = new BHelpContext();
+            var db = new BHelpContext();
             var count = 0;
             var filePath = @"c:\TEMP\BH Call Log - April 2021.csv";
             DataTable csvtable = new DataTable();
@@ -157,18 +157,45 @@ namespace BHelp
             {
                 Delivery delivery = new Delivery();
                 delivery.ClientId = GetClientId(row[2].ToString(), row[3].ToString());
-                delivery.ODId = GetUserId(row[1].ToString());
-                delivery.DriverId = GetUserId(row[16].ToString());
-                delivery.Notes = row[14].ToString();
+               
 
-                if (IsDate(row[15].ToString()))/* && delivery.ClientId > 0)*/
+                if (IsDate(row[15].ToString()) && delivery.ClientId == 0)
                 {
+                   // Create new client (with only head of household)
                     count++;
+                    Client client = new Client()
+                    {
+                        LastName = row[2].ToString(),
+                        FirstName = row[3].ToString(),
+                        StreetNumber = row[4].ToString(),
+                        StreetName = row[5].ToString(),
+                        City = row[6].ToString(),
+                        Zip = row[7].ToString(),
+                        Phone = row[8].ToString(),
+                        Notes = "Auto-added"
+                    };
+                    //db.Clients.Add(client);
+                    //db.SaveChanges();
                 }
 
-                //db.Deliveries.Add(delivery);
-                //db.SaveChanges();
-                //System.Diagnostics.Debug.WriteLine(delivery.FirstName, delivery.LastName);
+                if (IsDate(row[15].ToString()) && delivery.ClientId == 0)
+                {
+                    // Create new delivery
+                    delivery.ODId = GetUserId(row[1].ToString());
+                    delivery.Children = Convert.ToInt32(row[9]);
+                    delivery.Adults = Convert.ToInt32(row[10]);
+                    delivery.Seniors = Convert.ToInt32(row[11]);
+                    delivery.DriverId = GetUserId(row[16].ToString());
+                    delivery.ODNotes = row[14].ToString();
+                    delivery.DateDelivered = Convert.ToDateTime(row[15]);
+                    delivery.FullBags = Convert.ToInt32(row[17]);
+                    delivery.HalfBags = Convert.ToInt32(row[18]);
+                    delivery.KidSnacks = Convert.ToInt32(row[19]);
+                    delivery.GiftCards = Convert.ToInt32(row[20]);
+                    delivery.Notes = row[21].ToString();
+                    //db.Deliveries.Add(delivery);
+                    //db.SaveChanges();
+                }
             }
             return true;
         }

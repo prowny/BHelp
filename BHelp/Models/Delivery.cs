@@ -9,6 +9,9 @@ namespace BHelp.Models
     {
         public int Id { get; set; }
         public int ClientId { get; set; }
+        public int? Children { get; set; }  // # of children in this delivery
+        public int? Adults { get; set; }     // # of adults in this delivery
+        public int? Seniors { get; set; }    // # of senoprs in this delivery
 
         [DisplayName("Delivery Date")]
         [Column(TypeName = "Date")]

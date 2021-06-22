@@ -247,6 +247,10 @@
     <Compile Include="Migrations\202106101808523_UserRolesUpgrade.designer.cs">
       <DependentUpon>202106101808523_UserRolesUpgrade.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202106220106204_AddAgeCategoryCountsToDelivery.cs" />
+    <Compile Include="Migrations\202106220106204_AddAgeCategoryCountsToDelivery.designer.cs">
+      <DependentUpon>202106220106204_AddAgeCategoryCountsToDelivery.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -454,6 +458,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202106101808523_UserRolesUpgrade.resx">
       <DependentUpon>202106101808523_UserRolesUpgrade.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106220106204_AddAgeCategoryCountsToDelivery.resx">
+      <DependentUpon>202106220106204_AddAgeCategoryCountsToDelivery.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
