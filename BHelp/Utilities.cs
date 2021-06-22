@@ -147,7 +147,8 @@ namespace BHelp
         public static Boolean UploadDeliveries()
         {
             var db = new BHelpContext();
-            var count = 0;
+            var count1 = 0;
+            var count2 = 0;
             var filePath = @"c:\TEMP\BH Call Log - April 2021.csv";
             DataTable csvtable = new DataTable();
             using (CsvReader csvReader = new CsvReader(new StreamReader(filePath), true))
@@ -157,12 +158,10 @@ namespace BHelp
             {
                 Delivery delivery = new Delivery();
                 delivery.ClientId = GetClientId(row[2].ToString(), row[3].ToString());
-               
-
                 if (IsDate(row[15].ToString()) && delivery.ClientId == 0)
                 {
                    // Create new client (with only head of household)
-                    count++;
+                    count2++;
                     Client client = new Client()
                     {
                         LastName = row[2].ToString(),
@@ -181,10 +180,14 @@ namespace BHelp
                 if (IsDate(row[15].ToString()) && delivery.ClientId == 0)
                 {
                     // Create new delivery
+                    count1++;
                     delivery.ODId = GetUserId(row[1].ToString());
-                    delivery.Children = Convert.ToInt32(row[9]);
-                    delivery.Adults = Convert.ToInt32(row[10]);
-                    delivery.Seniors = Convert.ToInt32(row[11]);
+                    try { delivery.Children = Convert.ToInt32(row[9]); }
+                    catch { delivery.Children = 0;}
+                    try { delivery.Adults = Convert.ToInt32(row[10]); }
+                    catch { delivery.Adults = 0;}
+                    try { delivery.Seniors = Convert.ToInt32(row[11]); }
+                    catch { delivery.Seniors = 0; }
                     delivery.DriverId = GetUserId(row[16].ToString());
                     delivery.ODNotes = row[14].ToString();
                     delivery.DateDelivered = Convert.ToDateTime(row[15]);
