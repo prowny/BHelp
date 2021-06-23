@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using System.Web.UI;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
@@ -325,6 +326,35 @@ namespace BHelp.Controllers
                 view.DateRangeTitle = view.MonthYear[0] + " through " + view.MonthYear[2];
             }
             view.ZipCodes = AppRoutines.GetZipCodesList();
+            // Load MonthlyCounts
+            view.MonthlyCounts=new string[3,view.ZipCodes.Count,6]; //Month, ZipsCodes, Counts
+            for (int i = 0; i < 3; i++)
+            {
+                var mY = view.MonthYear[i].Split(' ');
+                var mo = DateTime.ParseExact(mY[0], "MMMM", CultureInfo.CurrentCulture).Month;
+                // var deliveries = db.Deliveries.Where(d => d.DeliveryDate.Year == view.Year && d.DeliveryDate.Month == mo).ToList();
+                var deliveries = db.Deliveries
+                    .Where(d =>d.DeliveryDate.Year == view.Year && d.DeliveryDate.Month == mo)
+                        .Join(db.Clients, del => del.ClientId, cli => cli.Id,
+                                     (del, cli) => new
+                                     {
+                                         zip = cli.Zip,
+                                         children = del.Children,
+                                         adults = del.Adults,
+                                         seniors = del.Seniors, 
+                                         fullBags = del.FullBags,
+                                         halfBags = del.HalfBags,
+                                         kidSnacks=del.KidSnacks
+                                     }
+                                 ).ToList();
+                
+
+                var x = deliveries[0];
+                //{
+                //    // Switch by Zip Code
+                //    //if(delivery.Z)
+                //}
+            }
             return View(view);
         }
         public ActionResult ReturnToDashboard()
