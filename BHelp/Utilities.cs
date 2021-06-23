@@ -164,6 +164,7 @@ namespace BHelp
                     count2++;
                     Client client = new Client()
                     {
+                        Active=true,
                         LastName = row[2].ToString(),
                         FirstName = row[3].ToString(),
                         StreetNumber = row[4].ToString(),

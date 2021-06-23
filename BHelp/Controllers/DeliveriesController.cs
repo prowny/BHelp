@@ -161,7 +161,8 @@ namespace BHelp.Controllers
         // GET: Deliveries/Create
         public ActionResult Create()
         {
-            return View();
+            return null;
+            //return View();
         }
 
         // POST: Deliveries/Create
@@ -189,7 +190,7 @@ namespace BHelp.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Delivery delivery = db.Deliveries.Find(id);
+            var delivery = db.Deliveries.Find(id);
             if (delivery == null)
             {
                 return HttpNotFound();
@@ -292,6 +293,17 @@ namespace BHelp.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult ReportsMenu()
+        {
+            return View();
+        }
+
+        public ActionResult CountyReport()
+        {
+            // Default to this year, this quarter
+            var reportView = new DeliveryViewModel();
+            return RedirectToAction("ReturnToDashboard");
+        }
         public ActionResult ReturnToDashboard()
         {
             return RedirectToAction("Index", "Home");

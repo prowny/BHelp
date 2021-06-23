@@ -263,6 +263,7 @@
     <Compile Include="Utilities.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="ViewModels\AddEditUserRolesViewModel.cs" />
+    <Compile Include="ViewModels\ReportsViewModel.cs" />
     <Compile Include="ViewModels\DeliveryViewModel.cs" />
     <Compile Include="ViewModels\ClientViewModel.cs" />
     <Compile Include="ViewModels\FamilyViewModel.cs" />
@@ -396,6 +397,8 @@
     <Content Include="Views\Users\Edit.cshtml" />
     <Content Include="Views\UpdateMyProfile\Edit.cshtml" />
     <Content Include="Views\ResetAnyPassword\Index.cshtml" />
+    <Content Include="Views\Deliveries\ReportsMenu.cshtml" />
+    <Content Include="Views\Deliveries\CountyReport.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
