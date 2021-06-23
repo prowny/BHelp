@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -301,14 +302,34 @@ namespace BHelp.Controllers
         public ActionResult CountyReport()
         {
             // Default to this year, this quarter
-            var reportView = new DeliveryViewModel();
-            return RedirectToAction("ReturnToDashboard");
+            var reportView = new ReportsViewModel
+            { Year = Convert.ToInt32(DateTime.Now.Year.ToString())};
+            var month =Convert.ToInt32(  DateTime.Now.Month.ToString());
+            if (month >= 1 && month <= 3) { reportView.Quarter = 1; }
+            if (month >= 4 && month <= 6) { reportView.Quarter = 2; }
+            if (month >= 7 && month <= 9) { reportView.Quarter = 3; }
+            if (month >= 10 && month <= 12) { reportView.Quarter = 4; }
+
+            if (DateTimeFormatInfo.CurrentInfo != null)
+            {
+                var m1 = 2 + (2 * (reportView.Quarter -1));
+                var m3 = m1 + 2;
+                reportView.DateRangeTitle = DateTimeFormatInfo.CurrentInfo.GetMonthName(m1)
+                                            + " " + reportView.Year.ToString()
+                                            + " through " + DateTimeFormatInfo.CurrentInfo.GetMonthName(m3)
+                                            + " " + reportView.Year.ToString();
+            }
+
+            return View( reportView);
         }
         public ActionResult ReturnToDashboard()
         {
             return RedirectToAction("Index", "Home");
         }
-
+        public ActionResult ReturnToReportsMenu()
+        {
+            return RedirectToAction("ReportsMenu");
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

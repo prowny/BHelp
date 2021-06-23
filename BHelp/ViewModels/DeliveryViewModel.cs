@@ -81,6 +81,5 @@ namespace BHelp.ViewModels
         public string DriverNotesToolTip { get; set; }  // Driver notes
 
         public string ClientNameAddress { get; set; }
-
     }
 }

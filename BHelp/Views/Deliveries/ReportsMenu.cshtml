@@ -8,11 +8,15 @@
     <title>ReportsMenu</title>
 </head>
 <body>
-    <table>
-        <tr><td><b>Reports Menu</b></td></tr>
-        <tr></tr>
-        <tr><td><a href="@Url.Action("CountyReport", "Deliveries")">County Report</a><br /></td></tr>
-    </table>
+<table>
+    <tr><td><b>Reports Menu</b></td></tr>
+    <tr></tr>
+    <tr><td><a href="@Url.Action("CountyReport", "Deliveries")">County Report</a><br /></td></tr>
+</table>
+<br/>
+<div>
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+</div>
 </body>
 </html>
 

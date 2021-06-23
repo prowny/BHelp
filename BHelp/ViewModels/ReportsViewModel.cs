@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Entity.Infrastructure.Design;
-using System.Linq;
-using System.Web;
 
 namespace BHelp.ViewModels
 {
@@ -15,7 +11,7 @@ namespace BHelp.ViewModels
         public DateTime EndMonth { get; set; }
 
         [Range(1, 4)] public int Quarter { get; set; }
-        [Range( 2020, 2040)] public int Year { get; set; }
-
+        [Range( 2020, 2050)] public int Year { get; set; }
+        public string DateRangeTitle { get; set; }  // e.g. "April 2021 through June 2021"
     }
 }
