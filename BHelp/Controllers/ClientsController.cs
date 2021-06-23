@@ -86,7 +86,7 @@ namespace BHelp.Controllers
                 { Id = i };
                 viewModel.FamilyMembers.Add(newMember);
             }
-            viewModel.ZipCodes = AppRoutines.GetZipCodes();
+            viewModel.ZipCodes = AppRoutines.GetZipCodesSelectList();
             return View(viewModel);
         }
 
@@ -150,7 +150,7 @@ namespace BHelp.Controllers
             {
                 return HttpNotFound();
             }
-            client.ZipCodes = AppRoutines.GetZipCodes();
+            client.ZipCodes = AppRoutines.GetZipCodesSelectList();
             client.Age = AppRoutines.GetAge(client.DateOfBirth, DateTime.Today);
             foreach (var item in client.ZipCodes)
             {

@@ -302,25 +302,30 @@ namespace BHelp.Controllers
         public ActionResult CountyReport()
         {
             // Default to this year, this quarter
-            var reportView = new ReportsViewModel
-            { Year = Convert.ToInt32(DateTime.Now.Year.ToString())};
-            var month =Convert.ToInt32(  DateTime.Now.Month.ToString());
-            if (month >= 1 && month <= 3) { reportView.Quarter = 1; }
-            if (month >= 4 && month <= 6) { reportView.Quarter = 2; }
-            if (month >= 7 && month <= 9) { reportView.Quarter = 3; }
-            if (month >= 10 && month <= 12) { reportView.Quarter = 4; }
+            var view = new ReportsViewModel
+                {Year = Convert.ToInt32(DateTime.Now.Year.ToString())};
+            var month = Convert.ToInt32(DateTime.Now.Month.ToString());
+            if (month >= 1 && month <= 3) { view.Quarter = 1; }
+            if (month >= 4 && month <= 6) { view.Quarter = 2; }
+            if (month >= 7 && month <= 9) { view.Quarter = 3; }
+            if (month >= 10 && month <= 12) { view.Quarter = 4; }
 
             if (DateTimeFormatInfo.CurrentInfo != null)
             {
-                var m1 = 2 + (2 * (reportView.Quarter -1));
-                var m3 = m1 + 2;
-                reportView.DateRangeTitle = DateTimeFormatInfo.CurrentInfo.GetMonthName(m1)
-                                            + " " + reportView.Year.ToString()
-                                            + " through " + DateTimeFormatInfo.CurrentInfo.GetMonthName(m3)
-                                            + " " + reportView.Year.ToString();
+                view.MonthYear = new string[3];
+                view.MonthYear[0] =
+                    DateTimeFormatInfo.CurrentInfo.GetMonthName(1 + (3 * (view.Quarter - 1)))
+                    + " " + view.Year.ToString();
+                view.MonthYear[1] =
+                    DateTimeFormatInfo.CurrentInfo.GetMonthName(2 + (3 * (view.Quarter - 1)))
+                    + " " + view.Year.ToString();
+                view.MonthYear[2] =
+                    DateTimeFormatInfo.CurrentInfo.GetMonthName(3 + (3 * (view.Quarter - 1)))
+                    + " " + view.Year.ToString();
+                view.DateRangeTitle = view.MonthYear[0] + " through " + view.MonthYear[2];
             }
-
-            return View( reportView);
+            view.ZipCodes = AppRoutines.GetZipCodesList();
+            return View(view);
         }
         public ActionResult ReturnToDashboard()
         {

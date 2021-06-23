@@ -70,7 +70,7 @@ namespace BHelp.Controllers
 
         public ActionResult GetZipCodes()
         {
-            AppRoutines.GetZipCodes();
+            AppRoutines.GetZipCodesSelectList();
             return RedirectToAction("Index", "Home");
         }
 

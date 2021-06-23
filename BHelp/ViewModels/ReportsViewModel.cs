@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace BHelp.ViewModels
 {
@@ -13,5 +15,7 @@ namespace BHelp.ViewModels
         [Range(1, 4)] public int Quarter { get; set; }
         [Range( 2020, 2050)] public int Year { get; set; }
         public string DateRangeTitle { get; set; }  // e.g. "April 2021 through June 2021"
+        public string[] MonthYear { get; set; }
+        public List<string> ZipCodes { get; set; }
     }
 }
