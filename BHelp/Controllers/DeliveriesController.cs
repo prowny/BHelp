@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
-using System.Web.UI;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
@@ -306,10 +305,10 @@ namespace BHelp.Controllers
             var view = new ReportsViewModel
                 {Year = Convert.ToInt32(DateTime.Now.Year.ToString())};
             var month = Convert.ToInt32(DateTime.Now.Month.ToString());
-            if (month >= 1 && month <= 3) { view.Quarter = 1; view.Months = new int[3]{ 1, 2, 3}; }
-            if (month >= 4 && month <= 6) { view.Quarter = 2; view.Months = new int[3] { 4, 5, 6 }; }
-            if (month >= 7 && month <= 9) { view.Quarter = 3; view.Months = new int[3] { 7, 8, 9 }; }
-            if (month >= 10 && month <= 12) { view.Quarter = 4; view.Months = new int[3] { 10, 11, 12 }; }
+            if (month >= 1 && month <= 3) { view.Quarter = 1; view.Months = new[]{ 1, 2, 3}; }
+            if (month >= 4 && month <= 6) { view.Quarter = 2; view.Months = new[] { 4, 5, 6 }; }
+            if (month >= 7 && month <= 9) { view.Quarter = 3; view.Months = new[] { 7, 8, 9 }; }
+            if (month >= 10 && month <= 12) { view.Quarter = 4; view.Months = new[] { 10, 11, 12 }; }
        
             if (DateTimeFormatInfo.CurrentInfo != null)
             {
@@ -326,8 +325,8 @@ namespace BHelp.Controllers
                 view.DateRangeTitle = view.MonthYear[0] + " through " + view.MonthYear[2];
             }
             view.ZipCodes = AppRoutines.GetZipCodesList();
-            // Load MonthlyCounts
-            view.MonthlyCounts=new int [13,view.ZipCodes.Count,6]; //Month, ZipsCodes, Counts
+            // Load MonthlyCounts - 7th zip code is for totals
+            view.MonthlyCounts=new int [12, view.ZipCodes.Count +1, 6]; //Month, ZipCodes, Counts
             for (int i = 0; i < 3; i++)
             {
                 var mY = view.MonthYear[i].Split(' ');
@@ -345,19 +344,21 @@ namespace BHelp.Controllers
 
                 foreach (var delivery in deliveries)
                 {
+                    var t = view.ZipCodes.Count;  // Extra zip code column is for totals
                     for (var j = 0; j < view.ZipCodes.Count; j++)
                     {
                         if (delivery.zip == view.ZipCodes[j])
                         {
-                            view.MonthlyCounts[mo, j, 0] ++; // month, zip, # of families
+                            view.MonthlyCounts[mo, j, 0] ++; view.MonthlyCounts[mo, t, 0]++;  // month, zip, # of families
                             var c = Convert.ToInt32(delivery.children);
                             var a = Convert.ToInt32(delivery.adults);
                             var s = Convert.ToInt32(delivery.seniors);
-                            view.MonthlyCounts[mo, j, 1] += c;
-                            view.MonthlyCounts[mo, j, 2] += a;
-                            view.MonthlyCounts[mo, j, 3] += s;
-                            view.MonthlyCounts[mo, j, 4] += (a + c + s);  // # of residents
-                            view.MonthlyCounts[mo, j, 5] = 0;  // pounds of food
+                            view.MonthlyCounts[mo, j, 1] += c; view.MonthlyCounts[mo, t, 1] += c;
+                            view.MonthlyCounts[mo, j, 2] += a; view.MonthlyCounts[mo, t, 2] += a;
+                            view.MonthlyCounts[mo, j, 3] += s; view.MonthlyCounts[mo, t, 3] += s;
+                            view.MonthlyCounts[mo, j, 4] += ( a + c + s); view.MonthlyCounts[mo, t, 4] += (a + c + s);  // # of residents
+                            var lbs=Convert.ToInt32( delivery.fullBags * 10 + delivery.halfBags * 9);
+                            view.MonthlyCounts[mo, j, 5] += lbs; view.MonthlyCounts[mo, t, 5] += lbs;  // pounds of food
                         }
                     }
                 }
