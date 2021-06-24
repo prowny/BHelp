@@ -306,11 +306,11 @@ namespace BHelp.Controllers
             var view = new ReportsViewModel
                 {Year = Convert.ToInt32(DateTime.Now.Year.ToString())};
             var month = Convert.ToInt32(DateTime.Now.Month.ToString());
-            if (month >= 1 && month <= 3) { view.Quarter = 1; }
-            if (month >= 4 && month <= 6) { view.Quarter = 2; }
-            if (month >= 7 && month <= 9) { view.Quarter = 3; }
-            if (month >= 10 && month <= 12) { view.Quarter = 4; }
-
+            if (month >= 1 && month <= 3) { view.Quarter = 1; view.Months = new int[3]{ 1, 2, 3}; }
+            if (month >= 4 && month <= 6) { view.Quarter = 2; view.Months = new int[3] { 4, 5, 6 }; }
+            if (month >= 7 && month <= 9) { view.Quarter = 3; view.Months = new int[3] { 7, 8, 9 }; }
+            if (month >= 10 && month <= 12) { view.Quarter = 4; view.Months = new int[3] { 10, 11, 12 }; }
+       
             if (DateTimeFormatInfo.CurrentInfo != null)
             {
                 view.MonthYear = new string[3];
@@ -349,23 +349,19 @@ namespace BHelp.Controllers
                     {
                         if (delivery.zip == view.ZipCodes[j])
                         {
-                            view.MonthlyCounts[mo, j, 1] ++; // month, zip, # of families
+                            view.MonthlyCounts[mo, j, 0] ++; // month, zip, # of families
                             var c = Convert.ToInt32(delivery.children);
                             var a = Convert.ToInt32(delivery.adults);
                             var s = Convert.ToInt32(delivery.seniors);
-                            view.MonthlyCounts[mo, j, 2] += c;
-                            view.MonthlyCounts[mo, j, 3] += a;
-                            view.MonthlyCounts[mo, j, 4] += s;
-                            view.MonthlyCounts[mo, j, 5] += (a + c + s);  // # of residents
-                            view.MonthlyCounts[mo, j, 6] = 0;  // pounds of food
+                            view.MonthlyCounts[mo, j, 1] += c;
+                            view.MonthlyCounts[mo, j, 2] += a;
+                            view.MonthlyCounts[mo, j, 3] += s;
+                            view.MonthlyCounts[mo, j, 4] += (a + c + s);  // # of residents
+                            view.MonthlyCounts[mo, j, 5] = 0;  // pounds of food
                         }
                     }
                 }
                 var x = deliveries[0];
-                //{
-                //    // Switch by Zip Code
-                //    //if(delivery.Z)
-                //}
             }
             return View(view);
         }
