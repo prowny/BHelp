@@ -19,6 +19,6 @@ namespace BHelp.ViewModels
         public string[] MonthYear { get; set; }
         public string ZipCode { get; set; }
         public List<string> ZipCodes { get; set; }
-        public string[,,] MonthlyCounts { get; set; } // Note 3-dimensional
+        public int [,,] MonthlyCounts { get; set; } // Note 3-dimensional
     }
 }
