@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
+using DocumentFormat.OpenXml.Office.MetaAttributes;
 using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
@@ -331,8 +332,10 @@ namespace BHelp.Controllers
             {
                 var mY = view.MonthYear[i].Split(' ');
                 var mo = DateTime.ParseExact(mY[0], "MMMM", CultureInfo.CurrentCulture).Month;
+                var startDate = Convert.ToDateTime(mo.ToString() + "/01/" + mY[1].ToString());
+                var endDate= Convert.ToDateTime((mo+1).ToString() + "/01/" + mY[1].ToString());
                 var deliveries = db.Deliveries
-                    .Where(d =>d.DeliveryDate.Year == view.Year && d.DeliveryDate.Month == mo)
+                    .Where(d => d.DateDelivered >= startDate && d.DateDelivered < endDate)
                         .Join(db.Clients, del => del.ClientId, cli => cli.Id,
                                      (del, cli) => new
                                      {
@@ -362,7 +365,7 @@ namespace BHelp.Controllers
                         }
                     }
                 }
-                var x = deliveries[0];
+                var x = "dummy";
             }
             return View(view);
         }
