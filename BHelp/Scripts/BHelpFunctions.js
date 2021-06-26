@@ -13,18 +13,18 @@
     });
 }
 
-function SearchClients(text)
+function SearchClients()
 {
     $.ajax({
         url: "/OD/SearchHouseholds",
         data: { searchString: $("#SearchText").val() },
         type: "POST",
-        success: function (data) {
-            var dummy = "";
+        success: function () {
+            //var dummy = "";
         },
         error: function (jqxhr, status, exception) {
             alert('Exception:', exception);
-            var dummy = "";       
+            //var dummy = "";       
         }
     });
 }
@@ -51,13 +51,27 @@ function GetFamilyDetails() {
         url: "/FamilyMembers/Edit",
         data: { Id: $("#client_Id").val() },
         type: "POST",
-        success: function (data) {
-            var dummy = "";
+        success: function() {
+            //var dummy = "";
         },
-        error: function (jqxhr, status, exception) {
+        error: function(jqxhr, status, exception) {
             alert('Exception:', exception);
-            var dummy = ""; 
+            //var dummy = "";
         }
     });
 }
 
+function CountyReport() {
+    $.ajax({
+        url: "/Deliveries/CountyReport",
+        data: { yy: $("#Year").val(), qtr: $("#Quarter").val() },
+        type: "POST",
+        success: function (data) {
+            $("body").html(data); // to refresh the page
+            //var dummy =xx;
+        },
+        error: function(jqxhr, status, exception) {
+            alert('Exception:', exception);
+        }
+    });
+}

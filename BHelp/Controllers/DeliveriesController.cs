@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
-using DocumentFormat.OpenXml.Office.MetaAttributes;
+using Castle.Core.Internal;
+using ClosedXML.Excel;
 using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
@@ -300,50 +302,73 @@ namespace BHelp.Controllers
             return View();
         }
 
-        public ActionResult CountyReport()
+        public ActionResult CountyReport(string yy = "", string qtr = "")
         {
-            // Default to this year, this quarter
-            var view = new ReportsViewModel
-                {Year = Convert.ToInt32(DateTime.Now.Year.ToString())};
-            var month = Convert.ToInt32(DateTime.Now.Month.ToString());
-            if (month >= 1 && month <= 3) { view.Quarter = 1; view.Months = new[]{ 1, 2, 3}; }
-            if (month >= 4 && month <= 6) { view.Quarter = 2; view.Months = new[] { 4, 5, 6 }; }
-            if (month >= 7 && month <= 9) { view.Quarter = 3; view.Months = new[] { 7, 8, 9 }; }
-            if (month >= 10 && month <= 12) { view.Quarter = 4; view.Months = new[] { 10, 11, 12 }; }
-       
+            int reportYear;
+            int reportQuarter = 0;
+            if (yy.IsNullOrEmpty() || qtr.IsNullOrEmpty())   // Default to this year, this quarter
+            {
+               reportYear = Convert.ToInt32(DateTime.Now.Year.ToString());
+                var month = Convert.ToInt32(DateTime.Now.Month.ToString());
+                if (month >= 1 && month <= 3) { reportQuarter = 1;}     
+                if (month >= 4 && month <= 6) { reportQuarter = 2;}     
+                if (month >= 7 && month <= 9) { reportQuarter = 3; }    
+                if (month >= 10 && month <= 12) { reportQuarter = 4; }
+            }
+            else
+            {
+                reportYear = Convert.ToInt32(yy);
+                reportQuarter = Convert.ToInt32(qtr);
+            }
+
+            var view = GetCountyReportView(reportYear, reportQuarter);
+            return View(view);
+        }
+
+        private ReportsViewModel GetCountyReportView(int yy, int qtr)
+        {
+            var view = new ReportsViewModel()
+            { Year = yy, Quarter = qtr };
+            if (qtr == 1) { view.Months = new[] { 1, 2, 3 }; }
+            if (qtr == 2) { view.Months = new[] { 4, 5, 6 }; }
+            if (qtr == 3) { view.Months = new[] { 7, 8, 9 }; }
+            if (qtr == 4) { view.Months = new[] { 10, 11, 12 }; }
             if (DateTimeFormatInfo.CurrentInfo != null)
             {
                 view.MonthYear = new string[3];
                 view.MonthYear[0] =
-                    DateTimeFormatInfo.CurrentInfo.GetMonthName(1 + (3 * (view.Quarter - 1)))
+                    DateTimeFormatInfo.CurrentInfo.GetMonthName(1 + (3 * (qtr - 1)))
                     + " " + view.Year.ToString();
                 view.MonthYear[1] =
-                    DateTimeFormatInfo.CurrentInfo.GetMonthName(2 + (3 * (view.Quarter - 1)))
+                    DateTimeFormatInfo.CurrentInfo.GetMonthName(2 + (3 * (qtr - 1)))
                     + " " + view.Year.ToString();
                 view.MonthYear[2] =
-                    DateTimeFormatInfo.CurrentInfo.GetMonthName(3 + (3 * (view.Quarter - 1)))
+                    DateTimeFormatInfo.CurrentInfo.GetMonthName(3 + (3 * (qtr - 1)))
                     + " " + view.Year.ToString();
                 view.DateRangeTitle = view.MonthYear[0] + " through " + view.MonthYear[2];
             }
             view.ZipCodes = AppRoutines.GetZipCodesList();
-            // Load MonthlyCounts - 7th zip code is for totals
-            view.MonthlyCounts=new int [12, view.ZipCodes.Count +1, 6]; //Month, ZipCodes, Counts
+            // Load MonthlyCounts - extra zip code is for totals column.
+            view.MonthlyCounts = new int[12, view.ZipCodes.Count + 1, 6]; //Month, ZipCodes, Counts
             for (int i = 0; i < 3; i++)
             {
                 var mY = view.MonthYear[i].Split(' ');
                 var mo = DateTime.ParseExact(mY[0], "MMMM", CultureInfo.CurrentCulture).Month;
-                var startDate = Convert.ToDateTime(mo.ToString() + "/01/" + mY[1].ToString());
-                var endDate= Convert.ToDateTime((mo+1).ToString() + "/01/" + mY[1].ToString());
+                var startDate = Convert.ToDateTime(mo.ToString() + "/01/" + mY[1]);
+                var endDate = Convert.ToDateTime((mo + 1).ToString() + "/01/" + mY[1]);
                 var deliveries = db.Deliveries
                     .Where(d => d.DateDelivered >= startDate && d.DateDelivered < endDate)
                         .Join(db.Clients, del => del.ClientId, cli => cli.Id,
                                      (del, cli) => new
                                      {
                                          zip = cli.Zip,
-                                         children = del.Children, adults = del.Adults, seniors = del.Seniors, 
-                                         fullBags = del.FullBags, halfBags = del.HalfBags, kidSnacks=del.KidSnacks
-                                     }
-                                 ).ToList();
+                                         children = del.Children,
+                                         adults = del.Adults,
+                                         seniors = del.Seniors,
+                                         fullBags = del.FullBags,
+                                         halfBags = del.HalfBags,
+                                         kidSnacks = del.KidSnacks
+                                     }).ToList();
 
                 foreach (var delivery in deliveries)
                 {
@@ -352,22 +377,90 @@ namespace BHelp.Controllers
                     {
                         if (delivery.zip == view.ZipCodes[j])
                         {
-                            view.MonthlyCounts[mo, j, 0] ++; view.MonthlyCounts[mo, t, 0]++;  // month, zip, # of families
+                            view.MonthlyCounts[mo, j, 0]++; view.MonthlyCounts[mo, t, 0]++;  // month, zip, # of families
                             var c = Convert.ToInt32(delivery.children);
                             var a = Convert.ToInt32(delivery.adults);
                             var s = Convert.ToInt32(delivery.seniors);
                             view.MonthlyCounts[mo, j, 1] += c; view.MonthlyCounts[mo, t, 1] += c;
                             view.MonthlyCounts[mo, j, 2] += a; view.MonthlyCounts[mo, t, 2] += a;
                             view.MonthlyCounts[mo, j, 3] += s; view.MonthlyCounts[mo, t, 3] += s;
-                            view.MonthlyCounts[mo, j, 4] += ( a + c + s); view.MonthlyCounts[mo, t, 4] += (a + c + s);  // # of residents
-                            var lbs=Convert.ToInt32( delivery.fullBags * 10 + delivery.halfBags * 9);
+                            view.MonthlyCounts[mo, j, 4] += (a + c + s); view.MonthlyCounts[mo, t, 4] += (a + c + s);  // # of residents
+                            var lbs = Convert.ToInt32(delivery.fullBags * 10 + delivery.halfBags * 9);
                             view.MonthlyCounts[mo, j, 5] += lbs; view.MonthlyCounts[mo, t, 5] += lbs;  // pounds of food
                         }
                     }
                 }
-                var x = "dummy";
             }
-            return View(view);
+            return view;
+        }
+
+        public ActionResult CountyReportToExcel(int yy, int qtr)
+        {
+            var view = GetCountyReportView(yy, qtr);
+            XLWorkbook workbook = new XLWorkbook();
+            IXLWorksheet ws = workbook.Worksheets.Add("County Report");
+            int activeRow = 1;
+            ws.Cell(activeRow, 1).SetValue("Bethesda Help, Inc.");
+            activeRow ++;
+            ws.Cell(activeRow, 1).SetValue(view.DateRangeTitle);
+            activeRow += 2;
+            for(int mo = 0; mo < 3; mo++)
+            {
+                ws.Cell(activeRow, 1).SetValue(view.MonthYear[mo]);
+                ws.Cell(activeRow, view.ZipCodes.Count).SetValue("TOTAL");
+                activeRow ++;
+                ws.Cell(activeRow, 1).SetValue("Zip Code");
+                for (int z = 0; z < view.ZipCodes.Count; z++)
+                {
+                    ws.Cell(activeRow, z + 1).SetValue(view.ZipCodes[z]); ;
+                }
+                ws.Cell(activeRow, view.ZipCodes.Count + 1).SetValue("All Zip Codes");
+
+                //        < td style = "text-align: right" ># of Families</td>
+                //                     @for(int i = 0; i < Model.ZipCodes.Count + 1; i++)
+                //        {
+                //            < td style = "text-align: right" > @Model.MonthlyCounts[Model.Months[mo], i, 0] </ td >}
+                //    </ tr >
+                //    < tr >
+                //        < td style = "text-align: right" ># of Children (&#60;18)</td>
+                //        @for(int i = 0; i < Model.ZipCodes.Count + 1; i++)
+                //        {
+                //            < td style = "text-align: right" > @Model.MonthlyCounts[Model.Months[mo], i, 1] </ td >}
+                //    </ tr >
+                //    < tr >
+                //        < td style = "text-align: right" ># of Adults(&#62;=18 and &#60;60)</td>
+                //        @for(int i = 0; i < Model.ZipCodes.Count + 1; i++)
+                //        {
+                //            < td style = "text-align: right" > @Model.MonthlyCounts[Model.Months[mo], i, 2] </ td >}
+                //    </ tr >
+                //    < tr >
+                //        < td style = "text-align: right" ># of Seniors (&#62;=60)</td>
+                //        @for(int i = 0; i < Model.ZipCodes.Count + 1; i++)
+                //        {
+                //            < td style = "text-align: right" > @Model.MonthlyCounts[Model.Months[mo], i, 3] </ td >}
+                //    </ tr >
+                //    < tr >
+                //        < td style = "text-align: right" ># of Residents</td>
+                //        @for(int i = 0; i < Model.ZipCodes.Count + 1; i++)
+                //        {
+                //            < td style = "text-align: right" > @Model.MonthlyCounts[Model.Months[mo], i, 4] </ td >}
+                //    </ tr >
+                //    < tr >
+                //        < td style = "text-align: right" ># of Pounds of Food</td>
+                //        @for(int i = 0; i < Model.ZipCodes.Count + 1; i++)
+                //        {
+                //            < td style = "text-align: right" > @Model.MonthlyCounts[Model.Months[mo], i, 5] </ td >}
+                //    </ tr >
+                //    < tr ></ tr >
+                //</ table >
+                activeRow ++;
+            }
+            ws.Columns().AdjustToContents();
+            MemoryStream ms = new MemoryStream();
+            workbook.SaveAs(ms);
+            ms.Position = 0;
+            return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                { FileDownloadName = "CountyReport.xlsx" };
         }
         public ActionResult ReturnToDashboard()
         {
