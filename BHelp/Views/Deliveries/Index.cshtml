@@ -19,7 +19,7 @@
 @*<p>@Html.ActionLink("Create New Delivery", "Create")</p>*@
 <table class="table">
     <tr>
-        <th>@Html.Label("Date")</th>
+        <th>@Html.Label("Log Date")</th>
         <th><div class="col100">@Html.Label("OD Name")</div></th>
         <th><div class="col25">@Html.Label("Last Name")</div></th>
         <th><div class="col25">@Html.Label("First Name")</div></th>
@@ -46,7 +46,7 @@
     {
     <tr>
         <td>@Html.DisplayFor(modelItem => item.DeliveryDate)</td>
-        <td>@Html.DisplayFor(modelItem => item.User.FullName, new { style = "width:100px" })</td>
+        <td>@Html.DisplayFor(modelItem => item.ODName, new { style = "width:100px" })</td>
         <td>@Html.DisplayFor(modelItem => item.Client.LastName)</td>
         <td>@Html.DisplayFor(modelItem => item.Client.FirstName)</td>
         <td>@Html.DisplayFor(modelItem => item.Client.StreetNumber)</td>

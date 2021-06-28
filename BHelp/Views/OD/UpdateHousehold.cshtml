@@ -139,7 +139,7 @@
                     <input type="submit" value="Save Changes" class="btn btn-default" id="SaveButton"/>
                     <span style="color: darkmagenta">&#8592;Click this first if you made ANY changes</span>
                 </div>
-               @if (User.IsInRole("OfficerOfTheDay"))
+               @if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("Administrator"))
                {
                    <div>
                        @Html.ActionLink("Create a Delivery", "AddDelivery", "OD", new {clientId = Model.ClientId}, null)

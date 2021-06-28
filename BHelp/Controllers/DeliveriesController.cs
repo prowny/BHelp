@@ -11,7 +11,6 @@ using BHelp.Models;
 using BHelp.ViewModels;
 using Castle.Core.Internal;
 using ClosedXML.Excel;
-using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
 {
@@ -85,11 +84,11 @@ namespace BHelp.Controllers
                         deliveryView.DriverName = "(nobody yet)";  
                     }
 
-                    var userIid = System.Web.HttpContext.Current.User.Identity.GetUserId();
-                    if (userIid != null)
+                    var ODid = delivery.ODId;          //System.Web.HttpContext.Current.User.Identity.GetUserId();
+                    if (ODid != null)
                     {
-                        var user = db.Users.Find(userIid);
-                        deliveryView.User = user;
+                        var user = db.Users.Find(ODid);
+                        deliveryView.ODName = user.FullName;
                     };
                     deliveryView.FirstName = client.FirstName;
                     deliveryView.LastName = client.LastName;

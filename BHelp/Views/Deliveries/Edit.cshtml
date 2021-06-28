@@ -42,7 +42,7 @@
         <div class="form-group">
             <table>
                 <tr>
-                    <td>Delivery Date&nbsp;</td>
+                    <td>Log Date&nbsp;</td>
                     <td>@Html.TextBoxFor(model => model.DeliveryDate, Model.DeliveryDate.ToString("MM/dd/yyyy"),
                             new {id = "DeliveryDate", style = "width: 75px;"})</td>
                     <td style="color: darkmagenta">&#8592;Click to change</td>
@@ -76,7 +76,6 @@
             </table>
             <div class="form-group">
                 @Html.Label("Date Delivered")
-                @*@(Model.DateDelivered.HasValue ? Model.DateDelivered.Value.ToString("MM/dd/yyyy") : "Date is Empty")*@
                 @Html.TextBoxFor(model => model.DateDelivered, Model.DateDelivered.ToString(),
                     new {id = "DateDelivered", style = "width: 75px;"})
                 <span style="color: darkmagenta">&#8592;Enter valid date (mm/dd/yyyy)</span> @*Html left-arrow*@

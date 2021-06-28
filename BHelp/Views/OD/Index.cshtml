@@ -24,16 +24,16 @@
 <body>
 @if (User.IsInRole("OfficerOfTheDay"))
 {
-    <h4>Call Log - set delivery date, find and select household</h4>
+    <h4>Call Log - find and select household</h4>
 }
 <div id="Header">
 @if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("Administrator"))
 {
     <table class="table">
         <tr>
-        <td><b>OD Name:</b>&nbsp;@Session["CurrentUserFullName"]</td>
-        <td>&nbsp;&nbsp;<b>Delivery Date:</b></td>
-        <td>
+            <td><b>OD Name:</b>&nbsp;@Session["CurrentUserFullName"]</td>
+            @*<td>&nbsp;&nbsp;<b>Delivery Date:</b></td>*@
+            @*<td>
             @Html.TextBox("Delivery Date", @Session["CallLogDate"].ToString(),
                 new {id = "CallLogDate", style = "width: 75px;"})
             <span style="color: darkmagenta">&#8592;Click to change</span>

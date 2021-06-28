@@ -43,7 +43,7 @@ namespace BHelp.ViewModels
         public int GiftCards { get; set; }
 
         [DisplayName("OD Name")]
-        public ApplicationUser User { get; set; }
+        public string ODName { get; set; }
         
         public Client Client { get; set; }
 

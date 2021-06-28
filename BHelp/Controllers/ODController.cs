@@ -19,7 +19,7 @@ namespace BHelp.Controllers
         {
             if (callLogDate.IsNullOrEmpty())
             {
-                DateTime cdt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day + 1);
+                DateTime cdt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
                 var cdts = cdt.ToString("MM/dd/yyyy");
                 Session["CallLogDate"] = cdts;
             }
