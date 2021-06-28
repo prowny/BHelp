@@ -22,7 +22,8 @@ namespace BHelp.Controllers
         // GET: Deliveries
         public ActionResult Index()
         {
-            var listDeliveries = new List<Delivery>(db.Deliveries).Where(d => d.DateDelivered == null).OrderBy(d => d.DeliveryDate).ToList();
+            var listDeliveries = new List<Delivery>(db.Deliveries).Where(d => d.DateDelivered == null)
+                .OrderBy(d => d.DeliveryDate).ThenBy(z => z.Zip).ToList();
             // to add order .ThenBy(Zip) means storing the Zip in Client.cs AND Delivery/cs
             var listDeliveryViewModels = new List<DeliveryViewModel>();
             foreach (var delivery in listDeliveries)
@@ -35,7 +36,7 @@ namespace BHelp.Controllers
                         Id = delivery.Id,
                         ClientId = client.Id,
                         Client = client,
-                        DeliveryDate = Convert.ToDateTime(Session["CallLogDate"]),
+                        DeliveryDate =delivery.DeliveryDate,
                         FamilyMembers = AppRoutines.GetFamilyMembers(client.Id),
                         FamilySelectList = AppRoutines.GetFamilySelectList(client.Id),
                         Kids = new List<FamilyMember>(),
@@ -178,6 +179,8 @@ namespace BHelp.Controllers
         {
             if (ModelState.IsValid)
             {
+                Client client = db.Clients.Find(delivery.ClientId);
+                if (client != null) delivery.Zip = client.Zip;
                 db.Deliveries.Add(delivery);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -233,7 +236,7 @@ namespace BHelp.Controllers
             if (delivery.HalfBags != null) viewModel.HalfBags = (int) delivery.HalfBags;
             if (delivery.KidSnacks != null) viewModel.KidSnacks = (int) delivery.KidSnacks;
             if (delivery.GiftCardsEligible != null) viewModel.GiftCardsEligible = (int) delivery.GiftCardsEligible;
-
+            viewModel.Zip = delivery.Zip;
             return View(viewModel);
         }
 
@@ -253,6 +256,8 @@ namespace BHelp.Controllers
 
                 if (updateData != null)
                 {
+                    Client client = db.Clients.Find(updateData.ClientId);
+                    if (client != null) updateData.Zip = client.Zip;
                     updateData.DeliveryDate = delivery.DeliveryDate;
                     updateData.FullBags = delivery.FullBags;
                     updateData.HalfBags = delivery.HalfBags;
@@ -356,36 +361,38 @@ namespace BHelp.Controllers
                 var mo = DateTime.ParseExact(mY[0], "MMMM", CultureInfo.CurrentCulture).Month;
                 var startDate = Convert.ToDateTime(mo.ToString() + "/01/" + mY[1]);
                 var endDate = Convert.ToDateTime((mo + 1).ToString() + "/01/" + mY[1]);
-                var deliveries = db.Deliveries
-                    .Where(d => d.DateDelivered >= startDate && d.DateDelivered < endDate)
-                        .Join(db.Clients, del => del.ClientId, cli => cli.Id,
-                                     (del, cli) => new
-                                     {
-                                         zip = cli.Zip,
-                                         children = del.Children,
-                                         adults = del.Adults,
-                                         seniors = del.Seniors,
-                                         fullBags = del.FullBags,
-                                         halfBags = del.HalfBags,
-                                         kidSnacks = del.KidSnacks
-                                     }).ToList();
-
+                //var deliveries = db.Deliveries
+                //    .Where(d => d.DateDelivered >= startDate && d.DateDelivered < endDate)
+                //        .Join(db.Clients, del => del.ClientId, cli => cli.Id,
+                            //(del, cli) => new
+                            //{
+                            //    zip = del.Zip,
+                            //    children = del.Children,
+                            //    adults = del.Adults,
+                            //    seniors = del.Seniors,
+                            //    fullBags = del.FullBags,
+                            //    halfBags = del.HalfBags,
+                            //    kidSnacks = del.KidSnacks
+                            //}).ToList();
+            var deliveries = db.Deliveries
+                    .Where(d => d.DateDelivered >= startDate && d.DateDelivered < endDate).ToList();
+                 
                 foreach (var delivery in deliveries)
                 {
                     var t = view.ZipCodes.Count;  // Extra zip code column is for totals
                     for (var j = 0; j < view.ZipCodes.Count; j++)
                     {
-                        if (delivery.zip == view.ZipCodes[j])
+                        if (delivery.Zip == view.ZipCodes[j])
                         {
                             view.MonthlyCounts[mo, j, 0]++; view.MonthlyCounts[mo, t, 0]++;  // month, zip, # of families
-                            var c = Convert.ToInt32(delivery.children);
-                            var a = Convert.ToInt32(delivery.adults);
-                            var s = Convert.ToInt32(delivery.seniors);
+                            var c = Convert.ToInt32(delivery.Children);
+                            var a = Convert.ToInt32(delivery.Adults);
+                            var s = Convert.ToInt32(delivery.Seniors);
                             view.MonthlyCounts[mo, j, 1] += c; view.MonthlyCounts[mo, t, 1] += c;
                             view.MonthlyCounts[mo, j, 2] += a; view.MonthlyCounts[mo, t, 2] += a;
                             view.MonthlyCounts[mo, j, 3] += s; view.MonthlyCounts[mo, t, 3] += s;
                             view.MonthlyCounts[mo, j, 4] += (a + c + s); view.MonthlyCounts[mo, t, 4] += (a + c + s);  // # of residents
-                            var lbs = Convert.ToInt32(delivery.fullBags * 10 + delivery.halfBags * 9);
+                            var lbs = Convert.ToInt32(delivery.FullBags * 10 + delivery.HalfBags * 9);
                             view.MonthlyCounts[mo, j, 5] += lbs; view.MonthlyCounts[mo, t, 5] += lbs;  // pounds of food
                         }
                     }
