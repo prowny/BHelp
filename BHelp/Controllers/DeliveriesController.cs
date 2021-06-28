@@ -407,53 +407,51 @@ namespace BHelp.Controllers
             for(int mo = 0; mo < 3; mo++)
             {
                 ws.Cell(activeRow, 1).SetValue(view.MonthYear[mo]);
-                ws.Cell(activeRow, view.ZipCodes.Count).SetValue("TOTAL");
+                ws.Cell(activeRow, view.ZipCodes.Count + 2).SetValue("TOTAL");
                 activeRow ++;
                 ws.Cell(activeRow, 1).SetValue("Zip Code");
-                for (int z = 0; z < view.ZipCodes.Count; z++)
+                for (int i = 0; i < view.ZipCodes.Count; i++)
                 {
-                    ws.Cell(activeRow, z + 1).SetValue(view.ZipCodes[z]); ;
+                    ws.Cell(activeRow, i +2).SetValue(view.ZipCodes[i]); ;
                 }
-                ws.Cell(activeRow, view.ZipCodes.Count + 1).SetValue("All Zip Codes");
-
-                //        < td style = "text-align: right" ># of Families</td>
-                //                     @for(int i = 0; i < Model.ZipCodes.Count + 1; i++)
-                //        {
-                //            < td style = "text-align: right" > @Model.MonthlyCounts[Model.Months[mo], i, 0] </ td >}
-                //    </ tr >
-                //    < tr >
-                //        < td style = "text-align: right" ># of Children (&#60;18)</td>
-                //        @for(int i = 0; i < Model.ZipCodes.Count + 1; i++)
-                //        {
-                //            < td style = "text-align: right" > @Model.MonthlyCounts[Model.Months[mo], i, 1] </ td >}
-                //    </ tr >
-                //    < tr >
-                //        < td style = "text-align: right" ># of Adults(&#62;=18 and &#60;60)</td>
-                //        @for(int i = 0; i < Model.ZipCodes.Count + 1; i++)
-                //        {
-                //            < td style = "text-align: right" > @Model.MonthlyCounts[Model.Months[mo], i, 2] </ td >}
-                //    </ tr >
-                //    < tr >
-                //        < td style = "text-align: right" ># of Seniors (&#62;=60)</td>
-                //        @for(int i = 0; i < Model.ZipCodes.Count + 1; i++)
-                //        {
-                //            < td style = "text-align: right" > @Model.MonthlyCounts[Model.Months[mo], i, 3] </ td >}
-                //    </ tr >
-                //    < tr >
-                //        < td style = "text-align: right" ># of Residents</td>
-                //        @for(int i = 0; i < Model.ZipCodes.Count + 1; i++)
-                //        {
-                //            < td style = "text-align: right" > @Model.MonthlyCounts[Model.Months[mo], i, 4] </ td >}
-                //    </ tr >
-                //    < tr >
-                //        < td style = "text-align: right" ># of Pounds of Food</td>
-                //        @for(int i = 0; i < Model.ZipCodes.Count + 1; i++)
-                //        {
-                //            < td style = "text-align: right" > @Model.MonthlyCounts[Model.Months[mo], i, 5] </ td >}
-                //    </ tr >
-                //    < tr ></ tr >
-                //</ table >
+                ws.Cell(activeRow, view.ZipCodes.Count + 2).SetValue("All Zip Codes");
                 activeRow ++;
+                ws.Cell(activeRow, 1).SetValue("# of Families");
+                for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                {
+                    ws.Cell(activeRow, i + 2).SetValue(view.MonthlyCounts[view.Months[mo], i, 0]);
+                }
+                activeRow ++;
+                ws.Cell(activeRow, 1).SetValue("# of Children (&#60;18)");
+                for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                {
+                    ws.Cell(activeRow, i + 2).SetValue(view.MonthlyCounts[view.Months[mo], i, 1]);
+                }
+                activeRow ++;
+                ws.Cell(activeRow, 1).SetValue("# of Adults(&#62;=18 and &#60;60");
+                for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                {
+                    ws.Cell(activeRow, i + 2).SetValue(view.MonthlyCounts[view.Months[mo], i, 2]);
+                }
+                activeRow ++;
+                ws.Cell(activeRow, 1).SetValue("# of Seniors (&#62;=60)");
+                for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                {
+                    ws.Cell(activeRow, i + 2).SetValue(view.MonthlyCounts[view.Months[mo], i, 3]);
+                }
+                activeRow ++;
+                ws.Cell(activeRow, 1).SetValue("# of Residents");
+                for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                {
+                    ws.Cell(activeRow, i + 2).SetValue(view.MonthlyCounts[view.Months[mo], i, 4]);
+                }
+                activeRow ++;
+                ws.Cell(activeRow, 1).SetValue("# of Pounds of Food");
+                for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                {
+                    ws.Cell(activeRow, i + 2).SetValue(view.MonthlyCounts[view.Months[mo], i, 5]);
+                }
+                activeRow += 2;
             }
             ws.Columns().AdjustToContents();
             MemoryStream ms = new MemoryStream();
