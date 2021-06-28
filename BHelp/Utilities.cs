@@ -147,8 +147,8 @@ namespace BHelp
         public static Boolean UploadDeliveries()
         {
             var db = new BHelpContext();
-            var count1 = 0;
-            var count2 = 0;
+            //var count1 = 0;
+            //var count2 = 0;
             var filePath = @"c:\TEMP\BH Call Log - April 2021.csv";
             DataTable csvtable = new DataTable();
             using (CsvReader csvReader = new CsvReader(new StreamReader(filePath), true))
@@ -161,8 +161,8 @@ namespace BHelp
                 if (IsDate(row[15].ToString()) && delivery.ClientId == 0)
                 {
                    // Create new client (with only head of household)
-                    count2++;
-                    Client client = new Client()
+                    //count2++;
+                    Client newClient = new Client()
                     {
                         Active=true,
                         LastName = row[2].ToString(),
@@ -174,14 +174,15 @@ namespace BHelp
                         Phone = row[8].ToString(),
                         Notes = "Auto-added"
                     };
-                    //db.Clients.Add(client);
+                    db.Clients.Add(newClient);
                     //db.SaveChanges();
                 }
 
                 if (IsDate(row[15].ToString()) && delivery.ClientId != 0)
                 {
+                    Client client = db.Clients.Find(delivery.ClientId);
                     // Create new delivery
-                    count1++;
+                    //count1++;
                     delivery.DeliveryDate = Convert.ToDateTime(row[0].ToString());
                     delivery.ODId = GetUserId(row[1].ToString());
                     try { delivery.Children = Convert.ToInt32(row[9]); }
@@ -198,6 +199,7 @@ namespace BHelp
                     delivery.KidSnacks = Convert.ToInt32(row[19]);
                     delivery.GiftCards = Convert.ToInt32(row[20]);
                     delivery.Notes = row[21].ToString();
+                    if (client != null) delivery.Zip = client.Zip;
                     //db.Deliveries.Add(delivery);
                     //db.SaveChanges();
                 }
@@ -205,6 +207,19 @@ namespace BHelp
             return true;
         }
 
+        public static Boolean CopyClientZipToDelivery()
+        {
+            var db = new BHelpContext();
+            var deliveries = db.Deliveries.ToList();
+            foreach (var delivery in deliveries)
+            {
+                var client = db.Clients.Find(delivery.ClientId);
+                if (client != null) delivery.Zip = client.Zip;
+            }
+
+            //db.SaveChanges();
+            return true;
+        }
         private static int GetClientId(string lastName, string firstName)
         {
             var db = new BHelpContext();
@@ -222,18 +237,9 @@ namespace BHelp
 
         private static bool IsDate(string inputDate)
         {
+            // ReSharper disable once NotAccessedVariable
             DateTime dat;
             return DateTime.TryParse(inputDate, out dat);
-            //bool isDate = true;
-            //try
-            //{
-            //    DateTime dt = DateTime.Parse(inputDate);
-            //}
-            //catch
-            //{
-            //    isDate = false;
-            //}
-            //return isDate;
         }
 
         private static string GetUserId(string fullName)

@@ -79,6 +79,12 @@ namespace BHelp.Controllers
             Utilities.UploadDeliveries();
             return RedirectToAction("Index", "Home");
         }
+
+        public ActionResult CopyClientZipToDelivery()
+        {
+            Utilities.CopyClientZipToDelivery();
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
 
