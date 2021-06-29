@@ -35,6 +35,7 @@ namespace BHelp.Controllers
                         Id = delivery.Id,
                         ClientId = client.Id,
                         Client = client,
+                        DriverId = delivery.DriverId,
                         DeliveryDate =delivery.DeliveryDate,
                         FamilyMembers = AppRoutines.GetFamilyMembers(client.Id),
                         FamilySelectList = AppRoutines.GetFamilySelectList(client.Id),
@@ -77,13 +78,14 @@ namespace BHelp.Controllers
                     if (delivery.DriverId != null)
                     {
                         var driver = db.Users.Find(delivery.DriverId);
-                        if (driver != null) deliveryView.DriverName = driver.FullName;
+                        if (driver != null)
+                        { deliveryView.DriverName = driver.FullName;}
+                        else
+                        {
+                            deliveryView.DriverName = "(nobody yet)";
+                        }
                     }
-                    else
-                    {
-                        deliveryView.DriverName = "(nobody yet)";  
-                    }
-
+                    
                     var ODid = delivery.ODId;          //System.Web.HttpContext.Current.User.Identity.GetUserId();
                     if (ODid != null)
                     {
@@ -207,6 +209,7 @@ namespace BHelp.Controllers
                 ClientId = delivery.ClientId,
                 DeliveryDate = Convert.ToDateTime(delivery.DeliveryDate.ToString("MM/dd/yyyy")),
                 ODNotes = delivery.ODNotes,
+                DriverId = delivery.DriverId,
                 DriverNotes = delivery.DriverNotes,
                 FamilyMembers = AppRoutines.GetFamilyMembers(delivery.ClientId),
                 FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId)
@@ -214,6 +217,15 @@ namespace BHelp.Controllers
   
             if (delivery.DateDelivered != null) viewModel.DateDelivered = (DateTime) delivery.DateDelivered;
 
+            viewModel.DriversList = AppRoutines.GetDriversSelectList();
+            foreach (var item in viewModel.DriversList)
+            {
+                if (item.Value == viewModel.DriverId)
+                {
+                    item.Selected = true;
+                    break;
+                }
+            }
 
             foreach (var mbr in viewModel.FamilyMembers)
             {
@@ -246,7 +258,7 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(
             [Bind(Include = "Id,ClientId,DeliveryDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards," +
-                            "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible")]
+                            "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId")]
             DeliveryViewModel delivery)
         {
             if (ModelState.IsValid)
@@ -263,6 +275,7 @@ namespace BHelp.Controllers
                     updateData.KidSnacks = delivery.KidSnacks;
                     updateData.GiftCards = delivery.GiftCards;
                     updateData.ODNotes = delivery.ODNotes;
+                    updateData.DriverId = delivery.DriverId;
                     updateData.DriverNotes = delivery.DriverNotes;
                     updateData.DateDelivered = delivery.DateDelivered;
                     db.Entry(updateData).State = EntityState.Modified;
@@ -353,27 +366,24 @@ namespace BHelp.Controllers
             }
             view.ZipCodes = AppRoutines.GetZipCodesList();
             // Load MonthlyCounts - extra zip code is for totals column.
-            view.MonthlyCounts = new int[12, view.ZipCodes.Count + 1, 6]; //Month, ZipCodes, Counts
+            view.MonthlyCounts = new int[13, view.ZipCodes.Count + 1, 6]; //Month, ZipCodes, Counts
             for (int i = 0; i < 3; i++)
             {
                 var mY = view.MonthYear[i].Split(' ');
                 var mo = DateTime.ParseExact(mY[0], "MMMM", CultureInfo.CurrentCulture).Month;
                 var startDate = Convert.ToDateTime(mo.ToString() + "/01/" + mY[1]);
-                var endDate = Convert.ToDateTime((mo + 1).ToString() + "/01/" + mY[1]);
-                //var deliveries = db.Deliveries
-                //    .Where(d => d.DateDelivered >= startDate && d.DateDelivered < endDate)
-                //        .Join(db.Clients, del => del.ClientId, cli => cli.Id,
-                            //(del, cli) => new
-                            //{
-                            //    zip = del.Zip,
-                            //    children = del.Children,
-                            //    adults = del.Adults,
-                            //    seniors = del.Seniors,
-                            //    fullBags = del.FullBags,
-                            //    halfBags = del.HalfBags,
-                            //    kidSnacks = del.KidSnacks
-                            //}).ToList();
-            var deliveries = db.Deliveries
+                DateTime endDate;
+                if (mo == 12)
+                {
+                    var enDt = Convert.ToDateTime("12/31/" + mY[1]);
+                    endDate = enDt.AddDays(1);
+                }
+                else
+                {
+                    endDate = Convert.ToDateTime((mo + 1).ToString() + "/01/" + mY[1]);
+                }
+               
+                var deliveries = db.Deliveries
                     .Where(d => d.DateDelivered >= startDate && d.DateDelivered < endDate).ToList();
                  
                 foreach (var delivery in deliveries)

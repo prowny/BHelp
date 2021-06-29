@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using Castle.Core.Internal;
+using Microsoft.Ajax.Utilities;
 
 namespace BHelp
 {
@@ -103,6 +104,52 @@ namespace BHelp
                 }
             }
             return familyMembers;
+        }
+
+        public static List<SelectListItem> GetDriversSelectList()
+        {
+            List<SelectListItem> driverList = new List<SelectListItem>();
+            using (var db = new BHelpContext())
+            {
+                var userList = db.Users.OrderBy(u => u.LastName).ToList();
+                var selListItem = new SelectListItem() { Value = "0", Text = @"(nobody yet)"};
+                driverList.Add(selListItem);
+                foreach (var user in userList)
+                {
+                   if (UserIsInRole(user.Id, "Driver"))
+                   {
+                       var newListItem = new SelectListItem() { Value = user.Id, Text = user.FullName };
+                       driverList.Add(newListItem);
+                   }
+                }
+            }
+            return (driverList);
+        }
+
+        public static Boolean UserIsInRole(string userId, string roleName)
+        {
+            var sqlString = "SELECT Id FROM AspNetRoles WHERE Name = '" + roleName + "'";
+            string roleId;
+            using (var context = new BHelpContext())
+            {
+                roleId = context.Database.SqlQuery<string>(sqlString).FirstOrDefault();
+                if (roleId == null)
+                {
+                    return false;
+                }
+            }
+
+            sqlString = "SELECT UserId FROM AspNetUserRoles WHERE ";
+            sqlString += "UserId = '" + userId + "' AND RoleId ='" + roleId + "'";
+            using (var context = new BHelpContext())
+            {
+                var success = context.Database.SqlQuery<string>(sqlString).FirstOrDefault();
+                if (success != null)
+                {
+                    return true;
+                }
+                return false;
+            }
         }
     }
 }

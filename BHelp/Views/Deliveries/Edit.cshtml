@@ -46,6 +46,14 @@
                     <td>@Html.TextBoxFor(model => model.DeliveryDate, Model.DeliveryDate.ToString("MM/dd/yyyy"),
                             new {id = "DeliveryDate", style = "width: 75px;"})</td>
                     <td style="color: darkmagenta">&#8592;Click to change</td>
+                    <td>&nbsp;Driver:</td>
+                    @if (Model.DriversList != null)
+                    {
+                        <td>
+                            @Html.DropDownListFor(model => model.DriverId, new SelectList(Model.DriversList, "Value", "Text"),new {@class = "form-control"})
+                            @Html.ValidationMessageFor(model => model.DriverId, "", new {@class = "text-danger"})
+                        </td>
+                    }
                 </tr>
             </table>
 
