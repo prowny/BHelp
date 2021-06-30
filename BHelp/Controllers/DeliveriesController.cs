@@ -354,16 +354,20 @@ namespace BHelp.Controllers
             {
                 view.MonthYear = new string[3];
                 view.MonthYear[0] =
-                    DateTimeFormatInfo.CurrentInfo.GetMonthName(1 + (3 * (qtr - 1)))
+                    DateTimeFormatInfo.CurrentInfo.GetMonthName(1 + 3 * (qtr - 1))
                     + " " + view.Year.ToString();
                 view.MonthYear[1] =
-                    DateTimeFormatInfo.CurrentInfo.GetMonthName(2 + (3 * (qtr - 1)))
+                    DateTimeFormatInfo.CurrentInfo.GetMonthName(2 + 3 * (qtr - 1))
                     + " " + view.Year.ToString();
                 view.MonthYear[2] =
-                    DateTimeFormatInfo.CurrentInfo.GetMonthName(3 + (3 * (qtr - 1)))
+                    DateTimeFormatInfo.CurrentInfo.GetMonthName(3 + 3 * (qtr - 1))
                     + " " + view.Year.ToString();
                 view.DateRangeTitle = view.MonthYear[0] + " through " + view.MonthYear[2];
+                view.ReportTitle = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(1 + 3 * (qtr - 1))
+                                   + "-" + DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(3 + 3 * (qtr - 1))
+                                   + " " + view.Year.ToString() + " County Report";
             }
+
             view.ZipCodes = AppRoutines.GetZipCodesList();
             // Load MonthlyCounts - extra zip code is for totals column.
             view.MonthlyCounts = new int[13, view.ZipCodes.Count + 1, 6]; //Month, ZipCodes, Counts
@@ -414,7 +418,7 @@ namespace BHelp.Controllers
         {
             var view = GetCountyReportView(yy, qtr);
             XLWorkbook workbook = new XLWorkbook();
-            IXLWorksheet ws = workbook.Worksheets.Add("County Report");
+            IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
             int activeRow = 1;
             ws.Cell(activeRow, 1).SetValue("Bethesda Help, Inc.");
             activeRow ++;
@@ -474,7 +478,7 @@ namespace BHelp.Controllers
             workbook.SaveAs(ms);
             ms.Position = 0;
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                { FileDownloadName = "CountyReport.xlsx" };
+                { FileDownloadName = view.ReportTitle +".xlsx" };
         }
         public ActionResult ReturnToDashboard()
         {
@@ -495,4 +499,3 @@ namespace BHelp.Controllers
         }
     }
 }
-
