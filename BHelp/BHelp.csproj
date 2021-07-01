@@ -409,6 +409,7 @@
     <Content Include="Views\ResetAnyPassword\Index.cshtml" />
     <Content Include="Views\Deliveries\ReportsMenu.cshtml" />
     <Content Include="Views\Deliveries\CountyReport.cshtml" />
+    <Content Include="Views\Deliveries\QuorkReport.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

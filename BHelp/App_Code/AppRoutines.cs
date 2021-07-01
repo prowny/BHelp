@@ -111,7 +111,7 @@ namespace BHelp
             List<SelectListItem> driverList = new List<SelectListItem>();
             using (var db = new BHelpContext())
             {
-                var userList = db.Users.OrderBy(u => u.LastName).ToList();
+                var userList = db.Users.OrderBy(u => u.LastName).Where(a => a.Active).ToList();
                 var selListItem = new SelectListItem() { Value = "0", Text = @"(nobody yet)"};
                 driverList.Add(selListItem);
                 foreach (var user in userList)

@@ -14,13 +14,8 @@
     @*Put page javascript in a separate .js file where breaks can be set during debugging:*@
     <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
     <style>
-        #Year {
-            width: 50px;
-        }
-
-        #Quarter {
-            width: 25px;
-        }
+        #Year {width: 50px;}
+        #Quarter {width: 25px;}
     </style>
 </head>
 <body>
@@ -34,7 +29,7 @@
         </tr>
     </table>
 <br />
-<div id ="ReportBody ">
+<div id ="ReportBody">
     <table>
         <tr><td><b>Bethesda Help, Inc.</b></td></tr>
         <tr><td><b>@Html.Label(Model.DateRangeTitle)</b></td></tr>
@@ -62,37 +57,37 @@
                 <td style="text-align: right"># of Families</td>
                 @for (int i = 0; i < Model.ZipCodes.Count + 1; i++)
                 {
-                    <td style="text-align: right">@Model.MonthlyCounts[Model.Months[mo], i, 0]</td>}
+                    <td style="text-align: right">@Model.Counts[Model.Months[mo], i, 0]</td>}
             </tr>
             <tr>
                 <td style="text-align: right"># of Children (&#60;18)</td>
                 @for (int i = 0; i < Model.ZipCodes.Count + 1; i++)
                 {
-                    <td style="text-align: right">@Model.MonthlyCounts[Model.Months[mo], i, 1]</td>}
+                    <td style="text-align: right">@Model.Counts[Model.Months[mo], i, 1]</td>}
             </tr>
             <tr>
                 <td style="text-align: right"># of Adults(&#62;=18 and &#60;60)</td>
                 @for (int i = 0; i < Model.ZipCodes.Count + 1; i++)
                 {
-                    <td style="text-align: right">@Model.MonthlyCounts[Model.Months[mo], i, 2]</td>}
+                    <td style="text-align: right">@Model.Counts[Model.Months[mo], i, 2]</td>}
             </tr>
             <tr>
                 <td style="text-align: right"># of Seniors (&#62;=60)</td>
                 @for (int i = 0; i < Model.ZipCodes.Count + 1; i++)
                 {
-                    <td style="text-align: right">@Model.MonthlyCounts[Model.Months[mo], i, 3]</td>}
+                    <td style="text-align: right">@Model.Counts[Model.Months[mo], i, 3]</td>}
             </tr>
             <tr>
                 <td style="text-align: right"># of Residents</td>
                 @for (int i = 0; i < Model.ZipCodes.Count + 1; i++)
                 {
-                    <td style="text-align: right">@Model.MonthlyCounts[Model.Months[mo], i, 4]</td>}
+                    <td style="text-align: right">@Model.Counts[Model.Months[mo], i, 4]</td>}
             </tr>
             <tr>
                 <td style="text-align: right"># of Pounds of Food</td>
                 @for (int i = 0; i < Model.ZipCodes.Count + 1; i++)
                 {
-                    <td style="text-align: right">@Model.MonthlyCounts[Model.Months[mo], i, 5]</td>}
+                    <td style="text-align: right">@Model.Counts[Model.Months[mo], i, 5]</td>}
             </tr>
             <tr></tr>
         </table>

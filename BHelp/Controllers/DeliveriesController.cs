@@ -369,8 +369,8 @@ namespace BHelp.Controllers
             }
 
             view.ZipCodes = AppRoutines.GetZipCodesList();
-            // Load MonthlyCounts - extra zip code is for totals column.
-            view.MonthlyCounts = new int[13, view.ZipCodes.Count + 1, 6]; //Month, ZipCodes, Counts
+            // Load Counts - extra zip code is for totals column.
+            view.Counts = new int[13, view.ZipCodes.Count + 1, 6]; //Month, ZipCodes, Counts
             for (int i = 0; i < 3; i++)
             {
                 var mY = view.MonthYear[i].Split(' ');
@@ -397,16 +397,16 @@ namespace BHelp.Controllers
                     {
                         if (delivery.Zip == view.ZipCodes[j])
                         {
-                            view.MonthlyCounts[mo, j, 0]++; view.MonthlyCounts[mo, t, 0]++;  // month, zip, # of families
+                            view.Counts[mo, j, 0]++; view.Counts[mo, t, 0]++;  // month, zip, # of families
                             var c = Convert.ToInt32(delivery.Children);
                             var a = Convert.ToInt32(delivery.Adults);
                             var s = Convert.ToInt32(delivery.Seniors);
-                            view.MonthlyCounts[mo, j, 1] += c; view.MonthlyCounts[mo, t, 1] += c;
-                            view.MonthlyCounts[mo, j, 2] += a; view.MonthlyCounts[mo, t, 2] += a;
-                            view.MonthlyCounts[mo, j, 3] += s; view.MonthlyCounts[mo, t, 3] += s;
-                            view.MonthlyCounts[mo, j, 4] += (a + c + s); view.MonthlyCounts[mo, t, 4] += (a + c + s);  // # of residents
+                            view.Counts[mo, j, 1] += c; view.Counts[mo, t, 1] += c;
+                            view.Counts[mo, j, 2] += a; view.Counts[mo, t, 2] += a;
+                            view.Counts[mo, j, 3] += s; view.Counts[mo, t, 3] += s;
+                            view.Counts[mo, j, 4] += (a + c + s); view.Counts[mo, t, 4] += (a + c + s);  // # of residents
                             var lbs = Convert.ToInt32(delivery.FullBags * 10 + delivery.HalfBags * 9);
-                            view.MonthlyCounts[mo, j, 5] += lbs; view.MonthlyCounts[mo, t, 5] += lbs;  // pounds of food
+                            view.Counts[mo, j, 5] += lbs; view.Counts[mo, t, 5] += lbs;  // pounds of food
                         }
                     }
                 }
@@ -439,37 +439,37 @@ namespace BHelp.Controllers
                 ws.Cell(activeRow, 1).SetValue("# of Families");
                 for (int i = 0; i < view.ZipCodes.Count + 1; i++)
                 {
-                    ws.Cell(activeRow, i + 2).SetValue(view.MonthlyCounts[view.Months[mo], i, 0]);
+                    ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 0]);
                 }
                 activeRow ++;
                 ws.Cell(activeRow, 1).SetValue("# of Children (&#60;18)");
                 for (int i = 0; i < view.ZipCodes.Count + 1; i++)
                 {
-                    ws.Cell(activeRow, i + 2).SetValue(view.MonthlyCounts[view.Months[mo], i, 1]);
+                    ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 1]);
                 }
                 activeRow ++;
                 ws.Cell(activeRow, 1).SetValue("# of Adults(&#62;=18 and &#60;60");
                 for (int i = 0; i < view.ZipCodes.Count + 1; i++)
                 {
-                    ws.Cell(activeRow, i + 2).SetValue(view.MonthlyCounts[view.Months[mo], i, 2]);
+                    ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 2]);
                 }
                 activeRow ++;
                 ws.Cell(activeRow, 1).SetValue("# of Seniors (&#62;=60)");
                 for (int i = 0; i < view.ZipCodes.Count + 1; i++)
                 {
-                    ws.Cell(activeRow, i + 2).SetValue(view.MonthlyCounts[view.Months[mo], i, 3]);
+                    ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 3]);
                 }
                 activeRow ++;
                 ws.Cell(activeRow, 1).SetValue("# of Residents");
                 for (int i = 0; i < view.ZipCodes.Count + 1; i++)
                 {
-                    ws.Cell(activeRow, i + 2).SetValue(view.MonthlyCounts[view.Months[mo], i, 4]);
+                    ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 4]);
                 }
                 activeRow ++;
                 ws.Cell(activeRow, 1).SetValue("# of Pounds of Food");
                 for (int i = 0; i < view.ZipCodes.Count + 1; i++)
                 {
-                    ws.Cell(activeRow, i + 2).SetValue(view.MonthlyCounts[view.Months[mo], i, 5]);
+                    ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 5]);
                 }
                 activeRow += 2;
             }
@@ -479,6 +479,67 @@ namespace BHelp.Controllers
             ms.Position = 0;
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 { FileDownloadName = view.ReportTitle +".xlsx" };
+        }
+
+        public ActionResult QuorkReport(string endingDate = "")
+        {
+            DateTime endDate;
+            if (endingDate.IsNullOrEmpty())
+            {
+                // Ends on a Friday - weekday Sunday is 0, Friday is 5
+                // If today is a Friday of Saturday, default to this week
+                int weekDay = Convert.ToInt32(DateTime.Today.DayOfWeek);
+                if (weekDay >= 5) // Default to this this Friday, else Friday last week
+                { endDate = DateTime.Today.AddDays(weekDay - 5); }
+                else
+                { endDate = DateTime.Today.AddDays(weekDay - 12); }
+            }
+            else
+            { endDate = Convert.ToDateTime(endingDate); }
+
+            var view = GetQuorkReportView(endDate);
+            return View(view);
+        }
+
+        private ReportsViewModel GetQuorkReportView(DateTime endDate)
+        {
+            DateTime startDate = endDate.AddDays(-6); 
+            var view = new ReportsViewModel()
+            {
+                BeginDate = startDate,
+                EndDate = endDate
+            };
+            view.DateRangeTitle= startDate.ToShortDateString() + " - " + view.EndDate.ToShortDateString();
+            view.ReportTitle = view.EndDate.ToString("MM-dd-yy") + " QORK Weekly Report";
+            view.ZipCodes = AppRoutines.GetZipCodesList();
+            // Load Counts - extra zip code is for totals column.
+            view.Counts = new int[1, view.ZipCodes.Count + 1, 8]; // 0 (unused), ZipCodes, Counts
+            var deliveries = db.Deliveries
+                .Where(d => d.DateDelivered >= startDate && d.DateDelivered < endDate).ToList();
+
+            foreach (var delivery in deliveries)
+            {
+                var zipCount = view.ZipCodes.Count;  // Extra zip code column is for totals
+                for (var j = 0; j < view.ZipCodes.Count; j++)
+                {
+                    if (delivery.Zip == view.ZipCodes[j])
+                    {
+                        var lbs = Convert.ToInt32(delivery.FullBags * 10 + delivery.HalfBags * 9);
+                        view.Counts[0, j, 0] += lbs; view.Counts[0, zipCount, 0] +=lbs;   //pounds of food
+                        view.Counts[0, j, 1] ++; view.Counts[0, zipCount, 1] ++; //# unique households served
+                        var c = Convert.ToInt32(delivery.Children);
+                        var a = Convert.ToInt32(delivery.Adults);   
+                        var s = Convert.ToInt32(delivery.Seniors);  
+                        view.Counts[0, j, 2] += (a + c + s); view.Counts[0, zipCount, 2] += (a + c + s);    //# residents served
+                        view.Counts[0, j, 3] += c; view.Counts[0, zipCount, 3] += c; //# children
+                        view.Counts[0, zipCount, 4] += s; view.Counts[0, zipCount, 4] += s;  //# seniors
+                        view.Counts[0, j, 5] = 0; view.Counts[0, zipCount, 5]= 0;  //#staff worked  ZERO
+                        view.Counts[0, j, 6] = 0; view.Counts[0, zipCount, 6] = 0;   //# staff hours   ZERO
+                        view.Counts[0, j, 7]++; view.Counts[0, zipCount, 7]++;  //# deliveries
+                    }
+                }
+            }
+            return view;
         }
         public ActionResult ReturnToDashboard()
         {
