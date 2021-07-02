@@ -10,6 +10,7 @@ namespace BHelp.ViewModels
     {
         public DateTime BeginDate { get; set; }
         public DateTime EndDate { get; set; }
+        public string EndDateString { get; set; }   // For use by Quork report
         public DateTime BeginMonth { get; set; }
         public DateTime EndMonth { get; set; }
 

@@ -486,16 +486,22 @@ namespace BHelp.Controllers
             DateTime endDate;
             if (endingDate.IsNullOrEmpty())
             {
-                // Ends on a Friday - weekday Sunday is 0, Friday is 5
+                // Ends on a Friday - weekday Monday is 1, Friday is 5
                 // If today is a Friday of Saturday, default to this week
                 int weekDay = Convert.ToInt32(DateTime.Today.DayOfWeek);
                 if (weekDay >= 5) // Default to this this Friday, else Friday last week
-                { endDate = DateTime.Today.AddDays(weekDay - 5); }
+                { endDate = DateTime.Today.AddDays(5 - weekDay); }
                 else
-                { endDate = DateTime.Today.AddDays(weekDay - 12); }
+                {
+                    DateTime lastFriday = DateTime.Now.AddDays(-1);
+                    while (lastFriday.DayOfWeek != DayOfWeek.Friday) lastFriday = lastFriday.AddDays(-1);
+                    endDate = lastFriday;
+                }
             }
             else
-            { endDate = Convert.ToDateTime(endingDate); }
+            {
+                endDate =Convert.ToDateTime(endingDate);
+            }
 
             var view = GetQuorkReportView(endDate);
             return View(view);
@@ -509,8 +515,10 @@ namespace BHelp.Controllers
                 BeginDate = startDate,
                 EndDate = endDate
             };
-            view.DateRangeTitle= startDate.ToShortDateString() + " - " + view.EndDate.ToShortDateString();
-            view.ReportTitle = view.EndDate.ToString("MM-dd-yy") + " QORK Weekly Report";
+            view.EndDateString = view.EndDate.ToShortDateString();
+            view.DateRangeTitle= startDate.ToShortDateString() + " - " + view.EndDateString;
+            view.ReportTitle = view.EndDateString + " QORK Weekly Report";
+            
             view.ZipCodes = AppRoutines.GetZipCodesList();
             // Load Counts - extra zip code is for totals column.
             view.Counts = new int[1, view.ZipCodes.Count + 1, 8]; // 0 (unused), ZipCodes, Counts
@@ -540,6 +548,17 @@ namespace BHelp.Controllers
                 }
             }
             return view;
+        }
+        public ActionResult FridayNext(DateTime friday)
+        {
+            friday = friday.AddDays(7);
+            return RedirectToAction("QuorkReport", new { endingDate = friday.ToShortDateString() });
+        }
+
+        public ActionResult FridayPrevious(DateTime friday)
+        {
+            friday = friday.AddDays(-7);
+            return RedirectToAction("QuorkReport", new{endingDate = friday.ToShortDateString()});
         }
         public ActionResult ReturnToDashboard()
         {
