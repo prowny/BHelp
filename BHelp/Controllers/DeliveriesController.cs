@@ -489,13 +489,13 @@ namespace BHelp.Controllers
                 // Ends on a Friday - weekday Monday is 1, Friday is 5
                 // If today is a Friday of Saturday, default to this week
                 int weekDay = Convert.ToInt32(DateTime.Today.DayOfWeek);
-                if (weekDay >= 5) // Default to this this Friday, else Friday last week
-                { endDate = DateTime.Today.AddDays(5 - weekDay); }
+                if (weekDay >= 6) // Default to this this Saturday, else Saturday last week
+                { endDate = DateTime.Today.AddDays(6 - weekDay); }
                 else
                 {
-                    DateTime lastFriday = DateTime.Now.AddDays(-1);
-                    while (lastFriday.DayOfWeek != DayOfWeek.Friday) lastFriday = lastFriday.AddDays(-1);
-                    endDate = lastFriday;
+                    DateTime lastSaturday = DateTime.Now.AddDays(-1);
+                    while (lastSaturday.DayOfWeek != DayOfWeek.Saturday) lastSaturday = lastSaturday.AddDays(-1);
+                    endDate = lastSaturday;
                 }
             }
             else
@@ -533,7 +533,7 @@ namespace BHelp.Controllers
                     if (delivery.Zip == view.ZipCodes[j])
                     {
                         var lbs = Convert.ToInt32(delivery.FullBags * 10 + delivery.HalfBags * 9);
-                        view.Counts[0, j, 0] += lbs; view.Counts[0, zipCount, 0] +=lbs;   //pounds of food
+                        view.Counts[0, j, 0] += lbs; view.Counts[0, zipCount, 0] += lbs;   //pounds of food
                         view.Counts[0, j, 1] ++; view.Counts[0, zipCount, 1] ++; //# unique households served
                         var c = Convert.ToInt32(delivery.Children);
                         var a = Convert.ToInt32(delivery.Adults);   
@@ -556,22 +556,66 @@ namespace BHelp.Controllers
             var view = GetQuorkReportView(endDate);
             var workbook = new XLWorkbook();
             IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
+
+            int activeRow = 1;
+            ws.Cell(activeRow, 1).SetValue("Bethesda Help, Inc. Quork Reportr");
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue("Time Period");
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue(view.DateRangeTitle);
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue("Zip Codes");
+            for (int i = 0; i < view.ZipCodes.Count; i++)
+            {
+                ws.Cell(activeRow, i + 2).SetValue(view.ZipCodes[i]);
+            }
+            ws.Cell(activeRow, view.ZipCodes.Count + 2).SetValue("Total Zip Codes");
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue("Total Food Lbs)");
+            for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+            { ws.Cell(activeRow, i + 2).SetValue(view.Counts[0, i, 0]); }
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue("# HH Served (No Repeat Clients in Time Period)");
+            for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+            { ws.Cell(activeRow, i + 2).SetValue(view.Counts[0,i,1]); }
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue("# Residents Served");   
+            for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+            { ws.Cell(activeRow, i + 2).SetValue(view.Counts[0, i, 2]); }
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue("# Residents <18");
+            for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+            { ws.Cell(activeRow, i + 2).SetValue(view.Counts[0, i, 3]); }
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue("# Residents >60");
+            for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+            { ws.Cell(activeRow, i + 2).SetValue(view.Counts[0, i, 4]); }
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue("# Staff Worked");
+            activeRow++;  
+            ws.Cell(activeRow, 1).SetValue("/# Staff Hours");
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue("# Deliveries");
+            for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+            { ws.Cell(activeRow, i + 2).SetValue(view.Counts[0, i, 7]); }
+
+            ws.Columns().AdjustToContents();
             MemoryStream ms = new MemoryStream();
             workbook.SaveAs(ms);
             ms.Position = 0;
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 { FileDownloadName = view.ReportTitle + ".xlsx" };
         }
-        public ActionResult FridayNext(DateTime friday)
+        public ActionResult SaturdayNext(DateTime saturday)
         {
-            friday = friday.AddDays(7);
-            return RedirectToAction("QuorkReport", new { endingDate = friday.ToShortDateString() });
+            saturday = saturday.AddDays(7);
+            return RedirectToAction("QuorkReport", new { endingDate = saturday.ToShortDateString() });
         }
 
-        public ActionResult FridayPrevious(DateTime friday)
+        public ActionResult SaturdayPrevious(DateTime saturday)
         {
-            friday = friday.AddDays(-7);
-            return RedirectToAction("QuorkReport", new{endingDate = friday.ToShortDateString()});
+            saturday = saturday.AddDays(-7);
+            return RedirectToAction("QuorkReport", new{endingDate = saturday.ToShortDateString()});
         }
         public ActionResult ReturnToDashboard()
         {
