@@ -96,7 +96,7 @@
 </table>
 <br />
 <div>
-    @Html.ActionLink("Download to Excel File", "CountyReportToExcel", new { yy = Model.Year, qtr=Model.Quarter }, null)
+    @Html.ActionLink("Download to Excel File", "QuorkReportToExcel", new { endingDate = Model.EndDateString }, null)
     <br />
     @Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu", new { })
     <br />

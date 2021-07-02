@@ -515,8 +515,8 @@ namespace BHelp.Controllers
                 BeginDate = startDate,
                 EndDate = endDate
             };
-            view.EndDateString = view.EndDate.ToShortDateString();
-            view.DateRangeTitle= startDate.ToShortDateString() + " - " + view.EndDateString;
+            view.EndDateString = view.EndDate.ToString("M-d-yy");
+            view.DateRangeTitle= startDate.ToShortDateString() + " - " + endDate.ToShortDateString();
             view.ReportTitle = view.EndDateString + " QORK Weekly Report";
             
             view.ZipCodes = AppRoutines.GetZipCodesList();
@@ -541,13 +541,26 @@ namespace BHelp.Controllers
                         view.Counts[0, j, 2] += (a + c + s); view.Counts[0, zipCount, 2] += (a + c + s);    //# residents served
                         view.Counts[0, j, 3] += c; view.Counts[0, zipCount, 3] += c; //# children
                         view.Counts[0, zipCount, 4] += s; view.Counts[0, zipCount, 4] += s;  //# seniors
-                        view.Counts[0, j, 5] = 0; view.Counts[0, zipCount, 5]= 0;  //#staff worked  ZERO
-                        view.Counts[0, j, 6] = 0; view.Counts[0, zipCount, 6] = 0;   //# staff hours   ZERO
+                        view.Counts[0, j, 5] = 0; view.Counts[0, zipCount, 5]= 0;  //#staff worked  ZERO!!!
+                        view.Counts[0, j, 6] = 0; view.Counts[0, zipCount, 6] = 0;   //# staff hours   ZERO!!!
                         view.Counts[0, j, 7]++; view.Counts[0, zipCount, 7]++;  //# deliveries
                     }
                 }
             }
             return view;
+        }
+
+        public ActionResult QuorkReportToExcel(string endingDate)
+        {
+            var endDate = Convert.ToDateTime(endingDate);
+            var view = GetQuorkReportView(endDate);
+            var workbook = new XLWorkbook();
+            IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
+            MemoryStream ms = new MemoryStream();
+            workbook.SaveAs(ms);
+            ms.Position = 0;
+            return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                { FileDownloadName = view.ReportTitle + ".xlsx" };
         }
         public ActionResult FridayNext(DateTime friday)
         {
