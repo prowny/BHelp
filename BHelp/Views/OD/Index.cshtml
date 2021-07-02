@@ -32,12 +32,6 @@
     <table class="table">
         <tr>
             <td><b>OD Name:</b>&nbsp;@Session["CurrentUserFullName"]</td>
-            @*<td>&nbsp;&nbsp;<b>Delivery Date:</b></td>*@
-            @*<td>
-            @Html.TextBox("Delivery Date", @Session["CallLogDate"].ToString(),
-                new {id = "CallLogDate", style = "width: 75px;"})
-            <span style="color: darkmagenta">&#8592;Click to change</span>
-        </td> @*Html left-arrow*@
         <tr>
     </table>
 }
@@ -48,12 +42,12 @@
                 @Html.TextBox("SearchText", "", new
                 {
                     id = "SearchText", style = "width: 50px;", onkeypress = "KeyPressHandler()",
-                    Title = "Tip: Enter full or partial Phone# OR Last Name.", autofocus = true
+                    Title = "Tip: Enter full or partial Phone# OR Last Name OR Street Number", autofocus = true
                 })
             </td>
             <td>
                 <a href="#" id="SearchString"><span>Search</span></a>
-                <span style="color: darkmagenta">&#8592; (Enter full or partial Phone# OR Last Name)</span>
+                <span style="color: darkmagenta">&#8592; (Enter full or partial Phone# OR Last Name OR Street Number)</span>
             </td>
         </tr>
     </table>
