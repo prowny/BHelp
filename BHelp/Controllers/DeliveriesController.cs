@@ -486,8 +486,8 @@ namespace BHelp.Controllers
             DateTime endDate;
             if (endingDate.IsNullOrEmpty())
             {
-                // Ends on a Friday - weekday Monday is 1, Friday is 5
-                // If today is a Friday of Saturday, default to this week
+                // Ends on a Saturday - weekday Monday is 1, Saturday is 6
+                // If today is a  Saturday, default to this week
                 int weekDay = Convert.ToInt32(DateTime.Today.DayOfWeek);
                 if (weekDay >= 6) // Default to this this Saturday, else Saturday last week
                 { endDate = DateTime.Today.AddDays(6 - weekDay); }
@@ -540,7 +540,7 @@ namespace BHelp.Controllers
                         var s = Convert.ToInt32(delivery.Seniors);  
                         view.Counts[0, j, 2] += (a + c + s); view.Counts[0, zipCount, 2] += (a + c + s);    //# residents served
                         view.Counts[0, j, 3] += c; view.Counts[0, zipCount, 3] += c; //# children
-                        view.Counts[0, zipCount, 4] += s; view.Counts[0, zipCount, 4] += s;  //# seniors
+                        view.Counts[0, j, 4] += s; view.Counts[0, zipCount, 4] += s;  //# seniors
                         view.Counts[0, j, 5] = 0; view.Counts[0, zipCount, 5]= 0;  //#staff worked  ZERO!!!
                         view.Counts[0, j, 6] = 0; view.Counts[0, zipCount, 6] = 0;   //# staff hours   ZERO!!!
                         view.Counts[0, j, 7]++; view.Counts[0, zipCount, 7]++;  //# deliveries
