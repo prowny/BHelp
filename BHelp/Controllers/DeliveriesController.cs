@@ -21,9 +21,8 @@ namespace BHelp.Controllers
         // GET: Deliveries
         public ActionResult Index()
         {
-            var listDeliveries = new List<Delivery>(db.Deliveries).Where(d => d.DateDelivered == null)
+            var listDeliveries = new List<Delivery>(db.Deliveries).Where(d => d.DateDelivered == null && d.Completed == false)
                 .OrderBy(d => d.DeliveryDate).ThenBy(z => z.Zip).ToList();
-            // to add order .ThenBy(Zip) means storing the Zip in Client.cs AND Delivery/cs
             var listDeliveryViewModels = new List<DeliveryViewModel>();
             foreach (var delivery in listDeliveries)
             {
@@ -34,7 +33,7 @@ namespace BHelp.Controllers
                     {
                         Id = delivery.Id,
                         ClientId = client.Id,
-                        Client = client,
+                        //Client = client,
                         DriverId = delivery.DriverId,
                         DeliveryDate =delivery.DeliveryDate,
                         FamilyMembers = AppRoutines.GetFamilyMembers(client.Id),

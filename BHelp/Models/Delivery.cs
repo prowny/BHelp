@@ -9,16 +9,32 @@ namespace BHelp.Models
     {
         public int Id { get; set; }
         public int ClientId { get; set; }
-        public int? Children { get; set; }  // # of children in this delivery
-        public int? Adults { get; set; }     // # of adults in this delivery
-        public int? Seniors { get; set; }    // # of senoprs in this delivery
+      
 
         [DisplayName("Delivery Date")]
         [Column(TypeName = "Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DeliveryDate { get; set; }
 
+        [DisplayName("Call Log Date")]
+        [Column(TypeName = "Date")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
+        public DateTime LogDate { get; set; }
+
+        // Snapshot: Client Data as of the Log Date
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string StreetNumber { get; set; }
+        public string StreetName { get; set; }
+        public string City { get; set; }
         public string Zip { get; set; }
+        public string Phone { get; set; }
+        public string NamesAgesInHH { get; set; }
+
+        public int? Children { get; set; }  // # of children in this delivery
+        public int? Adults { get; set; }     // # of adults in this delivery
+        public int? Seniors { get; set; }    // # of seniors in this delivery
+       
         public string Notes { get; set; }  // Notes entered by drivers, baggers. etc. (as opposed to OD notes or Household notes)
         public int? FullBags { get; set; }
         public int? HalfBags { get; set; }
@@ -33,6 +49,7 @@ namespace BHelp.Models
         public string DriverId { get; set; }
 
         public DateTime? DateDelivered { get; set; }
+        public Boolean Completed { get; set; }
         public string ODNotes { get; set; }
         public string DriverNotes { get; set; }
     }
