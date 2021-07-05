@@ -53,6 +53,7 @@ namespace BHelp.ViewModels
        
         public List<FamilyMember> FamilyMembers { get; set; }
         public List<SelectListItem> FamilySelectList { get; set; }  // For display onlly
+        public string NamesAgesInHH { get; set; }
         public List<FamilyMember> Kids { get; set; }
         public int KidsCount { get; set; }
         public List<FamilyMember> Adults { get; set; }

@@ -111,14 +111,26 @@ namespace BHelp.Controllers
         public ActionResult AddDelivery(int clientId)
         {
             var userIid = System.Web.HttpContext.Current.User.Identity.GetUserId();
-
-            Delivery delivery = new Delivery()
+            var client = db.Clients.Find(clientId);
+            if (client != null)
             {
-                ODId = userIid,
-                ClientId = clientId,
-                DeliveryDate = Convert.ToDateTime(Session["CallLogDate"])
-            };
-            db.Deliveries.Add(delivery);
+                Delivery delivery = new Delivery
+                {
+                    ODId = userIid,
+                    ClientId = clientId,
+                    LogDate = DateTime.Today,
+                    FirstName = client.FirstName,
+                    LastName = client.LastName,
+                    StreetNumber = client.StreetNumber,
+                    StreetName = client.StreetName,
+                    Phone = client.Phone,
+                    City = client.City,
+                    Zip=client.Zip,
+                    NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(clientId),
+                };
+                db.Deliveries.Add(delivery);
+            }
+
             db.SaveChanges();
             return RedirectToAction("Index");
         }

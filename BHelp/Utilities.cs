@@ -220,6 +220,28 @@ namespace BHelp
             //db.SaveChanges();
             return true;
         }
+
+        public static Boolean CopySnapshotDataToDelivery()
+        {
+            var db = new BHelpContext();
+            var deliveries = db.Deliveries.ToList();
+            foreach (var delivery in deliveries)
+            {
+                var client = db.Clients.Find(delivery.ClientId);
+                delivery.LogDate = delivery.DeliveryDate;
+                if (client != null)
+                {
+                    delivery.FirstName = client.FirstName;
+                    delivery.LastName = client.LastName;
+                    delivery.StreetNumber = client.StreetNumber;
+                    delivery.StreetName = client.StreetName;
+                    delivery.City = client.City;
+                    delivery.Phone = client.Phone;
+                }
+            }
+            db.SaveChanges();
+            return true;
+        }
         private static int GetClientId(string lastName, string firstName)
         {
             var db = new BHelpContext();

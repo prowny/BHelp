@@ -36,6 +36,7 @@ namespace BHelp.Controllers
                         //Client = client,
                         DriverId = delivery.DriverId,
                         DeliveryDate =delivery.DeliveryDate,
+                        NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id),
                         FamilyMembers = AppRoutines.GetFamilyMembers(client.Id),
                         FamilySelectList = AppRoutines.GetFamilySelectList(client.Id),
                         Kids = new List<FamilyMember>(),
@@ -180,7 +181,16 @@ namespace BHelp.Controllers
             if (ModelState.IsValid)
             {
                 Client client = db.Clients.Find(delivery.ClientId);
-                if (client != null) delivery.Zip = client.Zip;
+                if (client != null)
+                {
+                    delivery.FirstName = client.FirstName;
+                    delivery.LastName = client.LastName;
+                    delivery.StreetNumber = client.StreetNumber;
+                    delivery.StreetName = delivery.StreetName;
+                    delivery.NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id);
+                    delivery.Zip = client.Zip;
+                }
+
                 db.Deliveries.Add(delivery);
                 db.SaveChanges();
                 return RedirectToAction("Index");

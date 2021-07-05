@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using Castle.Core.Internal;
-using Microsoft.Ajax.Utilities;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace BHelp
 {
@@ -54,6 +54,19 @@ namespace BHelp
             return years;
         }
 
+        public static string GetNamesAgesOfAllInHousehold(int clientId)
+        {
+            string NamesAges = "";
+            var familyMembers = GetFamilyMembers(clientId);
+            foreach (var familyMamber in familyMembers)
+            {
+                var age = GetAge(familyMamber.DateOfBirth, DateTime.Today).ToString();
+                NamesAges += familyMamber.FirstName + " " + familyMamber.LastName + "/" + age + ", "
+            }
+
+            NamesAges = NamesAges.Substring(NamesAges.Length - 2); // remove last ", "
+            return NamesAges;
+        }
         public static List<SelectListItem> GetFamilySelectList(int clientId)
         {
             List<SelectListItem> householdList = new List<SelectListItem>();
