@@ -43,8 +43,8 @@
             <table>
                 <tr>
                     <td>Log Date&nbsp;</td>
-                    <td>@Html.TextBoxFor(model => model.DeliveryDate, Model.DeliveryDate.ToString("MM/dd/yyyy"),
-                            new {id = "DeliveryDate", style = "width: 75px;"})</td>
+                    <td>@Html.TextBoxFor(model => model.LogDate, Model.LogDate.ToString("MM/dd/yyyy"),
+                            new {id = "LogDate", style = "width: 75px;"})</td>
                     <td style="color: darkmagenta">&#8592;Click to change</td>
                     <td>&nbsp;Driver:</td>
                     @if (Model.DriversList != null)
@@ -107,9 +107,9 @@
 </html>
 <script>
     $(function () {
-        window.$("#DeliveryDate").datepicker();
+        window.$("#LogDate").datepicker();
     });
-</script> @*DeliveryDate datepicker*@
+</script> @*LogDate datepicker*@
 <script>
     $(document).ready(function () {
         $(".datepicker").datepicker({

@@ -7,7 +7,6 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using Castle.Core.Internal;
-using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace BHelp
 {
@@ -61,7 +60,7 @@ namespace BHelp
             foreach (var familyMamber in familyMembers)
             {
                 var age = GetAge(familyMamber.DateOfBirth, DateTime.Today).ToString();
-                NamesAges += familyMamber.FirstName + " " + familyMamber.LastName + "/" + age + ", "
+                NamesAges += familyMamber.FirstName + " " + familyMamber.LastName + "/" + age + ", ";
             }
 
             NamesAges = NamesAges.Substring(NamesAges.Length - 2); // remove last ", "

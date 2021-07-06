@@ -45,7 +45,7 @@
     @foreach (var item in Model)
     {
     <tr>
-        <td>@Html.DisplayFor(modelItem => item.DeliveryDate)</td>
+        <td>@Html.DisplayFor(modelItem => item.LogDate)</td>
         <td>@Html.DisplayFor(modelItem => item.ODName, new { style = "width:100px" })</td>
         <td>@Html.DisplayFor(modelItem => item.Client.LastName)</td>
         <td>@Html.DisplayFor(modelItem => item.Client.FirstName)</td>

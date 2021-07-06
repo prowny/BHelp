@@ -12,11 +12,11 @@ namespace BHelp.ViewModels
     {
         public int Id { get; set; }
         public int ClientId { get; set; }
-
-        [DisplayName("Delivery Date")]
+        
+        [DisplayName("Call Log Date")]
         [Column(TypeName = "Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateTime DeliveryDate { get; set; }
+        public DateTime LogDate { get; set; }
 
         [DataType(DataType.MultilineText)]
         public string Notes { get; set; }   // Client/Household Notes

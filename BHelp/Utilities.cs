@@ -183,7 +183,7 @@ namespace BHelp
                     Client client = db.Clients.Find(delivery.ClientId);
                     // Create new delivery
                     //count1++;
-                    delivery.DeliveryDate = Convert.ToDateTime(row[0].ToString());
+                    delivery.LogDate = Convert.ToDateTime(row[0].ToString());
                     delivery.ODId = GetUserId(row[1].ToString());
                     try { delivery.Children = Convert.ToInt32(row[9]); }
                     catch { delivery.Children = 0;}
@@ -228,7 +228,6 @@ namespace BHelp
             foreach (var delivery in deliveries)
             {
                 var client = db.Clients.Find(delivery.ClientId);
-                delivery.LogDate = delivery.DeliveryDate;
                 if (client != null)
                 {
                     delivery.FirstName = client.FirstName;

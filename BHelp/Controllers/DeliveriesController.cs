@@ -22,7 +22,7 @@ namespace BHelp.Controllers
         public ActionResult Index()
         {
             var listDeliveries = new List<Delivery>(db.Deliveries).Where(d => d.DateDelivered == null && d.Completed == false)
-                .OrderBy(d => d.DeliveryDate).ThenBy(z => z.Zip).ToList();
+                .OrderBy(z => z.Zip).ToList();
             var listDeliveryViewModels = new List<DeliveryViewModel>();
             foreach (var delivery in listDeliveries)
             {
@@ -35,7 +35,7 @@ namespace BHelp.Controllers
                         ClientId = client.Id,
                         //Client = client,
                         DriverId = delivery.DriverId,
-                        DeliveryDate =delivery.DeliveryDate,
+                        LogDate =delivery.LogDate,
                         NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id),
                         FamilyMembers = AppRoutines.GetFamilyMembers(client.Id),
                         FamilySelectList = AppRoutines.GetFamilySelectList(client.Id),
@@ -175,7 +175,7 @@ namespace BHelp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(
-            [Bind(Include = "Id,ClientId,DeliveryDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards")]
+            [Bind(Include = "Id,ClientId,LogDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards")]
             Delivery delivery)
         {
             if (ModelState.IsValid)
@@ -216,7 +216,7 @@ namespace BHelp.Controllers
             {
                 Id = delivery.Id,
                 ClientId = delivery.ClientId,
-                DeliveryDate = Convert.ToDateTime(delivery.DeliveryDate.ToString("MM/dd/yyyy")),
+                LogDate = Convert.ToDateTime(delivery.LogDate.ToString("MM/dd/yyyy")),
                 ODNotes = delivery.ODNotes,
                 DriverId = delivery.DriverId,
                 DriverNotes = delivery.DriverNotes,
@@ -266,7 +266,7 @@ namespace BHelp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(
-            [Bind(Include = "Id,ClientId,DeliveryDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards," +
+            [Bind(Include = "Id,ClientId,LogDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards," +
                             "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId")]
             DeliveryViewModel delivery)
         {
@@ -278,7 +278,7 @@ namespace BHelp.Controllers
                 {
                     Client client = db.Clients.Find(updateData.ClientId);
                     if (client != null) updateData.Zip = client.Zip;
-                    updateData.DeliveryDate = delivery.DeliveryDate;
+                    updateData.LogDate = delivery.LogDate;
                     updateData.FullBags = delivery.FullBags;
                     updateData.HalfBags = delivery.HalfBags;
                     updateData.KidSnacks = delivery.KidSnacks;
