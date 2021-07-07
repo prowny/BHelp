@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel;
-//using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
+using System;
 
 namespace BHelp.Models
 {
@@ -14,6 +14,15 @@ namespace BHelp.Models
     {
         [JsonProperty, DisplayName("Active")]
         public bool Active { get; set; }    // Added PER 04/30/2021
+
+        [JsonProperty, DisplayName("Begin Date")]
+        public DateTime BeginDate { get; set; }    // Added PER 07/06/2021
+
+        [JsonProperty, DisplayName("Last Date")]
+        public DateTime LastDate { get; set; }    // Added PER 07/06/2021
+
+        [JsonProperty, DisplayName("Notes")]
+        public String Notes { get; set; }    // Added PER 07/06/2021
 
         [JsonProperty, DisplayName("First Name")]
         public string FirstName { get; set; }
@@ -30,8 +39,6 @@ namespace BHelp.Models
             // Add custom user claims here
             return userIdentity;
         }
-        //[InverseProperty("PrimaryTutor")]
-        //public virtual ICollection<Student> PrimaryTutees { get; set; }
 
         [JsonProperty]
         public override string Email
@@ -81,16 +88,12 @@ namespace BHelp.Models
                 base.PhoneNumber = value;
             }
         }
-
-        //// For use by TutorSchedule update routines:
-        //[NotMapped]
-        //public List<TutorSchedule> TutorSchedules { get; set; }
-
+        
         [NotMapped]
         public string FullName
         {
             get { return string.Format("{0} {1}", FirstName, LastName); }
-            set => throw new System.NotImplementedException();
+            set => throw new NotImplementedException();
         }
     }
 }

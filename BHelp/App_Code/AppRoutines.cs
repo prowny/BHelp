@@ -63,7 +63,7 @@ namespace BHelp
                 NamesAges += familyMamber.FirstName + " " + familyMamber.LastName + "/" + age + ", ";
             }
 
-            NamesAges = NamesAges.Substring(NamesAges.Length - 2); // remove last ", "
+            NamesAges = NamesAges.Substring(0,NamesAges.Length - 2); // remove last ", "
             return NamesAges;
         }
         public static List<SelectListItem> GetFamilySelectList(int clientId)
@@ -91,12 +91,10 @@ namespace BHelp
         public static List<FamilyMember> GetFamilyMembers(int clientId)
         {
             var familyMembers = new List<FamilyMember>(); // For editiing
+            
             using (var db = new BHelpContext())
             {
                 var client = db.Clients.Find(clientId);
-                var sqlString = "SELECT * FROM FamilyMembers ";
-                sqlString += "WHERE Active > 0 AND ClientId =" + clientId;
-                var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
                 if (client != null)
                 {
                     FamilyMember headOfHousehold = new FamilyMember()
@@ -105,9 +103,13 @@ namespace BHelp
                         LastName = client.LastName,
                         DateOfBirth = client.DateOfBirth,
                     };
-                    familyList.Add(headOfHousehold);
+                    familyMembers.Add(headOfHousehold);
                 }
-
+                
+                var sqlString = "SELECT * FROM FamilyMembers ";
+                sqlString += "WHERE Active > 0 AND ClientId =" + clientId;
+                var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
+              
                 foreach (FamilyMember member in familyList)
                 {
                     member.Age = GetAge(member.DateOfBirth, DateTime.Today);

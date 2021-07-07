@@ -148,7 +148,6 @@ namespace BHelp
         {
             var db = new BHelpContext();
             //var count1 = 0;
-            //var count2 = 0;
             var filePath = @"c:\TEMP\BH Call Log - April 2021.csv";
             DataTable csvtable = new DataTable();
             using (CsvReader csvReader = new CsvReader(new StreamReader(filePath), true))
@@ -158,37 +157,36 @@ namespace BHelp
             {
                 Delivery delivery = new Delivery();
                 delivery.ClientId = GetClientId(row[2].ToString(), row[3].ToString());
-                if (IsDate(row[15].ToString()) && delivery.ClientId == 0)
-                {
-                   // Create new client (with only head of household)
-                    //count2++;
-                    Client newClient = new Client()
-                    {
-                        Active=true,
-                        LastName = row[2].ToString(),
-                        FirstName = row[3].ToString(),
-                        StreetNumber = row[4].ToString(),
-                        StreetName = row[5].ToString(),
-                        City = row[6].ToString(),
-                        Zip = row[7].ToString(),
-                        Phone = row[8].ToString(),
-                        Notes = "Auto-added"
-                    };
-                    db.Clients.Add(newClient);
-                    //db.SaveChanges();
-                }
+                //if (IsDate(row[15].ToString()) && delivery.ClientId == 0)
+                //{
+                //   // Create new client (with only head of household)
+                //    Client newClient = new Client()
+                //    {
+                //        Active=true,
+                //        LastName = row[2].ToString(),
+                //        FirstName = row[3].ToString(),
+                //        StreetNumber = row[4].ToString(),
+                //        StreetName = row[5].ToString(),
+                //        City = row[6].ToString(),
+                //        Zip = row[7].ToString(),
+                //        Phone = row[8].ToString(),
+                //        Notes = "Auto-added"
+                //    };
+                //    db.Clients.Add(newClient);
+                //    //db.SaveChanges();
+                //}
 
                 if (IsDate(row[15].ToString()) && delivery.ClientId != 0)
                 {
                     Client client = db.Clients.Find(delivery.ClientId);
-                    // Create new delivery
+                    //// Create new delivery
                     //count1++;
                     delivery.LogDate = Convert.ToDateTime(row[0].ToString());
                     delivery.ODId = GetUserId(row[1].ToString());
                     try { delivery.Children = Convert.ToInt32(row[9]); }
-                    catch { delivery.Children = 0;}
+                    catch { delivery.Children = 0; }
                     try { delivery.Adults = Convert.ToInt32(row[10]); }
-                    catch { delivery.Adults = 0;}
+                    catch { delivery.Adults = 0; }
                     try { delivery.Seniors = Convert.ToInt32(row[11]); }
                     catch { delivery.Seniors = 0; }
                     delivery.DriverId = GetUserId(row[16].ToString());
@@ -216,7 +214,6 @@ namespace BHelp
                 var client = db.Clients.Find(delivery.ClientId);
                 if (client != null) delivery.Zip = client.Zip;
             }
-
             //db.SaveChanges();
             return true;
         }
@@ -236,9 +233,11 @@ namespace BHelp
                     delivery.StreetName = client.StreetName;
                     delivery.City = client.City;
                     delivery.Phone = client.Phone;
+                    delivery.NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id);
+                    delivery.Completed = true;
                 }
             }
-            db.SaveChanges();
+            //db.SaveChanges();
             return true;
         }
         private static int GetClientId(string lastName, string firstName)

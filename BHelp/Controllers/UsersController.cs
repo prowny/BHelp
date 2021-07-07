@@ -33,17 +33,21 @@ namespace BHelp.Controllers
         // POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,UserName,Active,FirstName,LastName,Title,PhoneNumber,Email")] ApplicationUser user)
+        public ActionResult Edit([Bind(Include = "Id,UserName,Active,FirstName,LastName,Title,PhoneNumber,Email,BeginDate,LastDate,Notes")] ApplicationUser user)
         {
             if (ModelState.IsValid)
             {
                 ApplicationUser saveUser = (from u in _db.Users.Where(u => u.Id == user.Id) select u).Single();
+                saveUser.Active = user.Active;
                 saveUser.UserName = user.UserName;
                 saveUser.FirstName = user.FirstName;
                 saveUser.LastName = user.LastName;
                 saveUser.Title = user.Title;
                 saveUser.PhoneNumber = user.PhoneNumber;
                 saveUser.Email = user.Email;
+                saveUser.BeginDate = user.BeginDate;
+                saveUser.LastDate = user.LastDate;
+                saveUser.Notes = user.Notes;
 
                 _db.SaveChanges();
                 return RedirectToAction("Index");

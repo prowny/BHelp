@@ -24,6 +24,11 @@
         <tr>
             <td>
                 <strong>
+                    @Html.DisplayNameFor(model => model.Active)
+                </strong>
+            </td>
+            <td>
+                <strong>
                     @Html.DisplayNameFor(model => model.UserName)
                 </strong>
             </td>
@@ -58,6 +63,9 @@
         {
             <tr>
                 <td>
+                    @Html.DisplayFor(modelItem => item.Active)
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.UserName)
                 </td>
                 <td>
@@ -76,8 +84,8 @@
                     @Html.DisplayFor(modelItem => item.PhoneNumber)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { userName = item.UserName }) |
-                    @Html.ActionLink("Delete", "Delete", new { userName = item.UserName })
+                    @Html.ActionLink("Edit", "Edit", new {userName = item.UserName})
+                    @*@Html.ActionLink("Delete", "Delete", new { userName = item.UserName })*@
                 </td>
             </tr>
         }

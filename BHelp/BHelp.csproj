@@ -265,6 +265,10 @@
     <Compile Include="Migrations\202107042319004_AddSnapshotToDelivery.designer.cs">
       <DependentUpon>202107042319004_AddSnapshotToDelivery.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202107062204233_AddStartEndNotesToUser.cs" />
+    <Compile Include="Migrations\202107062204233_AddStartEndNotesToUser.designer.cs">
+      <DependentUpon>202107062204233_AddStartEndNotesToUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -485,6 +489,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202107042319004_AddSnapshotToDelivery.resx">
       <DependentUpon>202107042319004_AddSnapshotToDelivery.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202107062204233_AddStartEndNotesToUser.resx">
+      <DependentUpon>202107062204233_AddStartEndNotesToUser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
