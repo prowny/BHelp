@@ -288,6 +288,7 @@
     <Compile Include="ViewModels\HouseholdViewModel.cs" />
     <Compile Include="Controllers\DeliveriesController.cs" />
     <Compile Include="ViewModels\UpdateMyProfileViewModel.cs" />
+    <Compile Include="ViewModels\UsersInRolesReportViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\BHelpZipCodes.txt" />
@@ -418,6 +419,7 @@
     <Content Include="Views\Deliveries\ReportsMenu.cshtml" />
     <Content Include="Views\Deliveries\CountyReport.cshtml" />
     <Content Include="Views\Deliveries\QuorkReport.cshtml" />
+    <Content Include="Views\Users\VolunteerDatesReport.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -1,0 +1,32 @@
+﻿@model BHelp.ViewModels.UsersInRolesReportViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>VolunteerDatesReport</title>
+</head>
+<body>
+    @for (var i = 0; i < Model.Report.Count; i++)
+    {
+        <table>
+        @for (var j = 0; j < Model.Report[i].Count; j++)
+        {
+            <tr>
+                <td>@Model.Report[i][j][0]</td>
+                <td>@Model.Report[i][j][1]</td>
+                <td>@Model.Report[i][j][2]</td>
+                <td>@Model.Report[i][j][3]</td>
+                <td>@Model.Report[i][j][4]</td>
+                <td>@Model.Report[i][j][5]</td>
+            </tr>
+        }    
+        </table>
+    }
+<br/>
+<div>
+    @Html.ActionLink("Return To Dashboard", "ReturnToDashboard")
+</div>
+</body>
+</html>

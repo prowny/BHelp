@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using System.Linq;
 using System.Net;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
-using Microsoft.AspNet.Identity;
+using BHelp.ViewModels;
 
 namespace BHelp.Controllers
 {
@@ -91,6 +92,14 @@ namespace BHelp.Controllers
 
         public ActionResult VolunteerDatesReport()
         {
+            var report = new UsersInRolesReportViewModel();
+            report.Report=new List<List<string[]>>();
+            //List <List<string[]>> report = UsersInRolesReportViewModel.Report;
+            List <string[]> lines = new List<string[]>();
+            //  Header:
+            lines.Add(new[]{DateTime.Today.ToShortDateString(), "","","","","Volunteer Start and End Dates"});
+            report.Report.Add(lines);
+
             var rolesList = _db.Roles.OrderBy(r => r.Name).ToList();
             var userList = _db.Users.OrderBy(u => u.LastName).ToList();
             foreach (var role in rolesList)
@@ -99,15 +108,27 @@ namespace BHelp.Controllers
                 foreach (var user in userList)
                 {
                     if (AppRoutines.UserIsInRole(user.Id, role.Name))
-                   { usersInRole.Add(user); }
+                    { usersInRole.Add(user); }
                 }
                 if (usersInRole.Count > 0)
                 {
-
+                    lines = new List<string[]>
+                    {new[] { "", "", "", "", "", "" }};   // Space between Roles
+                    string str0 = role.Name;
+                    if (role.Name == "OfficerOfTheDay") { str0 = "OD"; }
+                    lines.Add(new[] { str0, "", "", "Start", "End", "Notes" });
+                    foreach (var usr in usersInRole)
+                    {
+                        var str5 = usr.LastDate.Year.ToString();
+                        // Has to be a year of disuse to show Ending Year
+                        if (usr.LastDate > usr.LastDate.AddYears(-1)) { str5 = "";}
+                        lines.Add(new[]{usr.FirstName, usr.LastName, usr.Email, usr.BeginDate.Year.ToString(), str5, usr.Notes});
+                    }
+                    report.Report.Add(lines);
                 }
             }
 
-            return RedirectToAction("ReturnToDashboard");
+            return View(report);
         }
         public ActionResult ReturnToDashboard()
         {
