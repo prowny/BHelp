@@ -1,8 +1,10 @@
-﻿using System.Web.Mvc;
+﻿using System.Collections.Generic;
+using System.Web.Mvc;
 using System.Linq;
 using System.Net;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
+using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
 {
@@ -85,6 +87,27 @@ namespace BHelp.Controllers
             _db.Users.Remove(user);
             _db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public ActionResult VolunteerDatesReport()
+        {
+            var rolesList = _db.Roles.OrderBy(r => r.Name).ToList();
+            var userList = _db.Users.OrderBy(u => u.LastName).ToList();
+            foreach (var role in rolesList)
+            {
+                var usersInRole = new List<ApplicationUser>();
+                foreach (var user in userList)
+                {
+                    if (AppRoutines.UserIsInRole(user.Id, role.Name))
+                   { usersInRole.Add(user); }
+                }
+                if (usersInRole.Count > 0)
+                {
+
+                }
+            }
+
+            return RedirectToAction("ReturnToDashboard");
         }
         public ActionResult ReturnToDashboard()
         {

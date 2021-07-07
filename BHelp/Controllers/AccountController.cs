@@ -103,9 +103,10 @@ namespace BHelp.Controllers
         private void WriteToLoginTable(string userName, string status)
         {
             var login = new Login { UserName = userName };
+            var user=new ApplicationUser();
             if (db.Users.Any(u => u.UserName == userName))
             {
-                var user = (from u in db.Users where u.UserName == userName select u).Single();
+                user = (from u in db.Users where u.UserName == userName select u).Single();
                 login.FirstName = user.FirstName;
                 login.LastName = user.LastName;
             }
@@ -115,6 +116,7 @@ namespace BHelp.Controllers
             DateTime localStandard = TimeZoneInfo.ConvertTime(dt1, TimeZoneInfo.Local, localZone);
             login.DateTime = localStandard;
             login.Status = status;
+            if (status == "Success") { user.LastDate = dt1; }   //Added 07/07/2021
 
             db.Logins.Add(login);
             db.SaveChanges();
