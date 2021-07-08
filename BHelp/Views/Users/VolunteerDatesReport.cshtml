@@ -6,6 +6,14 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>VolunteerDatesReport</title>
+    <style>
+        #ColA {width: 100px;}
+        #ColB {width: 100px;}
+        #ColC {width: 220px;}
+        #ColD {width: 75px;}
+        #ColE {width: 75px;}
+        #ColF {width: 220px;}
+    </style>
 </head>
 <body>
     @for (var i = 0; i < Model.Report.Count; i++)
@@ -14,12 +22,24 @@
         @for (var j = 0; j < Model.Report[i].Count; j++)
         {
             <tr>
-                <td>@Model.Report[i][j][0]</td>
-                <td>@Model.Report[i][j][1]</td>
-                <td>@Model.Report[i][j][2]</td>
-                <td>@Model.Report[i][j][3]</td>
-                <td>@Model.Report[i][j][4]</td>
-                <td>@Model.Report[i][j][5]</td>
+                @if (j == 0)
+                {
+                    <td style="text-align: center",id="ColA"><b>@Model.Report[i][j][0]</b></td>
+                    <td style="text-align: center",id="ColB"><b>@Model.Report[i][j][1]</b></td>
+                    <td style="text-align: center",id="ColC"><b>@Model.Report[i][j][2]</b></td>
+                    <td style="text-align: center",id="ColD"><b>@Model.Report[i][j][3]</b></td>
+                    <td style="text-align: center",id="ColE"><b>@Model.Report[i][j][4]</b></td>
+                    <td style="text-align: center",id="ColF"><b>@Model.Report[i][j][5]</b></td>
+                }
+                else
+                {
+                    <td id="ColA">@Model.Report[i][j][0]</td>
+                    <td id="ColB">@Model.Report[i][j][1]</td>
+                    <td id="ColC">@Model.Report[i][j][2]</td>
+                    <td  style="text-align: center",id="ColD">@Model.Report[i][j][3]</td>
+                    <td  style="text-align: center",id="ColE">@Model.Report[i][j][4]</td>
+                    <td id="ColF">@Model.Report[i][j][5]</td>
+                }
             </tr>
         }    
         </table>

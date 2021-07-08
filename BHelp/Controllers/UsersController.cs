@@ -95,16 +95,16 @@ namespace BHelp.Controllers
             var report = new UsersInRolesReportViewModel();
             report.Report=new List<List<string[]>>();
             //List <List<string[]>> report = UsersInRolesReportViewModel.Report;
-            List <string[]> lines = new List<string[]>();
-            //  Header:
-            lines.Add(new[]{DateTime.Today.ToShortDateString(), "","","","","Volunteer Start and End Dates"});
-            report.Report.Add(lines);
+            List<string[]> headerLines = new List<string[]>
+            {new[] {DateTime.Today.ToShortDateString(), "", "", "", "", "Volunteer Start and End Dates"}};
+            report.Report.Add(headerLines);
 
             var rolesList = _db.Roles.OrderBy(r => r.Name).ToList();
             var userList = _db.Users.OrderBy(u => u.LastName).ToList();
             foreach (var role in rolesList)
             {
                 var usersInRole = new List<ApplicationUser>();
+               
                 foreach (var user in userList)
                 {
                     if (AppRoutines.UserIsInRole(user.Id, role.Name))
@@ -112,18 +112,20 @@ namespace BHelp.Controllers
                 }
                 if (usersInRole.Count > 0)
                 {
-                    lines = new List<string[]>
-                    {new[] { "", "", "", "", "", "" }};   // Space between Roles
+                    List<string[]> lines = new List<string[]>();
                     string str0 = role.Name;
                     if (role.Name == "OfficerOfTheDay") { str0 = "OD"; }
                     lines.Add(new[] { str0, "", "", "Start", "End", "Notes" });
                     foreach (var usr in usersInRole)
                     {
+                        var str4 = usr.BeginDate.Year.ToString();
+                        if (str4 == "1900") { str4 = "";}
                         var str5 = usr.LastDate.Year.ToString();
-                        // Has to be a year of disuse to show Ending Year
-                        if (usr.LastDate > usr.LastDate.AddYears(-1)) { str5 = "";}
-                        lines.Add(new[]{usr.FirstName, usr.LastName, usr.Email, usr.BeginDate.Year.ToString(), str5, usr.Notes});
+                        // Has to be one year of disuse to show Ending Year
+                        if (usr.LastDate > DateTime.Today.AddYears(-1) || str5 == "1900") { str5 = "";}
+                        lines.Add(new[]{usr.FirstName, usr.LastName, usr.Email, str4, str5, usr.Notes});
                     }
+                    lines.Add( new[] { "", "", "", "", "", "" });   // Space between Roles
                     report.Report.Add(lines);
                 }
             }
@@ -133,7 +135,7 @@ namespace BHelp.Controllers
         public ActionResult ReturnToDashboard()
         {
             return RedirectToAction("Index", "Home");
-        }
+        } 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
