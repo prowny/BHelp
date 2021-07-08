@@ -168,8 +168,8 @@ namespace BHelp.Controllers
                         var str4 = usr.BeginDate.Year.ToString();
                         if (str4 == "1900") { str4 = ""; }
                         var str5 = usr.LastDate.Year.ToString();
-                        // Has to be one year of disuse to show Ending Year
-                        if (usr.LastDate > DateTime.Today.AddYears(-1) || str5 == "1900") { str5 = ""; }
+                        // Has to be one year of disuse or inactive to show Ending Year
+                        if (usr.Active == true && (usr.LastDate > DateTime.Today.AddYears(-1) || str5 == "1900")) { str5 = ""; }
                         lines.Add(new[] { usr.FirstName, usr.LastName, usr.Email, str4, str5, usr.Notes });
                     }
                     lines.Add(new[] { "", "", "", "", "", "" });   // Space between Roles
@@ -192,8 +192,8 @@ namespace BHelp.Controllers
                     var str4 = user.BeginDate.Year.ToString();
                     if (str4 == "1900") { str4 = ""; }
                     var str5 = user.LastDate.Year.ToString();
-                    // Has to be one year of disuse to show Ending Year
-                    if (user.LastDate > DateTime.Today.AddYears(-1) || str5 == "1900") { str5 = ""; }
+                    // Has to be inactive or one year of disuse to show Ending Year
+                    if (user.Active==true &&(user.LastDate > DateTime.Today.AddYears(-1) || str5 == "1900")) { str5 = ""; }
                     otherLines.Add(new[] { user.FirstName, user.LastName, user.Email, str4, str5, user.Notes });
                 }
             }
