@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace BHelp.Models
 {
@@ -16,9 +17,11 @@ namespace BHelp.Models
         public bool Active { get; set; }    // Added PER 04/30/2021
 
         [JsonProperty, DisplayName("Begin Date")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime BeginDate { get; set; }    // Added PER 07/06/2021
 
         [JsonProperty, DisplayName("Last Date")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime LastDate { get; set; }    // Added PER 07/06/2021
 
         [JsonProperty, DisplayName("Notes")]

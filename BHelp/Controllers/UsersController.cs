@@ -94,7 +94,6 @@ namespace BHelp.Controllers
         {
             var report = new UsersInRolesReportViewModel();
             report.Report=new List<List<string[]>>();
-            //List <List<string[]>> report = UsersInRolesReportViewModel.Report;
             List<string[]> headerLines = new List<string[]>
             {new[] {DateTime.Today.ToShortDateString(), "", "", "", "", "Volunteer Start and End Dates"}};
             report.Report.Add(headerLines);
@@ -128,6 +127,31 @@ namespace BHelp.Controllers
                     lines.Add( new[] { "", "", "", "", "", "" });   // Space between Roles
                     report.Report.Add(lines);
                 }
+            }
+            // Add "Others" when users have no roles:
+            var sqlString = "SELECT DISTINCT UserId FROM AspNetUserRoles";
+            var rolesUserIdList = _db.Database.SqlQuery<string>(sqlString).ToList();
+            List<string[]> otherLines = new List<string[]>();
+            otherLines.Add(new[] { "Others", "", "", "Start", "End", "Notes" });
+            foreach (var user in userList)
+            {
+                var matchingIds = rolesUserIdList
+                    .Where(i => i.Contains(user.Id));
+                if (!matchingIds.Any())
+                {
+                    var str4 = user.BeginDate.Year.ToString();
+                    if (str4 == "1900") { str4 = ""; }
+                    var str5 = user.LastDate.Year.ToString();
+                    // Has to be one year of disuse to show Ending Year
+                    if (user.LastDate > DateTime.Today.AddYears(-1) || str5 == "1900") { str5 = ""; }
+                    otherLines.Add(new[] { user.FirstName, user.LastName, user.Email, str4, str5, user.Notes });
+                }
+            }
+
+            if (otherLines.Count > 0)
+            {
+                otherLines.Add(new[] { "", "", "", "", "", "" });   // Space between Roles
+                report.Report.Add(otherLines);
             }
 
             return View(report);
