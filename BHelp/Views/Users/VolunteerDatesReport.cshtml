@@ -46,7 +46,11 @@
     }
 <br/>
 <div>
-    @Html.ActionLink("Return To Dashboard", "ReturnToDashboard")
+    @Html.ActionLink("Download to Excel File", "VolunteerDatesReportToExcel", new { }, null)
+    <br />
+    @Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu", new { })
+    <br />
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
 </div>
 </body>
 </html>

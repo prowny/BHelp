@@ -6,6 +6,8 @@ using System.Net;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
+using System.IO;
+using ClosedXML.Excel;
 
 namespace BHelp.Controllers
 {
@@ -92,8 +94,54 @@ namespace BHelp.Controllers
 
         public ActionResult VolunteerDatesReport()
         {
-            var report = new UsersInRolesReportViewModel();
-            report.Report=new List<List<string[]>>();
+            UsersInRolesReportViewModel report = GetUsersInRolesReport();
+            return View(report);
+        }
+
+        public ActionResult VolunteerDatesReportToExcel()
+        {
+            UsersInRolesReportViewModel report = GetUsersInRolesReport();
+            XLWorkbook workbook = new XLWorkbook();
+            IXLWorksheet ws = workbook.Worksheets.Add("Users In Roles");
+            int activeRow = 1;
+            ws.Cell(activeRow, 3).SetValue(report.Report[0][0][0]).Style.Font.SetBold();
+            ws.Cell(activeRow, 6).SetValue(report.Report[0][0][5]).Style.Font.SetBold();
+            activeRow ++;
+            for (int i = 1; i < report.Report.Count; i++)
+            {
+                for(int j = 0; j < report.Report[i].Count; j++)
+                {
+                    activeRow++;
+                    if (j == 0)
+                    {
+                        ws.Cell(activeRow, 1).SetValue(report.Report[i][j][0]).Style.Font.SetBold();
+                        ws.Cell(activeRow, 2).SetValue(report.Report[i][j][1]).Style.Font.SetBold();
+                        ws.Cell(activeRow, 3).SetValue(report.Report[i][j][2]).Style.Font.SetBold();
+                        ws.Cell(activeRow, 4).SetValue(report.Report[i][j][3]).Style.Font.SetBold();
+                        ws.Cell(activeRow, 5).SetValue(report.Report[i][j][4]).Style.Font.SetBold();
+                        ws.Cell(activeRow, 6).SetValue(report.Report[i][j][5]).Style.Font.SetBold();
+                    }
+                    else
+                    {
+                        ws.Cell(activeRow, 1).SetValue(report.Report[i][j][0]);
+                        ws.Cell(activeRow, 2).SetValue(report.Report[i][j][1]);
+                        ws.Cell(activeRow, 3).SetValue(report.Report[i][j][2]);
+                        ws.Cell(activeRow, 4).SetValue(report.Report[i][j][3]);
+                        ws.Cell(activeRow, 5).SetValue(report.Report[i][j][4]);
+                        ws.Cell(activeRow, 6).SetValue(report.Report[i][j][5]);
+                    }
+                }
+            }
+            ws.Columns().AdjustToContents();
+            MemoryStream ms = new MemoryStream();
+            workbook.SaveAs(ms);
+            ms.Position = 0;
+            return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            { FileDownloadName =  "Volunteer Start Dates.xlsx" };
+        }
+        private UsersInRolesReportViewModel GetUsersInRolesReport()
+        {
+            var report = new UsersInRolesReportViewModel { Report = new List<List<string[]>>() };
             List<string[]> headerLines = new List<string[]>
             {new[] {DateTime.Today.ToShortDateString(), "", "", "", "", "Volunteer Start and End Dates"}};
             report.Report.Add(headerLines);
@@ -103,7 +151,7 @@ namespace BHelp.Controllers
             foreach (var role in rolesList)
             {
                 var usersInRole = new List<ApplicationUser>();
-               
+
                 foreach (var user in userList)
                 {
                     if (AppRoutines.UserIsInRole(user.Id, role.Name))
@@ -118,21 +166,23 @@ namespace BHelp.Controllers
                     foreach (var usr in usersInRole)
                     {
                         var str4 = usr.BeginDate.Year.ToString();
-                        if (str4 == "1900") { str4 = "";}
+                        if (str4 == "1900") { str4 = ""; }
                         var str5 = usr.LastDate.Year.ToString();
                         // Has to be one year of disuse to show Ending Year
-                        if (usr.LastDate > DateTime.Today.AddYears(-1) || str5 == "1900") { str5 = "";}
-                        lines.Add(new[]{usr.FirstName, usr.LastName, usr.Email, str4, str5, usr.Notes});
+                        if (usr.LastDate > DateTime.Today.AddYears(-1) || str5 == "1900") { str5 = ""; }
+                        lines.Add(new[] { usr.FirstName, usr.LastName, usr.Email, str4, str5, usr.Notes });
                     }
-                    lines.Add( new[] { "", "", "", "", "", "" });   // Space between Roles
+                    lines.Add(new[] { "", "", "", "", "", "" });   // Space between Roles
                     report.Report.Add(lines);
                 }
             }
             // Add "Others" when users have no roles:
             var sqlString = "SELECT DISTINCT UserId FROM AspNetUserRoles";
             var rolesUserIdList = _db.Database.SqlQuery<string>(sqlString).ToList();
-            List<string[]> otherLines = new List<string[]>();
-            otherLines.Add(new[] { "Others", "", "", "Start", "End", "Notes" });
+            List<string[]> otherLines = new List<string[]>
+            {
+                new[] { "Others", "", "", "Start", "End", "Notes" }
+            };
             foreach (var user in userList)
             {
                 var matchingIds = rolesUserIdList
@@ -153,8 +203,11 @@ namespace BHelp.Controllers
                 otherLines.Add(new[] { "", "", "", "", "", "" });   // Space between Roles
                 report.Report.Add(otherLines);
             }
-
-            return View(report);
+            return report;
+        }
+        public ActionResult ReturnToReportsMenu()
+        {
+            return RedirectToAction("ReportsMenu","Deliveries");
         }
         public ActionResult ReturnToDashboard()
         {
