@@ -189,8 +189,28 @@ namespace BHelp.Controllers
                     delivery.StreetName = delivery.StreetName;
                     delivery.NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id);
                     delivery.Zip = client.Zip;
+                    // GIFT CARDS ELIGIBLE:
+                    // 1 per week maximum
+                    // 1 per household of 3 or fewer
+                    // 2 per household of 4 or more
+                    // 3 max per calendar month;
+                    var totalThisWeek = GetGiftCardsSince(client.Id, DateTime.Today.AddDays(-7));
+                    DateTime since1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                    var totalThisMonth = GetGiftCardsSince(client.Id, since1);
+                    var numberInHousehold = delivery.NamesAgesInHH.Count(n => n == ',') + 1;
+                    if (numberInHousehold < 4)   // 1 per household of 3 or fewer
+                    {
+                        delivery.GiftCardsEligible = 1;
+                        if (delivery.GiftCardsEligible + totalThisMonth > 3) delivery.GiftCardsEligible = 0;
+                    }
+                    if (numberInHousehold > 3)    // 2 per household of 4 or more
+                    {
+                        delivery.GiftCardsEligible = 3 - totalThisMonth;
+                        if (delivery.GiftCardsEligible > 2) delivery.GiftCardsEligible = 2;
+                    }
+                    if (totalThisWeek > 0) delivery.GiftCardsEligible = 0;   // 1 per week maximum
                 }
-
+                
                 db.Deliveries.Add(delivery);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -217,13 +237,16 @@ namespace BHelp.Controllers
                 Id = delivery.Id,
                 ClientId = delivery.ClientId,
                 LogDate = Convert.ToDateTime(delivery.LogDate.ToString("MM/dd/yyyy")),
+               
                 ODNotes = delivery.ODNotes,
                 DriverId = delivery.DriverId,
                 DriverNotes = delivery.DriverNotes,
                 FamilyMembers = AppRoutines.GetFamilyMembers(delivery.ClientId),
                 FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId)
             };
-  
+
+            viewModel.DateLastDelivery = GetLastDeliveryDate(delivery.Id);
+
             if (delivery.DateDelivered != null) viewModel.DateDelivered = (DateTime) delivery.DateDelivered;
 
             viewModel.DriversList = AppRoutines.GetDriversSelectList();
@@ -490,6 +513,30 @@ namespace BHelp.Controllers
                 { FileDownloadName = view.ReportTitle +".xlsx" };
         }
 
+        private  DateTime GetLastDeliveryDate(int id)
+        {
+            var dt = db.Deliveries.Where(d => d.DeliveryDate != null
+                && d.Id == id && d.Completed)
+                .OrderByDescending(x => x.DeliveryDate).Select(d => d.DeliveryDate)
+                .FirstOrDefault();
+            return dt;
+        }
+
+        private int GetGiftCardsSince(int id, DateTime dt)
+        {
+            var total = 0;
+            var dList = db.Deliveries.Where(d => d.Id == id && d.Completed
+                                     && d.DeliveryDate >= dt).Select(g => g.GiftCards).ToList();
+            foreach(var i in dList)
+            {
+                if (i != null)
+                {
+                    var gc = (int) i;
+                    total += gc;
+                }
+            }
+            return total;
+        }
         public ActionResult QuorkReport(string endingDate = "")
         {
             DateTime endDate;
