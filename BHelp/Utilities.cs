@@ -10,7 +10,7 @@ using DataTable = System.Data.DataTable;
 
 namespace BHelp
 {
-    public class Utilities
+    public static class Utilities
     {
         public static Boolean UploadClients()
         {
@@ -40,10 +40,9 @@ namespace BHelp
                     Notes = row[13].ToString()
                 };
                 db.Clients.Add(client);
-                db.SaveChanges();
+                //db.SaveChanges();
                 //System.Diagnostics.Debug.WriteLine(client.FirstName, client.LastName);
             }
-
             return true;
         }
 
@@ -147,7 +146,8 @@ namespace BHelp
         public static Boolean UploadDeliveries()
         {
             var db = new BHelpContext();
-            //var count1 = 0;
+            var count = 0;
+            var newCount = 0;
             var filePath = @"c:\TEMP\BH Call Log - April 2021.csv";
             DataTable csvtable = new DataTable();
             using (CsvReader csvReader = new CsvReader(new StreamReader(filePath), true))
@@ -156,31 +156,32 @@ namespace BHelp
             foreach (DataRow row in csvtable.Rows)
             {
                 Delivery delivery = new Delivery();
-                delivery.ClientId = GetClientId(row[2].ToString(), row[3].ToString());
-                //if (IsDate(row[15].ToString()) && delivery.ClientId == 0)
-                //{
-                //   // Create new client (with only head of household)
-                //    Client newClient = new Client()
-                //    {
-                //        Active=true,
-                //        LastName = row[2].ToString(),
-                //        FirstName = row[3].ToString(),
-                //        StreetNumber = row[4].ToString(),
-                //        StreetName = row[5].ToString(),
-                //        City = row[6].ToString(),
-                //        Zip = row[7].ToString(),
-                //        Phone = row[8].ToString(),
-                //        Notes = "Auto-added"
-                //    };
-                //    db.Clients.Add(newClient);
-                //    //db.SaveChanges();
-                //}
+                delivery.ClientId = GetClientId(row[2].ToString(), row[4].ToString(), row[5].ToString());
+                if (IsDate(row[15].ToString()) && delivery.ClientId == 0)
+                {
+                    newCount++;
+                    //   // Create new client (with only head of household)
+                    //    Client newClient = new Client()
+                    //    {
+                    //        Active=true,
+                    //        LastName = row[2].ToString(),
+                    //        FirstName = row[3].ToString(),
+                    //        StreetNumber = row[4].ToString(),
+                    //        StreetName = row[5].ToString(),
+                    //        City = row[6].ToString(),
+                    //        Zip = row[7].ToString(),
+                    //        Phone = row[8].ToString(),
+                    //        Notes = "Auto-added"
+                    //    };
+                    //    db.Clients.Add(newClient);
+                    //    //db.SaveChanges();
+                }
 
                 if (IsDate(row[15].ToString()) && delivery.ClientId != 0)
                 {
                     Client client = db.Clients.Find(delivery.ClientId);
                     //// Create new delivery
-                    //count1++;
+                    count++;
                     delivery.LogDate = Convert.ToDateTime(row[0].ToString());
                     delivery.ODId = GetUserId(row[1].ToString());
                     try { delivery.Children = Convert.ToInt32(row[9]); }
@@ -202,6 +203,8 @@ namespace BHelp
                     //db.SaveChanges();
                 }
             }
+
+            var unused = count.ToString() + " " + newCount.ToString(); 
             return true;
         }
 
@@ -240,18 +243,27 @@ namespace BHelp
             //db.SaveChanges();
             return true;
         }
-        private static int GetClientId(string lastName, string firstName)
+        private static int GetClientId(string lastName, string streetNumber, string streetName)
         {
+            // 07/26/21 Look up by Street # = Street Name.
             var db = new BHelpContext();
-            var client= db.Clients.FirstOrDefault(c => c.LastName == lastName 
-                                                       && c.FirstName == firstName);
+            var client= db.Clients.FirstOrDefault(c => c.StreetNumber == streetNumber
+                                                       && c.StreetName == streetName);
             if (client != null)
             {
                 return client.Id;
             }
             else
             {
-                return 0;
+                client = db.Clients.FirstOrDefault(c => c.LastName == lastName && c.StreetNumber == streetNumber);
+                if (client != null)
+                {
+                    return client.Id;
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
 
