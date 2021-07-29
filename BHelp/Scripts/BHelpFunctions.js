@@ -13,6 +13,21 @@
     });
 }
 
+function UpdateDriverLogDate(callLogDate) {
+    $.ajax({
+        url: '/Driver/Index',
+        data: { logDate: callLogDate },
+        type: "POST",
+        success: function (data) {
+            $("body").html(data); // to refresh the page
+            //alert('Ajax hit'); 
+        },
+        error: function (jqxhr, status, exception) {
+            alert('Exception:', exception);
+        }
+    });
+}
+
 function SearchClients()
 {
     $.ajax({

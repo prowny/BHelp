@@ -5,6 +5,7 @@ using System.Net;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
+using BHelp.ViewModels;
 using Microsoft.AspNet.Identity;
 using Castle.Core.Internal;
 
@@ -17,9 +18,21 @@ namespace BHelp.Controllers
         // GET: Driver
         public ActionResult Index(DateTime? logDate, string userId)
         {
-            if (!logDate.HasValue) {logDate=DateTime.Today;}
-            if (!userId.IsNullOrEmpty()) { userId = System.Web.HttpContext.Current.User.Identity.GetUserId(); }
-            var deliveryView = db.Deliveries.Where(d => d.LogDate == logDate
+            if (!logDate.HasValue)
+            {
+                DateTime cdt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                var cdts = cdt.ToString("MM/dd/yyyy");
+                Session["CallLogDate"] = cdts;
+                logDate = cdt;
+            }
+            else
+            {
+                Session["CallLogDate"] = logDate.ToString();
+            }
+            var deliveryView = new DeliveryViewModel();
+            deliveryView.LogDate = (DateTime) logDate;
+            if (userId.IsNullOrEmpty()) { userId = System.Web.HttpContext.Current.User.Identity.GetUserId(); }
+            deliveryView.DeliveryList = db.Deliveries.Where(d => d.LogDate == logDate
                                                         && d.DriverId == userId).OrderByDescending(z => z.Zip).ToList();
           
             return View(deliveryView);

@@ -82,5 +82,6 @@ namespace BHelp.ViewModels
         public string DriverNotesToolTip { get; set; }  // Driver notes
         public string ClientNameAddress { get; set; }
         public IEnumerable<SelectListItem> DriversList { get; set; }
+        public IEnumerable<Delivery> DeliveryList { get; set; }
     }
 }
