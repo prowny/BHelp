@@ -12,7 +12,7 @@ namespace BHelp.Controllers
 {
     public class ODController : Controller
     {
-        private BHelpContext db = new BHelpContext();
+        private readonly BHelpContext db = new BHelpContext();
 
         // GET: Household
         public ActionResult Index(string callLogDate, string searchString, int? selectedId)

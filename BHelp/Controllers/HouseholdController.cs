@@ -11,7 +11,7 @@ namespace BHelp.Controllers
 {
     public class HouseholdController : Controller
     {
-        private BHelpContext db = new BHelpContext();
+        private readonly BHelpContext db = new BHelpContext();
 
         // GET: Household
         public ActionResult Index(int clientId)
@@ -124,7 +124,7 @@ namespace BHelp.Controllers
                             familyMember.FirstName = member.FirstName;
                             familyMember.LastName = member.LastName;
                             familyMember.DateOfBirth = DateTime.Today.AddYears(-member.Age);
-                            if (member.Delete == true)
+                            if (member.Delete)
                             {
                                 db.FamilyMembers.Remove(familyMember);
                             }
@@ -133,7 +133,7 @@ namespace BHelp.Controllers
                 }
 
                 db.SaveChanges();
-                return RedirectToAction("UpdateHousehold", "OD", new { Id = client.Id });
+                return RedirectToAction("UpdateHousehold", "OD", new {client.Id });
             }
             return null;
         }

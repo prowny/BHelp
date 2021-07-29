@@ -12,7 +12,7 @@ namespace BHelp.Controllers
 {
     public class ClientsController : Controller
     {
-        private BHelpContext db = new BHelpContext();
+        private readonly BHelpContext db = new BHelpContext();
 
         // GET: Clients
         public ActionResult Index()

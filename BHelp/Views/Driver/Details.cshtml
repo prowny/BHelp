@@ -1,0 +1,234 @@
+﻿@model BHelp.Models.Delivery
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+</head>
+<body>
+    <div>
+        <h4>Delivery</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.ClientId)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.ClientId)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.DeliveryDate)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.DeliveryDate)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.LogDate)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.LogDate)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.FirstName)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.LastName)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.LastName)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.StreetNumber)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.StreetNumber)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.StreetName)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.StreetName)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.City)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.City)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Zip)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Zip)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Phone)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Phone)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.NamesAgesInHH)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.NamesAgesInHH)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Children)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Children)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Adults)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Adults)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Seniors)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Seniors)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Notes)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Notes)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.FullBags)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.FullBags)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.HalfBags)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.HalfBags)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.KidSnacks)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.KidSnacks)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.GiftCardsEligible)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.GiftCardsEligible)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.GiftCards)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.GiftCards)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.ODId)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.ODId)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.DriverId)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.DriverId)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.DateDelivered)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.DateDelivered)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Completed)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Completed)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.ODNotes)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.ODNotes)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.DriverNotes)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.DriverNotes)
+            </dd>
+    
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</body>
+</html>
