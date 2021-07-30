@@ -127,10 +127,22 @@ namespace BHelp.Controllers
                     City = client.City,
                     Zip=client.Zip,
                     NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(clientId),
+                    Children = 0,
+                    Adults = 0,
+                    Seniors = 0
                 };
+                var familyList = AppRoutines.GetFamilyMembers(clientId);
+                if (familyList != null)
+                {
+                    foreach (var mbr in familyList)
+                    {
+                        if (mbr.Age < 18) { delivery.Children += 1; }
+                        if (mbr.Age >= 18 && mbr.Age < 60) { delivery.Adults += 1; }
+                        if (mbr.Age >= 60) { delivery.Seniors += 1; }
+                    }
+                }
                 db.Deliveries.Add(delivery);
             }
-
             db.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -154,9 +166,9 @@ namespace BHelp.Controllers
                 City = client.City,
                 Zip = client.Zip,
                 Phone = client.Phone,
-                Notes = client.Notes,
-                FamilyMembers = AppRoutines.GetFamilyMembers(client.Id)
+                Notes = client.Notes
             };
+            houseHold.FamilyMembers = AppRoutines.GetFamilyMembers(client.Id);
             var newMember = new FamilyMember();
             houseHold.FamilyMembers.Add(newMember);  // Blank line for adding new member.
             newMember.ClientId = -1;

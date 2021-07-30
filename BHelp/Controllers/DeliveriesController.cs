@@ -189,6 +189,15 @@ namespace BHelp.Controllers
                     delivery.StreetName = delivery.StreetName;
                     delivery.NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id);
                     delivery.Zip = client.Zip;
+
+                    var familyList = AppRoutines.GetFamilyMembers(client.Id);
+                    foreach (var mbr in familyList )
+                    {
+                        if (mbr.Age < 18) { delivery.Children += 1; }
+                        if (mbr.Age >= 18 && mbr.Age < 60) { delivery.Adults += 1; }
+                        if (mbr.Age >= 60) { delivery.Seniors += 1; }
+                    }
+                     
                     // GIFT CARDS ELIGIBLE:
                     // 1 per week maximum
                     // 1 per household of 3 or fewer
@@ -197,7 +206,7 @@ namespace BHelp.Controllers
                     var totalThisWeek = GetGiftCardsSince(client.Id, DateTime.Today.AddDays(-7));
                     DateTime since1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
                     var totalThisMonth = GetGiftCardsSince(client.Id, since1);
-                    var numberInHousehold = delivery.NamesAgesInHH.Count(n => n == ',') + 1;
+                    var numberInHousehold = delivery.Children + delivery.Adults + delivery.Seniors ;
                     if (numberInHousehold < 4)   // 1 per household of 3 or fewer
                     {
                         delivery.GiftCardsEligible = 1;
@@ -259,13 +268,16 @@ namespace BHelp.Controllers
                 }
             }
 
-            foreach (var mbr in viewModel.FamilyMembers)
-            {
-                mbr.Age = AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
-                if (mbr.Age < 18) { viewModel.KidsCount += 1; }
-                if (mbr.Age >= 18 && mbr.Age < 60) { viewModel.AdultsCount += 1; }
-                if (mbr.Age >= 60) {viewModel.SeniorsCount += 1; }
-            }
+            if (delivery.Children != null) viewModel.KidsCount = (int) delivery.Children;
+            if (delivery.Adults != null) viewModel.AdultsCount = (int) delivery.Adults;
+            if (delivery.Seniors != null) viewModel.SeniorsCount = (int) delivery.Seniors;
+            //foreach (var mbr in viewModel.FamilyMembers)
+            //{
+            //    mbr.Age = AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
+            //    if (mbr.Age < 18) { viewModel.KidsCount += 1; }
+            //    if (mbr.Age >= 18 && mbr.Age < 60) { viewModel.AdultsCount += 1; }
+            //    if (mbr.Age >= 60) {viewModel.SeniorsCount += 1; }
+            //}
             var client = db.Clients.Find(delivery.ClientId);
             if (client != null)
             {

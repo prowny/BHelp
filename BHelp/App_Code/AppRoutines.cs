@@ -102,6 +102,7 @@ namespace BHelp
                         FirstName = client.FirstName,
                         LastName = client.LastName,
                         DateOfBirth = client.DateOfBirth,
+                        Age = GetAge(client.DateOfBirth,DateTime.Today)
                     };
                     familyMembers.Add(headOfHousehold);
                 }

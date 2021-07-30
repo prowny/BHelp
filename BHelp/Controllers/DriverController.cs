@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -29,53 +30,31 @@ namespace BHelp.Controllers
             {
                 Session["CallLogDate"] = logDate.ToString();
             }
-            var deliveryView = new DeliveryViewModel();
-            deliveryView.LogDate = (DateTime) logDate;
+
+            var deliveryView = new DeliveryViewModel
+            {
+                LogDate = (DateTime) logDate,
+                DeliveryList = new List<Delivery>()
+            };
+
             if (userId.IsNullOrEmpty()) { userId = System.Web.HttpContext.Current.User.Identity.GetUserId(); }
-            deliveryView.DeliveryList = db.Deliveries.Where(d => d.LogDate == logDate
-                                                        && d.DriverId == userId).OrderByDescending(z => z.Zip).ToList();
-          
+            var deliveryList = db.Deliveries.Where(d => d.LogDate == logDate
+                 && d.DriverId == userId).OrderByDescending(z => z.Zip).ToList();
+
+            foreach (var delivery in deliveryList)
+            {
+                var client = db.Clients.Find(delivery.ClientId);
+                if (client != null)
+                {
+                    delivery.ClientNameAddress = client.LastName + ", " + client.FirstName
+                       + " " + client.StreetNumber + " " + client.StreetName + " " + client.Zip;
+                    delivery.Notes = client.Notes;
+                }
+                deliveryView.DeliveryList.Add(delivery);
+            }
             return View(deliveryView);
-        }
-
-        // GET: Driver/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Delivery delivery = db.Deliveries.Find(id);
-            if (delivery == null)
-            {
-                return HttpNotFound();
-            }
-            return View(delivery);
-        }
-
-        // GET: Driver/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Driver/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,ClientId,DeliveryDate,LogDate,FirstName,LastName,StreetNumber,StreetName,City,Zip,Phone,NamesAgesInHH,Children,Adults,Seniors,Notes,FullBags,HalfBags,KidSnacks,GiftCardsEligible,GiftCards,ODId,DriverId,DateDelivered,Completed,ODNotes,DriverNotes")] Delivery delivery)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Deliveries.Add(delivery);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(delivery);
-        }
-
+         }
+        
         // GET: Driver/Edit/5
         public ActionResult Edit(int? id)
         {

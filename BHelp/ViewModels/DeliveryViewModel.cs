@@ -69,6 +69,7 @@ namespace BHelp.ViewModels
         //For Delivery List display:
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public  string FullName { get; set; }
         public string StreetNumber { get; set; }
         public string StreetName { get; set; }
         public string City { get; set; }
@@ -82,6 +83,6 @@ namespace BHelp.ViewModels
         public string DriverNotesToolTip { get; set; }  // Driver notes
         public string ClientNameAddress { get; set; }
         public IEnumerable<SelectListItem> DriversList { get; set; }
-        public IEnumerable<Delivery> DeliveryList { get; set; }
+        public List<Delivery> DeliveryList { get; set; }
     }
 }

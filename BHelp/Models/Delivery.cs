@@ -47,10 +47,12 @@ namespace BHelp.Models
 
         [StringLength(128)]
         public string DriverId { get; set; }
-
         public DateTime? DateDelivered { get; set; }
         public Boolean Completed { get; set; }
         public string ODNotes { get; set; }
         public string DriverNotes { get; set; }
+
+        [NotMapped]
+        public string ClientNameAddress { get; set; }
     }
 }
