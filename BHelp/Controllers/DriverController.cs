@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -9,6 +8,7 @@ using BHelp.Models;
 using BHelp.ViewModels;
 using Microsoft.AspNet.Identity;
 using Castle.Core.Internal;
+using System.Data.Entity;
 
 namespace BHelp.Controllers
 {
@@ -18,13 +18,24 @@ namespace BHelp.Controllers
 
         // GET: Driver
         public ActionResult Index(DateTime? logDate, string userId)
+
         {
+            var logYear = DateTime.Today.Year;
+            var logMonth = DateTime.Today.Month;
+            var logDay = DateTime.Today.Day;
+            string cdts1 = "";
+            string cdts2 = "";
             if (!logDate.HasValue)
             {
                 DateTime cdt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
                 var cdts = cdt.ToString("MM/dd/yyyy");
                 Session["CallLogDate"] = cdts;
                 logDate = cdt;
+                logYear = cdt.Year;
+                logMonth = cdt.Month;
+                logDay = cdt.Day;
+                cdts1 = cdt.ToString("yyyy-MM-dd");
+                cdts2 = cdt.AddDays(1).ToString("yyyy-MM-dd");
             }
             else
             {
@@ -33,13 +44,15 @@ namespace BHelp.Controllers
 
             var deliveryView = new DeliveryViewModel
             {
-                LogDate = (DateTime) logDate,
+                LogDate = ((DateTime) logDate).Date,
                 DeliveryList = new List<Delivery>()
             };
-
+           
             if (userId.IsNullOrEmpty()) { userId = System.Web.HttpContext.Current.User.Identity.GetUserId(); }
-            var deliveryList = db.Deliveries.Where(d => d.LogDate == logDate
-                 && d.DriverId == userId).OrderByDescending(z => z.Zip).ToList();
+            // Get around Date and DateTime differences:
+            var deliveryList = db.Deliveries.Where(d => d.LogDate.Year == logYear 
+                         && d.LogDate.Month == logMonth && d.LogDate.Day == logDay
+                         && d.DriverId == userId).OrderByDescending(z => z.Zip).ToList();
 
             foreach (var delivery in deliveryList)
             {

@@ -141,12 +141,48 @@ namespace BHelp.Controllers
                         if (mbr.Age >= 60) { delivery.Seniors += 1; }
                     }
                 }
+                // GIFT CARDS ELIGIBLE:
+                // 1 per week maximum
+                // 1 per household of 3 or fewer
+                // 2 per household of 4 or more
+                // 3 max per calendar month;
+                var totalThisWeek = GetGiftCardsSince(client.Id, DateTime.Today.AddDays(-7));
+                DateTime since1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                var totalThisMonth = GetGiftCardsSince(client.Id, since1);
+                var numberInHousehold = delivery.Children + delivery.Adults + delivery.Seniors;
+                if (numberInHousehold < 4)   // 1 per household of 3 or fewer
+                {
+                    delivery.GiftCardsEligible = 1;
+                    if (delivery.GiftCardsEligible + totalThisMonth > 3) delivery.GiftCardsEligible = 0;
+                }
+                if (numberInHousehold > 3)    // 2 per household of 4 or more
+                {
+                    delivery.GiftCardsEligible = 3 - totalThisMonth;
+                    if (delivery.GiftCardsEligible > 2) delivery.GiftCardsEligible = 2;
+                }
+                if (totalThisWeek > 0) delivery.GiftCardsEligible = 0;   // 1 per week maximum
+
                 db.Deliveries.Add(delivery);
             }
             db.SaveChanges();
             return RedirectToAction("Index");
         }
 
+        private int GetGiftCardsSince(int id, DateTime dt)
+        {
+            var total = 0;
+            var dList = db.Deliveries.Where(d => d.Id == id && d.Completed
+                                                            && d.DeliveryDate >= dt).Select(g => g.GiftCards).ToList();
+            foreach (var i in dList)
+            {
+                if (i != null)
+                {
+                    var gc = (int)i;
+                    total += gc;
+                }
+            }
+            return total;
+        }
         public ActionResult UpdateHousehold(int Id) //Launches 2nd page of OD call log
         {
             Client client = db.Clients.Find( Id);

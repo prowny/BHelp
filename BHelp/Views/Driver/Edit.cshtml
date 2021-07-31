@@ -6,6 +6,9 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Edit</title>
+    <style>
+        #SaveButton {background-color: blue;color: white}
+    </style>
 </head>
 <body>
     @using (Html.BeginForm())
@@ -30,41 +33,41 @@
                 </tr>
                 <tr>
                     <td>Children:</td>
-                    <td>&nbsp;@Html.LabelFor(model => model.Children)</td>
+                    <td>&nbsp;@Html.DisplayFor(model => model.Children)</td>
                     <td>&nbsp;Adults:</td>
-                    <td>&nbsp;@Html.LabelFor(model => model.Adults)</td>
+                    <td>&nbsp;@Html.DisplayFor(model => model.Adults)</td>
                     <td>&nbsp;Seniors:</td>
-                    <td>&nbsp;@Html.LabelFor(model => model.Seniors)</td>
+                    <td>&nbsp;@Html.DisplayFor(model => model.Seniors)</td>
                     <td>&nbsp;Giant Cards Eligible:</td>
-                    <td>&nbsp;@Html.LabelFor(model => model.GiftCardsEligible)</td>
+                    <td>&nbsp;@Html.DisplayFor(model => model.GiftCardsEligible)</td>
                 </tr>
             </table>
             <br/>
             <table>
                 <tr>
                     <td>Full Bags:&nbsp;</td>
-                    <td>@Html.EditorFor(model => model.FullBags, new { htmlAttributes = new { @class = "form-control" } })
+                    <td>@Html.EditorFor(model => model.FullBags, new { htmlAttributes = new { @min = "0", max = "9" } })
                         @Html.ValidationMessageFor(model => model.FullBags, "", new { @class = "text-danger" })
                     </td>
                 </tr>
                 <tr>
                     <td>Half Bags:&nbsp;</td>
                     <td>
-                        @Html.EditorFor(model => model.HalfBags, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.EditorFor(model => model.HalfBags, new { htmlAttributes = new { @min = "0", max = "9" } })
                         @Html.ValidationMessageFor(model => model.HalfBags, "", new { @class = "text-danger" })
                     </td>
                 </tr>
                 <tr>
                     <td>Kid Snacks:&nbsp;</td>
                     <td>
-                        @Html.EditorFor(model => model.KidSnacks, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.EditorFor(model => model.KidSnacks, new { htmlAttributes = new { @min = "0", max = "9" } })
                         @Html.ValidationMessageFor(model => model.KidSnacks, "", new { @class = "text-danger" })
                     </td>
                 </tr>
                 <tr>
                     <td>Giant Cards:&nbsp;</td>
                     <td>
-                        @Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new {@min = "0", @max = Model.GiftCardsEligible}})
                         @Html.ValidationMessageFor(model => model.GiftCards, "", new { @class = "text-danger" })
                     </td>
                 </tr>
@@ -90,13 +93,14 @@
                     </td>
                 </tr>
             </table>
-    
+            <br/>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Save" class="btn btn-default" />
+                    <input type="submit" value="Save" class="btn btn-default", id="SaveButton" />
                 </div>
             </div>
         </div>
+        <br/>
     }
     
 <div>
