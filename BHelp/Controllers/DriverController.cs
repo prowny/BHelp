@@ -8,7 +8,6 @@ using BHelp.Models;
 using BHelp.ViewModels;
 using Microsoft.AspNet.Identity;
 using Castle.Core.Internal;
-using System.Data.Entity;
 
 namespace BHelp.Controllers
 {
@@ -23,8 +22,8 @@ namespace BHelp.Controllers
             var logYear = DateTime.Today.Year;
             var logMonth = DateTime.Today.Month;
             var logDay = DateTime.Today.Day;
-            string cdts1 = "";
-            string cdts2 = "";
+            //string cdts1 = "";
+            //string cdts2 = "";
             if (!logDate.HasValue)
             {
                 DateTime cdt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
@@ -34,8 +33,8 @@ namespace BHelp.Controllers
                 logYear = cdt.Year;
                 logMonth = cdt.Month;
                 logDay = cdt.Day;
-                cdts1 = cdt.ToString("yyyy-MM-dd");
-                cdts2 = cdt.AddDays(1).ToString("yyyy-MM-dd");
+                //cdts1 = cdt.ToString("yyyy-MM-dd");
+                //cdts2 = cdt.AddDays(1).ToString("yyyy-MM-dd");
             }
             else
             {
@@ -88,11 +87,20 @@ namespace BHelp.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,ClientId,DeliveryDate,LogDate,FirstName,LastName,StreetNumber,StreetName,City,Zip,Phone,NamesAgesInHH,Children,Adults,Seniors,Notes,FullBags,HalfBags,KidSnacks,GiftCardsEligible,GiftCards,ODId,DriverId,DateDelivered,Completed,ODNotes,DriverNotes")] Delivery delivery)
+        public ActionResult Edit([Bind(Include = "Id,FullBags,HalfBags,KidSnacks,GiftCards,DateDelivered,Completed,DriverNotes")] Delivery delivery)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(delivery).State = EntityState.Modified;
+                var del = db.Deliveries.Find(delivery.Id);
+                if (del != null)
+                {
+                    del.FullBags = delivery.FullBags;
+                    del.HalfBags = delivery.HalfBags;
+                    del.KidSnacks = delivery.KidSnacks;
+                    del.GiftCards = delivery.GiftCards;
+                    del.Completed = delivery.Completed;
+                    del.DriverNotes = delivery.DriverNotes;
+                }
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
