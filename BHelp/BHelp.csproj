@@ -426,6 +426,7 @@
     <Content Include="Views\Driver\Details.cshtml" />
     <Content Include="Views\Driver\Edit.cshtml" />
     <Content Include="Views\Driver\Index.cshtml" />
+    <Content Include="Views\Account\InactiveMessage.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

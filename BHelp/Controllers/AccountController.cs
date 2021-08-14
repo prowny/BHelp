@@ -88,6 +88,11 @@ namespace BHelp.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+                    var usr = db.Users.FirstOrDefault(n => n.UserName == model.UserName);
+                    if (usr != null) // Block inactive user account.
+                    {
+                        if (!usr.Active) { return RedirectToAction("InactiveMessage"); }
+                    }
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -98,6 +103,11 @@ namespace BHelp.Controllers
                     ModelState.AddModelError("", @"Invalid login attempt.");
                     return View(model);
             }
+        }
+
+        public ActionResult InactiveMessage()
+        {
+            return View();
         }
 
         private void WriteToLoginTable(string userName, string status)
@@ -167,11 +177,11 @@ namespace BHelp.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            // Add block to non-Administrators 08/26/2020:
-            //if (!User.IsInRole("Administrator"))
-            //{
-            //    return RedirectToAction("Login", "Account");
-            //}
+            // Add block to non-Administrators 08/13/2021:
+            if (!User.IsInRole("Administrator"))
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
             return View();
         }
@@ -343,7 +353,7 @@ namespace BHelp.Controllers
 
         private List<SelectListItem> GetUserNamesList()
         {
-            var userList = db.Users.ToList();
+            var userList = db.Users.OrderBy(l => l.LastName).ToList();
             List<SelectListItem> userNames = new List<SelectListItem>();
             foreach (var user in userList)
             {
