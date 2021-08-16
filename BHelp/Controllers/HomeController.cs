@@ -56,18 +56,6 @@ namespace BHelp.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public ActionResult UploadAdults()
-        {
-            Utilities.UploadAdults();
-            return RedirectToAction("Index", "Home");
-        }
-
-        public ActionResult ReverseNames()
-        {
-            Utilities.ReverseNames();
-            return RedirectToAction("Index", "Home");
-        }
-
         public ActionResult GetZipCodes()
         {
             AppRoutines.GetZipCodesSelectList();
