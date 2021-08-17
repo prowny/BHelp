@@ -66,7 +66,7 @@ namespace BHelp
             foreach (DataRow row in csvtable.Rows)
             {
                 rowCount++;
-                if (rowCount > 806) // Start with 8/2/21
+                if (rowCount > 630) // Start with 8/2/21
                 {
                     Delivery delivery = new Delivery
                     {
@@ -96,9 +96,10 @@ namespace BHelp
                     if (delivery.ClientId != 0)
                     {
                         Client client = db.Clients.Find(delivery.ClientId);
-                        //// Create new delivery
+                        // Create new delivery
                         count++;
                         delivery.LogDate = Convert.ToDateTime(row[0].ToString());
+                        //delivery.DeliveryDate = null;
                         delivery.ODId = GetUserId(row[1].ToString());
                         try
                         {
@@ -128,12 +129,36 @@ namespace BHelp
                         }
 
                         delivery.ODNotes = row[13].ToString();
-                        delivery.DateDelivered = Convert.ToDateTime(row[14]);  // can be null or empty
+                        try
+                        {
+                            delivery.DateDelivered = Convert.ToDateTime(row[14]); // can be null or empty
+                        }
+                        catch
+                        {
+                            //delivery.DateDelivered = null;
+                        }
+
                         delivery.DriverId = GetUserId(row[15].ToString());
-                        delivery.FullBags = Convert.ToInt32(row[16]);
-                        delivery.HalfBags = Convert.ToInt32(row[17]);
-                        delivery.KidSnacks = Convert.ToInt32(row[18]);
-                        delivery.GiftCards = Convert.ToInt32(row[19]);
+                        try
+                        { delivery.FullBags = Convert.ToInt32(row[16]); }
+                        catch
+                        { delivery.FullBags = null; }
+
+                        try
+                        { delivery.HalfBags = Convert.ToInt32(row[17]); }
+                        catch
+                        { delivery.HalfBags = null; }
+
+                        try
+                        { delivery.KidSnacks = Convert.ToInt32(row[18]); }
+                        catch
+                        { delivery.KidSnacks = null; }
+
+                        try
+                        { delivery.GiftCards = Convert.ToInt32(row[19]); }
+                        catch
+                        { delivery.GiftCards = null; } 
+                        
                         delivery.Completed = true;
                         if (client != null)
                         {

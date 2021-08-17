@@ -11,7 +11,7 @@ namespace BHelp.Models
         public int ClientId { get; set; }
       
 
-        [DisplayName("Delivery Date")]
+        [DisplayName("Delivery Date")]  //Unused
         [Column(TypeName = "Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DeliveryDate { get; set; }
@@ -47,7 +47,11 @@ namespace BHelp.Models
 
         [StringLength(128)]
         public string DriverId { get; set; }
-        public DateTime? DateDelivered { get; set; }
+
+        [Column(TypeName = "Date")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
+        public DateTime DateDelivered { get; set; }
+
         public Boolean Completed { get; set; }
         public string ODNotes { get; set; }
         public string DriverNotes { get; set; }

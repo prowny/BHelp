@@ -16,12 +16,12 @@ namespace BHelp.Controllers
 {
     public class DeliveriesController : Controller
     {
-        private BHelpContext db = new BHelpContext();
+        private readonly BHelpContext db = new BHelpContext();
 
         // GET: Deliveries
         public ActionResult Index()
         {
-            var listDeliveries = new List<Delivery>(db.Deliveries).Where(d => d.DateDelivered == null && d.Completed == false)
+            var listDeliveries = new List<Delivery>(db.Deliveries).Where(d =>  d.Completed == false)
                 .OrderBy(z => z.Zip).ToList();
             var listDeliveryViewModels = new List<DeliveryViewModel>();
             foreach (var delivery in listDeliveries)
@@ -256,7 +256,7 @@ namespace BHelp.Controllers
 
             viewModel.DateLastDelivery = GetLastDeliveryDate(delivery.Id);
 
-            if (delivery.DateDelivered != null) viewModel.DateDelivered = (DateTime) delivery.DateDelivered;
+            viewModel.DateDelivered = delivery.DateDelivered;
 
             viewModel.DriversList = AppRoutines.GetDriversSelectList();
             foreach (var item in viewModel.DriversList)
@@ -322,7 +322,7 @@ namespace BHelp.Controllers
                     updateData.ODNotes = delivery.ODNotes;
                     updateData.DriverId = delivery.DriverId;
                     updateData.DriverNotes = delivery.DriverNotes;
-                    updateData.DateDelivered = delivery.DateDelivered;
+                    if (delivery.DateDelivered != null) updateData.DateDelivered = (DateTime) delivery.DateDelivered;
                     db.Entry(updateData).State = EntityState.Modified;
                     db.SaveChanges();
                 }
@@ -528,10 +528,11 @@ namespace BHelp.Controllers
 
         private  DateTime GetLastDeliveryDate(int id)
         {
-            var dt = db.Deliveries.Where(d => d.DeliveryDate != null
-                && d.Id == id && d.Completed)
-                .OrderByDescending(x => x.DeliveryDate).Select(d => d.DeliveryDate)
+            DateTime dt = db.Deliveries.Where(d => d.DateDelivered != null
+                                              && d.Id == id && d.Completed)
+                .OrderByDescending(x => x.DeliveryDate).Select(d => d.DateDelivered)
                 .FirstOrDefault();
+
             return dt;
         }
 
