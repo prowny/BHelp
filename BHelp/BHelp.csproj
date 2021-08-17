@@ -270,6 +270,10 @@
     <Compile Include="Migrations\202107062204233_AddStartEndNotesToUser.designer.cs">
       <DependentUpon>202107062204233_AddStartEndNotesToUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202108172001493_ChangeDeliveryDateType.cs" />
+    <Compile Include="Migrations\202108172001493_ChangeDeliveryDateType.designer.cs">
+      <DependentUpon>202108172001493_ChangeDeliveryDateType.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -501,6 +505,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202107062204233_AddStartEndNotesToUser.resx">
       <DependentUpon>202107062204233_AddStartEndNotesToUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202108172001493_ChangeDeliveryDateType.resx">
+      <DependentUpon>202108172001493_ChangeDeliveryDateType.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -50,7 +50,7 @@ namespace BHelp.Models
 
         [Column(TypeName = "Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateTime DateDelivered { get; set; }
+        public DateTime? DateDelivered { get; set; }
 
         public Boolean Completed { get; set; }
         public string ODNotes { get; set; }

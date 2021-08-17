@@ -526,14 +526,22 @@ namespace BHelp.Controllers
                 { FileDownloadName = view.ReportTitle +".xlsx" };
         }
 
-        private  DateTime GetLastDeliveryDate(int id)
+        private  DateTime? GetLastDeliveryDate(int id)
         {
-            DateTime dt = db.Deliveries.Where(d => d.DateDelivered != null
-                                              && d.Id == id && d.Completed)
+            DateTime? dt = db.Deliveries.Where(d => d.DateDelivered != null
+                                                    && d.Id == id && d.Completed)
                 .OrderByDescending(x => x.DeliveryDate).Select(d => d.DateDelivered)
                 .FirstOrDefault();
 
-            return dt;
+            // ReSharper disable once UseNullPropagation
+            if (dt == null)
+            {
+                return null;
+            }
+            else
+            {
+                return (DateTime) dt;
+            }
         }
 
         private int GetGiftCardsSince(int id, DateTime dt)
