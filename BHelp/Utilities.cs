@@ -66,7 +66,7 @@ namespace BHelp
             foreach (DataRow row in csvtable.Rows)
             {
                 rowCount++;
-                if (rowCount > 807) // Start with 8/2/21
+                if (rowCount > 806) // Start with 8/2/21
                 {
                     Delivery delivery = new Delivery
                     {
@@ -93,7 +93,7 @@ namespace BHelp
                         //    //db.SaveChanges();
                     }
 
-                    if (IsDate(row[15].ToString()) && delivery.ClientId != 0)
+                    if (delivery.ClientId != 0)
                     {
                         Client client = db.Clients.Find(delivery.ClientId);
                         //// Create new delivery
@@ -101,35 +101,56 @@ namespace BHelp
                         delivery.LogDate = Convert.ToDateTime(row[0].ToString());
                         delivery.ODId = GetUserId(row[1].ToString());
                         try
-                        { delivery.Children = Convert.ToInt32(row[9]); }
+                        {
+                            delivery.Children = Convert.ToInt32(row[9]);
+                        }
                         catch
-                        { delivery.Children = 0; }
+                        {
+                            delivery.Children = 0;
+                        }
+
                         try
-                        { delivery.Adults = Convert.ToInt32(row[10]); }
+                        {
+                            delivery.Adults = Convert.ToInt32(row[10]);
+                        }
                         catch
-                        { delivery.Adults = 0; }
+                        {
+                            delivery.Adults = 0;
+                        }
+
                         try
-                        { delivery.Seniors = Convert.ToInt32(row[11]); }
+                        {
+                            delivery.Seniors = Convert.ToInt32(row[11]);
+                        }
                         catch
-                        { delivery.Seniors = 0; }
+                        {
+                            delivery.Seniors = 0;
+                        }
 
                         delivery.ODNotes = row[13].ToString();
-                        delivery.DateDelivered = Convert.ToDateTime(row[14]);
+                        delivery.DateDelivered = Convert.ToDateTime(row[14]);  // can be null or empty
                         delivery.DriverId = GetUserId(row[15].ToString());
                         delivery.FullBags = Convert.ToInt32(row[16]);
                         delivery.HalfBags = Convert.ToInt32(row[17]);
                         delivery.KidSnacks = Convert.ToInt32(row[18]);
                         delivery.GiftCards = Convert.ToInt32(row[19]);
-                        delivery.Notes = row[20].ToString();
-                        if (client != null) delivery.Zip = client.Zip;
-                        //db.Deliveries.Add(delivery);
-                        //db.SaveChanges();
-
+                        delivery.Completed = true;
+                        if (client != null)
+                        {
+                            delivery.NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id);
+                            delivery.Notes = row[20].ToString();
+                            delivery.StreetNumber = client.StreetNumber;
+                            delivery.StreetName = client.StreetName;
+                            delivery.City = client.City;
+                            delivery.Phone = client.Phone;
+                            delivery.Zip = client.Zip;
+                        }
                     }
+                    db.Deliveries.Add(delivery);
+                    db.SaveChanges();
                 }
             }
             var unused = count.ToString() + " " + newCount.ToString();
-
             return true;
         }
 
