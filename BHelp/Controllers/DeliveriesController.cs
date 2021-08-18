@@ -72,7 +72,7 @@ namespace BHelp.Controllers
                     if (delivery.HalfBags != null) deliveryView.HalfBags = (int) delivery.HalfBags;
                     if (delivery.KidSnacks != null) deliveryView.KidSnacks = (int) delivery.KidSnacks;
                     if (delivery.GiftCards != null) deliveryView.GiftCards = (int) delivery.GiftCards;
-                    deliveryView.GiftCardsEligible = (int) delivery.GiftCardsEligible;
+                    if (delivery.GiftCardsEligible != null) deliveryView.GiftCardsEligible = (int) delivery.GiftCardsEligible;
                     deliveryView.DateLastDelivery = DateTime.Today.AddDays(-7); // !!! calculate this value
                     deliveryView.DateLastGiftCard = DateTime.Today.AddDays(-7); // !!! calculate this value
                     if (delivery.DriverId != null)
