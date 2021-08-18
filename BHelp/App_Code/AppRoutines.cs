@@ -13,6 +13,29 @@ namespace BHelp
     // ReSharper disable once ClassNeverInstantiated.Global
     public class AppRoutines
     {
+        public static DateTime GetLastDeliveryDate(int clientId)
+        {
+            var dt = DateTime.MinValue;
+            using (var db = new BHelpContext())
+            {
+                var delivery = db.Deliveries.Where(i => i.ClientId == clientId)
+                    .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
+                if (delivery?.DateDelivered != null) return (DateTime) delivery.DateDelivered;
+            }
+            return dt;
+        }
+
+        public static DateTime GetDateLastGiftCard(int clientId)
+        {
+            var dt = DateTime.MinValue;
+            using (var db = new BHelpContext())
+            {
+                var delivery = db.Deliveries.Where(i => i.Id == clientId && i.GiftCards > 0)
+                    .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
+                if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
+            }
+            return dt;
+        }
         public static List<SelectListItem> GetZipCodesSelectList()
         {
             List<SelectListItem> getZipCodesSelectList = new List<SelectListItem>();
@@ -52,7 +75,6 @@ namespace BHelp
             int years = (DateTime.MinValue + span).Year - 1;
             return years;
         }
-
         public static string GetNamesAgesOfAllInHousehold(int clientId)
         {
             string NamesAges = "";
@@ -87,7 +109,6 @@ namespace BHelp
                 return (householdList);
             }
         }
-
         public static List<FamilyMember> GetFamilyMembers(int clientId)
         {
             var familyMembers = new List<FamilyMember>(); // For editiing
@@ -120,7 +141,6 @@ namespace BHelp
             }
             return familyMembers;
         }
-
         public static List<SelectListItem> GetDriversSelectList()
         {
             List<SelectListItem> driverList = new List<SelectListItem>();
@@ -140,7 +160,6 @@ namespace BHelp
             }
             return (driverList);
         }
-
         public static Boolean UserIsInRole(string userId, string roleName)
         {
             var sqlString = "SELECT Id FROM AspNetRoles WHERE Name = '" + roleName + "'";

@@ -24,22 +24,22 @@
         <div class="form-horizontal">
             <span><h3>Edit Delivery</h3></span>
             <span><b>Client:</b>&nbsp;@Html.Label(Model.ClientNameAddress)&nbsp;@Html.Label(Model.Client.Phone) </span>
+            <br/>
             <span>
                 <b>Family:</b>&nbsp;
                 @if (Model.FamilySelectList != null)
                 {@Html.DropDownListFor(modelItem => Model.Notes, Model.FamilySelectList)
                 }
             </span>
-            <br/>
             <span><b>Children:&nbsp;</b>@Html.Label(Model.KidsCount.ToString())</span>&nbsp;
             <span><b>Adults:&nbsp;</b>@Html.Label(Model.AdultsCount.ToString())</span>&nbsp;
             <span><b>Seniors:&nbsp;</b>@Html.Label(Model.SeniorsCount.ToString())</span>&nbsp;
+            <br/>
             <span><b>Last Delivery:</b>
                 @if (Model.DateLastDelivery != null)
-                {
-                    @Html.Label(Model.DateLastDelivery.Value.ToShortDateString())
-                }
+                {@Html.Label(Model.DateLastDelivery.Value.ToShortDateString())}
             </span>
+            <span><b>Gift Cards This Month:</b>@Html.Label(Model.GiftCardsThisMonth.ToString())</span>
             <span><b>Gift Cards Eligible:</b>&nbsp;@Html.Label(Model.GiftCardsEligible.ToString())</span>
             <hr/>
             @Html.ValidationSummary(true, "", new {@class = "text-danger"})
@@ -90,7 +90,9 @@
             </table>
             <div class="form-group">
                 @Html.Label("Date Delivered")
-                @Html.TextBoxFor(model => model.DateDelivered, Model.DateDelivered.ToString(),
+                @*@Html.TextBoxFor(model => model.DateDelivered, Model.DateDelivered.ToString(),
+                    new {id = "DateDelivered", style = "width: 75px;"})*@
+                @Html.TextBoxFor(model => model.DateDelivered, "{0:MM/dd/yyyy}",
                     new {id = "DateDelivered", style = "width: 75px;"})
                 <span style="color: darkmagenta">&#8592;Enter valid date (mm/dd/yyyy)</span> @*Html left-arrow*@
             </div>

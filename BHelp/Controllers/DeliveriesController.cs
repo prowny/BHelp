@@ -73,8 +73,12 @@ namespace BHelp.Controllers
                     if (delivery.KidSnacks != null) deliveryView.KidSnacks = (int) delivery.KidSnacks;
                     if (delivery.GiftCards != null) deliveryView.GiftCards = (int) delivery.GiftCards;
                     if (delivery.GiftCardsEligible != null) deliveryView.GiftCardsEligible = (int) delivery.GiftCardsEligible;
-                    deliveryView.DateLastDelivery = DateTime.Today.AddDays(-7); // !!! calculate this value
-                    deliveryView.DateLastGiftCard = DateTime.Today.AddDays(-7); // !!! calculate this value
+                    deliveryView.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
+                    deliveryView.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
+                    DateTime since1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                    deliveryView.GiftCardsThisMonth = GetGiftCardsSince(client.Id, since1);
+                    int hhTotal = deliveryView.KidsCount + deliveryView.AdultsCount + deliveryView.SeniorsCount;
+                    deliveryView.GiftCardsEligible = GetGiftCardsEligible(client.Id, hhTotal);
                     if (delivery.DriverId != null)
                     {
                         var driver = db.Users.Find(delivery.DriverId);
@@ -190,42 +194,12 @@ namespace BHelp.Controllers
                     delivery.NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id);
                     delivery.Zip = client.Zip;
 
-                    var familyList = AppRoutines.GetFamilyMembers(client.Id);
-                    foreach (var mbr in familyList )
-                    {
-                        if (mbr.Age < 18) { delivery.Children += 1; }
-                        if (mbr.Age >= 18 && mbr.Age < 60) { delivery.Adults += 1; }
-                        if (mbr.Age >= 60) { delivery.Seniors += 1; }
-                    }
-                     
-                    // GIFT CARDS ELIGIBLE:
-                    // 1 per week maximum
-                    // 1 per household of 3 or fewer
-                    // 2 per household of 4 or more
-                    // 3 max per calendar month;
-                    var totalThisWeek = GetGiftCardsSince(client.Id, DateTime.Today.AddDays(-7));
-                    DateTime since1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-                    var totalThisMonth = GetGiftCardsSince(client.Id, since1);
-                    var numberInHousehold = delivery.Children + delivery.Adults + delivery.Seniors ;
-                    if (numberInHousehold < 4)   // 1 per household of 3 or fewer
-                    {
-                        delivery.GiftCardsEligible = 1;
-                        if (delivery.GiftCardsEligible + totalThisMonth > 3) delivery.GiftCardsEligible = 0;
-                    }
-                    if (numberInHousehold > 3)    // 2 per household of 4 or more
-                    {
-                        delivery.GiftCardsEligible = 3 - totalThisMonth;
-                        if (delivery.GiftCardsEligible > 2) delivery.GiftCardsEligible = 2;
-                    }
-                    if (totalThisWeek > 0) delivery.GiftCardsEligible = 0;   // 1 per week maximum
+                    db.Deliveries.Add(delivery);
+                    db.SaveChanges();
+                    return View(delivery);
                 }
-                
-                db.Deliveries.Add(delivery);
-                db.SaveChanges();
-                return RedirectToAction("Index");
             }
-
-            return View(delivery);
+            return RedirectToAction("Index");
         }
 
         // GET: Deliveries/Edit/5
@@ -271,13 +245,6 @@ namespace BHelp.Controllers
             if (delivery.Children != null) viewModel.KidsCount = (int) delivery.Children;
             if (delivery.Adults != null) viewModel.AdultsCount = (int) delivery.Adults;
             if (delivery.Seniors != null) viewModel.SeniorsCount = (int) delivery.Seniors;
-            //foreach (var mbr in viewModel.FamilyMembers)
-            //{
-            //    mbr.Age = AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
-            //    if (mbr.Age < 18) { viewModel.KidsCount += 1; }
-            //    if (mbr.Age >= 18 && mbr.Age < 60) { viewModel.AdultsCount += 1; }
-            //    if (mbr.Age >= 60) {viewModel.SeniorsCount += 1; }
-            //}
             var client = db.Clients.Find(delivery.ClientId);
             if (client != null)
             {
@@ -285,6 +252,10 @@ namespace BHelp.Controllers
                 viewModel.ClientNameAddress = client.LastName + ", " + client.FirstName
                                               + " " + client.StreetNumber + " " + client.StreetName + " " + client.Zip;
                 viewModel.Notes = client.Notes;
+                viewModel.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
+                viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
+                int? hhTotal = delivery.Children + delivery.Adults + delivery.Seniors;
+                viewModel.GiftCardsEligible = GetGiftCardsEligible(client.Id, hhTotal);
             }
 
             if (delivery.FullBags != null) viewModel.FullBags = (int) delivery.FullBags;
@@ -292,6 +263,7 @@ namespace BHelp.Controllers
             if (delivery.KidSnacks != null) viewModel.KidSnacks = (int) delivery.KidSnacks;
             if (delivery.GiftCardsEligible != null) viewModel.GiftCardsEligible = (int) delivery.GiftCardsEligible;
             viewModel.Zip = delivery.Zip;
+
             return View(viewModel);
         }
 
@@ -322,7 +294,11 @@ namespace BHelp.Controllers
                     updateData.ODNotes = delivery.ODNotes;
                     updateData.DriverId = delivery.DriverId;
                     updateData.DriverNotes = delivery.DriverNotes;
-                    if (delivery.DateDelivered != null) updateData.DateDelivered = (DateTime) delivery.DateDelivered;
+                    if (delivery.DateDelivered != null)
+                    {
+                        updateData.DateDelivered = (DateTime) delivery.DateDelivered;
+                        updateData.Completed = true;
+                    }
                     db.Entry(updateData).State = EntityState.Modified;
                     db.SaveChanges();
                 }
@@ -544,7 +520,33 @@ namespace BHelp.Controllers
             }
         }
 
-        private int GetGiftCardsSince(int id, DateTime dt)
+        private int GetGiftCardsEligible(int id, int? hhTotal)
+        {
+            // GIFT CARDS ELIGIBLE:
+            // 1 per week maximum
+            // 1 per household of 3 or fewer
+            // 2 per household of 4 or more
+            // 3 max per calendar month;
+            var eligible = 0;
+            var totalThisWeek = GetGiftCardsSince(id, DateTime.Today.AddDays(-7));
+            DateTime since1 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var totalThisMonth = GetGiftCardsSince(id, since1);
+            var numberInHousehold = hhTotal;
+            if (numberInHousehold < 4)   // 1 per household of 3 or fewer
+            {
+                eligible = 1;
+                if (eligible + totalThisMonth > 3) eligible = 0;
+            }
+            if (numberInHousehold > 3)    // 2 per household of 4 or more
+            {
+                eligible = 3 - totalThisMonth;
+                if (eligible > 2) eligible = 2;
+            }
+            if (totalThisWeek > 0) eligible = 0;   // 1 per week maximum
+            return eligible;
+         }
+
+         private int GetGiftCardsSince(int id, DateTime dt)
         {
             var total = 0;
             var dList = db.Deliveries.Where(d => d.Id == id && d.Completed
@@ -689,7 +691,6 @@ namespace BHelp.Controllers
             saturday = saturday.AddDays(7);
             return RedirectToAction("QuorkReport", new { endingDate = saturday.ToShortDateString() });
         }
-
         public ActionResult SaturdayPrevious(DateTime saturday)
         {
             saturday = saturday.AddDays(-7);

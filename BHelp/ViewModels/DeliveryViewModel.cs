@@ -49,8 +49,7 @@ namespace BHelp.ViewModels
 
         [Column(TypeName = "Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateTime? DateDelivered { get; set; }
-       
+        public DateTime? DateDelivered { get; set; }       
         public List<FamilyMember> FamilyMembers { get; set; }
         public List<SelectListItem> FamilySelectList { get; set; }  // For display onlly
         public string NamesAgesInHH { get; set; }
@@ -63,6 +62,7 @@ namespace BHelp.ViewModels
         public int HouseholdCount { get; set; }
         public DateTime? DateLastDelivery { get; set; }
         public DateTime DateLastGiftCard { get; set; }
+        public int GiftCardsThisMonth { get; set; }
         public string DriverId { get; set; }
         public string DriverName { get; set; }
 
