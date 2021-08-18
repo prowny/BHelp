@@ -1,0 +1,22 @@
+﻿
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>CallLogHistory</title>
+</head>
+<body>
+<div>
+    <b>Call Log History</b>
+    <br />
+    <a href="@Url.Action("CallLogIndividual", "Deliveries")">History by Individual Client</a><br />
+    <a href="@Url.Action("Index", "Deliveries")">History by Date Range</a><br />
+</div>
+<br/>
+<div>
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new {})
+</div>
+</body>
+</html>

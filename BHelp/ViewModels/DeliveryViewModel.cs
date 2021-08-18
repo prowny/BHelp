@@ -84,5 +84,6 @@ namespace BHelp.ViewModels
         public string ClientNameAddress { get; set; }
         public IEnumerable<SelectListItem> DriversList { get; set; }
         public List<Delivery> DeliveryList { get; set; }
+        public IEnumerable<SelectListItem> ClientSelectList { get; set; }
     }
 }

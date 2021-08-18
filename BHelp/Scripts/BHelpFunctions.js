@@ -90,3 +90,19 @@ function CountyReport() {
         }
     });
 }
+
+function EditCallLog()
+{
+    $.ajax({
+        url: "/Deliveries/CallLogIndividual",
+        data: { clientId: $("#clientList").val() },
+        type: "POST",
+        success: function () {
+            //var dummy = "";
+        },
+        error: function (jqxhr, status, exception) {
+            alert('Exception:', exception);
+            //var dummy = "";       
+        }
+    });
+}

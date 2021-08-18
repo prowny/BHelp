@@ -33,7 +33,6 @@ namespace BHelp.Controllers
                     {
                         Id = delivery.Id,
                         ClientId = client.Id,
-                        //Client = client,
                         DriverId = delivery.DriverId,
                         LogDate =delivery.LogDate,
                         NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id),
@@ -150,7 +149,6 @@ namespace BHelp.Controllers
             return View(listDeliveryViewModels);
         }
  
-
         // GET: Deliveries/Details/5
         public ActionResult Details(int? id)
         {
@@ -335,6 +333,32 @@ namespace BHelp.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult CallLogMenu()
+        {
+            return View();
+        }
+
+        public ActionResult CallLogIndividual()
+        {
+            List<SelectListItem> clientSelectList = new List<SelectListItem>();
+            var clientList = db.Clients.OrderBy(c => c.LastName).ToList();
+            foreach (var client in clientList)
+            {
+                var text = client.LastName + ", " + client.FirstName + " ";
+                text += client.StreetNumber + " " + client.StreetName;
+                var selListItem = new SelectListItem() { Value = client.Id.ToString(), Text = text };
+                clientSelectList.Add(selListItem);
+            }
+            var callLogView = new DeliveryViewModel { ClientSelectList = clientSelectList };
+
+            return View(callLogView);
+        }
+
+        [HttpPost]
+        public ActionResult CallLogIndividual(string clientId)
+        {
+            return null;
+        }
         public ActionResult ReportsMenu()
         {
             return View();

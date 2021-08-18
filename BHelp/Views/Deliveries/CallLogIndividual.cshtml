@@ -1,0 +1,40 @@
+﻿@using System.Web.Mvc.Html
+@using BHelp.ViewModels
+
+@model DeliveryViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>CallLogIndividual</title>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    @*Put page javascript in a separate .js file where breaks can be set during debugging:*@
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
+</head>
+<body>
+    <div>
+        <b>Call Log History by Individual Client</b>
+        <br />
+        <table>
+            <tr>
+                <td>Select Client:</td>
+                <td>
+                   @Html.DropDownList("clientList", Model.ClientSelectList)
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br />
+<div>
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+</div>
+<script type="text/javascript">
+    $("#clientList").change(EditCallLog);
+</script>
+</body>
+</html>

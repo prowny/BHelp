@@ -431,6 +431,8 @@
     <Content Include="Views\Driver\Edit.cshtml" />
     <Content Include="Views\Driver\Index.cshtml" />
     <Content Include="Views\Account\InactiveMessage.cshtml" />
+    <Content Include="Views\Deliveries\CallLogMenu.cshtml" />
+    <Content Include="Views\Deliveries\CallLogIndividual.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
