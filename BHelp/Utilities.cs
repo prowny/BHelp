@@ -43,16 +43,15 @@ namespace BHelp
                 //System.Diagnostics.Debug.WriteLine(client.FirstName, client.LastName);
                 string _adults = row[10].ToString();
                 string[] adultsArray = _adults.Split(',');
-                AddFamily(row, adultsArray, client.Id ); // contains newly added client Id
+                AddFamily(row, adultsArray, client.Id); // contains newly added client Id
                 string _kids = row[11].ToString();
                 string[] kidsArray = _kids.Split(',');
                 AddFamily(row, kidsArray, client.Id);
-
             }
             return true;
         }
 
-       public static Boolean UploadDeliveries()
+        public static Boolean UploadDeliveries()
         {
             var db = new BHelpContext();
             var count = 0;
@@ -60,24 +59,24 @@ namespace BHelp
             var filePath = @"c:\TEMP\BH Call Log Apr-Dec 2021.csv";
             DataTable csvtable = new DataTable();
             using (CsvReader csvReader = new CsvReader(new StreamReader(filePath), true))
-            { csvtable.Load(csvReader); }
+            {
+                csvtable.Load(csvReader);
+            }
 
             var rowCount = 0;
             foreach (DataRow row in csvtable.Rows)
             {
                 rowCount++;
-                if (rowCount > 630) // Start with 8/2/21
+                if (rowCount > 1) // Start with 08/16/2021
                 {
-                    if (IsDate((string) row[0]))
+                    Delivery delivery = new Delivery
                     {
-                        Delivery delivery = new Delivery
-                        {
-                            ClientId = GetClientId(row[2].ToString(), row[4].ToString(), row[5].ToString())
-                        };
+                        ClientId = GetClientId(row[2].ToString(), row[4].ToString(), row[5].ToString())
+                    };
                         // Total Food lbs =  row[22]. If = 0, delivery was not made.
-                        if (IsDate(row[14].ToString()) && delivery.ClientId == 0)
-                        {
-                            newCount++;
+                    if (IsDate(row[14].ToString()) && delivery.ClientId == 0)
+                    {
+                        newCount++;
                             //   // Create new client (with only head of household)
                             //    Client newClient = new Client()
                             //    {
@@ -93,91 +92,107 @@ namespace BHelp
                             //    };
                             //    db.Clients.Add(newClient);
                             //    //db.SaveChanges();
-                        }
-
-                        if (delivery.ClientId != 0)
-                        {
-                            Client client = db.Clients.Find(delivery.ClientId);
-                            // Create new delivery
-                            count++;
-                            delivery.LogDate = Convert.ToDateTime(row[0].ToString());
-                            //delivery.DeliveryDate = null;
-                            delivery.ODId = GetUserId(row[1].ToString());
-                            try
-                            { delivery.Children = Convert.ToInt32(row[9]); }
-                            catch
-                            { delivery.Children = 0; }
-                            try
-                            { delivery.Adults = Convert.ToInt32(row[10]); }
-                            catch
-                            { delivery.Adults = 0; }
-                            try
-                            { delivery.Seniors = Convert.ToInt32(row[11]); }
-                            catch
-                            { delivery.Seniors = 0; }
-
-                            delivery.ODNotes = row[13].ToString();
-                            try
-                            { delivery.DateDelivered = Convert.ToDateTime(row[14]); // can be null or empty
-                            }
-                            catch
-                            {
-                                //delivery.DateDelivered = null;
-                            }
-
-                            delivery.DriverId = GetUserId(row[15].ToString());
-                            try
-                            {
-                                delivery.FullBags = Convert.ToInt32(row[16]);
-                            }
-                            catch
-                            {
-                                delivery.FullBags = null;
-                            }
-
-                            try
-                            {
-                                delivery.HalfBags = Convert.ToInt32(row[17]);
-                            }
-                            catch
-                            {
-                                delivery.HalfBags = null;
-                            }
-
-                            try
-                            {
-                                delivery.KidSnacks = Convert.ToInt32(row[18]);
-                            }
-                            catch
-                            {
-                                delivery.KidSnacks = null;
-                            }
-
-                            try
-                            {
-                                delivery.GiftCards = Convert.ToInt32(row[19]);
-                            }
-                            catch
-                            {
-                                delivery.GiftCards = null;
-                            }
-
-                            delivery.Completed = true;
-                            if (client != null)
-                            {
-                                delivery.NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id);
-                                delivery.Notes = row[20].ToString();
-                                delivery.StreetNumber = client.StreetNumber;
-                                delivery.StreetName = client.StreetName;
-                                delivery.City = client.City;
-                                delivery.Phone = client.Phone;
-                                delivery.Zip = client.Zip;
-                            }
-                        }
-
-                        db.Deliveries.Add(delivery);
-                        db.SaveChanges();
                     }
+
+                    if (delivery.ClientId != 0)
+                    {
+                        Client client = db.Clients.Find(delivery.ClientId);
+                        // Create new delivery
+                        count++;
+                        delivery.LogDate = Convert.ToDateTime(row[0].ToString());
+                        //delivery.DeliveryDate = null;
+                        delivery.ODId = GetUserId(row[1].ToString());
+                        try
+                        {
+                            delivery.Children = Convert.ToInt32(row[9]);
+                        }
+                        catch
+                        {
+                            delivery.Children = 0;
+                        }
+
+                        try
+                        {
+                            delivery.Adults = Convert.ToInt32(row[10]);
+                        }
+                        catch
+                        {
+                            delivery.Adults = 0;
+                        }
+
+                        try
+                        {
+                            delivery.Seniors = Convert.ToInt32(row[11]);
+                        }
+                        catch
+                        {
+                            delivery.Seniors = 0;
+                        }
+
+                        delivery.ODNotes = row[13].ToString();
+                        try
+                        {
+                            delivery.DateDelivered = Convert.ToDateTime(row[14]); // can be null or empty
+                        }
+                        catch
+                        {
+                            //delivery.DateDelivered = null;
+                        }
+
+                        delivery.DriverId = GetUserId(row[15].ToString());
+                        try
+                        {
+                            delivery.FullBags = Convert.ToInt32(row[16]);
+                        }
+                        catch
+                        {
+                            delivery.FullBags = null;
+                        }
+
+                        try
+                        {
+                            delivery.HalfBags = Convert.ToInt32(row[17]);
+                        }
+                        catch
+                        {
+                            delivery.HalfBags = null;
+                        }
+
+                        try
+                        {
+                            delivery.KidSnacks = Convert.ToInt32(row[18]);
+                        }
+                        catch
+                        {
+                            delivery.KidSnacks = null;
+                        }
+
+                        try
+                        {
+                            delivery.GiftCards = Convert.ToInt32(row[19]);
+                        }
+                        catch
+                        {
+                            delivery.GiftCards = null;
+                        }
+
+                        delivery.Completed = true;
+                        if (client != null)
+                        {
+                            delivery.LastName = client.LastName;
+                            delivery.FirstName = client.FirstName;
+                            delivery.NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id);
+                            delivery.Notes = row[20].ToString();
+                            delivery.StreetNumber = client.StreetNumber;
+                            delivery.StreetName = client.StreetName;
+                            delivery.City = client.City;
+                            delivery.Phone = client.Phone;
+                            delivery.Zip = client.Zip;
+                        }
+                    }
+
+                    db.Deliveries.Add(delivery);
+                    //db.SaveChanges();
                 }
             }
             var unused = count.ToString() + " " + newCount.ToString();
