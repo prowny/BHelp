@@ -17,22 +17,32 @@
     <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
 </head>
 <body>
-    <div>
-        <b>Call Log History by Individual Client</b>
-        <br />
-        <table>
-            <tr>
-                <td>Select Client:</td>
-                <td>
-                   @Html.DropDownList("clientList", Model.ClientSelectList)
-                </td>
-            </tr>
-        </table>
-    </div>
+<div>
+    <b>Call Log History by Individual Client</b>
+    <br />
+    <table>
+        <tr>
+            <td>Select Client:</td>
+            <td>
+                @Html.DropDownList("clientList", Model.ClientSelectList)
+            </td>
+        </tr>
+    </table>
+</div>
+<br/>
+<div id="callLogsDiv">
+    callLogsDiv
+</div>
+   
     <br />
 <div>
     @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
 </div>
+<script type='text/javascript'>
+    $(document).ready(function () {
+        $("#callLogsDiv").hide();
+    });
+</script>
 <script type="text/javascript">
     $("#clientList").change(EditCallLog);
 </script>

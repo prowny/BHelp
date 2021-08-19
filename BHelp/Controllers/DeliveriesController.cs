@@ -353,12 +353,26 @@ namespace BHelp.Controllers
 
             return View(callLogView);
         }
-
+         
         [HttpPost]
-        public ActionResult CallLogIndividual(string clientId)
+        public DeliveryViewModel CallLogIndividual(string clientId)
         {
-            return null;
+            int intClientId = Convert.ToInt32(clientId);
+            var callLogView = new DeliveryViewModel
+            {
+                DeliveryList = db.Deliveries.OrderByDescending(d => d.LogDate)
+                    .Where(d => d.ClientId == intClientId).ToList()
+            };
+            try
+            {
+                return callLogView;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
+
         public ActionResult ReportsMenu()
         {
             return View();
