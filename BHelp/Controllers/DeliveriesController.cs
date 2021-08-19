@@ -338,39 +338,39 @@ namespace BHelp.Controllers
             return View();
         }
 
-        public ActionResult CallLogIndividual()
+        public ActionResult CallLogIndividual(int? clientId)
         {
             List<SelectListItem> clientSelectList = new List<SelectListItem>();
             var clientList = db.Clients.OrderBy(c => c.LastName).ToList();
             foreach (var client in clientList)
             {
-                var text = client.LastName + ", " + client.FirstName + " ";
+                if (db.Deliveries.Any(d => d.ClientId == client.Id))
+                { 
+                    var text = client.LastName + ", " + client.FirstName + " ";
                 text += client.StreetNumber + " " + client.StreetName;
                 var selListItem = new SelectListItem() { Value = client.Id.ToString(), Text = text };
+                if (clientId == client.Id)
+                {
+                    selListItem.Selected = true;
+                }
                 clientSelectList.Add(selListItem);
+                }
             }
             var callLogView = new DeliveryViewModel { ClientSelectList = clientSelectList };
-
+            if (clientId != null)
+            {
+                var deliveryList = db.Deliveries.Where(d => d.ClientId == clientId)
+                    .OrderByDescending(d => d.LogDate).ToList();
+                callLogView.DeliveryList = deliveryList;
+            }
             return View(callLogView);
         }
          
         [HttpPost]
-        public DeliveryViewModel CallLogIndividual(string clientId)
+        public ActionResult CallLogIndividual(string id)
         {
-            int intClientId = Convert.ToInt32(clientId);
-            var callLogView = new DeliveryViewModel
-            {
-                DeliveryList = db.Deliveries.OrderByDescending(d => d.LogDate)
-                    .Where(d => d.ClientId == intClientId).ToList()
-            };
-            try
-            {
-                return callLogView;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            var intClientId = Convert.ToInt32(id);
+            return RedirectToAction("CallLogIndividual", new { clientId = intClientId });
         }
 
         public ActionResult ReportsMenu()
@@ -745,10 +745,7 @@ namespace BHelp.Controllers
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-            {
-                db.Dispose();
-            }
-
+            { db.Dispose(); }
             base.Dispose(disposing);
         }
     }

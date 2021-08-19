@@ -93,14 +93,13 @@ function CountyReport() {
 
 function EditCallLog()
 {
-    $("#callLogsDiv").hide();
     $.ajax({
         url: "/Deliveries/CallLogIndividual",
-        data: { clientId: $("#clientList").val() },
+        data: { id: $("#clientList").val() },
         type: "POST",
         success: function (data) {
-            alert(data.delivery.DeliveryList);
-            $("#callLogsDiv").show();
+            $("body").html(data); // to refresh the page
+            //var dummy =xx;
         },
         error: function (jqxhr, status, exception) {
             alert('Exception:', exception);

@@ -31,18 +31,38 @@
 </div>
 <br/>
 <div id="callLogsDiv">
-    callLogsDiv
+   @if (Model.DeliveryList != null)
+   {
+       <table>
+           <tr>
+               <td>Log Date</td>
+               <td>Name</td>
+               <td>Addess</td>
+               <td>Completed</td>
+           </tr>
+        @foreach (var delivery in Model.DeliveryList)
+        {
+            <tr>
+                <td>@delivery.LogDate.ToShortDateString()</td>
+                @{ string name = delivery.LastName + ", " + delivery.FirstName; }
+                @{ string addr = delivery.StreetNumber + " " + delivery.StreetName; }
+                @{ bool cmpltd = delivery.Completed;}
+                <td>@name</td>
+                <td>@addr</td>
+                <td style="text-align: center">@Html.CheckBox("Completed", cmpltd)</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = delivery.Id })
+                </td>
+            </tr>
+        }
+       </table>
+   }
 </div>
    
     <br />
 <div>
     @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
 </div>
-<script type='text/javascript'>
-    $(document).ready(function () {
-        $("#callLogsDiv").hide();
-    });
-</script>
 <script type="text/javascript">
     $("#clientList").change(EditCallLog);
 </script>
