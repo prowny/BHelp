@@ -8,6 +8,7 @@ using BHelp.DataAccessLayer;
 using BHelp.Models;
 using Castle.Core.Internal;
 
+// ReSharper disable once CheckNamespace
 namespace BHelp
 {
     // ReSharper disable once ClassNeverInstantiated.Global
@@ -20,7 +21,10 @@ namespace BHelp
             {
                 var delivery = db.Deliveries.Where(i => i.ClientId == clientId)
                     .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
-                if (delivery?.DateDelivered != null) return (DateTime) delivery.DateDelivered;
+                if (delivery != null)
+                {
+                    if(delivery.DateDelivered != null) return (DateTime) delivery.DateDelivered;
+                }
             }
             return dt;
         }
@@ -32,7 +36,10 @@ namespace BHelp
             {
                 var delivery = db.Deliveries.Where(i => i.Id == clientId && i.GiftCards > 0)
                     .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
-                if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
+                if (delivery != null)
+                { 
+                    if (delivery.DateDelivered != null) return (DateTime) delivery.DateDelivered;
+                }
             }
             return dt;
         }
