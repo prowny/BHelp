@@ -205,6 +205,15 @@ namespace BHelp.Controllers
                 Notes = client.Notes
             };
             houseHold.FamilyMembers = AppRoutines.GetFamilyMembers(client.Id);
+            houseHold.ZipCodes = AppRoutines.GetZipCodesSelectList();
+            foreach (var item in houseHold.ZipCodes)
+            {
+                if (item.Value == client.Zip)
+                {
+                    item.Selected = true;
+                    break;
+                }
+            }
             var newMember = new FamilyMember();
             houseHold.FamilyMembers.Add(newMember);  // Blank line for adding new member.
             newMember.ClientId = -1;

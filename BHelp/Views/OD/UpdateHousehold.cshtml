@@ -59,25 +59,25 @@
                             @Html.LabelFor(model => model.Zip, htmlAttributes: new { @class = "control-label col-md-2" })
                         </td>
                         <td>
-                            @Html.EditorFor(model => model.Zip, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.DropDownListFor(model => model.Zip, new SelectList(Model.ZipCodes, "Value", "Text"), new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.Zip, "", new { @class = "text-danger" })
                         </td>
                     </tr>
                     <tr>
                         <td></td>
                         <td style="text-align: right">
-                            @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @Html.LabelFor(model => model.Phone, htmlAttributes: new {@class = "control-label col-md-2"})
                         </td>
                         <td>
-                            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.Phone, new {htmlAttributes = new {@class = "form-control"}})
+                            @Html.ValidationMessageFor(model => model.Phone, "", new {@class = "text-danger"})
                         </td>
                         <td style="text-align: right">
-                            @Html.LabelFor(model => model.Notes, htmlAttributes: new { @class = "control-label col-md-2" })
+                            @Html.LabelFor(model => model.Notes, htmlAttributes: new {@class = "control-label col-md-2"})
                         </td>
                         <td>
-                            @Html.EditorFor(model => model.Notes, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.Notes, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.Notes, new {htmlAttributes = new {@class = "form-control"}})
+                            @Html.ValidationMessageFor(model => model.Notes, "", new {@class = "text-danger"})
                         </td>
                     </tr>
                 </table>

@@ -49,6 +49,7 @@ namespace BHelp.ViewModels
         public List<SelectListItem> FamilySelectList { get; set; }  // For display onlly
         [DisplayName("Family Members")]
         public List<FamilyMember> FamilyMembers { get; set; }  // For editing
+        public IEnumerable<SelectListItem> ZipCodes { get; set; }
         public string StreetToolTip { get; set; }
         public string CityToolTip { get; set; }
         public string PhoneToolTip { get; set; }
