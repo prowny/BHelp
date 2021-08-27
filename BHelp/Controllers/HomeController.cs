@@ -37,6 +37,10 @@ namespace BHelp.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        public ActionResult GoToBHelpSite()
+        {
+            return Redirect("https://www.bethesdahelp.org");
+        }
         public ActionResult LogOut()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);

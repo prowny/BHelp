@@ -70,7 +70,8 @@
         <div>
             <strong>Officer of the Day Menu</strong><br />
             <a href="@Url.Action("Index", "OD")">Call Log - OD Section</a><br />
-        </div>
+            <a href="@Url.Action("Index", "Deliveries")">Maintain Open Deliveries</a>
+            </div>
     }
     <br />
 
@@ -83,13 +84,14 @@
     }
 <br />
 
-    <div>
-        <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br />
-        <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br />
-        <br />
-        @Html.AntiForgeryToken()
-        <a href="@Url.Action("Logout", "Home")">LogOut</a>
-    </div>
+<div>
+    <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br />
+    <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br />
+    <a href="@Url.Action("GoToBHelpSite", "Home")">Go To Bethesda Help Website</a><br />
+    <br />
+    @Html.AntiForgeryToken()
+    <a href="@Url.Action("Logout", "Home")">LogOut</a>
+</div>
 
 </body>
 </html>

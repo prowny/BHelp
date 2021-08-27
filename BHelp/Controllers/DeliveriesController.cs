@@ -214,6 +214,7 @@ namespace BHelp.Controllers
                 ClientId = delivery.ClientId,
                 LogDate = Convert.ToDateTime(delivery.LogDate.ToString("MM/dd/yyyy")),
                 ODNotes = delivery.ODNotes,
+                DriverId = delivery.DriverId,
                 DriverName = GetDriverName(delivery.DriverId),
                 DriverNotes = delivery.DriverNotes,
                 NamesAgesInHH = delivery.NamesAgesInHH,

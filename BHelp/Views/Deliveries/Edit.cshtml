@@ -20,7 +20,6 @@
     @using (Html.BeginForm())
     {
         @Html.AntiForgeryToken()
-
     <div class="form-horizontal">
         <span><h3>Edit Delivery</h3></span>
         <span style="color: darkmagenta"> (Snapshot of client when the delivery was created:)</span><br />
@@ -102,6 +101,7 @@
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
+                    @Html.ActionLink("Delete", "Delete", new {id = Model.Id}, new{id="DeleteButton"})
                 </div>
             </div>
         </div>
@@ -111,7 +111,7 @@
         @Html.ActionLink("Back to Delivery List", "Index")
     </div>
     <div>
-        @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+        @Html.ActionLink("Return to Dashboard", "ReturnToDashboard")
     </div>
 </body>
 </html>
