@@ -163,9 +163,27 @@ namespace BHelp.Controllers
                 if (totalThisWeek > 0) delivery.GiftCardsEligible = 0;   // 1 per week maximum
 
                 db.Deliveries.Add(delivery);
+                db.SaveChanges();
+                db.Entry(delivery).GetDatabaseValues();
+                return RedirectToAction("ConfirmCreateDelivery", new { newId = delivery.Id });
             }
-            db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public ActionResult ConfirmCreateDelivery(int? newId)
+        {
+            var delivery = db.Deliveries.Find(newId);
+            if (delivery != null)
+            {
+                var newDeliveryView = new DeliveryViewModel
+                {
+                    FullName = delivery.LastName + ", " + delivery.FirstName,
+                    StreetNumber = delivery.StreetNumber,
+                    StreetName = delivery.StreetName
+                };
+                return View(newDeliveryView);
+            }
+            return null;
         }
 
         private int GetGiftCardsSince(int id, DateTime dt)

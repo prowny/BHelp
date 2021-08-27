@@ -669,6 +669,7 @@
     <Content Include="Views\Deliveries\CallLogIndividual.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Views\OD\ConfirmCreateDelivery.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -680,7 +680,7 @@ namespace BHelp.Controllers
             IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
 
             int activeRow = 1;
-            ws.Cell(activeRow, 1).SetValue("Bethesda Help, Inc. Quork Reportr");
+            ws.Cell(activeRow, 1).SetValue("Bethesda Help, Inc. Quork Report");
             activeRow++;
             ws.Cell(activeRow, 1).SetValue("Time Period");
             activeRow++;
