@@ -21,30 +21,32 @@
     {
         @Html.AntiForgeryToken()
 
-        <div class="form-horizontal">
-            <span><h3>Edit Delivery</h3></span>
-            <span><b>Client:</b>&nbsp;@Html.Label(Model.ClientNameAddress)&nbsp;@Html.Label(Model.Client.Phone) </span>
-            <br/>
-            <span>
-                <b>Family:</b>&nbsp;
-                @if (Model.FamilySelectList != null)
-                {@Html.DropDownListFor(modelItem => Model.Notes, Model.FamilySelectList)
-                }
-            </span>
-            <span><b>Children:&nbsp;</b>@Html.Label(Model.KidsCount.ToString())</span>&nbsp;
-            <span><b>Adults:&nbsp;</b>@Html.Label(Model.AdultsCount.ToString())</span>&nbsp;
-            <span><b>Seniors:&nbsp;</b>@Html.Label(Model.SeniorsCount.ToString())</span>&nbsp;
-            <br/>
-            <span><b>Last Delivery:</b>
-                @if (Model.DateLastDelivery != null)
-                {@Html.Label(Model.DateLastDelivery.Value.ToShortDateString())}
-            </span>
-            <span><b>Gift Cards This Month:</b>@Html.Label(Model.GiftCardsThisMonth.ToString())</span>
-            <span><b>Gift Cards Eligible:</b>&nbsp;@Html.Label(Model.GiftCardsEligible.ToString())</span>
-            <hr/>
-            @Html.ValidationSummary(true, "", new {@class = "text-danger"})
-            @Html.HiddenFor(model => model.Id)
-        </div>
+    <div class="form-horizontal">
+        <span><h3>Edit Delivery</h3></span>
+        <span style="color: darkmagenta"> (Snapshot of client when the delivery was created:)</span><br />
+        <span><b>Client:</b>&nbsp;@Html.Label(Model.ClientNameAddress)&nbsp;@Html.Label(Model.Client.Phone) </span>
+        <br />
+        <span>
+            <b>Family:</b>&nbsp;
+            @if (Model.FamilySelectList != null)
+            {@Html.DropDownListFor(modelItem => Model.Notes, Model.FamilySelectList)
+        }
+        </span>
+        <span><b>Children:&nbsp;</b>@Html.Label(Model.KidsCount.ToString())</span>&nbsp;
+        <span><b>Adults:&nbsp;</b>@Html.Label(Model.AdultsCount.ToString())</span>&nbsp;
+        <span><b>Seniors:&nbsp;</b>@Html.Label(Model.SeniorsCount.ToString())</span>&nbsp;
+        <br />
+        <span>
+            <b>Last Delivery:</b>
+            @if (Model.DateLastDelivery != null)
+            {@Html.Label(Model.DateLastDelivery.Value.ToShortDateString())}
+        </span>
+        <span><b>Gift Cards This Month:</b>@Html.Label(Model.GiftCardsThisMonth.ToString())</span>
+        <span><b>Gift Cards Eligible:</b>&nbsp;@Html.Label(Model.GiftCardsEligible.ToString())</span>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+    </div>
         <div class="form-group">
             <table>
                 <tr>

@@ -203,34 +203,26 @@ namespace BHelp.Controllers
         // GET: Deliveries/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            if (id == null) { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
 
             var delivery = db.Deliveries.Find(id);
-            if (delivery == null)
-            {
-                return HttpNotFound();
-            }
-            var viewModel = new DeliveryViewModel()
+            if (delivery == null) { return HttpNotFound(); }
+
+            var viewModel = new DeliveryViewModel
             {
                 Id = delivery.Id,
                 ClientId = delivery.ClientId,
                 LogDate = Convert.ToDateTime(delivery.LogDate.ToString("MM/dd/yyyy")),
-               
                 ODNotes = delivery.ODNotes,
-                DriverId = delivery.DriverId,
+                DriverName = GetDriverName(delivery.DriverId),
                 DriverNotes = delivery.DriverNotes,
-                FamilyMembers = AppRoutines.GetFamilyMembers(delivery.ClientId),
-                FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId)
+                NamesAgesInHH = delivery.NamesAgesInHH,
+                FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId),
+                DateLastDelivery = GetLastDeliveryDate(delivery.Id),
+                DateDelivered = delivery.DateDelivered,
+                DriversList = AppRoutines.GetDriversSelectList()
             };
-
-            viewModel.DateLastDelivery = GetLastDeliveryDate(delivery.Id);
-
-            viewModel.DateDelivered = delivery.DateDelivered;
-
-            viewModel.DriversList = AppRoutines.GetDriversSelectList();
+            
             foreach (var item in viewModel.DriversList)
             {
                 if (item.Value == viewModel.DriverId)
@@ -243,17 +235,17 @@ namespace BHelp.Controllers
             if (delivery.Children != null) viewModel.KidsCount = (int) delivery.Children;
             if (delivery.Adults != null) viewModel.AdultsCount = (int) delivery.Adults;
             if (delivery.Seniors != null) viewModel.SeniorsCount = (int) delivery.Seniors;
+            if (delivery.GiftCardsEligible != null) viewModel.GiftCardsEligible = (int) delivery.GiftCardsEligible;
             var client = db.Clients.Find(delivery.ClientId);
             if (client != null)
             {
                 viewModel.Client = client;
                 viewModel.ClientNameAddress = client.LastName + ", " + client.FirstName
-                                              + " " + client.StreetNumber + " " + client.StreetName + " " + client.Zip;
+                          + " " + client.StreetNumber + " " + client.StreetName + " " + client.Zip;
                 viewModel.Notes = client.Notes;
                 viewModel.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
                 viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
                 int? hhTotal = delivery.Children + delivery.Adults + delivery.Seniors;
-                viewModel.GiftCardsEligible = GetGiftCardsEligible(client.Id, hhTotal);
             }
 
             if (delivery.FullBags != null) viewModel.FullBags = (int) delivery.FullBags;
@@ -340,13 +332,12 @@ namespace BHelp.Controllers
 
         public ActionResult CallLogIndividual(int? clientId)
         {
-            List<SelectListItem> clientSelectList = new List<SelectListItem>();
+            var clientSelectList = new List<SelectListItem>();
             var clientList = db.Clients.OrderBy(c => c.LastName).ToList();
             foreach (var client in clientList)
             {
-                if (db.Deliveries.Any(d => d.ClientId == client.Id))
-                { 
-                    var text = client.LastName + ", " + client.FirstName + " ";
+                if (!db.Deliveries.Any(d => d.ClientId == client.Id)) continue;
+                var text = client.LastName + ", " + client.FirstName + " ";
                 text += client.StreetNumber + " " + client.StreetName;
                 var selListItem = new SelectListItem() { Value = client.Id.ToString(), Text = text };
                 if (clientId == client.Id)
@@ -354,10 +345,11 @@ namespace BHelp.Controllers
                     selListItem.Selected = true;
                 }
                 clientSelectList.Add(selListItem);
-                }
             }
             var callLogView = new DeliveryViewModel { ClientSelectList = clientSelectList };
-            if (clientId != null)
+            if (clientId == null)
+            {    return View(callLogView);}
+            else
             {
                 var deliveryList = db.Deliveries.Where(d => d.ClientId == clientId)
                     .OrderByDescending(d => d.LogDate).ToList();
@@ -584,7 +576,7 @@ namespace BHelp.Controllers
             return eligible;
          }
 
-         private int GetGiftCardsSince(int id, DateTime dt)
+        private int GetGiftCardsSince(int id, DateTime dt)
         {
             var total = 0;
             var dList = db.Deliveries.Where(d => d.Id == id && d.Completed
@@ -599,6 +591,18 @@ namespace BHelp.Controllers
             }
             return total;
         }
+
+        private string GetDriverName(string id)
+        {
+            if (id != null)
+            {
+                var driver = db.Users.Find(id);
+                if (driver != null) return driver.FullName;
+            }
+
+            return "(nobody yet)";
+        }
+
         public ActionResult QuorkReport(string endingDate = "")
         {
             DateTime endDate;
