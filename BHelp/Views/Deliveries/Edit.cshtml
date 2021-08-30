@@ -96,6 +96,8 @@
                 @Html.TextBoxFor(model => model.DateDelivered, "{0:MM/dd/yyyy}",
                     new {id = "DateDelivered", style = "width: 75px;"})
                 <span style="color: darkmagenta">&#8592;Enter valid date (mm/dd/yyyy)</span> @*Html left-arrow*@
+                @Html.Label("Completed:")
+                @Html.EditorFor(model => model.Completed ) 
             </div>
             <br/>
             <div class="form-group">
@@ -108,7 +110,7 @@
     }
     <br />
     <div>
-        @Html.ActionLink("Back to Delivery List", "Index")
+        @Html.ActionLink("Back to Delivery List", "CallLogIndividual")
     </div>
     <div>
         @Html.ActionLink("Return to Dashboard", "ReturnToDashboard")

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
+using BHelp.Migrations;
 using BHelp.Models;
 using BHelp.ViewModels;
 using Castle.Core.Internal;
@@ -89,8 +90,8 @@ namespace BHelp.Controllers
                         }
                     }
                     
-                    var ODid = delivery.ODId;          //System.Web.HttpContext.Current.User.Identity.GetUserId();
-                    if (ODid != null)
+                    var ODid = delivery.ODId; 
+                    if (!ODid.IsNullOrEmpty())
                     {
                         var user = db.Users.Find(ODid);
                         deliveryView.ODName = user.FullName;
@@ -221,7 +222,8 @@ namespace BHelp.Controllers
                 FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId),
                 DateLastDelivery = GetLastDeliveryDate(delivery.Id),
                 DateDelivered = delivery.DateDelivered,
-                DriversList = AppRoutines.GetDriversSelectList()
+                DriversList = AppRoutines.GetDriversSelectList(),
+                Completed = delivery.Completed
             };
             
             foreach (var item in viewModel.DriversList)
@@ -246,7 +248,7 @@ namespace BHelp.Controllers
                 viewModel.Notes = client.Notes;
                 viewModel.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
                 viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
-                int? hhTotal = delivery.Children + delivery.Adults + delivery.Seniors;
+                //int? hhTotal = delivery.Children + delivery.Adults + delivery.Seniors;
             }
 
             if (delivery.FullBags != null) viewModel.FullBags = (int) delivery.FullBags;
@@ -265,7 +267,7 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(
             [Bind(Include = "Id,ClientId,LogDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards," +
-                            "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId")]
+                            "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId,Completed")]
             DeliveryViewModel delivery)
         {
             if (ModelState.IsValid)
@@ -285,11 +287,16 @@ namespace BHelp.Controllers
                     updateData.ODNotes = delivery.ODNotes;
                     updateData.DriverId = delivery.DriverId;
                     updateData.DriverNotes = delivery.DriverNotes;
+                    var previouslyCompleted = updateData.Completed;
                     if (delivery.DateDelivered != null)
                     {
                         updateData.DateDelivered = (DateTime) delivery.DateDelivered;
                         updateData.Completed = true;
                     }
+                    // if delivery was previously Completed and now changed to False, make it False:
+                    if (previouslyCompleted == true && delivery.Completed == false)
+                    { updateData.Completed = false; }
+
                     db.Entry(updateData).State = EntityState.Modified;
                     db.SaveChanges();
                 }
@@ -302,9 +309,7 @@ namespace BHelp.Controllers
         public ActionResult Delete(int? id)
         {
             if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
 
             Delivery delivery = db.Deliveries.Find(id);
             if (delivery == null)
