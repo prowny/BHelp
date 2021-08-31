@@ -58,5 +58,8 @@ namespace BHelp.Models
 
         [NotMapped]
         public string ClientNameAddress { get; set; }
+
+        [NotMapped]
+        public string DateDeliveredString { get; set; }
     }
 }

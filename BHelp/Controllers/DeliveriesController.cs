@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
-using BHelp.Migrations;
 using BHelp.Models;
 using BHelp.ViewModels;
 using Castle.Core.Internal;
@@ -208,7 +207,6 @@ namespace BHelp.Controllers
 
             var delivery = db.Deliveries.Find(id);
             if (delivery == null) { return HttpNotFound(); }
-
             var viewModel = new DeliveryViewModel
             {
                 Id = delivery.Id,
@@ -225,7 +223,9 @@ namespace BHelp.Controllers
                 DriversList = AppRoutines.GetDriversSelectList(),
                 Completed = delivery.Completed
             };
-            
+            if (Request.UrlReferrer != null)
+            { viewModel.ReturnURL = Request.UrlReferrer.ToString(); }
+         
             foreach (var item in viewModel.DriversList)
             {
                 if (item.Value == viewModel.DriverId)
@@ -244,11 +244,10 @@ namespace BHelp.Controllers
             {
                 viewModel.Client = client;
                 viewModel.ClientNameAddress = client.LastName + ", " + client.FirstName
-                          + " " + client.StreetNumber + " " + client.StreetName + " " + client.Zip;
+                                              + " " + client.StreetNumber + " " + client.StreetName + " " + client.Zip;
                 viewModel.Notes = client.Notes;
                 viewModel.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
                 viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
-                //int? hhTotal = delivery.Children + delivery.Adults + delivery.Seniors;
             }
 
             if (delivery.FullBags != null) viewModel.FullBags = (int) delivery.FullBags;
@@ -267,8 +266,8 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(
             [Bind(Include = "Id,ClientId,LogDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards," +
-                            "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId,Completed")]
-            DeliveryViewModel delivery)
+            "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId,Completed,ReturnURL")]
+             DeliveryViewModel delivery)
         {
             if (ModelState.IsValid)
             {
@@ -294,12 +293,21 @@ namespace BHelp.Controllers
                         updateData.Completed = true;
                     }
                     // if delivery was previously Completed and now changed to False, make it False:
-                    if (previouslyCompleted == true && delivery.Completed == false)
+                    if (previouslyCompleted && delivery.Completed == false)
                     { updateData.Completed = false; }
 
                     db.Entry(updateData).State = EntityState.Modified;
                     db.SaveChanges();
                 }
+                if(delivery.ReturnURL.Contains("CallLogIndividual"))
+                {
+                    if (updateData != null)
+                        return RedirectToAction("CallLogIndividual", new {clientId = updateData.ClientId});
+                }
+
+                if (delivery.ReturnURL.Contains("CallLogByDate"))
+                { return RedirectToAction("CallLogByDate"); }
+
                 return RedirectToAction("Index");
             }
             return View(delivery);
@@ -371,6 +379,33 @@ namespace BHelp.Controllers
             return RedirectToAction("CallLogIndividual", new { clientId = intClientId });
         }
 
+        public ActionResult CallLogByDate(DateTime? startDate, DateTime? endDate )
+        {
+            if (!startDate.HasValue || !endDate.HasValue)  // default to today and 1 week ago
+            {
+                startDate = DateTime.Today.AddDays(-7);
+                endDate = DateTime.Today;
+            }
+            
+            List<Delivery> deliveries = db.Deliveries
+                .Where(d => d.LogDate >= startDate && d.LogDate <= endDate)
+                .OrderByDescending(d => d.LogDate).ToList();
+            var callLogView = new DeliveryViewModel
+            {
+                DeliveryList = deliveries,
+                HistoryStartDate = Convert.ToDateTime(startDate),
+                HistoryEndDate = Convert.ToDateTime(endDate),
+        };
+
+            foreach (Delivery del in callLogView.DeliveryList)
+            {
+                if (del.DateDelivered.HasValue)
+                {
+                    del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                }
+            }
+            return View(callLogView);
+        }
         public ActionResult ReportsMenu()
         {
             return View();

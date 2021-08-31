@@ -1,6 +1,5 @@
 ﻿@using System.Web.Mvc.Html
 @using BHelp.ViewModels
-
 @model DeliveryViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
@@ -43,6 +42,7 @@
                 <td>Log Date</td>
                 <td>Name</td>
                 <td>Addess</td>
+                <td>Date Delivered</td>
                 <td>Completed</td>
             </tr>
             @foreach (var delivery in Model.DeliveryList)
@@ -54,6 +54,7 @@
                     @{ bool cmpltd = delivery.Completed;}
                     <td>@name</td>
                     <td>@addr</td>
+                    <td>@delivery.DateDelivered.ToString()</td>
                     <td style="text-align: center">@Html.CheckBox("Completed", cmpltd)</td>
                     <td>
                         @Html.ActionLink("Edit", "Edit", new { id = delivery.Id })

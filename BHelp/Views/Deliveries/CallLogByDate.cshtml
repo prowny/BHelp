@@ -1,0 +1,107 @@
+﻿@using System.Web.Mvc.Html
+@using BHelp.ViewModels
+@model DeliveryViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Call Log By Date</title>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
+    @*Put page javascript in a separate .js file where breaks can be set during debugging:*@
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
+</head>
+<body>
+<div>
+    <b>Call Log History by Date Range</b>
+    <table>
+        <tr>
+            <td>Starting Date:</td>
+            <td>
+                @Html.TextBox("Starting Date", @Model.HistoryStartDate.ToShortDateString(),
+                    new {id = "StartDate", style = "width: 60px;"})
+                <span style="color: darkmagenta">&#8592;Click to change</span>
+            </td> @*Html left-arrow*@
+            <td> Ending Date:</td>
+            <td>
+                @Html.TextBox("Ending Date:", @Model.HistoryEndDate.ToShortDateString(),
+                    new {id = "EndDate", style = "width: 60px;"})
+                <span style="color: darkmagenta">&#8592;Click to change</span>
+            </td> @*Html left-arrow*@
+        </tr>
+    </table>
+</div>
+
+<div id="callLogsDiv">
+    @if (Model.DeliveryList != null)
+    {
+        <table>
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Log Date</td>
+                <td>Name</td>
+                <td>Addess</td>
+                <td>Date Delivered</td>
+                <td>Completed</td>
+            </tr>
+            @foreach (var delivery in Model.DeliveryList)
+            {
+                <tr>
+                    <td>@delivery.LogDate.ToShortDateString()</td>
+                    @{ string name = delivery.LastName + ", " + delivery.FirstName; }
+                    @{ string addr = delivery.StreetNumber + " " + delivery.StreetName; }
+                    @{ bool cmpltd = delivery.Completed;}
+                    <td>@name</td>
+                    <td>@addr</td>
+                    <td>@delivery.DateDeliveredString</td>
+                    <td style="text-align: center">@Html.CheckBox("Completed", cmpltd)</td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new {id = delivery.Id})
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+<br/>
+<div>
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new {})
+</div>
+</body>
+</html>
+<script>
+    $(function () {
+        window.$("#StartDate").datepicker();
+    });
+</script>
+<script>
+    $(function () {
+        window.$("#EndDate").datepicker();
+    });
+</script>
+<script type="text/javascript">
+    $("#StartDate").change(function () {
+        var stDate = $('#StartDate').val();
+        var endDt = $('#EndDate').val();
+        window.location.href = '@Url.Action("CallLogByDate","Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
+     });
+</script>
+<script>
+    $(function () {
+        window.$("#EndDate").datepicker();
+    });
+</script>
+<script type="text/javascript">
+    $("#EndDate").change(function () {
+        var stDate = $('#StartDate').val();
+        var endDt = $('#EndDate').val();
+        window.location.href = '@Url.Action("CallLogByDate","Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
+    });
+</script>

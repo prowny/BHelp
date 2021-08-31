@@ -49,7 +49,7 @@ namespace BHelp.ViewModels
 
         [Column(TypeName = "Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateTime? DateDelivered { get; set; } 
+        public DateTime? DateDelivered { get; set; }
         public Boolean Completed { get; set; }
         public List<FamilyMember> FamilyMembers { get; set; }
         public List<SelectListItem> FamilySelectList { get; set; }  // For display onlly
@@ -85,6 +85,10 @@ namespace BHelp.ViewModels
         public string ClientNameAddress { get; set; }
         public IEnumerable<SelectListItem> DriversList { get; set; }
         public List<Delivery> DeliveryList { get; set; }
+        public IEnumerable<SelectListItem> DeliveriesList { get; set; }
         public IEnumerable<SelectListItem> ClientSelectList { get; set; }
+        public DateTime HistoryStartDate { get; set; }
+        public DateTime HistoryEndDate { get; set; }
+        public  string ReturnURL { get; set; }
     }
 }
