@@ -10,8 +10,7 @@ using Castle.Core.Internal;
 
 namespace BHelp
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
-    public class AppRoutines
+    public static class AppRoutines
     {
         public static DateTime GetLastDeliveryDate(int clientId)
         {
@@ -20,7 +19,7 @@ namespace BHelp
             {
                 var delivery = db.Deliveries.Where(i => i.ClientId == clientId)
                     .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
-                if (delivery?.DateDelivered != null) return (DateTime) delivery.DateDelivered;
+                if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
             }
             return dt;
         }
@@ -53,7 +52,7 @@ namespace BHelp
         }
         public static List<string> GetZipCodesList()
         {
-            List< string> getZipCodesList = new List<string>();
+            List<string> getZipCodesList = new List<string>();
             string[] lines =
                 System.IO.File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/BHelpZipCodes.txt");
             foreach (var line in lines)
@@ -68,7 +67,7 @@ namespace BHelp
         public static int GetAge(DateTime dob, [Optional] DateTime today)
         {
             if (today.ToString(CultureInfo.CurrentCulture).IsNullOrEmpty())
-            { today = DateTime.Today;};
+            { today = DateTime.Today; };
             TimeSpan span = today - dob;
             // Because we start at year 1 for the Gregorian
             // calendar, we must subtract a year here.
@@ -79,13 +78,13 @@ namespace BHelp
         {
             string NamesAges = "";
             var familyMembers = GetFamilyMembers(clientId);
-            foreach (var familyMamber in familyMembers)
+            foreach (var familyMember in familyMembers)
             {
-                var age = GetAge(familyMamber.DateOfBirth, DateTime.Today).ToString();
-                NamesAges += familyMamber.FirstName + " " + familyMamber.LastName + "/" + age + ", ";
+                var age = GetAge(familyMember.DateOfBirth, DateTime.Today).ToString();
+                NamesAges += familyMember.FirstName + " " + familyMember.LastName + "/" + age + ", ";
             }
 
-            NamesAges = NamesAges.Substring(0,NamesAges.Length - 2); // remove last ", "
+            NamesAges = NamesAges.Substring(0, NamesAges.Length - 2); // remove last ", "
             return NamesAges;
         }
         public static List<SelectListItem> GetFamilySelectList(int clientId)
@@ -112,7 +111,7 @@ namespace BHelp
         public static List<FamilyMember> GetFamilyMembers(int clientId)
         {
             var familyMembers = new List<FamilyMember>(); // For editiing
-            
+
             using (var db = new BHelpContext())
             {
                 var client = db.Clients.Find(clientId);
@@ -123,15 +122,15 @@ namespace BHelp
                         FirstName = client.FirstName,
                         LastName = client.LastName,
                         DateOfBirth = client.DateOfBirth,
-                        Age = GetAge(client.DateOfBirth,DateTime.Today)
+                        Age = GetAge(client.DateOfBirth, DateTime.Today)
                     };
                     familyMembers.Add(headOfHousehold);
                 }
-                
+
                 var sqlString = "SELECT * FROM FamilyMembers ";
                 sqlString += "WHERE Active > 0 AND ClientId =" + clientId;
                 var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
-              
+
                 foreach (FamilyMember member in familyList)
                 {
                     member.Age = GetAge(member.DateOfBirth, DateTime.Today);
@@ -147,15 +146,15 @@ namespace BHelp
             using (var db = new BHelpContext())
             {
                 var userList = db.Users.OrderBy(u => u.LastName).Where(a => a.Active).ToList();
-                var selListItem = new SelectListItem() { Value = "0", Text = @"(nobody yet)"};
+                var selListItem = new SelectListItem() { Value = "0", Text = @"(nobody yet)" };
                 driverList.Add(selListItem);
                 foreach (var user in userList)
                 {
-                   if (UserIsInRole(user.Id, "Driver"))
-                   {
-                       var newListItem = new SelectListItem() { Value = user.Id, Text = user.FullName };
-                       driverList.Add(newListItem);
-                   }
+                    if (UserIsInRole(user.Id, "Driver"))
+                    {
+                        var newListItem = new SelectListItem() { Value = user.Id, Text = user.FullName };
+                        driverList.Add(newListItem);
+                    }
                 }
             }
             return (driverList);

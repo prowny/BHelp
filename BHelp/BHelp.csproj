@@ -176,9 +176,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Code\AppRoutines.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Compile Include="AppRoutines.cs" />
     <Compile Include="App_Start\BundleConfig.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -328,7 +326,6 @@
     <Compile Include="Models\Login.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Properties\AppRoutines.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs">
