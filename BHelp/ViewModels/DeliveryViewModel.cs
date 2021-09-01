@@ -12,7 +12,8 @@ namespace BHelp.ViewModels
     {
         public int Id { get; set; }
         public int ClientId { get; set; }
-        
+        public string ODId { get; set; }
+
         [DisplayName("Call Log Date")]
         [Column(TypeName = "Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
@@ -84,6 +85,7 @@ namespace BHelp.ViewModels
         public string DriverNotesToolTip { get; set; }  // Driver notes
         public string ClientNameAddress { get; set; }
         public IEnumerable<SelectListItem> DriversList { get; set; }
+        public IEnumerable<SelectListItem> ODList { get; set; }
         public List<Delivery> DeliveryList { get; set; }
         public IEnumerable<SelectListItem> DeliveriesList { get; set; }
         public IEnumerable<SelectListItem> ClientSelectList { get; set; }

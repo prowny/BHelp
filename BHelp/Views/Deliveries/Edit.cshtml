@@ -57,8 +57,17 @@
                         @Html.TextBoxFor(model => model.LogDate, Model.LogDate.ToString("MM/dd/yyyy"),
                         new {id = "LogDate", style = "width: 75px;"})
                 </td>
-                <td style="color: darkmagenta">&#8592;Click to change</td>
-                <td>&nbsp;Driver:</td>
+                    <td style="color: darkmagenta">&#8592;Click to change</td>
+                   
+                 <td>&nbsp;OD:</td>
+                    @if (Model.ODList != null)
+                    {
+                        <td>
+                            @Html.DropDownListFor(model => model.ODId, new SelectList(Model.DriversList, "Value", "Text"), new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.ODId, "", new { @class = "text-danger" })
+                        </td>
+                    }
+                    <td>&nbsp;Driver:</td>
                 @if (Model.DriversList != null)
                 {
                     <td>

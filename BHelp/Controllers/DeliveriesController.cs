@@ -212,28 +212,27 @@ namespace BHelp.Controllers
                 Id = delivery.Id,
                 ClientId = delivery.ClientId,
                 LogDate = Convert.ToDateTime(delivery.LogDate.ToString("MM/dd/yyyy")),
+                ODId = delivery.ODId,
+                ODList = AppRoutines.GetODSelectList(),
                 ODNotes = delivery.ODNotes,
                 DriverId = delivery.DriverId,
                 DriverName = GetDriverName(delivery.DriverId),
                 DriverNotes = delivery.DriverNotes,
+                DriversList = AppRoutines.GetDriversSelectList(),
                 NamesAgesInHH = delivery.NamesAgesInHH,
                 FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId),
                 DateLastDelivery = GetLastDeliveryDate(delivery.Id),
                 DateDelivered = delivery.DateDelivered,
-                DriversList = AppRoutines.GetDriversSelectList(),
                 Completed = delivery.Completed
             };
             if (Request.UrlReferrer != null)
             { viewModel.ReturnURL = Request.UrlReferrer.ToString(); }
          
             foreach (var item in viewModel.DriversList)
-            {
-                if (item.Value == viewModel.DriverId)
-                {
-                    item.Selected = true;
-                    break;
-                }
-            }
+            { if (item.Value == viewModel.DriverId) { item.Selected = true; break; } }
+
+            foreach (var item in viewModel.ODList)
+            { if (item.Value == viewModel.ODId) { item.Selected = true; break; } }
 
             if (delivery.Children != null) viewModel.KidsCount = (int) delivery.Children;
             if (delivery.Adults != null) viewModel.AdultsCount = (int) delivery.Adults;
@@ -266,8 +265,8 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(
             [Bind(Include = "Id,ClientId,LogDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards," +
-            "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId,Completed,ReturnURL")]
-             DeliveryViewModel delivery)
+            "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId,Completed," +
+            "ODId,ReturnURL")] DeliveryViewModel delivery)
         {
             if (ModelState.IsValid)
             {
@@ -285,6 +284,7 @@ namespace BHelp.Controllers
                     updateData.GiftCardsEligible = delivery.GiftCardsEligible;
                     updateData.ODNotes = delivery.ODNotes;
                     updateData.DriverId = delivery.DriverId;
+                    updateData.ODId = delivery.ODId;
                     updateData.DriverNotes = delivery.DriverNotes;
                     var previouslyCompleted = updateData.Completed;
                     if (delivery.DateDelivered != null)

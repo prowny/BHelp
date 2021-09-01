@@ -23,7 +23,6 @@ namespace BHelp
             }
             return dt;
         }
-
         public static DateTime GetDateLastGiftCard(int clientId)
         {
             var dt = DateTime.MinValue;
@@ -158,6 +157,25 @@ namespace BHelp
                 }
             }
             return (driverList);
+        }
+        public static List<SelectListItem> GetODSelectList()
+        {
+            List<SelectListItem> odList = new List<SelectListItem>();
+            using (var db = new BHelpContext())
+            {
+                var userList = db.Users.OrderBy(u => u.LastName).Where(a => a.Active).ToList();
+                var selListItem = new SelectListItem() { Value = "0", Text = @"(nobody yet)" };
+                odList.Add(selListItem);
+                foreach (var user in userList)
+                {
+                    if (UserIsInRole(user.Id, "OfficerOfTheDay"))
+                    {
+                        var newListItem = new SelectListItem() { Value = user.Id, Text = user.FullName };
+                        odList.Add(newListItem);
+                    }
+                }
+            }
+            return (odList);
         }
         public static Boolean UserIsInRole(string userId, string roleName)
         {
