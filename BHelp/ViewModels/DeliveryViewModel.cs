@@ -51,6 +51,7 @@ namespace BHelp.ViewModels
         [Column(TypeName = "Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime? DateDelivered { get; set; }
+        public string DateDeliveredString { get; set; }
         public Boolean Completed { get; set; }
         public List<FamilyMember> FamilyMembers { get; set; }
         public List<SelectListItem> FamilySelectList { get; set; }  // For display onlly

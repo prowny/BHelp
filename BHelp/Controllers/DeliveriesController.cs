@@ -368,6 +368,13 @@ namespace BHelp.Controllers
                 var deliveryList = db.Deliveries.Where(d => d.ClientId == clientId)
                     .OrderByDescending(d => d.LogDate).ToList();
                 callLogView.DeliveryList = deliveryList;
+                foreach (var del in callLogView.DeliveryList)
+                {
+                    if (del.DateDelivered.HasValue)
+                    {
+                        del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                    }
+                }
             }
             return View(callLogView);
         }
@@ -397,7 +404,7 @@ namespace BHelp.Controllers
                 HistoryEndDate = Convert.ToDateTime(endDate),
         };
 
-            foreach (Delivery del in callLogView.DeliveryList)
+            foreach (var del in callLogView.DeliveryList)
             {
                 if (del.DateDelivered.HasValue)
                 {
