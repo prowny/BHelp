@@ -63,7 +63,7 @@
                     @if (Model.ODList != null)
                     {
                         <td>
-                            @Html.DropDownListFor(model => model.ODId, new SelectList(Model.DriversList, "Value", "Text"), new { @class = "form-control" })
+                            @Html.DropDownListFor(model => model.ODId, new SelectList(Model.ODList, "Value", "Text"), new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.ODId, "", new { @class = "text-danger" })
                         </td>
                     }
