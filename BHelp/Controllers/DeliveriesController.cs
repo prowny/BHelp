@@ -90,7 +90,7 @@ namespace BHelp.Controllers
                     }
                     
                     var ODid = delivery.ODId; 
-                    if (!ODid.IsNullOrEmpty())
+                    if (!ODid.IsNullOrEmpty() && ODid != "0")
                     {
                         var user = db.Users.Find(ODid);
                         deliveryView.ODName = user.FullName;
@@ -252,7 +252,7 @@ namespace BHelp.Controllers
             if (delivery.FullBags != null) viewModel.FullBags = (int) delivery.FullBags;
             if (delivery.HalfBags != null) viewModel.HalfBags = (int) delivery.HalfBags;
             if (delivery.KidSnacks != null) viewModel.KidSnacks = (int) delivery.KidSnacks;
-            if (delivery.GiftCardsEligible != null) viewModel.GiftCardsEligible = (int) delivery.GiftCardsEligible;
+            if (delivery.GiftCards != null) viewModel.GiftCards = (int)delivery.GiftCards;
             viewModel.Zip = delivery.Zip;
 
             return View(viewModel);

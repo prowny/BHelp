@@ -54,7 +54,8 @@
                     @{ bool cmpltd = delivery.Completed;}
                     <td>@name</td>
                     <td>@addr</td>
-                    <td>@delivery.DateDelivered.ToString()</td>
+                    @*<td>@delivery.DateDelivered.ToShortDateString()</td>*@
+                    <td></td>
                     <td style="text-align: center">@Html.CheckBox("Completed", cmpltd)</td>
                     <td>
                         @Html.ActionLink("Edit", "Edit", new { id = delivery.Id })
