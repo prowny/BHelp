@@ -392,8 +392,8 @@ namespace BHelp.Controllers
             {
                 startDate = DateTime.Today.AddDays(-7);
                 endDate = DateTime.Today;
-            }
-            
+            }  
+         
             List<Delivery> deliveries = db.Deliveries
                 .Where(d => d.LogDate >= startDate && d.LogDate <= endDate)
                 .OrderByDescending(d => d.LogDate).ToList();
