@@ -194,11 +194,20 @@ namespace BHelp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.UserName, FirstName = model.FirstName, LastName = model.LastName, PhoneNumber = model.PhoneNumber, Email = model.Email };
-                user.PhoneNumberConfirmed = true;   // (default)
-                user.EmailConfirmed = true;        // (default)
-                user.BeginDate=DateTime.Today;
-                user.LastDate = DateTime.Today;
+                var user = new ApplicationUser
+                {
+                    UserName = model.UserName,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    PhoneNumber = model.PhoneNumber,
+                    Email = model.Email,
+                    PhoneNumberConfirmed = true,
+                    EmailConfirmed = true,
+                    BeginDate = DateTime.Today,
+                    LastDate = DateTime.Today,
+                    Active = true
+                };
+               
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

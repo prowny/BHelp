@@ -136,7 +136,11 @@
 }
     <br />
     <div>
-        @Html.ActionLink("Back to Delivery List", "CallLogIndividual")
+        @if (Model.ReturnURL.Contains("CallLogByDate"))
+        {@Html.ActionLink("Back to Delivery List", "CallLogByDate")}
+
+        @if (Model.ReturnURL.Contains("CallLogIndividual"))
+        {@Html.ActionLink("Back to Delivery List", "CallLogIndividual")}
     </div>
     <div>
         @Html.ActionLink("Return to Dashboard", "ReturnToDashboard")
