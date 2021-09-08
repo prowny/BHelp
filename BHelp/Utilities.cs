@@ -56,7 +56,8 @@ namespace BHelp
             var db = new BHelpContext();
             var count = 0;
             var newCount = 0;
-            var filePath = @"c:\TEMP\BH Call Log Apr-Dec 2021.csv";
+            //var filePath = @"c:\TEMP\CallLog0830-0903.csv";
+            var filePath = AppDomain.CurrentDomain.BaseDirectory + "/App_Data/CallLog0830-0903.csv";
             DataTable csvtable = new DataTable();
             using (CsvReader csvReader = new CsvReader(new StreamReader(filePath), true))
             {
@@ -192,7 +193,7 @@ namespace BHelp
                     }
 
                     db.Deliveries.Add(delivery);
-                    //db.SaveChanges();
+                    db.SaveChanges();
                 }
             }
             var unused = count.ToString() + " " + newCount.ToString();
