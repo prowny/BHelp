@@ -54,5 +54,11 @@ namespace BHelp.ViewModels
         public string CityToolTip { get; set; }
         public string PhoneToolTip { get; set; }
         public string NotesToolTip { get; set; }  // Household/Client notes
+        public DateTime DateLastDelivery { get; set; }
+        public DateTime DateLastGiftCard { get; set; }
+        public int GiftCardsThisMonth { get; set; }
+        public int DeliveriesThisMonth { get; set; }
+        public DateTime NextDeliveryEligibleDate { get; set; }
+        public DateTime NextGiftCardEligibleDate { get; set; }
     }
 }

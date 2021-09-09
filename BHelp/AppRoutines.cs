@@ -49,6 +49,72 @@ namespace BHelp
             }
             return getZipCodesSelectList;
         }
+        public static int GetDeliveriesThisMonth(int clientId)
+        {
+            var endDate = DateTime.Today;
+            var startDate = new DateTime(endDate.Year, endDate.Month,1);
+            using (var db = new BHelpContext())
+            {
+                var dtm= db.Deliveries.Count(i => i.ClientId == clientId
+                                 && i.DateDelivered >= startDate && i.DateDelivered <= endDate);
+                return dtm;
+            }
+        }
+        public static int GetGiftCardsThisMonth(int clientId)
+        {
+            var giftCardCount = 0;
+            var delList = GetAllDeliveriesThisMonth(clientId);
+            foreach (var del in delList)
+            {
+                var cards = Convert.ToInt32(del.GiftCards);
+                if (del.GiftCards != null) giftCardCount += cards;
+            }
+            return giftCardCount;
+        }
+        public static List<Delivery> GetAllDeliveriesThisMonth(int clientId)
+        {
+            var endDate = DateTime.Today;
+            var startDate = new DateTime(endDate.Year, endDate.Month, 1);
+            using (var db = new BHelpContext())
+            {
+                return db.Deliveries.Where(i => i.ClientId == clientId
+                && i.DateDelivered >= startDate && i.DateDelivered <= endDate).ToList();
+            }
+        }
+        public static DateTime GetNextEligibleDeliveryDate(int clientId)
+        {
+            var deliveriesThisMonth = GetDeliveriesThisMonth(clientId);
+            var lastDeliveryDate = GetLastDeliveryDate(clientId);
+            var nextEligibleDate = lastDeliveryDate.AddDays(7);
+          
+            if (deliveriesThisMonth >= 3)    // if already 3 this month, no more
+            {
+                    nextEligibleDate = lastDeliveryDate.AddDays(7); // move it to next month
+            }
+
+            if (lastDeliveryDate < DateTime.Today.AddDays(-30))
+            { nextEligibleDate = DateTime.Today; }
+            return nextEligibleDate;
+        }
+        public static DateTime GetNextGiftCardEligibleDate(int clientId)
+        {
+            // GIFT CARDS ELIGIBLE:
+            // 1 per week maximum
+            // 1 per household of 3 or fewer
+            // 2 per household of 4 or more
+            // 3 max per calendar month;
+            var giftCardsThisMonth = GetGiftCardsThisMonth(clientId);
+            var lastGiftCardDate = GetDateLastGiftCard(clientId);
+            var nextEligibleDate = lastGiftCardDate.AddDays(7);
+            if (giftCardsThisMonth >= 3)    // if already 3 this month, no more
+            {
+                nextEligibleDate = nextEligibleDate.AddDays(7); // move it to next month
+            }
+
+            if (lastGiftCardDate < DateTime.Today.AddDays(-30))
+            { nextEligibleDate = DateTime.Today; }
+            return nextEligibleDate;
+        }
         public static List<string> GetZipCodesList()
         {
             List<string> getZipCodesList = new List<string>();

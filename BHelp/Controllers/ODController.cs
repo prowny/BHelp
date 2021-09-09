@@ -207,23 +207,29 @@ namespace BHelp.Controllers
             if (client == null)
             { RedirectToAction("Index"); }
 
-            HouseholdViewModel houseHold = new HouseholdViewModel()
+            HouseholdViewModel houseHold = new HouseholdViewModel
             {
                 ClientId = Id,
                 // ReSharper disable once PossibleNullReferenceException
                 LastName = client.LastName,
                 FirstName = client.FirstName,
-                Active =client.Active,
-                Age=AppRoutines.GetAge(client.DateOfBirth, DateTime.Today),
+                Active = client.Active,
+                Age = AppRoutines.GetAge(client.DateOfBirth, DateTime.Today),
                 StreetNumber = client.StreetNumber,
                 StreetName = client.StreetName,
                 City = client.City,
                 Zip = client.Zip,
                 Phone = client.Phone,
-                Notes = client.Notes
+                Notes = client.Notes,
+                FamilyMembers = AppRoutines.GetFamilyMembers(client.Id),
+                ZipCodes = AppRoutines.GetZipCodesSelectList(),
+                DateLastDelivery = AppRoutines.GetLastDeliveryDate(Id),
+                DateLastGiftCard = AppRoutines.GetDateLastGiftCard(Id),
+                GiftCardsThisMonth = AppRoutines.GetGiftCardsThisMonth(Id),
+                DeliveriesThisMonth = AppRoutines.GetDeliveriesThisMonth(Id),
+                NextDeliveryEligibleDate =AppRoutines.GetNextEligibleDeliveryDate(Id),
+                NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id)
             };
-            houseHold.FamilyMembers = AppRoutines.GetFamilyMembers(client.Id);
-            houseHold.ZipCodes = AppRoutines.GetZipCodesSelectList();
             foreach (var item in houseHold.ZipCodes)
             {
                 if (item.Value == client.Zip)
