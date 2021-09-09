@@ -49,10 +49,13 @@ namespace BHelp.Controllers
            
             if (userId.IsNullOrEmpty()) { userId = System.Web.HttpContext.Current.User.Identity.GetUserId(); }
             // Get around Date and DateTime differences:
-            var deliveryList = db.Deliveries.Where(d => d.LogDate.Year == logYear 
-                         && d.LogDate.Month == logMonth && d.LogDate.Day == logDay
-                         && d.DriverId == userId).OrderByDescending(z => z.Zip).ToList();
+            //var deliveryList = db.Deliveries.Where(d => d.LogDate.Year == logYear 
+            //             && d.LogDate.Month == logMonth && d.LogDate.Day == logDay
+            //             && d.DriverId == userId).OrderByDescending(z => z.Zip).ToList();
 
+            // 09/09/2021: change to driver eses all open deliveries
+            var deliveryList = new List<Delivery>(db.Deliveries).Where(d => d.Completed == false)
+                .OrderBy(z => z.Zip).ToList();
             foreach (var delivery in deliveryList)
             {
                 var client = db.Clients.Find(delivery.ClientId);

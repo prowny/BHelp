@@ -111,8 +111,11 @@ namespace BHelp
                 nextEligibleDate = nextEligibleDate.AddDays(7); // move it to next month
             }
 
-            if (lastGiftCardDate < DateTime.Today.AddDays(-30))
-            { nextEligibleDate = DateTime.Today; }
+            var nedd = GetNextEligibleDeliveryDate(clientId);
+            if (lastGiftCardDate < nedd)
+            {
+                nextEligibleDate = nedd;
+            }
             return nextEligibleDate;
         }
         public static List<string> GetZipCodesList()
