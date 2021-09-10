@@ -9,6 +9,9 @@
     <style>
         #SaveButton {background-color: blue;color: white}
     </style>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
 </head>
 <body>
     @using (Html.BeginForm())
@@ -31,6 +34,8 @@
                     <td>&nbsp;@Html.DisplayFor(model => model.City)</td>
                     <td>&nbsp;@Html.DisplayFor(model => model.Zip)</td>
                 </tr>
+            </table>
+            <table>
                 <tr>
                     <td>Children:</td>
                     <td>&nbsp;@Html.DisplayFor(model => model.Children)</td>
@@ -40,6 +45,16 @@
                     <td>&nbsp;@Html.DisplayFor(model => model.Seniors)</td>
                     <td>&nbsp;Giant Cards Eligible:</td>
                     <td>&nbsp;@Html.DisplayFor(model => model.GiftCardsEligible)</td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td>Desired Delivery Date:</td>
+                    <td>
+                        @Html.TextBoxFor(model => model.DeliveryDate, Model.DeliveryDate.ToString("MM/dd/yyyy"),
+                            new {id = "DeliveryDate", style = "width: 75px;"})
+                    </td> 
+                    <td style="color: darkmagenta">&#8592;Click to change</td>
                 </tr>
             </table>
             <br/>
@@ -110,6 +125,10 @@
 <div>
     @Html.ActionLink("Return To Dashboard", "ReturnToDashboard")
 </div>
-
+<script>
+    $(function () {
+        window.$("#DeliveryDate").datepicker();
+    });
+</script> @*DeliveryDate datepicker*@
 </body>
 </html>

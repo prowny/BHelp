@@ -13,7 +13,7 @@
     <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
 </head>
 <body>
-    <table class="table">
+    @*<table class="table">
         <tr>
             <td>Log Date:&nbsp;</td>
             <td>
@@ -22,7 +22,7 @@
         </td>
         <td style="color: darkmagenta">&#8592;Click to change</td>
     </tr>
-</table>
+</table>*@
 <table class="table">
     @*<tr>
         <td><b> @Html.Label("First Name")</b></td>
@@ -55,15 +55,21 @@
     {
         <table>
             <tr>
-                <td><b> @Html.Label("Client:")</b></td>
+                <td><b>@Html.Label("Del Date:")</b></td>
+                <td>@Html.DisplayFor(modelItem => item.DeliveryDate)</td>
+                <td><b>@Html.Label("Zip:")</b></td>
+                <td>@Html.DisplayFor(modelItem => item.Zip)</td>
+                <td><b>@Html.Label("Client:")</b></td>
                 <td>@Html.DisplayFor(modelItem => item.ClientNameAddress)</td>
                 <td>@Html.DisplayFor(modelItem => item.Phone)</td>
-                <td>@Html.DisplayFor(modelItem => item.ODNotes)</td>
+                <td><b> @Html.Label("HH#:")</b></td>
+                <td>@Html.DisplayFor(modelItem => item.HouseoldCount)</td>
+                <td>@Html.ActionLink("Edit", "Edit", new {id = item.Id})</td>
             </tr>
         </table>
         <table>
             <tr>
-                <td><b> @Html.Label("Children:")</b></td>
+                @*<td><b> @Html.Label("Children:")</b></td>
                 <td>@Html.DisplayFor(modelItem => item.Children)</td>
                 <td><b> @Html.Label("Adults:")</b></td>
                 <td>@Html.DisplayFor(modelItem => item.Adults)</td>
@@ -71,7 +77,7 @@
                 <td>@Html.DisplayFor(modelItem => item.Seniors)</td>
 
                 <td>@Html.DisplayFor(modelItem => item.DriverNotes)</td>
-                <td>@Html.ActionLink("Edit", "Edit", new {id = item.Id})</td>
+                <td>@Html.ActionLink("Edit", "Edit", new {id = item.Id})</td>*@
             </tr>
         </table>
     }

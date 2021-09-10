@@ -74,7 +74,8 @@
                         @Html.TextBoxFor(model => model.DeliveryDate, Model.DeliveryDate.ToString("MM/dd/yyyy"),
                             new {id = "DeliveryDate", style = "width: 75px;"})
                     </td>
-                    <td style="color: darkmagenta">&#8592;Click to change</td>
+                    @*<td style="color: darkmagenta">&#8592;Click to change</td>*@
+                    <td style="color:darkmagenta ">&#8592;Enter valid date (mm/dd/yyyy)</td>
                 </tr>
             </table>
 
@@ -168,11 +169,11 @@
         window.$("#LogDate").datepicker();
     });
 </script> @*LogDate datepicker*@
-<script>
+@*<script>
     $(function () {
         window.$("#DeliveryDate").datepicker();
     });
-</script> @*DeliveryDate datepicker*@
+</script>*@ @*DeliveryDate datepicker*@
 <script>
     $(document).ready(function () {
         $(".datepicker").datepicker({

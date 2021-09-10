@@ -60,6 +60,9 @@ namespace BHelp.Models
         public List<FamilyMember> FamilyMembers { get; set; }
 
         [NotMapped]
+        public int HouseholdCount { get; set; }
+
+        [NotMapped]
         public IEnumerable<SelectListItem> FamilySelectList { get; set; }
 
         [NotMapped]

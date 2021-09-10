@@ -19,9 +19,9 @@ namespace BHelp.Controllers
         public ActionResult Index(DateTime? logDate, string userId)
 
         {
-            var logYear = DateTime.Today.Year;
-            var logMonth = DateTime.Today.Month;
-            var logDay = DateTime.Today.Day;
+            //var logYear = DateTime.Today.Year;
+            //var logMonth = DateTime.Today.Month;
+            //var logDay = DateTime.Today.Day;
             //string cdts1 = "";
             //string cdts2 = "";
             if (!logDate.HasValue)
@@ -30,9 +30,9 @@ namespace BHelp.Controllers
                 var cdts = cdt.ToString("MM/dd/yyyy");
                 Session["CallLogDate"] = cdts;
                 logDate = cdt;
-                logYear = cdt.Year;
-                logMonth = cdt.Month;
-                logDay = cdt.Day;
+                //logYear = cdt.Year;
+                //logMonth = cdt.Month;
+                //logDay = cdt.Day;
                 //cdts1 = cdt.ToString("yyyy-MM-dd");
                 //cdts2 = cdt.AddDays(1).ToString("yyyy-MM-dd");
             }
@@ -47,7 +47,7 @@ namespace BHelp.Controllers
                 DeliveryList = new List<Delivery>()
             };
            
-            if (userId.IsNullOrEmpty()) { userId = System.Web.HttpContext.Current.User.Identity.GetUserId(); }
+            if (userId.IsNullOrEmpty()) { System.Web.HttpContext.Current.User.Identity.GetUserId(); }
             // Get around Date and DateTime differences:
             //var deliveryList = db.Deliveries.Where(d => d.LogDate.Year == logYear 
             //             && d.LogDate.Month == logMonth && d.LogDate.Day == logDay
@@ -55,15 +55,18 @@ namespace BHelp.Controllers
 
             // 09/09/2021: change to driver eses all open deliveries
             var deliveryList = new List<Delivery>(db.Deliveries).Where(d => d.Completed == false)
-                .OrderBy(z => z.Zip).ToList();
+                .OrderBy(d => d.DeliveryDate).ThenBy(z => z.Zip)
+                .ThenBy(n => n.LastName).ToList();
             foreach (var delivery in deliveryList)
             {
                 var client = db.Clients.Find(delivery.ClientId);
                 if (client != null)
                 {
                     delivery.ClientNameAddress = client.LastName + ", " + client.FirstName
-                       + " " + client.StreetNumber + " " + client.StreetName + " " + client.Zip;
+                       + " " + client.StreetNumber + " " + client.StreetName;
                     delivery.Notes = client.Notes;
+                    var familyMembers = AppRoutines.GetFamilyMembers(client.Id);
+                    delivery.HouseoldCount = familyMembers.Count;
                 }
                 deliveryView.DeliveryList.Add(delivery);
             }
@@ -90,7 +93,8 @@ namespace BHelp.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,FullBags,HalfBags,KidSnacks,GiftCards,DateDelivered,Completed,DriverNotes")] Delivery delivery)
+        public ActionResult Edit([Bind(Include = "Id,FullBags,HalfBags,KidSnacks,GiftCards," +
+                    "DateDelivered,Completed,DriverNotes,DeliveryDate")] Delivery delivery)
         {
             if (ModelState.IsValid)
             {
@@ -103,6 +107,7 @@ namespace BHelp.Controllers
                     del.GiftCards = delivery.GiftCards;
                     del.Completed = delivery.Completed;
                     del.DriverNotes = delivery.DriverNotes;
+                    del.DeliveryDate = delivery.DeliveryDate;
                 }
                 db.SaveChanges();
                 return RedirectToAction("Index");
