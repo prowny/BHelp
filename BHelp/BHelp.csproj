@@ -334,6 +334,7 @@
     <Compile Include="ViewModels\AddEditUserRolesViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="ViewModels\OpenDeliveryViewModel.cs" />
     <Compile Include="ViewModels\ReportsViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

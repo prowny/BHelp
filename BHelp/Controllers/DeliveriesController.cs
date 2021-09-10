@@ -288,7 +288,7 @@ namespace BHelp.Controllers
                     updateData.ODId = delivery.ODId;
                     updateData.DriverNotes = delivery.DriverNotes;
                     var previouslyCompleted = updateData.Completed;
-                    updateData.DeliveryDate = (DateTime)delivery.DeliveryDate;
+                    updateData.DeliveryDate = delivery.DeliveryDate;
                     if (delivery.DateDelivered != null)
                     {
                         updateData.DateDelivered = (DateTime) delivery.DateDelivered;
