@@ -222,6 +222,7 @@ namespace BHelp.Controllers
                 NamesAgesInHH = delivery.NamesAgesInHH,
                 FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId),
                 DateLastDelivery = GetLastDeliveryDate(delivery.Id),
+                DeliveryDate = delivery.DeliveryDate,  // Desired Delivery Date
                 DateDelivered = delivery.DateDelivered,
                 Completed = delivery.Completed
             };
@@ -266,7 +267,7 @@ namespace BHelp.Controllers
         public ActionResult Edit(
             [Bind(Include = "Id,ClientId,LogDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards," +
             "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId,Completed," +
-            "ODId,ReturnURL")] DeliveryViewModel delivery)
+            "DeliveryDate,ODId,ReturnURL")] DeliveryViewModel delivery)
         {
             if (ModelState.IsValid)
             {
@@ -287,6 +288,7 @@ namespace BHelp.Controllers
                     updateData.ODId = delivery.ODId;
                     updateData.DriverNotes = delivery.DriverNotes;
                     var previouslyCompleted = updateData.Completed;
+                    updateData.DeliveryDate = (DateTime)delivery.DeliveryDate;
                     if (delivery.DateDelivered != null)
                     {
                         updateData.DateDelivered = (DateTime) delivery.DateDelivered;

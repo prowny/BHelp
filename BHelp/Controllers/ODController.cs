@@ -129,7 +129,8 @@ namespace BHelp.Controllers
                     NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(clientId),
                     Children = 0,
                     Adults = 0,
-                    Seniors = 0
+                    Seniors = 0,
+                    DeliveryDate =  DateTime.Today.AddDays(1)  // Desired Delivery Date
                 };
                 var familyList = AppRoutines.GetFamilyMembers(clientId);
                 if (familyList != null)

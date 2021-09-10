@@ -19,6 +19,11 @@ namespace BHelp.ViewModels
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime LogDate { get; set; }
 
+        [DisplayName("Desired Delivery Date")]
+        [Column(TypeName = "Date")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
+        public DateTime DeliveryDate { get; set; }
+
         [DataType(DataType.MultilineText)]
         public string Notes { get; set; }   // Client/Household Notes
 
