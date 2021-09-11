@@ -10,7 +10,6 @@ namespace BHelp.ViewModels
     {
         public string ReportTitle { get; set; }
         public  string[,] OpenDeliveries { get; set; }
-        public List <string> OpenDelivery { get; set; }
-        public DateTime DeliveryDate { get; set; }
+        public int  OpenDeliveryCount { get; set; }
     }
 }
