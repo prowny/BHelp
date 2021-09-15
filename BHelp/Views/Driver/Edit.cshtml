@@ -37,8 +37,8 @@
             </table>
             <table>
                 <tr>
-                    <td>Children:</td>
-                    <td>&nbsp;@Html.DisplayFor(model => model.Children)</td>
+                    <td>Children age 2-17:</td>
+                    <td>&nbsp;@Html.DisplayFor(model => model.NumberOfKids2_17)</td>
                     <td>&nbsp;Adults:</td>
                     <td>&nbsp;@Html.DisplayFor(model => model.Adults)</td>
                     <td>&nbsp;Seniors:</td>
@@ -54,7 +54,13 @@
                         @Html.TextBoxFor(model => model.DeliveryDate, Model.DeliveryDate.ToString("MM/dd/yyyy"),
                             new {id = "DeliveryDate", style = "width: 75px;"})
                     </td> 
-                    <td style="color: darkmagenta">&#8592;Click to change</td>
+                    <td style="color: darkmagenta">&#8592;Click to change</td> 
+                    <td>&nbsp;&nbsp;</td>
+                    <td>Driver:</td>
+                    <td>
+                        @Html.DropDownListFor(model => model.DriverId, new SelectList(Model.DriversList, "Value", "Text"), new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.DriverId, "", new { @class = "text-danger" })
+                    </td>
                 </tr>
             </table>
             <br/>

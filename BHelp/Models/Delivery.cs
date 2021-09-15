@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Web.Mvc;
+using DocumentFormat.OpenXml.Office.CoverPageProps;
 
 namespace BHelp.Models
 {
@@ -57,6 +60,9 @@ namespace BHelp.Models
         public string DriverNotes { get; set; }
 
         [NotMapped]
+        public IEnumerable<SelectListItem> DriversList { get; set; }
+
+        [NotMapped]
         public string ClientNameAddress { get; set; }
 
         [NotMapped]
@@ -64,5 +70,11 @@ namespace BHelp.Models
 
         [NotMapped]
         public int HouseoldCount { get; set; }
+
+        [NotMapped]
+        public int NumberOfKids2_17 { get; set; }
+
+        [NotMapped]
+        public string DriverName { get; set; }
     }
 }

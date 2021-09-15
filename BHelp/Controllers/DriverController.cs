@@ -10,7 +10,6 @@ using BHelp.ViewModels;
 using Microsoft.AspNet.Identity;
 using ClosedXML.Excel;
 using Castle.Core.Internal;
-using Castle.DynamicProxy.Generators;
 
 namespace BHelp.Controllers
 {
@@ -41,7 +40,7 @@ namespace BHelp.Controllers
             };
            
             if (userId.IsNullOrEmpty()) { System.Web.HttpContext.Current.User.Identity.GetUserId(); }
-            // 09/09/2021: change to driver eses all open deliveries
+            // 09/09/2021: change to driver sees all open deliveries
             var deliveryList = new List<Delivery>(db.Deliveries).Where(d => d.Completed == false)
                 .OrderBy(d => d.DeliveryDate).ThenBy(z => z.Zip)
                 .ThenBy(n => n.LastName).ToList();
@@ -56,6 +55,23 @@ namespace BHelp.Controllers
                     var familyMembers = AppRoutines.GetFamilyMembers(client.Id);
                     delivery.HouseoldCount = familyMembers.Count;
                 }
+
+                if (delivery.DriverId != null)
+                {
+                    var driver = db.Users.Find(delivery.DriverId);
+                    if (driver != null)  // Id could be "0"
+                    {
+                        delivery.DriverName = driver.FullName;
+                    }
+                    else
+                    {
+                        delivery.DriverName = "  - - -  ";
+                    }
+                }
+                else
+                {
+                    delivery.DriverName = "  - - -  ";
+                }
                 deliveryView.DeliveryList.Add(delivery);
             }
             return View(deliveryView);
@@ -69,11 +85,24 @@ namespace BHelp.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Delivery delivery = db.Deliveries.Find(id);
-            if (delivery == null)
+
+            if (delivery != null)
             {
-                return HttpNotFound();
+                delivery.DriversList = AppRoutines.GetDriversSelectList();
+
+                foreach (var item in delivery.DriversList)
+                {
+                    if (item.Value == delivery.DriverId)
+                    {
+                        item.Selected = true;
+                        break;
+                    }
+                }
+
+                delivery.NumberOfKids2_17 = AppRoutines.GetNumberOfKids2_17(delivery.ClientId);
+                return View(delivery);
             }
-            return View(delivery);
+            return RedirectToAction("Index");
         }
 
         // POST: Driver/Edit/5
@@ -82,13 +111,14 @@ namespace BHelp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,FullBags,HalfBags,KidSnacks,GiftCards," +
-                    "DateDelivered,Completed,DriverNotes,DeliveryDate")] Delivery delivery)
+                    "DateDelivered,Completed,DriverNotes,DeliveryDate,DriverId")] Delivery delivery)
         {
             if (ModelState.IsValid)
             {
                 var del = db.Deliveries.Find(delivery.Id);
                 if (del != null)
                 {
+                    del.DriverId = delivery.DriverId;
                     del.FullBags = delivery.FullBags;
                     del.HalfBags = delivery.HalfBags;
                     del.KidSnacks = delivery.KidSnacks;
@@ -113,20 +143,21 @@ namespace BHelp.Controllers
             ws.Cell(activeRow, 2).SetValue(DateTime.Today.ToShortDateString());
             activeRow++;
             ws.Cell(activeRow, 1).SetValue("Delivery Date");
-            ws.Cell(activeRow, 2).SetValue("Zip Code");
-            ws.Cell(activeRow, 3).SetValue("Client");
-            ws.Cell(activeRow, 4).SetValue("Address");
-            ws.Cell(activeRow, 5).SetValue("City");
-            ws.Cell(activeRow, 6).SetValue("Phone");
-            ws.Cell(activeRow, 7).SetValue("# in HH");
-            ws.Cell(activeRow, 8).SetValue("Client Notes");
-            ws.Cell(activeRow, 9).SetValue("OD Notes");
-            ws.Cell(activeRow, 10).SetValue("Driver Notes");
+            ws.Cell(activeRow, 2).SetValue("Driver");
+            ws.Cell(activeRow, 3).SetValue("Zip Code");
+            ws.Cell(activeRow, 4).SetValue("Client");
+            ws.Cell(activeRow, 5).SetValue("Address");
+            ws.Cell(activeRow, 6).SetValue("City");
+            ws.Cell(activeRow, 7).SetValue("Phone");
+            ws.Cell(activeRow, 8).SetValue("# in HH");
+            ws.Cell(activeRow, 9).SetValue("Client Notes");
+            ws.Cell(activeRow, 10).SetValue("OD Notes");
+            ws.Cell(activeRow, 11).SetValue("Driver Notes");
             
             for (var i = 0; i < view.OpenDeliveryCount; i++)
             {
                 activeRow++;
-                for (var j = 1; j < 11; j++)
+                for (var j = 1; j < 12; j++)
                 {
                     ws.Cell(activeRow, j).SetValue(view.OpenDeliveries[i,j]);
                 }
@@ -148,28 +179,36 @@ namespace BHelp.Controllers
                 ReportTitle = "Bethesda Help Open Deliveries"
             };
             var deliveryList = new List<Delivery>(db.Deliveries).Where(d => d.Completed == false)
-                .OrderBy(d => d.DeliveryDate).ThenBy(z => z.Zip)
+                .OrderBy(d => d.DeliveryDate)
+                .ThenBy(d => d.DriverId)
+                .ThenBy(z => z.Zip)
                 .ThenBy(n => n.LastName).ToList();
             odv.OpenDeliveryCount = deliveryList.Count;
-            odv.OpenDeliveries = new string[deliveryList.Count , 11];
+            odv.OpenDeliveries = new string[deliveryList.Count , 12];
             var i = 0;
             foreach (var del in deliveryList)
             {
                 var client = db.Clients.Find(del.ClientId);
                 odv.OpenDeliveries[i, 1] = del.DeliveryDate.ToShortDateString();
-                odv.OpenDeliveries[i, 2] = del.Zip;
-                odv.OpenDeliveries[i, 3] = del.LastName + ", " + del.FirstName;
-                odv.OpenDeliveries[i, 4] = del.StreetNumber + " " + del.StreetName;
-                odv.OpenDeliveries[i, 5] = del.City;
-                odv.OpenDeliveries[i, 6] = del.Phone;
+
+                var driver = db.Users.Find(del.DriverId);
+                if (driver != null)
+                {
+                    odv.OpenDeliveries[i, 2] = driver.FullName;
+                }
+                odv.OpenDeliveries[i, 3] = del.Zip;
+                odv.OpenDeliveries[i, 4] = del.LastName + ", " + del.FirstName;
+                odv.OpenDeliveries[i, 5] = del.StreetNumber + " " + del.StreetName;
+                odv.OpenDeliveries[i, 6] = del.City;
+                odv.OpenDeliveries[i, 7] = del.Phone;
                 if (client != null)
                 {
                     var familyMemberCount = db.FamilyMembers.Count(c => c.ClientId == client.Id);
-                    odv.OpenDeliveries[i, 7] = (familyMemberCount + 1).ToString();
-                    odv.OpenDeliveries[i, 8] = client.Notes;
+                    odv.OpenDeliveries[i, 8] = (familyMemberCount + 1).ToString();
+                    odv.OpenDeliveries[i, 9] = client.Notes;
                 }
-                odv.OpenDeliveries[i, 9] = del.ODNotes;
-                odv.OpenDeliveries[i, 10] = del.DriverNotes;
+                odv.OpenDeliveries[i, 10] = del.ODNotes;
+                odv.OpenDeliveries[i, 11] = del.DriverNotes;
                 i++;
             }
             return odv;

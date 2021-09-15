@@ -271,5 +271,26 @@ namespace BHelp
                 return false;
             }
         }
+
+        public static int GetNumberOfKids2_17(int clientId)
+        {
+            // Assume Head of Household is not a Child
+            using (var db = new BHelpContext())
+            {
+                var client = db.Clients.Find(clientId);
+                if (client != null)
+                {
+                    var fromDate = DateTime.Today.AddYears(-17).ToShortDateString();
+                    var thruDate = DateTime.Today.AddYears(-2).ToShortDateString();
+                    var sqlString = "SELECT * FROM FamilyMembers ";
+                    sqlString += "WHERE Active > 0 AND ClientId =" + clientId;
+                    sqlString += " AND DateOfBirth >= '" + fromDate + "'";
+                    sqlString += " AND DateOfBirth <= '" + thruDate + "'";
+                    var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
+                    return familyList.Count;
+                }
+            }
+            return 0;
+        }
     }
 }
