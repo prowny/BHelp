@@ -28,7 +28,7 @@ namespace BHelp
             var dt = DateTime.MinValue;
             using (var db = new BHelpContext())
             {
-                var delivery = db.Deliveries.Where(i => i.Id == clientId && i.GiftCards > 0)
+                var delivery = db.Deliveries.Where(i => i.ClientId == clientId && i.GiftCards > 0)
                     .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
                 if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
             }

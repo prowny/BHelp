@@ -32,8 +32,17 @@
                 </tr>
                 <tr>
                     <td style="text-align: right">Gift Cards This Month:</td><td>@Html.Label(@Model.GiftCardsThisMonth.ToString())</td>
-                    <td style="text-align: right">Last Gift Card:</td><td>@Html.Label(@Model.DateLastGiftCard.ToShortDateString())</td>
+                   
+                    @if (Model.DateLastGiftCard == DateTime.MinValue)
+                    {
+                        <td style="text-align: right">Last Gift Card:</td><td>@Html.Label("(none)")</td>     
+                    }
+                    else
+                    {
+                        <td style="text-align: right">Last Gift Card:</td><td>@Html.Label(@Model.DateLastGiftCard.ToShortDateString())</td>
+                    }
                     <td style="text-align: right">Next Gift Card Eligible</td><td>@Html.Label(@Model.NextGiftCardEligibleDate.ToShortDateString())</td>
+                
                 </tr>
             </table>
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
