@@ -17,7 +17,21 @@ namespace BHelp
             var dt = DateTime.MinValue;
             using (var db = new BHelpContext())
             {
-                var delivery = db.Deliveries.Where(i => i.ClientId == clientId)
+                var delivery = db.Deliveries.Where(i => i.ClientId == clientId
+                                                        && i.DateDelivered != null)
+                    .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
+                if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
+            }
+            return dt;
+        }
+
+        public static DateTime GetPriorDeliveryDate(int clientId, DateTime callLogDate)
+        {
+            var dt = DateTime.MinValue;
+            using (var db = new BHelpContext())
+            {
+                var delivery = db.Deliveries.Where(i => i.ClientId == clientId
+                                                        && i.DateDelivered < callLogDate)
                     .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
                 if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
             }

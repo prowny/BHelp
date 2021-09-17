@@ -35,29 +35,40 @@
         <input type="hidden" name="HistoryEndDate" value="@Model.HistoryEndDate" />
         @Html.AntiForgeryToken()
         <div class="form-horizontal">
-            <span><strong>Edit Delivery</strong></span>
-            <span style="color: darkmagenta"> (Snapshot of client when the delivery was created:)</span><br />
+            <table>
+                <tr>
+                    <td><strong>Edit Delivery</strong></td>
+                    <td style="color: darkmagenta">
+                        @Html.Label(" (Snapshot of client when the delivery was created " +
+                                    Model.LogDate.ToShortDateString() + ":)")
+                    </td>
+                </tr>
+            </table>
+
             <span><b>Client:</b>&nbsp;@Html.Label(Model.ClientNameAddress)&nbsp;@Html.Label(Model.Client.Phone) </span>
-            <br />
+            <br/>
             <span>
                 <b>Family:</b>&nbsp;
                 @if (Model.FamilySelectList != null)
                 {@Html.DropDownListFor(modelItem => Model.Notes, Model.FamilySelectList)
             }
+                <b>Prior Delivery:</b>
+                @if (Model.DatePriorDelivery != DateTime.MinValue)
+                {@Html.Label(Model.DatePriorDelivery.ToShortDateString())
+            }
+            else
+            {
+                @Html.Label("(none)")
+            }
             </span>
-            <span><b>Children:&nbsp;</b>@Html.Label(Model.KidsCount.ToString())</span>&nbsp;
+            @*<span><b>Children:&nbsp;</b>@Html.Label(Model.KidsCount.ToString())</span>&nbsp;
             <span><b>Adults:&nbsp;</b>@Html.Label(Model.AdultsCount.ToString())</span>&nbsp;
-            <span><b>Seniors:&nbsp;</b>@Html.Label(Model.SeniorsCount.ToString())</span>&nbsp;
-            <br />
-            <span>
-                <b>Last Delivery:</b>
-                @if (Model.DateLastDelivery != null)
-                {@Html.Label(Model.DateLastDelivery.Value.ToShortDateString())}
-            </span>
-            <span><b>Gift Cards This Month:</b>@Html.Label(Model.GiftCardsThisMonth.ToString())</span>
-            <span><b>Gift Cards Eligible:</b>&nbsp;@Html.Label(Model.GiftCardsEligible.ToString())</span>
-            <hr />
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <span><b>Seniors:&nbsp;</b>@Html.Label(Model.SeniorsCount.ToString())</span>*@&nbsp;
+            <br/>
+            @*<span><b>Gift Cards This Month:</b>@Html.Label(Model.GiftCardsThisMonth.ToString())</span>
+            <span><b>Gift Cards Eligible:</b>&nbsp;@Html.Label(Model.GiftCardsEligible.ToString())</span>*@
+            <hr/>
+            @Html.ValidationSummary(true, "", new {@class = "text-danger"})
             @Html.HiddenFor(model => model.Id)
         </div>
         <div class="form-group">
@@ -157,7 +168,7 @@
         {@Html.ActionLink("Back to Delivery List", "CallLogByDate")}
 
         @if (Model.ReturnURL.Contains("CallLogIndividual"))
-        {@Html.ActionLink("Back to Delivery List", "CallLogIndividual")}
+        {@Html.ActionLink("Back to Delivery List", "CallLogIndividual", new{clientId = Model.ClientId})}
     </div>
     <div>
         @Html.ActionLink("Return to Dashboard", "ReturnToDashboard")

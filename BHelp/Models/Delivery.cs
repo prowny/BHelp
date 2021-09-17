@@ -67,7 +67,7 @@ namespace BHelp.Models
 
         [NotMapped]
         public string DateDeliveredString { get; set; }
-
+        
         [NotMapped]
         public int HouseoldCount { get; set; }
 

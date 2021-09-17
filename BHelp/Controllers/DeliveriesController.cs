@@ -170,7 +170,6 @@ namespace BHelp.Controllers
         public ActionResult Create()
         {
             return null;
-            //return View();
         }
 
         // POST: Deliveries/Create
@@ -221,7 +220,8 @@ namespace BHelp.Controllers
                 DriversList = AppRoutines.GetDriversSelectList(),
                 NamesAgesInHH = delivery.NamesAgesInHH,
                 FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId),
-                DateLastDelivery = GetLastDeliveryDate(delivery.Id),
+                DatePriorDelivery = AppRoutines.GetPriorDeliveryDate(delivery.ClientId,delivery.LogDate),
+                DateLastDelivery = GetDeliveryDate(delivery.Id),
                 DeliveryDate = delivery.DeliveryDate,  // Desired Delivery Date
                 DateDelivered = delivery.DateDelivered,
                 Completed = delivery.Completed
@@ -582,7 +582,7 @@ namespace BHelp.Controllers
                 { FileDownloadName = view.ReportTitle +".xlsx" };
         }
 
-        private  DateTime? GetLastDeliveryDate(int id)
+        private  DateTime? GetDeliveryDate(int id)
         {
             DateTime? dt = db.Deliveries.Where(d => d.DateDelivered != null
                                                     && d.Id == id && d.Completed)
