@@ -23,8 +23,8 @@
         <td style="color: darkmagenta">&#8592;Click to change</td>
     </tr>
 </table>*@
-<table class="table">
-    @*<tr>
+@*<table class="table">
+    <tr>
         <td><b> @Html.Label("First Name")</b></td>
         <td><b> @Html.Label("Last Name")</b></td>
         <td><b> @Html.Label("Street")</b></td>
@@ -46,9 +46,10 @@
         <td><b> @Html.Label("Delvered")</b></td>
         <td><b> @Html.Label("Complete")</b></td>
         <td><b> @Html.Label("Notes")</b></td>
-    </tr>*@
-</table>
+    </tr>
+</table>*@
 
+<h4>Open Deliveries</h4>
 @if (Model.DeliveryList != null && Model.DeliveryList.Any())
 {
     foreach (var item in Model.DeliveryList)
