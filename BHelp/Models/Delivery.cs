@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
-using DocumentFormat.OpenXml.Office.CoverPageProps;
 
 namespace BHelp.Models
 {

@@ -60,5 +60,6 @@ namespace BHelp.ViewModels
         public int DeliveriesThisMonth { get; set; }
         public DateTime NextDeliveryEligibleDate { get; set; }
         public DateTime NextGiftCardEligibleDate { get; set; }
+        public DateTime DesiredDeliveryDate { get; set; }
     }
 }
