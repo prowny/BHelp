@@ -200,9 +200,21 @@ namespace BHelp.Controllers
         }
 
         // GET: Deliveries/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(int? id, string desiredDeliveryDate)
         {
             if (id == null) { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
+
+            if (id == 0) // coming from UpdateDesiredDeliveryDate
+            {
+                id = Convert.ToInt32(TempData["CurrentDeliveryId"]);
+                var del = db.Deliveries.Find(id);
+                if (del != null)
+                {
+                    del.DeliveryDate = Convert.ToDateTime(desiredDeliveryDate);
+                    db.SaveChanges();
+                }
+            }
+            TempData["CurrentDeliveryId"] = id.ToString();
 
             var delivery = db.Deliveries.Find(id);
             if (delivery == null) { return HttpNotFound(); }
@@ -221,11 +233,12 @@ namespace BHelp.Controllers
                 NamesAgesInHH = delivery.NamesAgesInHH,
                 FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId),
                 DatePriorDelivery = AppRoutines.GetPriorDeliveryDate(delivery.ClientId,delivery.LogDate),
-                DateLastDelivery = GetDeliveryDate(delivery.Id),
-                DeliveryDate = delivery.DeliveryDate,  // Desired Delivery Date
+                DateLastDelivery = GetLastGetDeliveryDate(delivery.Id),
+                DeliveryDate = delivery.DeliveryDate, 
                 DateDelivered = delivery.DateDelivered,
                 Completed = delivery.Completed
             };
+
             if (Request.UrlReferrer != null)
             { viewModel.ReturnURL = Request.UrlReferrer.ToString(); }
          
@@ -582,7 +595,7 @@ namespace BHelp.Controllers
                 { FileDownloadName = view.ReportTitle +".xlsx" };
         }
 
-        private  DateTime? GetDeliveryDate(int id)
+        private  DateTime? GetLastGetDeliveryDate(int id)
         {
             DateTime? dt = db.Deliveries.Where(d => d.DateDelivered != null
                                                     && d.Id == id && d.Completed)

@@ -73,7 +73,7 @@
         <td style="text-align: center">@Html.DisplayFor(modelItem => item.GiftCards)</td>
         <td title=@item.DriverNotesToolTip>@Html.DisplayFor(modelItem => item.DriverNotes)</td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+            @Html.ActionLink("Edit", "Edit", new { id = item.Id, desiredDeliveryDate = item.DeliveryDate})
         </td>
     </tr>
     }

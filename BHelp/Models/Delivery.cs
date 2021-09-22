@@ -13,7 +13,7 @@ namespace BHelp.Models
         public int ClientId { get; set; }
       
 
-        [DisplayName("Delivery Date")]  //Unused
+        [DisplayName("Desired Delivery Date")]
         [Column(TypeName = "Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DeliveryDate { get; set; }

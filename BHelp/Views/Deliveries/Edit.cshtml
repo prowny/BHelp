@@ -3,20 +3,9 @@
 <!DOCTYPE html>
 
 <style>
-    #SaveButton {
-        background-color: blue;
-        color: white
-    }
-
-    #DeleteButton {
-        background-color: red;
-        color: white
-    }
-
-    #AddButton {
-        background-color: green;
-        color: white
-    }
+    #SaveButton {background-color: blue;color: white}
+    #DeleteButton {background-color: red;color: white}
+    #AddButton {background-color: green;color: white}
 </style>
 <html>
 <head>
@@ -42,6 +31,7 @@
                         @Html.Label(" (Snapshot of client when the delivery was created " +
                                     Model.LogDate.ToShortDateString() + ":)")
                     </td>
+                    <td style="display: none" id="Id">@Html.Label(Model.Id.ToString())</td>
                 </tr>
             </table>
 
@@ -83,10 +73,9 @@
                     <td>&nbsp;&nbsp;Desired Delivery Date:</td>
                     <td>
                         @Html.TextBoxFor(model => model.DeliveryDate, Model.DeliveryDate.ToString("MM/dd/yyyy"),
-                            new {id = "DeliveryDate", style = "width: 75px;"})
+                            new {id = "DesiredDeliveryDate", style = "width: 75px;"})
                     </td>
-                    @*<td style="color: darkmagenta">&#8592;Click to change</td>*@
-                    <td style="color:darkmagenta ">&#8592;Enter valid date (mm/dd/yyyy)</td>
+                    <td style="color: darkmagenta">&#8592;Click to change</td>
                 </tr>
             </table>
 
@@ -180,11 +169,17 @@
         window.$("#LogDate").datepicker();
     });
 </script> @*LogDate datepicker*@
-@*<script>
+<script>
     $(function () {
-        window.$("#DeliveryDate").datepicker();
+        window.$("#DesiredDeliveryDate").datepicker();
     });
-</script>*@ @*DeliveryDate datepicker*@
+</script> @*DeliveryDate datepicker*@
+<script type="text/javascript">
+   $("#DesiredDeliveryDate").change(function() {
+        var dDDate = $('#DesiredDeliveryDate').val();
+       UpdateDesiredDeliveryDate(dDDate);
+   });
+</script>
 <script>
     $(document).ready(function () {
         $(".datepicker").datepicker({

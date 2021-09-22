@@ -50,7 +50,7 @@ namespace BHelp.ViewModels
         [DisplayName("Family Members")]
         public List<FamilyMember> FamilyMembers { get; set; }  // For editing
         public IEnumerable<SelectListItem> ZipCodes { get; set; }
-        public string StreetToolTip { get; set; }
+        public string StreetToolTip { get; set; } 
         public string CityToolTip { get; set; }
         public string PhoneToolTip { get; set; }
         public string NotesToolTip { get; set; }  // Household/Client notes
