@@ -50,6 +50,8 @@
             {
                 @Html.Label("(none)")
             }
+                <b>&nbsp;Gift Cards This Month:&nbsp;</b>@Html.Label(Model.GiftCardsThisMonth.ToString())
+                <b>&nbsp;Gift Cards Eligible:</b>&nbsp;@Html.Label(Model.GiftCardsEligible.ToString())
             </span>
             @*<span><b>Children:&nbsp;</b>@Html.Label(Model.KidsCount.ToString())</span>&nbsp;
             <span><b>Adults:&nbsp;</b>@Html.Label(Model.AdultsCount.ToString())</span>&nbsp;

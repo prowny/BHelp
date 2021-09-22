@@ -142,25 +142,36 @@ namespace BHelp.Controllers
                         if (mbr.Age >= 60) { delivery.Seniors += 1; }
                     }
                 }
-                // GIFT CARDS ELIGIBLE:
-                // 1 per household of 3 or fewer
-                // 2 per household of 4 or more
-                // 1 per calendar month maximum
-                var firstOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-                var totalThisWeek = GetGiftCardsSince(client.Id, DateTime.Today.AddDays(-7));
+                // GIFT CARDS ELIGIBLE, based on DesiredDeliveryDate:
+                // 1 per household of 3 or fewer; 1 per household per calendar month max
+                // 2 per household of 4 or more; 2 per household per calendar month max
+                var firstOfMonth = new DateTime(delivery.DeliveryDate.Year, delivery.DeliveryDate.Month, 1);
                 var totalThisMonth = GetGiftCardsSince(client.Id, firstOfMonth);
                 var numberInHousehold = delivery.Children + delivery.Adults + delivery.Seniors;
-                if (numberInHousehold < 4)   // 1 per household of 3 or fewer
+                if (numberInHousehold <= 3)   // 1 per household of 3 or fewer
                 {
                     delivery.GiftCardsEligible = 1;
-                    if (delivery.GiftCardsEligible + totalThisMonth > 2) delivery.GiftCardsEligible = 0;
+                    if (delivery.GiftCardsEligible + totalThisMonth > 1) delivery.GiftCardsEligible = 0;
+                    delivery.GiftCards = delivery.GiftCardsEligible;
                 }
-                if (numberInHousehold > 3)    // 2 per household of 4 or more
+                if (numberInHousehold >= 4)    // 2 per household of 4 or more
                 {
-                    delivery.GiftCardsEligible = 2 - totalThisMonth;
-                    if (delivery.GiftCardsEligible > 2) delivery.GiftCardsEligible = 2;
+                    delivery.GiftCardsEligible = 2;
+                    if (delivery.GiftCardsEligible + totalThisMonth > 2) delivery.GiftCardsEligible = 0;
+                    delivery.GiftCards = delivery.GiftCardsEligible;
                 }
-                if (totalThisWeek > 0) delivery.GiftCardsEligible = 0;   // 1 per Month maximum
+                // Full Bags:
+                if (numberInHousehold <= 2) { delivery.FullBags = 1; }
+                if (numberInHousehold >= 3 && numberInHousehold <= 4) { delivery.FullBags = 2; }
+                if (numberInHousehold == 5 || numberInHousehold == 6) { delivery.FullBags = 3; }
+                if (numberInHousehold == 7 || numberInHousehold == 8) { delivery.FullBags = 4; }
+                if (numberInHousehold >= 9) { delivery.FullBags = 5; }
+                // Half Bags:
+                if (numberInHousehold <= 4) { delivery.HalfBags = 1; }
+                if (numberInHousehold >= 5 && numberInHousehold <= 8) { delivery.HalfBags = 2; }
+                if (numberInHousehold >= 9) { delivery.HalfBags = 3; }
+                // Kid Snacks:
+                delivery.KidSnacks = AppRoutines.GetNumberOfKids2_17(clientId);
 
                 db.Deliveries.Add(delivery);
                 db.SaveChanges();
@@ -225,11 +236,12 @@ namespace BHelp.Controllers
                 ZipCodes = AppRoutines.GetZipCodesSelectList(),
                 DateLastDelivery = AppRoutines.GetLastDeliveryDate(Id),
                 DateLastGiftCard = AppRoutines.GetDateLastGiftCard(Id),
-                GiftCardsThisMonth = AppRoutines.GetGiftCardsThisMonth(Id),
-                DeliveriesThisMonth = AppRoutines.GetDeliveriesThisMonth(Id),
-                NextDeliveryEligibleDate =AppRoutines.GetNextEligibleDeliveryDate(Id),
-                NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id),
-                DesiredDeliveryDate = DateTime.Today.AddDays(1)
+                DesiredDeliveryDate = DateTime.Today.AddDays(1),  // Desired Delivery Date
+                GiftCardsThisMonth = AppRoutines.GetGiftCardsThisMonth(Id, DateTime.Today.AddDays(1)),
+                //DeliveriesThisMonth = AppRoutines.GetDeliveriesThisMonth(Id),
+                NextDeliveryEligibleDate =AppRoutines.GetNextEligibleDeliveryDate(Id,DateTime.Today.AddDays(1)),
+                NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id, DateTime.Today.AddDays(1)),
+                
             };
             if (houseHold.DateLastDelivery == DateTime.MinValue)
             { }
