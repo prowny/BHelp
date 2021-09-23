@@ -279,9 +279,10 @@ namespace BHelp.Controllers
             var totalThisMonth = 0;
             if (delivery.DateDelivered != null)
             {
-                var stringThruDate = delivery.DateDelivered.ToString();
-                DateTime dt2 = DateTime.ParseExact(stringThruDate,
-                    "MM-dd-yyyy", CultureInfo.InvariantCulture);
+                var yy= delivery.DateDelivered.Value.Year;
+                var mm = delivery.DateDelivered.Value.Month;
+                var dd = delivery.DateDelivered.Value.Day;
+                var dt2 = new DateTime(yy, mm, dd);
                 totalThisMonth = GetGiftCardsSince(client.Id, firstOfMonth, dt2);
             }
 
@@ -300,7 +301,7 @@ namespace BHelp.Controllers
             }
             viewModel.GiftCards = viewModel.GiftCardsEligible;
             // Full Bags:
-            if (numberInHousehold <= 2) { delivery.FullBags = 1; }
+            if (numberInHousehold <= 2) { viewModel.FullBags = 1; }
             if (numberInHousehold >= 3 && numberInHousehold <= 4) { viewModel.FullBags = 2; }
             if (numberInHousehold == 5 || numberInHousehold == 6) { viewModel.FullBags = 3; }
             if (numberInHousehold == 7 || numberInHousehold == 8) { viewModel.FullBags = 4; }
@@ -312,12 +313,6 @@ namespace BHelp.Controllers
             // Kid Snacks:
             viewModel.KidSnacks = AppRoutines.GetNumberOfKids2_17(client.Id);
 
-
-
-            //if (delivery.FullBags != null) viewModel.FullBags = (int) delivery.FullBags;
-            //if (delivery.HalfBags != null) viewModel.HalfBags = (int) delivery.HalfBags;
-            //if (delivery.KidSnacks != null) viewModel.KidSnacks = (int) delivery.KidSnacks;
-            //if (delivery.GiftCards != null) viewModel.GiftCards = (int)delivery.GiftCards;
             viewModel.Zip = delivery.Zip;
 
             return View(viewModel);
