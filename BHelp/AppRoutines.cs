@@ -349,14 +349,18 @@ namespace BHelp
             ws.Cell(activeRow, 6).SetValue("City");
             ws.Cell(activeRow, 7).SetValue("Phone");
             ws.Cell(activeRow, 8).SetValue("# in HH");
-            ws.Cell(activeRow, 9).SetValue("Client Notes");
-            ws.Cell(activeRow, 10).SetValue("OD Notes");
-            ws.Cell(activeRow, 11).SetValue("Driver Notes");
+            ws.Cell(activeRow, 9).SetValue("Full Bags");
+            ws.Cell(activeRow, 10).SetValue("Half Bags");
+            ws.Cell(activeRow, 11).SetValue("Kid Snacks");
+            ws.Cell(activeRow, 12).SetValue("Gift Cards");
+            ws.Cell(activeRow, 13).SetValue("Client Notes");
+            ws.Cell(activeRow, 14).SetValue("OD Notes");
+            ws.Cell(activeRow, 15).SetValue("Driver Notes");
 
             for (var i = 0; i < view.OpenDeliveryCount; i++)
             {
                 activeRow++;
-                for (var j = 1; j < 12; j++)
+                for (var j = 1; j < 16; j++)
                 {
                     ws.Cell(activeRow, j).SetValue(view.OpenDeliveries[i, j]);
                 }
@@ -377,13 +381,14 @@ namespace BHelp
 
             using (var db = new BHelpContext())
             { 
-                var deliveryList = new List<Delivery>(db.Deliveries).Where(d => d.Completed == false)
+                var deliveryList = new List<Delivery>(db.Deliveries)
+                    .Where(d => d.Completed == false)
                     .OrderBy(d => d.DeliveryDate)
                     .ThenBy(d => d.DriverId)
                     .ThenBy(z => z.Zip)
                     .ThenBy(n => n.LastName).ToList();
                 odv.OpenDeliveryCount = deliveryList.Count;
-                odv.OpenDeliveries = new string[deliveryList.Count, 12];
+                odv.OpenDeliveries = new string[deliveryList.Count, 16];
                 var i = 0;
                 foreach (var del in deliveryList)
                 {
@@ -405,11 +410,17 @@ namespace BHelp
                     {
                         var familyMemberCount = db.FamilyMembers.Count(c => c.ClientId == client.Id);
                         odv.OpenDeliveries[i, 8] = (familyMemberCount + 1).ToString();
-                        odv.OpenDeliveries[i, 9] = client.Notes;
+                        
+                        odv.OpenDeliveries[i, 13] = client.Notes;
                     }
 
-                    odv.OpenDeliveries[i, 10] = del.ODNotes;
-                    odv.OpenDeliveries[i, 11] = del.DriverNotes;
+                    odv.OpenDeliveries[i, 9] = del.FullBags.ToString();
+                    odv.OpenDeliveries[i, 10] = del.HalfBags.ToString();
+                    odv.OpenDeliveries[i, 11] = del.KidSnacks.ToString();
+                    odv.OpenDeliveries[i, 12] = del.GiftCards.ToString();
+
+                    odv.OpenDeliveries[i, 14] = del.ODNotes;
+                    odv.OpenDeliveries[i, 15] = del.DriverNotes;
                     i++;
                 }
 
