@@ -1,0 +1,227 @@
+﻿@using System.Web.Mvc.Html
+@model BHelp.ViewModels.HouseholdViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>OD_Update_Household</title>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
+    <style>
+        #SaveButton {
+            background-color: blue;
+            color: white
+        }
+
+        #DeleteButton {
+            background-color: red;
+            color: white
+        }
+
+        #AddButton {
+            background-color: green;
+            color: white
+        }
+
+        .agewidth {
+            width: 10px
+        }
+    </style>
+</head>
+<body>
+    @using (Html.BeginForm("Index", "Household", FormMethod.Post))
+    {
+        <div>
+
+        </div>
+        <div>
+            @Html.AntiForgeryToken()
+            <div class="form-horizontal">
+                <b>Household Delivery Data</b>
+                <table>
+                    <tr>
+                        <td style="text-align: right">Deliveries This Month:</td>
+                        <td>@Html.Label(@Model.DeliveriesThisMonth.ToString())</td>
+                        <td style="text-align: right">Last Delivery:</td>
+                        @if (Model.DateLastDelivery == DateTime.MinValue)
+                        {
+                            <td>@Html.Label("(none)")</td>
+                        }
+                        else
+                        {
+                            <td>@Html.Label(@Model.DateLastDelivery.ToShortDateString())</td>
+                        }
+
+                        <td style="text-align: right">Next Eligible Delivery:</td>
+                        <td>@Html.Label(@Model.NextDeliveryEligibleDate.ToShortDateString())</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right">Gift Cards This Month:</td>
+                        <td>@Html.Label(@Model.GiftCardsThisMonth.ToString())</td>
+                        @if (Model.DateLastGiftCard == DateTime.MinValue)
+                        {
+                            <td style="text-align: right">Last Gift Card:</td>
+                            <td>@Html.Label("(none)")</td>
+                        }
+                        else
+                        {
+                            <td style="text-align: right">Last Gift Card:</td>
+                            <td>@Html.Label(@Model.DateLastGiftCard.ToShortDateString())</td>
+                        }
+                        <td style="text-align: right">Next Gift Card Eligible</td>
+                        <td>@Html.Label(@Model.NextGiftCardEligibleDate.ToShortDateString())</td>
+
+                    </tr>
+                </table>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.ClientId)
+                @if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("Administrator"))
+                {
+                    <h5>Call Log - check/edit client info, then create a delivery</h5>
+                }
+                <div id="Address">
+                    <table>
+                        <tr>
+                            <td><b>Household At:</b></td>
+                            <td style="text-align: right">
+                                @Html.LabelFor(model => model.StreetNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                            </td>
+                            <td>
+                                @Html.EditorFor(model => model.StreetNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.StreetNumber, "", new { @class = "text-danger" })
+                            </td>
+                            <td style="text-align: right">
+                                @Html.LabelFor(model => model.StreetName, htmlAttributes: new { @class = "control-label col-md-2" })
+                            </td>
+                            <td>
+                                @Html.EditorFor(model => model.StreetName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.StreetName, "", new { @class = "text-danger" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="text-align: right">
+                                @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
+                            </td>
+                            <td>
+                                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                            </td>
+                            <td style="text-align: right">
+                                @Html.LabelFor(model => model.Zip, htmlAttributes: new { @class = "control-label col-md-2" })
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(model => model.Zip, new SelectList(Model.ZipCodes, "Value", "Text"), new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Zip, "", new { @class = "text-danger" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="text-align: right">
+                                @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-md-2" })
+                            </td>
+                            <td>
+                                @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                            </td>
+                            <td style="text-align: right">
+                                @Html.LabelFor(model => model.Notes, htmlAttributes: new { @class = "control-label col-md-2" })
+                            </td>
+                            <td>
+                                @Html.EditorFor(model => model.Notes, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Notes, "", new { @class = "text-danger" })
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="Family">
+                    <table>
+                        <tr>
+                            <td><b>Family Members:</b></td>
+                            <td><b>First Name</b></td>
+                            <td><b>Last Name</b></td>
+                            <td><b>Age</b></td>
+                        </tr>
+                        @for (int i = 0; i < Model.FamilyMembers.Count; i++)
+                        {
+                            @Html.HiddenFor(mbr => Model.FamilyMembers[i].Id)
+                            @Html.HiddenFor(mbr => Model.FamilyMembers[i].ClientId)
+                            <tr>
+                                <td></td>
+                                @if (Model.FamilyMembers[i].Id > 0)
+                                {
+                                    <td>@Html.EditorFor(mbr => Model.FamilyMembers[i].FirstName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                                    <td>@Html.EditorFor(m => Model.FamilyMembers[i].LastName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                                    <td>@Html.EditorFor(m => Model.FamilyMembers[i].Age, new { htmlAttributes = new { type = "number", min = "0", max = "110" } }) </td>
+                                    <td>
+                                        @Html.EditorFor(model => model.FamilyMembers[i].Delete, new { htmlAttributes = new { @class = "form-control" } })
+                                        Delete
+                                    </td>
+                                }
+                                @if (Model.FamilyMembers[i].Id == 0 && Model.FamilyMembers[i].ClientId == 0) // HH was added to FamilyMembers list with no Id
+                                {
+                                    <td>@Html.EditorFor(mbr => Model.FamilyMembers[i].FirstName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                                    <td>@Html.EditorFor(m => Model.FamilyMembers[i].LastName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                                    <td>@Html.EditorFor(m => Model.FamilyMembers[i].Age, new { htmlAttributes = new { type = "number", min = "0", max = "110" } }) </td>
+                                    <td>Head of Household</td>}
+                                @if (Model.FamilyMembers[i].ClientId < 0) // AddNew household member was added with ClientId = -1
+                                {
+                                <tr>
+                                    <td></td>
+                                    <td>@Html.EditorFor(mbr => Model.FamilyMembers[i].FirstName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                                    <td>@Html.EditorFor(m => Model.FamilyMembers[i].LastName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                                    <td>@Html.EditorFor(m => Model.FamilyMembers[i].Age, new { htmlAttributes = new { type = "number", min = "0", max = "110" } }) </td>
+                                    <td>
+                                        <input type="submit" value="Add Member" class="btn btn-default" id="AddButton" />
+                                        @*Redirects to HouseholdController/Index POST:*@
+                                        <input type="submit" value="Delete Checked Members" class="btn btn-default" id="DeleteButton" />
+                                    </td>
+                                </tr>
+                            }
+                                </tr>
+                            }
+                    </table>
+                </div>
+                <br />
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        @*Redirects to HouseholdController/Index POST:*@
+                        <input type="submit" value="Save Changes" class="btn btn-default" id="SaveButton" />
+                        <span style="color: darkmagenta">&#8592;Click this first if you made ANY changes</span>
+                    </div>
+                    @if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("Administrator"))
+                    {
+                        <div>
+                            @Html.ActionLink("Create a Delivery", "AddDelivery", "OD", new { clientId = Model.ClientId, desiredDeliveryDate = Model.DesiredDeliveryDate }, null)
+                        </div>
+                    }
+                </div>
+            </div>
+            <div>
+                @Html.ActionLink("Back to Select Page", "Index")
+            </div>
+            <div>
+                @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+            </div>
+        </div>
+    }
+</body>
+</html>
+<script>
+    $(function () {
+        window.$("#DesiredDeliveryDate").datepicker();
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#deleteMember").live("click", function () {
+            $("#deleteCheckboxHidden").attr("value", "True");
+        });
+    });
+</script>

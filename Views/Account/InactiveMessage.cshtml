@@ -1,0 +1,20 @@
+﻿@model BHelp.ViewModels.LoginViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>InactiveMessage</title>
+</head>
+<body>
+<table>
+    <tr>
+        <td style="color: red">Your account is inactive. Contact the Bethesda Help Administrator.</td> 
+    </tr>
+</table>
+<div>
+    @Html.ActionLink("OK", "Login")
+</div>
+</body>
+</html>

@@ -1,0 +1,101 @@
+﻿@model IEnumerable<BHelp.Models.ApplicationUser>
+
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <h4>Maintain Website Users</h4>
+    <table>
+        <tr>
+            <td>
+                @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+            </td>
+        </tr>
+    </table>
+    <p>
+        @Html.ActionLink("Register a New User", "Create")
+    </p>
+    <table>
+        <tr>
+            <td>
+                <strong>
+                    @Html.DisplayNameFor(model => model.Active)
+                </strong>
+            </td>
+            <td>
+                <strong>
+                    @Html.DisplayNameFor(model => model.UserName)
+                </strong>
+            </td>
+            <td>
+                <strong>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </strong>
+            </td>
+            <td>
+                <strong>
+                    @Html.DisplayNameFor(model => model.LastName)
+                </strong>
+            </td>
+            <td>
+                <strong>
+                    @Html.DisplayNameFor(model => model.Title)
+                </strong>
+            </td>
+            <td>
+                <strong>
+                    @Html.DisplayNameFor(model => model.Email)
+                </strong>
+            </td>
+            <td>
+                <strong>
+                    @Html.DisplayNameFor(model => model.PhoneNumber)
+                </strong>
+            </td>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Active)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new {userName = item.UserName})
+                    @*@Html.ActionLink("Delete", "Delete", new { userName = item.UserName })*@
+                </td>
+            </tr>
+        }
+    </table>
+    <table>
+        <tr>
+            <td>
+                @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

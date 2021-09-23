@@ -1,0 +1,30 @@
+﻿@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ReportsMenu</title>
+</head>
+<body>
+<table>
+    <tr><td><b>Reports Menu</b></td></tr>
+    <tr></tr>
+    <tr><td><a href="@Url.Action("CountyReport", "Deliveries")">County Report</a><br /></td></tr>
+    <tr><td><a href="@Url.Action("QuorkReport", "Deliveries")">Weekly QORK Report</a><br /></td></tr>
+    <tr><td><a href="@Url.Action("VolunteerDatesReport", "Users")">Volunteer Start and End Dates</a><br /></td></tr>
+
+</table>
+<br/>
+<div>
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+</div>
+</body>
+</html>
+
+<script>
+    $(function () {
+        window.$("#BeginMonth").datepicker();
+    });
+</script> @*BeginMonth datepicker*@
+

@@ -1,0 +1,44 @@
+﻿@model BHelp.Models.Delivery
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Delete</title>
+</head>
+<body>
+    <h3>Are you sure you want to delete this?</h3>
+    <div>
+        <h4>Delivery</h4>
+        <hr />
+        <table>
+            <tr>
+                <td>@Html.Label("Last Name: ")</td>
+                <td> @Html.DisplayFor(model => model.LastName)</td>
+            </tr>
+            <tr>
+                <td>@Html.Label("Address: ")</td>
+                <td> @Html.DisplayFor(model => model.StreetNumber)</td>
+                <td>@Html.DisplayFor(model => model.StreetName)</td>
+            </tr>
+            <tr>
+                <td>@Html.Label("Log Date: ")</td>
+                <td> @Html.DisplayFor(model => model.LogDate)</td>
+            </tr>
+        </table>
+       @using (Html.BeginForm()) {
+            @Html.AntiForgeryToken()
+           <div>
+               <br/>
+               <input type="submit" value="Delete" class="btn btn-default" style="color: red" /> |
+               @Html.ActionLink("Back to List", "Index")
+           </div>
+        }
+    </div>
+</body>
+</html>
