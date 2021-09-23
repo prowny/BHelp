@@ -150,7 +150,13 @@ namespace BHelp.Controllers
             }
             return View(listDeliveryViewModels);
         }
- 
+
+        public ActionResult OpenDeliveriesToExcel()
+        {
+            var result = AppRoutines.OpenDeliveriesToExcel();
+            return result;
+        }
+
         // GET: Deliveries/Details/5
         public ActionResult Details(int? id)
         {

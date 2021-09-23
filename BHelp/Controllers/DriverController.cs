@@ -135,41 +135,8 @@ namespace BHelp.Controllers
 
         public ActionResult OpenDeliveriesToExcel()
         {
-            var view = GetOpenDeliveryViewModel();
-            XLWorkbook workbook = new XLWorkbook();
-            IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
-            int activeRow = 1;
-            ws.Cell(activeRow, 1).SetValue(view.ReportTitle);
-            ws.Cell(activeRow, 2).SetValue(DateTime.Today.ToShortDateString());
-            activeRow++;
-            ws.Cell(activeRow, 1).SetValue("Delivery Date");
-            ws.Cell(activeRow, 2).SetValue("Driver");
-            ws.Cell(activeRow, 3).SetValue("Zip Code");
-            ws.Cell(activeRow, 4).SetValue("Client");
-            ws.Cell(activeRow, 5).SetValue("Address");
-            ws.Cell(activeRow, 6).SetValue("City");
-            ws.Cell(activeRow, 7).SetValue("Phone");
-            ws.Cell(activeRow, 8).SetValue("# in HH");
-            ws.Cell(activeRow, 9).SetValue("Client Notes");
-            ws.Cell(activeRow, 10).SetValue("OD Notes");
-            ws.Cell(activeRow, 11).SetValue("Driver Notes");
-            
-            for (var i = 0; i < view.OpenDeliveryCount; i++)
-            {
-                activeRow++;
-                for (var j = 1; j < 12; j++)
-                {
-                    ws.Cell(activeRow, j).SetValue(view.OpenDeliveries[i,j]);
-                }
-            }
-
-
-            ws.Columns().AdjustToContents();
-            MemoryStream ms = new MemoryStream();
-            workbook.SaveAs(ms);
-            ms.Position = 0;
-            return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                { FileDownloadName = view.ReportTitle + ".xlsx" };
+            var result = AppRoutines.OpenDeliveriesToExcel();
+            return result;
         }
 
         private OpenDeliveryViewModel GetOpenDeliveryViewModel()
@@ -213,7 +180,6 @@ namespace BHelp.Controllers
             }
             return odv;
         }
-
         public ActionResult ReturnToDashboard()
         {
             return RedirectToAction("Index", "Home");
