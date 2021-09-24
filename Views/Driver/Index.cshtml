@@ -1,0 +1,116 @@
+﻿@*@model IEnumerable<BHelp.Models.Delivery>*@
+@model BHelp.ViewModels.DeliveryViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
+</head>
+<body>
+    @*<table class="table">
+        <tr>
+            <td>Log Date:&nbsp;</td>
+            <td>
+                @Html.TextBoxFor(model => model.LogDate, Model.LogDate.ToString("MM/dd/yyyy"),
+                new {id = "LogDate", style = "width: 75px;"})
+        </td>
+        <td style="color: darkmagenta">&#8592;Click to change</td>
+    </tr>
+</table>*@
+@*<table class="table">
+    <tr>
+        <td><b> @Html.Label("First Name")</b></td>
+        <td><b> @Html.Label("Last Name")</b></td>
+        <td><b> @Html.Label("Street")</b></td>
+        <td><b> @Html.Label("Street Name")</b></td>
+        <td><b> @Html.Label("Zip")</b></td>
+        <td><b> @Html.Label("City")</b></td>
+        <td><b> @Html.Label("Client Phone")</b></td>
+        <td><b> @Html.Label("HH:C")</b></td>
+        <td><b> @Html.Label("HH:A")</b></td>
+        <td><b> @Html.Label("HH:S")</b></td>
+        <td><b> @Html.Label("OD Notes")</b></td>
+    </tr>
+    <tr>
+        <td><b> @Html.Label("Full")</b></td>
+        <td><b> @Html.Label("Half")</b></td>
+        <td><b> @Html.Label("Kids")</b></td>
+        <td><b> @Html.Label("Giant Eligible")</b></td>
+        <td><b> @Html.Label("Giant Cards")</b></td>
+        <td><b> @Html.Label("Delvered")</b></td>
+        <td><b> @Html.Label("Complete")</b></td>
+        <td><b> @Html.Label("Notes")</b></td>
+    </tr>
+</table>*@
+
+<h4>Open Deliveries</h4>
+@if (Model.DeliveryList != null && Model.DeliveryList.Any())
+{
+    foreach (var item in Model.DeliveryList)
+    {
+        <table>
+            <tr>
+                <td><b>@Html.Label("Del Date:")</b></td>
+                <td>@Html.DisplayFor(modelItem => item.DeliveryDate)</td>
+                <td><b>@Html.Label("Driver:")</b></td>
+                <td>@Html.DisplayFor(modelItem => item.DriverName)</td>
+                <td><b>@Html.Label("Zip:")</b></td>
+                <td>@Html.DisplayFor(modelItem => item.Zip)</td>
+                <td><b>@Html.Label("Client:")</b></td>
+                <td>@Html.DisplayFor(modelItem => item.ClientNameAddress)</td>
+                <td>@Html.DisplayFor(modelItem => item.Phone)</td>
+                <td><b> @Html.Label("HH#:")</b></td>
+                <td>@Html.DisplayFor(modelItem => item.HouseoldCount)</td>
+                <td>@Html.ActionLink("Edit", "Edit", new {id = item.Id})</td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                @*<td><b> @Html.Label("Children:")</b></td>
+                <td>@Html.DisplayFor(modelItem => item.Children)</td>
+                <td><b> @Html.Label("Adults:")</b></td>
+                <td>@Html.DisplayFor(modelItem => item.Adults)</td>
+                <td><b> @Html.Label("Seniors:")</b></td>
+                <td>@Html.DisplayFor(modelItem => item.Seniors)</td>
+
+                <td>@Html.DisplayFor(modelItem => item.DriverNotes)</td>
+                <td>@Html.ActionLink("Edit", "Edit", new {id = item.Id})</td>*@
+            </tr>
+        </table>
+    }
+}
+<br />
+<div>
+    @Html.ActionLink("Download to Excel", "OpenDeliveriesToExcel", new { })
+    <span style="color: darkmagenta">&#8592;Will include Client Notes, OD Notes, and Driver Notes</span>
+</div>
+<div id="ReturnToDashboard">
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+</div>
+</body>
+</html>
+<script>
+    $(function () {
+        window.$("#LogDate").datepicker();
+    });
+</script> @*LogDate datepicker*@
+<script>
+    $(document).ready(function () {
+        $(".datepicker").datepicker({
+            dateFormat: "dd-mm-yy",
+            changemonth: true,
+            changeyear: true
+        });
+    });
+</script>
+<script type="text/javascript">
+    $("#LogDate").change(function () {
+        UpdateDriverLogDate(window.$('#LogDate').val());
+    });
+</script>

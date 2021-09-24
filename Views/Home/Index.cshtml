@@ -1,0 +1,97 @@
+﻿@model BHelp.Models.ApplicationUser
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <style>
+        p.indent {padding-left: 1em}
+        div {padding-left: 10px}
+    </style>
+    <link rel="icon" href="~/images/bhelp.ico" type="image/x-icon" />
+</head>
+<body>
+
+    <div>
+        <table>
+            <tr><td>&nbsp;&nbsp; Welcome  @User.Identity.Name!</td></tr>
+            <tr>
+                <td>
+                    <p style="text-decoration:underline" class="indent"><strong>Bethesda Help Food Delivery Program Dashboard</strong></p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    @if (User.IsInRole("Developer"))
+    {
+        <div>
+            <strong>Developer Menu</strong><br />
+            <a href="@Url.Action("UploadClients", "Home")">Upload Clients Utility</a><br />
+            <a href="@Url.Action("GetZipCodes", "Home")">Get Zip Codes</a><br />
+            <a href="@Url.Action("UploadDeliveries", "Home")">Upload Deliveries</a><br />
+            <a href="@Url.Action("CopyClientZipToDelivery", "Home")">Copy Client Zip To Delivery</a><br />
+            <a href="@Url.Action("CopySnapshotDataToDelivery", "Home")">Copy Snapshot Data To Delivery</a><br />
+        </div>
+
+    }
+    <br />
+    @if (User.IsInRole("Administrator") || User.IsInRole("Developer"))
+    {
+        <div>
+            <strong>Administrator Menu</strong><br />
+            <a href="@Url.Action("MaintainUsers", "Home")">Maintain Volunteers / Website Users</a><br />
+            <a href="@Url.Action("MaintainUserRoles", "Home")">Maintain User Permissions (&quot;Roles&quot;)</a><br />
+            <a href="@Url.Action("ResetAnyPassword", "Account")">Reset Any Password</a><br />
+            <br />
+        </div>
+    }
+
+    @if (User.IsInRole("Staff") || User.IsInRole("Administrator"))
+    {
+        <div>
+            <strong>Staff Menu</strong><br />
+            <a href="@Url.Action("Index", "Clients")">Maintain Clients</a>
+            <span style="color: darkmagenta">("Alpha List")</span><br />
+            <a href="@Url.Action("Index", "OD")">Maintain Family Members (Family)</a>
+            <span style="color: darkmagenta"> (Go to OD Select Client page)</span><br />
+            <a href="@Url.Action("CallLogMenu", "Deliveries")">Maintain Call Log History</a><br />
+            <a href="@Url.Action("Index", "Deliveries")">Maintain Open Deliveries</a>
+            <span style="color: darkmagenta"> (Deliveries with no Date Delivered or not Completed)</span><br />
+            <a href="@Url.Action("ReportsMenu", "Deliveries")">Reports</a><br />
+        </div>
+    }
+    <br />
+
+    @if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("Staff") || User.IsInRole("Administrator"))
+    {
+        <div>
+            <strong>Officer of the Day Menu</strong><br />
+            <a href="@Url.Action("Index", "OD")">Call Log - OD Section</a><br />
+            <a href="@Url.Action("Index", "Deliveries")">Maintain Open Deliveries</a>
+            </div>
+    }
+    <br />
+
+    @if (User.IsInRole("Driver") || User.IsInRole("Staff") || User.IsInRole("Administrator"))
+    {
+        <div>
+            <strong>Driver Menu</strong><br />
+            <a href="@Url.Action("Index", "Driver")">Call Log - Driver Section</a><br />
+        </div>
+    }
+<br />
+
+<div>
+    <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br />
+    <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br />
+    <a href="@Url.Action("GoToBHelpSite", "Home")">Go To Bethesda Help Website</a><br />
+    <br />
+    @Html.AntiForgeryToken()
+    <a href="@Url.Action("Logout", "Home")">LogOut</a>
+</div>
+
+</body>
+</html>

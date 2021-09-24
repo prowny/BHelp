@@ -1,0 +1,89 @@
+﻿@model BHelp.ViewModels.FamilyViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <style>
+        p.indent {padding-left: 1em}
+        div {padding-left: 10px}
+    </style>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
+</head>
+
+<body>
+<table class="table">
+    <tr>
+        <td>&nbsp;&nbsp; User Name:&nbsp; @User.Identity.Name</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>Maintain Household Members</b></td>
+    </tr>
+</table>
+
+<table class="table">
+    <tr>
+        <td style="font-size: small"><b>@Html.Label("Select Client")</b></td>
+    </tr>
+    <tr>
+        <td>@Html.DropDownList("client_Id", Model.Clients)</td>
+    </tr>
+</table>
+
+<div id="FamilyMembersDiv" style="display:none">
+    <table>
+        <tr>
+            <td><b>@Html.DisplayNameFor(model => model.FirstName)</b></td>
+            <td><b> @Html.DisplayNameFor(model => model.LastName)</b></td>
+            <td><b> @Html.DisplayNameFor(model => model.Age)</b></td>
+        </tr>
+        @for (int i = 0; i < Model.FamilyMembers.Count; i++)
+        {
+            @Html.HiddenFor(mbr => Model.FamilyMembers[i].Id)
+            @Html.HiddenFor(mbr => Model.FamilyMembers[i].ClientId)
+            <tr>
+                <td>@Html.EditorFor(modelItem => Model.FamilyMembers[i].FirstName)</td>
+                <td>@Html.EditorFor(modelItem => Model.FamilyMembers[i].LastName)</td>
+                <td>@Html.EditorFor(modelItem => Model.FamilyMembers[i].Age)</td>
+            </tr>
+        }
+    </table>
+</div>
+
+@*@foreach (var item in Model.FamilyMembers)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClientId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateOfBirth)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+            </td>
+        </tr>*@
+
+
+<br/>
+<div id="ReturnToDashboard">
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new {})
+</div>
+</body>
+</html>
+<script type="text/javascript">
+    $("#client_Id").change(GetFamilyDetails);
+</script>

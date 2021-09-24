@@ -1,0 +1,88 @@
+﻿@using System.Web.Mvc.Html
+@model IEnumerable<BHelp.ViewModels.DeliveryViewModel>
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head><meta name="viewport" content="width=device-width" /><title>Index</title>
+    <style>
+        .col25 {width: 25px;text-align: center}
+        .col40 {width: 40px;text-align: left}
+        .col50 {width: 50px;text-align: left}
+        .col60 {width: 60px;text-align: left}
+        .col100{ width: 100px; text-align: left;}
+    </style>
+</head>
+
+<body>
+<p><b>Open Deliveries</b></p>
+@*<p>@Html.ActionLink("Create New Delivery", "Create")</p>*@
+<table class="table">
+    <tr>
+        <th>@Html.Label("Log Date")</th>
+        <th><div class="col100">@Html.Label("OD Name")</div></th>
+        <th><div class="col50">@Html.Label("Last Name")</div></th>
+        <th><div class="col50">@Html.Label("First Name")</div></th>
+        <th><div class="col50">@Html.Label("Street No")</div></th>
+        <th><div class="col100">@Html.Label("Street Name")</div></th>
+        <th><div class="col100">@Html.Label("City")</div></th>
+        <th><div class="col25">@Html.Label("Zip Code")</div></th>
+        <th><div class="col100">@Html.Label("Client Phone")</div></th>
+        <th><div class="col100">@Html.Label("OD Notes")</div></th>
+        <th><div class="col25">@Html.Label("#C")</div></th>
+        <th><div class="col25">@Html.Label("#A")</div></th>
+        <th><div class="col25">@Html.Label("#S")</div></th>
+        <th><div class="col100">@Html.Label("Names/Age ALL in HH")</div></th>
+        <th><div class="col40">@Html.Label("Gift Cards Eligible")</div></th>
+        <th><div class="col100" style="text-align: center">@Html.Label("Driver")</div></th>
+        <th><div class="col40">@Html.Label("Full Bags")</div></th>
+        <th><div class="col40">@Html.Label("Half Bags")</div></th>
+        <th><div class="col40">@Html.Label("Kids Snack")</div></th>
+        <th><div class="col40">@Html.Label("Giant Gift Cards")</div></th>
+        <th><div class="col100">@Html.Label("Driver Notes ")</div></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+    <tr>
+        <td>@Html.DisplayFor(modelItem => item.LogDate)</td>
+        <td>@Html.DisplayFor(modelItem => item.ODName, new { style = "width:100px" })</td>
+        <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+        <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+        <td>@Html.DisplayFor(modelItem => item.StreetNumber)</td>
+        <td title=@item.StreetToolTip>
+            @Html.DisplayFor(modelItem => item.StreetName)
+        </td>
+        <td title=@item.CityToolTip>
+            @Html.DisplayFor(modelItem => item.City)
+        </td>
+        <td>@Html.DisplayFor(modelItem => item.Zip)</td>
+        <td title=@item.PhoneToolTip>
+            @Html.DisplayFor(modelItem => item.Phone)
+        </td>
+        <td title=@item.ODNotesToolTip>@Html.DisplayFor(modelItem => item.ODNotes)</td>
+        <td style="text-align: center">@Html.DisplayFor(modelItem => item.KidsCount)</td>
+        <td style="text-align: center">@Html.DisplayFor(modelItem => item.AdultsCount)</td>
+        <td style="text-align: center">@Html.DisplayFor(modelItem => item.SeniorsCount)</td>
+        <td>@Html.DropDownListFor(modelItem => item.Notes, item.FamilySelectList)</td>
+        <td style="text-align: center">@Html.DisplayFor(modelItem => item.GiftCardsEligible)</td>
+        <td>@Html.DisplayFor(modelItem => item.DriverName)</td>
+        <td style="text-align: center">@Html.DisplayFor(modelItem => item.FullBags)</td>
+        <td style="text-align: center">@Html.DisplayFor(modelItem => item.HalfBags)</td>
+        <td style="text-align: center">@Html.DisplayFor(modelItem => item.KidSnacks)</td>
+        <td style="text-align: center">@Html.DisplayFor(modelItem => item.GiftCards)</td>
+        <td title=@item.DriverNotesToolTip>@Html.DisplayFor(modelItem => item.DriverNotes)</td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.Id, desiredDeliveryDate = item.DeliveryDate})
+        </td>
+    </tr>
+    }
+</table>
+<div>
+    @Html.ActionLink("Download to Excel File", "OpenDeliveriesToExcel", new { })
+    <br/>
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+
+</div>
+</body>
+</html>

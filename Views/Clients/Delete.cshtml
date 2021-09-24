@@ -1,0 +1,63 @@
+﻿@model BHelp.Models.Client
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<style>
+    #DeleteButton {background-color: red; color:white }
+</style>
+<h4>Delete Client</h4>
+<h4>Are you sure you want to permanently delete this client and all family members?</h4>
+<div>
+    <hr />
+    <table>
+        <tr>
+            <td> @Html.DisplayNameFor(model => model.Active)</td>
+            <td> @Html.DisplayFor(model => model.Active)</td>
+        </tr>
+        <tr>
+            <td> @Html.DisplayNameFor(model => model.FirstName)</td>
+            <td> @Html.DisplayFor(model => model.FirstName)</td>
+        </tr>
+        <tr>
+            <td> @Html.DisplayNameFor(model => model.LastFirstName)</td>
+            <td> @Html.DisplayFor(model => model.LastFirstName)</td>
+        </tr>
+        <tr>
+            <td> @Html.DisplayNameFor(model => model.Age)</td>
+            <td> @Html.DisplayFor(model => model.Age)</td>
+        </tr>
+        <tr>
+            <td> @Html.DisplayNameFor(model => model.StreetNumber)</td>
+            <td> @Html.DisplayFor(model => model.StreetNumber)</td>
+        </tr>
+        <tr>
+            <td> @Html.DisplayNameFor(model => model.StreetName)</td>
+            <td> @Html.DisplayFor(model => model.StreetName)</td>
+        </tr>
+        <tr>
+            <td> @Html.DisplayNameFor(model => model.City)</td>
+            <td> @Html.DisplayFor(model => model.City)</td>
+        </tr>
+        <tr>
+            <td> @Html.DisplayNameFor(model => model.Zip)</td>
+            <td> @Html.DisplayFor(model => model.Zip)</td>
+        </tr>
+        <tr>
+            <td> @Html.DisplayNameFor(model => model.Phone)</td>
+            <td> @Html.DisplayFor(model => model.Phone)</td>
+        </tr>
+        <tr>
+            <td> @Html.DisplayNameFor(model => model.Notes)</td>
+            <td> @Html.DisplayFor(model => model.Notes)</td>
+        </tr>
+    </table>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div>
+            <input type="submit" value="Delete" class="btn btn-default" id="DeleteButton"/> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>
