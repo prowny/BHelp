@@ -388,6 +388,7 @@ namespace BHelp.Controllers
                     updateData.DriverId = delivery.DriverId;
                     updateData.ODId = delivery.ODId;
                     updateData.DriverNotes = delivery.DriverNotes;
+                    updateData.Completed = delivery.Completed;
                     var previouslyCompleted = updateData.Completed;
                     updateData.DeliveryDate = delivery.DeliveryDate;
                     if (delivery.DateDelivered != null)
@@ -473,6 +474,7 @@ namespace BHelp.Controllers
                 callLogView.DeliveryList = deliveryList;
                 foreach (var del in callLogView.DeliveryList)
                 {
+                    del.DriverName = GetDriverName(del.DriverId);
                     if (del.DateDelivered.HasValue)
                     {
                         del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
@@ -509,6 +511,7 @@ namespace BHelp.Controllers
 
             foreach (var del in callLogView.DeliveryList)
             {
+                del.DriverName = GetDriverName(del.DriverId);
                 if (del.DateDelivered.HasValue)
                 {
                     del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";

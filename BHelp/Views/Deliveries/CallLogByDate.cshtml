@@ -46,8 +46,9 @@
             </tr>
             <tr>
                 <td>Log Date</td>
-                <td>Name</td>
+                <td>Client Name</td>
                 <td>Addess</td>
+                <td>Driver</td>
                 <td>Date Delivered</td>
                 <td>Completed</td>
             </tr>
@@ -60,6 +61,7 @@
                     @{ bool cmpltd = delivery.Completed;}
                     <td>@name</td>
                     <td>@addr</td>
+                    <td >@delivery.DriverName</td>
                     <td>@delivery.DateDeliveredString</td>
                     <td style="text-align: center">@Html.CheckBox("Completed", cmpltd)</td>
                     <td>
