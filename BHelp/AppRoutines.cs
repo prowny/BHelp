@@ -138,25 +138,32 @@ namespace BHelp
         public static DateTime GetNextGiftCardEligibleDate(int clientId, DateTime dt)
         {
             // GIFT CARDS ELIGIBLE:
-            // 1 per week maximum
-            // 1 per household of 3 or fewer
-            // 2 per household of 4 or more
-            // 3 max per calendar month;
-            var giftCardsThisMonth = GetGiftCardsThisMonth(clientId, dt);
-            var lastGiftCardDate = GetDateLastGiftCard(clientId);
-            var nextEligibleDate = lastGiftCardDate.AddDays(7);
-            if (giftCardsThisMonth >= 3)    // if already 3 this month, no more
+            // 1 per household of 3 or fewer; 1 per household per calendar month max
+            // 2 per household of 4 or more; 2 per household per calendar month max;
+            var eligible = 0;
+            var numberInHousehold = GetFamilyMembers(clientId).Count;
+            var firstOfMonth = new DateTime(dt.Year, dt.Month, 1);
+            var totalThisMonth = GetGiftCardsThisMonth(clientId, firstOfMonth);
+            if (numberInHousehold <= 3)   // 1 per household of 3 or fewer
             {
-                nextEligibleDate = nextEligibleDate.AddMonths(1);
-                nextEligibleDate =new DateTime( nextEligibleDate.Year,
-                nextEligibleDate.Month, 1); // move it to next month
+                eligible = 1;
+                if (eligible + totalThisMonth > 1) eligible = 0;
+            }
+            if (numberInHousehold >= 4)    // 2 per household of 4 or more
+            {
+                eligible = 2;
+                if (eligible + totalThisMonth > 2) eligible = 0;
             }
 
-            var nedd = GetNextEligibleDeliveryDate(clientId, dt);
-            if (lastGiftCardDate < nedd)
+            var lastGiftCardDate = GetDateLastGiftCard(clientId);
+            var nextEligibleDate = lastGiftCardDate.AddDays(7);
+            if (eligible == 0)
             {
-                nextEligibleDate = nedd;
+                nextEligibleDate = nextEligibleDate.AddMonths(1);
+                nextEligibleDate = new DateTime(nextEligibleDate.Year,
+                    nextEligibleDate.Month, 1); // move it to next month
             }
+
             return nextEligibleDate;
         }
         public static List<string> GetZipCodesList()
