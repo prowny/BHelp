@@ -276,7 +276,6 @@ namespace BHelp.Controllers
                 viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
             }
 
-            var totalThisMonth = 0;
             if (delivery.Completed == false)
             {
                 // Calculate # of Full, Half, Snacks, and Gift Cards
@@ -284,6 +283,7 @@ namespace BHelp.Controllers
                 // 1 per household of 3 or fewer; 1 per household per calendar month max
                 // 2 per household of 4 or more; 2 per household per calendar month max
                 var firstOfMonth = new DateTime(delivery.DeliveryDate.Year, delivery.DeliveryDate.Month, 1);
+                var totalThisMonth = 0;
                 if (delivery.DateDelivered != null)
                 {
                     var yy = delivery.DateDelivered.Value.Year;
@@ -362,6 +362,16 @@ namespace BHelp.Controllers
 
                 // Kid Snacks:
                 viewModel.KidSnacks = AppRoutines.GetNumberOfKids2_17(client.Id);
+            }
+
+            if (delivery.Completed && delivery.DateDelivered == null)  // failed delivery
+            {
+                var yy = delivery.DeliveryDate.Year;
+                var mm = delivery.DeliveryDate.Month;
+                var dd = delivery.DeliveryDate.Day;
+                var firstOfMonth = new DateTime(delivery.DeliveryDate.Year, delivery.DeliveryDate.Month, 1);
+                var dt2 = new DateTime(yy, mm, dd);
+                viewModel.GiftCardsThisMonth = GetGiftCardsSince(client.Id, firstOfMonth, dt2);
             }
 
             viewModel.Zip = delivery.Zip;
