@@ -210,18 +210,23 @@ namespace BHelp.Controllers
         // GET: Deliveries/Edit/5
         public ActionResult Edit(int? id, string desiredDeliveryDate)
         {
-            if (id == null) { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
-            
-            if (id == 0) // coming from UpdateDesiredDeliveryDate
+            switch (id)
             {
-                id = Convert.ToInt32(TempData["CurrentDeliveryId"]);
-                var del = db.Deliveries.Find(id);
-                if (del != null)
-                {
-                    del.DeliveryDate = Convert.ToDateTime(desiredDeliveryDate);
-                    db.SaveChanges();
+                case null:
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                case 0: // coming from UpdateDesiredDeliveryDate
+                    {
+                    id = Convert.ToInt32(TempData["CurrentDeliveryId"]);
+                    var del = db.Deliveries.Find(id);
+                    if (del != null)
+                    {
+                        del.DeliveryDate = Convert.ToDateTime(desiredDeliveryDate);
+                        db.SaveChanges();
+                    }
+                    break;
                 }
             }
+
             TempData["CurrentDeliveryId"] = id.ToString();
 
             var delivery = db.Deliveries.Find(id);
@@ -272,6 +277,11 @@ namespace BHelp.Controllers
                 viewModel.ClientNameAddress = client.LastName + ", " + client.FirstName
                                               + " " + client.StreetNumber + " " + client.StreetName + " " + client.Zip;
                 viewModel.Notes = client.Notes;
+                if (viewModel.Notes.Length > 32)
+                {
+                    viewModel.Notes = client.Notes.Substring(0, client.Notes.Length - 1);
+                }
+
                 viewModel.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
                 viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
             }
@@ -283,7 +293,7 @@ namespace BHelp.Controllers
                 // 1 per household of 3 or fewer; 1 per household per calendar month max
                 // 2 per household of 4 or more; 2 per household per calendar month max
                 var firstOfMonth = new DateTime(delivery.DeliveryDate.Year, delivery.DeliveryDate.Month, 1);
-                var totalThisMonth = 0;
+                int totalThisMonth;
                 if (delivery.DateDelivered != null)
                 {
                     var yy = delivery.DateDelivered.Value.Year;
@@ -412,8 +422,12 @@ namespace BHelp.Controllers
                     updateData.DeliveryDate = delivery.DeliveryDate;
                     if (delivery.DateDelivered != null)
                     {
-                        updateData.DateDelivered = (DateTime) delivery.DateDelivered;
+                        updateData.DateDelivered = (DateTime)delivery.DateDelivered;
                         updateData.Completed = true;
+                    }
+                    else
+                    {
+                        updateData.DateDelivered = null;
                     }
                     // if delivery was previously Completed and now changed to False, make it False:
                     if (previouslyCompleted && delivery.Completed == false)

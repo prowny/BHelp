@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Management.Instrumentation;
 using System.Runtime.InteropServices;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
@@ -370,6 +371,7 @@ namespace BHelp
                 for (var j = 1; j < 16; j++)
                 {
                     ws.Cell(activeRow, j).SetValue(view.OpenDeliveries[i, j]);
+                    ws.Cell(activeRow, j).Style.Font.FontSize=32;
                 }
             }
 

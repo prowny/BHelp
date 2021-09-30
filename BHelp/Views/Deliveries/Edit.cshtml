@@ -17,153 +17,166 @@
     <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
 </head>
 <body>
-    @using (Html.BeginForm())
-    {
-        <input type="hidden" name="ReturnUrl" value="@Model.ReturnURL" />
-        <input type="hidden" name="HistoryStartDate" value="@Model.HistoryStartDate" />
-        <input type="hidden" name="HistoryEndDate" value="@Model.HistoryEndDate" />
-        @Html.AntiForgeryToken()
-        <div class="form-horizontal">
-            <table>
-                <tr>
-                    <td><strong>Edit Delivery</strong></td>
-                    <td style="color: darkmagenta">
-                        @Html.Label(" (Snapshot of client when the delivery was created " +
-                                    Model.LogDate.ToShortDateString() + ":)")
-                    </td>
-                    <td style="display: none" id="Id">@Html.Label(Model.Id.ToString())</td>
-                </tr>
-            </table>
-
-            <span><b>Client:</b>&nbsp;@Html.Label(Model.ClientNameAddress)&nbsp;@Html.Label(Model.Client.Phone) </span>
-            <br/>
+    <section id="editForm">
+        @using (Html.BeginForm("Edit", "Deliveries", FormMethod.Post))
+        {
+            <input type="hidden" name="ReturnUrl" value="@Model.ReturnURL"/>
+            <input type="hidden" name="HistoryStartDate" value="@Model.HistoryStartDate"/>
+            <input type="hidden" name="HistoryEndDate" value="@Model.HistoryEndDate"/>
+            @Html.AntiForgeryToken()
+            <div class="form-horizontal">
+                <table>
+                    <tr>
+                        <td><strong>Edit Delivery</strong></td>
+                        <td style="color: darkmagenta">
+                            @Html.Label(" (Snapshot of client when the delivery was created " +
+                                        Model.LogDate.ToShortDateString() + ":)")
+                        </td>
+                        <td style="display: none" id="Id">@Html.Label(Model.Id.ToString())</td>
+                    </tr>
+                </table>
+                <span>
+                    <b>Client:</b>&nbsp;@Html.Label(Model.ClientNameAddress)&nbsp;
+                    <b>Phone:</b>&nbsp;@Html.Label(Model.Client.Phone)&nbsp;
+                    <b>Notes:</b>&nbsp;@Html.Label(Model.Notes)
+                </span>
+            </div>
             <span>
                 <b>Family:</b>&nbsp;
                 @if (Model.FamilySelectList != null)
-                {@Html.DropDownListFor(modelItem => Model.Notes, Model.FamilySelectList)
-            }
+                {
+                    @Html.DropDownListFor(modelItem => Model.Notes, Model.FamilySelectList)
+                }
                 <b>Prior Delivery:</b>
                 @if (Model.DatePriorDelivery != DateTime.MinValue)
-                {@Html.Label(Model.DatePriorDelivery.ToShortDateString())
-            }
-            else
-            {
-                @Html.Label("(none)")
-            }
+                {
+                    @Html.Label(Model.DatePriorDelivery.ToShortDateString())
+                }
+                else
+                {
+                    @Html.Label("(none)")
+                }
                 <b>&nbsp;Gift Cards This Month:&nbsp;</b>@Html.Label(Model.GiftCardsThisMonth.ToString())
                 <b>&nbsp;Gift Cards Eligible:</b>&nbsp;@Html.Label(Model.GiftCardsEligible.ToString())
             </span>
-            @*<span><b>Children:&nbsp;</b>@Html.Label(Model.KidsCount.ToString())</span>&nbsp;
-            <span><b>Adults:&nbsp;</b>@Html.Label(Model.AdultsCount.ToString())</span>&nbsp;
-            <span><b>Seniors:&nbsp;</b>@Html.Label(Model.SeniorsCount.ToString())</span>*@&nbsp;
             <br/>
-            @*<span><b>Gift Cards This Month:</b>@Html.Label(Model.GiftCardsThisMonth.ToString())</span>
-            <span><b>Gift Cards Eligible:</b>&nbsp;@Html.Label(Model.GiftCardsEligible.ToString())</span>*@
-            <hr/>
-            @Html.ValidationSummary(true, "", new {@class = "text-danger"})
-            @Html.HiddenFor(model => model.Id)
-        </div>
-        <div class="form-group">
-            <table>
-                <tr>
-                    <td>Log Date:</td>
-                    <td>
-                        @Html.TextBoxFor(model => model.LogDate, Model.LogDate.ToString("MM/dd/yyyy"),
-                        new {id = "LogDate", style = "width: 75px;"})
-                    </td>
-                    <td style="color: darkmagenta">&#8592;Click to change</td>
-                    <td>&nbsp;&nbsp;Desired Delivery Date:</td>
-                    <td>
-                        @Html.TextBoxFor(model => model.DeliveryDate, Model.DeliveryDate.ToString("MM/dd/yyyy"),
-                            new {id = "DesiredDeliveryDate", style = "width: 75px;"})
-                    </td>
-                    <td style="color: darkmagenta">&#8592;Click to change</td>
-                </tr>
-            </table>
 
-            <table>
-                <tr><td></td><td></td><td>OD Notes</td><td></td><td></td><td>Driver Notes</td></tr>
-                <tr>
-                    <td>&nbsp;OD:</td>
-                    @if (Model.ODList != null)
-                    {
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.Id)
+            <hr/>
+            <div class="form-group">
+                <table>
+                    <tr>
+                        <td>Log Date:</td>
                         <td>
-                            @Html.DropDownListFor(model => model.ODId, new SelectList(Model.ODList, "Value", "Text"), new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.ODId, "", new { @class = "text-danger" })
+                            @Html.TextBoxFor(model => model.LogDate, Model.LogDate.ToString("MM/dd/yyyy"),
+                                new { id = "LogDate", style = "width: 75px;" })
                         </td>
-                    }
-                    <td>
-                        @Html.EditorFor(model => model.ODNotes, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.ODNotes, "", new { @class = "text-danger" })
-                    </td>
-                    <td>&nbsp;Driver:</td>
-                    @if (Model.DriversList != null)
-                    {
+                        <td style="color: darkmagenta"> &#8592;Click to change</td>
+                        <td> &nbsp;&nbsp;Desired Delivery Date:</td>
                         <td>
-                            @Html.DropDownListFor(model => model.DriverId, new SelectList(Model.DriversList, "Value", "Text"), new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.DriverId, "", new { @class = "text-danger" })
+                            @Html.TextBoxFor(model => model.DeliveryDate, Model.DeliveryDate.ToString("MM/dd/yyyy"),
+                                new { id = "DesiredDeliveryDate", style = "width: 75px;" })
                         </td>
-                    }
-                    <td>
-                        @Html.EditorFor(model => model.DriverNotes, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.DriverNotes, "", new { @class = "text-danger" })
-                    </td>
-                </tr>
-            </table>
-            <table>
-                <tr>
-                    <td>@Html.LabelFor(model => model.FullBags, htmlAttributes: new { @class = "control-label col-md-2" })</td>
-                    <td>
-                        @Html.EditorFor(model => model.FullBags, new { htmlAttributes = new { style = "width:35px", min = 0, max = 20 } })
-                        @Html.ValidationMessageFor(model => model.FullBags, "", new { @class = "text-danger" })
-                    </td>
-                    <td>@Html.LabelFor(model => model.HalfBags, htmlAttributes: new { @class = "control-label col-md-2" })</td>
-                    <td>
-                        @Html.EditorFor(model => model.HalfBags, new { htmlAttributes = new { style = "width:35px", min = 0, max = 20 } })
-                        @Html.ValidationMessageFor(model => model.HalfBags, "", new { @class = "text-danger" })
-                    </td>
-                    <td>@Html.LabelFor(model => model.KidSnacks, htmlAttributes: new { @class = "control-label col-md-2" })</td>
-                    <td>
-                        @Html.EditorFor(model => model.KidSnacks, new { htmlAttributes = new { style = "width:35px", min = 0, max = 20 } })
-                        @Html.ValidationMessageFor(model => model.KidSnacks, "", new { @class = "text-danger" })
-                    </td>
-                    <td>@Html.LabelFor(model => model.GiftCards, htmlAttributes: new { @class = "control-label col-md-2" })</td>
-                    <td>
-                        @Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { style = "width:35px", min = 0, max = 20 } })
-                        @Html.ValidationMessageFor(model => model.GiftCards, "", new { @class = "text-danger" })
-                    </td>
-                </tr>
-            </table>
+                        <td style="color: darkmagenta"> &#8592;Click to change</td>
+                    </tr>
+                </table>
+
+                <table>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td> OD Notes</td>
+                        <td></td>
+                        <td></td>
+                        <td>Driver Notes</td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp; OD:</td>
+                        @if (Model.ODList != null)
+                        {
+                            <td>
+                                @Html.DropDownListFor(model => model.ODId, new SelectList(Model.ODList, "Value", "Text"), new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.ODId, "", new { @class = "text-danger" })
+                            </td>
+                        }
+                        <td>
+                            @Html.EditorFor(model => model.ODNotes, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ODNotes, "", new { @class = "text-danger" })
+                        </td>
+                        <td>&nbsp;Driver:</td>
+                        @if (Model.DriversList != null)
+                        {
+                            <td>
+                                @Html.DropDownListFor(model => model.DriverId, new SelectList(Model.DriversList, "Value", "Text"), new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.DriverId, "", new { @class = "text-danger" })
+                            </td>
+                        }
+                        <td>
+                            @Html.EditorFor(model => model.DriverNotes, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.DriverNotes, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td>@Html.LabelFor(model => model.FullBags, htmlAttributes: new { @class = "control-label col-md-2" })</td>
+                        <td>
+                            @Html.EditorFor(model => model.FullBags, new { htmlAttributes = new { style = "width:35px", min = 0, max = 20 } })
+                            @Html.ValidationMessageFor(model => model.FullBags, "", new { @class = "text-danger" })
+                        </td>
+                        <td>@Html.LabelFor(model => model.HalfBags, htmlAttributes: new { @class = "control-label col-md-2" })</td>
+                        <td>
+                            @Html.EditorFor(model => model.HalfBags, new { htmlAttributes = new { style = "width:35px", min = 0, max = 20 } })
+                            @Html.ValidationMessageFor(model => model.HalfBags, "", new { @class = "text-danger" })
+                        </td>
+                        <td>@Html.LabelFor(model => model.KidSnacks, htmlAttributes: new { @class = "control-label col-md-2" })</td>
+                        <td>
+                            @Html.EditorFor(model => model.KidSnacks, new { htmlAttributes = new { style = "width:35px", min = 0, max = 20 } })
+                            @Html.ValidationMessageFor(model => model.KidSnacks, "", new { @class = "text-danger" })
+                        </td>
+                        <td>@Html.LabelFor(model => model.GiftCards, htmlAttributes: new { @class = "control-label col-md-2" })</td>
+                        <td>
+                            @Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { style = "width:35px", min = 0, max = 20 } })
+                            @Html.ValidationMessageFor(model => model.GiftCards, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                </table>
+            </div>
             <div class="form-group">
                 @Html.Label("Date Delivered")
-                @*@Html.TextBoxFor(model => model.DateDelivered, Model.DateDelivered.ToString(),
-                    new {id = "DateDelivered", style = "width: 75px;"})*@
                 @Html.TextBoxFor(model => model.DateDelivered, "{0:MM/dd/yyyy}",
-                    new {id = "DateDelivered", style = "width: 75px;"})
-                <span style="color: darkmagenta">&#8592;Enter valid date (mm/dd/yyyy)</span> @*Html left-arrow*@
+                    new { id = "DateDelivered", style = "width: 75px;" })
+                <span style="color: darkmagenta"> &#8592;Enter valid date (mm/dd/yyyy)</span> @*Html left-arrow*@
                 @Html.Label("Completed:")
                 @Html.EditorFor(model => model.Completed)
             </div>
-            <br />
+            <br/>
+
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
+                    <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
                     @Html.ActionLink("Delete", "Delete", new { id = Model.Id }, new { id = "DeleteButton" })
                 </div>
             </div>
-        </div>
-    }
-    <br />
-    <div>
-        @if (Model.ReturnURL.Contains("CallLogByDate"))
-        {@Html.ActionLink("Back to Delivery List", "CallLogByDate")}
 
-        @if (Model.ReturnURL.Contains("CallLogIndividual"))
-        {@Html.ActionLink("Back to Delivery List", "CallLogIndividual", new{clientId = Model.ClientId})}
-    </div>
-    <div>
-        @Html.ActionLink("Return to Dashboard", "ReturnToDashboard")
-    </div>
+            <br/>
+            <div>
+                @if (Model.ReturnURL.Contains("CallLogByDate"))
+                {
+                    @Html.ActionLink("Back to Delivery List", "CallLogByDate")
+                }
+
+                @if (Model.ReturnURL.Contains("CallLogIndividual"))
+                {
+                    @Html.ActionLink("Back to Delivery List", "CallLogIndividual", new { clientId = Model.ClientId })
+                }
+            </div>
+            <div>
+                @Html.ActionLink("Return to Dashboard", "ReturnToDashboard")
+            </div>
+        }
+    </section>
 </body>
 </html>
 <script>
@@ -172,19 +185,19 @@
     });
 </script> @*LogDate datepicker*@
 <script>
-    $(function () {
-        window.$("#DesiredDeliveryDate").datepicker();
-    });
+            $(function () {
+               window.$("#DesiredDeliveryDate").datepicker();
+            });
 </script> @*DeliveryDate datepicker*@
-<script type="text/javascript">
-   $("#DesiredDeliveryDate").change(function() {
-        var dDDate = $('#DesiredDeliveryDate').val();
-       UpdateDesiredDeliveryDate(dDDate);
-   });
-</script>
+@*<script type="text/javascript">
+    $("#DesiredDeliveryDate").change(function () {
+        var dDDate = window.$("#DesiredDeliveryDate").val();
+        UpdateDesiredDeliveryDate(dDDate);
+    });
+</script>*@
 <script>
     $(document).ready(function () {
-        $(".datepicker").datepicker({
+        ".datepicker".datepicker({
             dateFormat: "dd-mm-yy",
             changemonth: true,
             changeyear: true
