@@ -371,7 +371,7 @@ namespace BHelp
                 for (var j = 1; j < 16; j++)
                 {
                     ws.Cell(activeRow, j).SetValue(view.OpenDeliveries[i, j]);
-                    ws.Cell(activeRow, j).Style.Font.FontSize=32;
+                    //ws.Cell(activeRow, j).Style.Font.FontSize=32;
                 }
             }
 
