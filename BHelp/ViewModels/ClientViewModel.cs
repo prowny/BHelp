@@ -57,5 +57,8 @@ namespace BHelp.ViewModels
         public string CityToolTip { get; set; }
         public string PhoneToolTip { get; set; }
         public string NotesToolTip { get; set; }  // Household/Client notes
+        public string ReportTitle { get; set; }
+        public string[,] ClientStrings { get; set; }
+        public int ClientCount { get; set; }
     }
 }

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
+using ClosedXML.Excel;
 
 namespace BHelp.Controllers
 {
@@ -215,6 +217,76 @@ namespace BHelp.Controllers
             db.FamilyMembers.RemoveRange(db.FamilyMembers.Where(m => m.ClientId == id));
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public ActionResult ClientListToExcel()
+        {
+            var view = getClientViewModel();
+            XLWorkbook workbook = new XLWorkbook();
+            IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
+            int activeRow = 1;
+            ws.Cell(activeRow, 1).SetValue(view.ReportTitle);
+            ws.Cell(activeRow, 2).SetValue(DateTime.Today.ToShortDateString());
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue("Active");
+            ws.Cell(activeRow, 2).SetValue("Last Name");
+            ws.Cell(activeRow, 3).SetValue("First Name");
+            ws.Cell(activeRow, 4).SetValue("Age");
+            ws.Cell(activeRow, 5).SetValue("Street #");
+            ws.Cell(activeRow, 6).SetValue("Street Name");
+            ws.Cell(activeRow, 7).SetValue("City");
+            ws.Cell(activeRow, 8).SetValue("Zip");
+            ws.Cell(activeRow, 9).SetValue("Phone");
+            ws.Cell(activeRow, 10).SetValue("Notes");
+            
+            for (var i = 0; i < view.ClientCount; i++)
+            {
+                activeRow++;
+                for (var j = 1; j < 11; j++)
+                {
+                    ws.Cell(activeRow, j).SetValue(view.ClientStrings[i, j]);
+                }
+            }
+
+
+            ws.Columns().AdjustToContents();
+            MemoryStream ms = new MemoryStream();
+            workbook.SaveAs(ms);
+            ms.Position = 0;
+            return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                { FileDownloadName = view.ReportTitle + ".xlsx" };
+        }
+
+        private static ClientViewModel getClientViewModel()
+        {
+            var cvm = new ClientViewModel()
+            { ReportTitle  = "Bethesda Help Client List" };
+
+            using (var db = new BHelpContext())
+            {
+                var clientList  = new List<Client>(db.Clients )
+                    .OrderBy(d => d.LastName).ToList();
+                cvm.ClientCount = clientList.Count;
+                cvm.ClientStrings = new string[clientList.Count, 11];
+                var i = 0;
+                foreach (var cli in clientList)
+                {
+                    var client = db.Clients.Find(cli.Id);
+                    cvm.ClientStrings[i, 1] = cli.Active.ToString();
+                    cvm.ClientStrings[i, 2] = cli.LastName;
+                    cvm.ClientStrings[i, 3] = cli.FirstName;
+                    var age = AppRoutines.GetAge(cli.DateOfBirth, DateTime.Today);
+                    cvm.ClientStrings[i, 4] = age.ToString();
+                    cvm.ClientStrings[i, 5] = cli.StreetNumber;
+                    cvm.ClientStrings[i, 6] = cli.StreetName;
+                    cvm.ClientStrings[i, 7] = cli.City;
+                    cvm.ClientStrings[i, 8] = cli.Zip;
+                    cvm.ClientStrings[i, 9] = cli.Phone;
+                    cvm.ClientStrings[i, 10] = cli.Notes;
+                    i++;
+                }
+                return cvm;
+            }
         }
 
         protected override void Dispose(bool disposing)
