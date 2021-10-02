@@ -99,5 +99,6 @@ namespace BHelp.ViewModels
         public DateTime HistoryStartDate { get; set; }
         public DateTime HistoryEndDate { get; set; }
         public  string ReturnURL { get; set; }
+        public IEnumerable<SelectListItem> SnapshotFamily { get; set; }
     }
 }

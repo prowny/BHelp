@@ -244,6 +244,7 @@ namespace BHelp.Controllers
                 DriverNotes = delivery.DriverNotes,
                 DriversList = AppRoutines.GetDriversSelectList(),
                 NamesAgesInHH = delivery.NamesAgesInHH,
+                SnapshotFamily = GetSnapshotFamily(delivery.NamesAgesInHH),
                 FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId),
                 DatePriorDelivery = AppRoutines.GetPriorDeliveryDate(delivery.ClientId,delivery.LogDate),
                 DateLastDelivery = GetLastGetDeliveryDate(delivery.Id),
@@ -578,6 +579,20 @@ namespace BHelp.Controllers
 
             var view = GetCountyReportView(reportYear, reportQuarter);
             return View(view);
+        }
+
+        private List<SelectListItem> GetSnapshotFamily(string listHH)
+        {
+            var i = 0;
+            List<SelectListItem> familyList = new List<SelectListItem>();
+            var listStrLineElements = listHH.Split(',').ToList();
+            foreach (var mbr in listStrLineElements)
+            {
+                i++;
+                var newListItem = new SelectListItem() { Value = i.ToString(), Text = mbr };
+                familyList.Add(newListItem);
+            }
+            return familyList;
         }
 
         private ReportsViewModel GetCountyReportView(int yy, int qtr)

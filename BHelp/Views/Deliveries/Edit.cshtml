@@ -43,9 +43,9 @@
             </div>
             <span>
                 <b>Family:</b>&nbsp;
-                @if (Model.FamilySelectList != null)
+                @if (Model.SnapshotFamily != null)
                 {
-                    @Html.DropDownListFor(modelItem => Model.Notes, Model.FamilySelectList)
+                    @Html.DropDownListFor(model => model.SnapshotFamily, new SelectList(Model.SnapshotFamily, "Value", "Text"), new { @class = "form-control" });
                 }
                 <b>Prior Delivery:</b>
                 @if (Model.DatePriorDelivery != DateTime.MinValue)
