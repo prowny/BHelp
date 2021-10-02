@@ -221,12 +221,18 @@ namespace BHelp.Controllers
 
         public ActionResult ClientListToExcel()
         {
-            var view = getClientViewModel();
+            var view = GetClientViewModel();
+            int columns = 21;
+            var curMonth = DateTime.Now.ToString("MMMM");
+            var curYear = DateTime.Now.Year.ToString();
             XLWorkbook workbook = new XLWorkbook();
             IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
             int activeRow = 1;
             ws.Cell(activeRow, 1).SetValue(view.ReportTitle);
+            ws.Cell(activeRow, 1).Style.Font.Bold = true;
             ws.Cell(activeRow, 2).SetValue(DateTime.Today.ToShortDateString());
+            ws.Cell(activeRow, 2).Style.Font.Bold = true;
+
             activeRow++;
             ws.Cell(activeRow, 1).SetValue("Active");
             ws.Cell(activeRow, 2).SetValue("Last Name");
@@ -237,41 +243,53 @@ namespace BHelp.Controllers
             ws.Cell(activeRow, 7).SetValue("City");
             ws.Cell(activeRow, 8).SetValue("Zip");
             ws.Cell(activeRow, 9).SetValue("Phone");
-            ws.Cell(activeRow, 10).SetValue("Notes");
-            
+            ws.Cell(activeRow, 10).SetValue("Children");
+            ws.Cell(activeRow, 11).SetValue("Adults");
+            ws.Cell(activeRow, 12).SetValue("Seniors");
+            ws.Cell(activeRow, 13).SetValue("Adults Names/Ages");
+            ws.Cell(activeRow, 14).SetValue("Kids Names/Ages");
+            ws.Cell(activeRow, 15).SetValue("# in HH");
+            ws.Cell(activeRow, 16).SetValue("Notes");
+            ws.Cell(activeRow, 17).SetValue("Date Last Delivery");
+            ws.Cell(activeRow, 18).SetValue("Date Last Gift Card");
+            ws.Cell(activeRow, 19).SetValue("Next Eligible for Food on");
+            ws.Cell(activeRow, 20).SetValue("Next Eligible for Gift Card(s) on");
+            ws.Cell(activeRow, 21).SetValue("# Deliveries " + curMonth + " " + curYear );
+            for (var i = 1; i < columns + 1; i++)
+            { ws.Cell(activeRow, i).Style.Font.Bold = true; }
+
             for (var i = 0; i < view.ClientCount; i++)
             {
                 activeRow++;
-                for (var j = 1; j < 11; j++)
+                for (var j = 1; j < columns; j++)
                 {
                     ws.Cell(activeRow, j).SetValue(view.ClientStrings[i, j]);
                 }
             }
 
-
             ws.Columns().AdjustToContents();
             MemoryStream ms = new MemoryStream();
             workbook.SaveAs(ms);
             ms.Position = 0;
+            var fileName = "BH Running Client List " + DateTime.Now.ToShortDateString();
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                { FileDownloadName = view.ReportTitle + ".xlsx" };
+                { FileDownloadName = fileName + ".xlsx" };
         }
 
-        private static ClientViewModel getClientViewModel()
+        private static ClientViewModel GetClientViewModel()
         {
-            var cvm = new ClientViewModel()
-            { ReportTitle  = "Bethesda Help Client List" };
+            var cvm = new ClientViewModel { ReportTitle  = "BH Food Client List" };
+            var columns = 21;
 
             using (var db = new BHelpContext())
             {
                 var clientList  = new List<Client>(db.Clients )
                     .OrderBy(d => d.LastName).ToList();
                 cvm.ClientCount = clientList.Count;
-                cvm.ClientStrings = new string[clientList.Count, 11];
+                cvm.ClientStrings = new string[clientList.Count, columns];
                 var i = 0;
                 foreach (var cli in clientList)
                 {
-                    var client = db.Clients.Find(cli.Id);
                     cvm.ClientStrings[i, 1] = cli.Active.ToString();
                     cvm.ClientStrings[i, 2] = cli.LastName;
                     cvm.ClientStrings[i, 3] = cli.FirstName;
@@ -282,7 +300,9 @@ namespace BHelp.Controllers
                     cvm.ClientStrings[i, 7] = cli.City;
                     cvm.ClientStrings[i, 8] = cli.Zip;
                     cvm.ClientStrings[i, 9] = cli.Phone;
-                    cvm.ClientStrings[i, 10] = cli.Notes;
+
+
+                    cvm.ClientStrings[i, 16] = cli.Notes;
                     i++;
                 }
                 return cvm;
