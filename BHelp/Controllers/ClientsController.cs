@@ -32,7 +32,7 @@ namespace BHelp.Controllers
                     Active = client.Active,
                     FirstName = client.FirstName,
                     LastName = client.LastName,
-                    Age = AppRoutines.GetAge(client.DateOfBirth,DateTime.Today),
+                    Age = AppRoutines.GetAge(client.DateOfBirth),
                     StreetNumber = client.StreetNumber,
                     StreetName = client.StreetName,
                     StreetToolTip = client.StreetName.Replace(" ", "\u00a0"),
@@ -153,7 +153,7 @@ namespace BHelp.Controllers
                 return HttpNotFound();
             }
             client.ZipCodes = AppRoutines.GetZipCodesSelectList();
-            client.Age = AppRoutines.GetAge(client.DateOfBirth, DateTime.Today);
+            client.Age = AppRoutines.GetAge(client.DateOfBirth);
             foreach (var item in client.ZipCodes)
             {
                 if (item.Value == client.Zip)
@@ -232,7 +232,6 @@ namespace BHelp.Controllers
             ws.Cell(activeRow, 1).Style.Font.Bold = true;
             ws.Cell(activeRow, 2).SetValue(DateTime.Today.ToShortDateString());
             ws.Cell(activeRow, 2).Style.Font.Bold = true;
-
             activeRow++;
             ws.Cell(activeRow, 1).SetValue("Active");
             ws.Cell(activeRow, 2).SetValue("Last Name");
@@ -261,7 +260,7 @@ namespace BHelp.Controllers
             for (var i = 0; i < view.ClientCount; i++)
             {
                 activeRow++;
-                for (var j = 1; j < columns; j++)
+                for (var j = 1; j < columns + 1; j++)
                 {
                     ws.Cell(activeRow, j).SetValue(view.ClientStrings[i, j]);
                 }
@@ -286,29 +285,139 @@ namespace BHelp.Controllers
                 var clientList  = new List<Client>(db.Clients )
                     .OrderBy(d => d.LastName).ToList();
                 cvm.ClientCount = clientList.Count;
-                cvm.ClientStrings = new string[clientList.Count, columns];
+                cvm.ClientStrings = new string[clientList.Count, columns + 1];
                 var i = 0;
                 foreach (var cli in clientList)
                 {
                     cvm.ClientStrings[i, 1] = cli.Active.ToString();
                     cvm.ClientStrings[i, 2] = cli.LastName;
                     cvm.ClientStrings[i, 3] = cli.FirstName;
-                    var age = AppRoutines.GetAge(cli.DateOfBirth, DateTime.Today);
+                    var age = AppRoutines.GetAge(cli.DateOfBirth);
                     cvm.ClientStrings[i, 4] = age.ToString();
                     cvm.ClientStrings[i, 5] = cli.StreetNumber;
                     cvm.ClientStrings[i, 6] = cli.StreetName;
                     cvm.ClientStrings[i, 7] = cli.City;
                     cvm.ClientStrings[i, 8] = cli.Zip;
                     cvm.ClientStrings[i, 9] = cli.Phone;
-
-
+                    var familyList = db.FamilyMembers
+                        .Where(f => f.ClientId == cli.Id).ToList();
+                    cvm.ClientStrings[i, 10] = GetChildrenCount(familyList);
+                    cvm.ClientStrings[i, 11] = GetAdultCount(familyList);
+                    cvm.ClientStrings[i, 12] = GetSeniorCount(age, familyList); // Age of Head of Household
+                    cvm.ClientStrings[i, 13] = GetAdultNamesAges(cli.Id, familyList);
+                    cvm.ClientStrings[i, 14] = GetKidsNamesAges(familyList);
+                    var numberInHousehold = familyList.Count + 1;
+                    cvm.ClientStrings[i, 15] = numberInHousehold.ToString();
                     cvm.ClientStrings[i, 16] = cli.Notes;
+
+                    var lastDD = AppRoutines.GetLastDeliveryDate(cli.Id);
+                    if (lastDD.Year < 2000)
+                    { cvm.ClientStrings[i, 17] = " - - "; }
+                    else
+                    { cvm.ClientStrings[i, 17] = lastDD.ToShortDateString(); }
+
+                    var lastGC = AppRoutines.GetDateLastGiftCard(cli.Id);
+                    if (lastGC.Year < 2000)
+                    { cvm.ClientStrings[i, 18] = " - - "; }
+                    else
+                    { cvm.ClientStrings[i, 18] = lastGC.ToShortDateString(); }
+
+                    var nextEDD = AppRoutines.GetNextEligibleDeliveryDate(cli.Id, DateTime.Now);
+                    if (nextEDD.Year < 2000)
+                    { cvm.ClientStrings[i, 19] =" (now)"; }
+                    else
+                    { cvm.ClientStrings[i, 19] = nextEDD.ToShortDateString(); }
+
+                    var nextGCED = AppRoutines.GetNextGiftCardEligibleDate(cli.Id, DateTime.Now);
+                    if (nextGCED.Year < 2000)
+                    { cvm.ClientStrings[i, 20] = " (now)"; }
+                    else
+                    { cvm.ClientStrings[i, 20] = nextGCED.ToShortDateString(); }
+
+                    cvm.ClientStrings[i, 21] = AppRoutines.GetDeliveriesCountThisMonth(cli.Id, DateTime.Now).ToString();
                     i++;
                 }
                 return cvm;
             }
         }
 
+        private static string GetChildrenCount(List<FamilyMember> familyList)
+        {
+            var result = 0; // No Head of Household in Children count
+            foreach (var mbr in familyList)
+            {
+                var age = AppRoutines.GetAge(mbr.DateOfBirth);
+                if (age <= 17)
+                { result++; }
+            }
+            return result.ToString();
+        }
+
+        private static string GetAdultCount(List<FamilyMember> familyList)
+        {
+            var result = 1; // Add Head of Househol to Adults count
+            foreach (var mbr in familyList)
+            {
+                var age = AppRoutines.GetAge(mbr.DateOfBirth);
+                if (age > 17)
+                { result++; }
+            }
+            return result.ToString();
+        }
+
+        private static string GetSeniorCount(int ageOfHeadOfHousehold, List<FamilyMember> familyList)
+        {
+            var result = 0;
+            if (ageOfHeadOfHousehold >= 60) { result = 1;}
+            foreach (var mbr in familyList)
+            {
+                var age = AppRoutines.GetAge(mbr.DateOfBirth);
+                if (age >= 60)
+                { result++; }
+            }
+            return result.ToString();
+        }
+
+        private static string GetAdultNamesAges(int clientId, List<FamilyMember> familyList)
+        {
+            var strResult = "";
+            using (var db = new BHelpContext())
+            { var client = db.Clients.Find(clientId);
+                if (client != null)
+                {
+                    strResult = client.FirstName + " " + client.LastName + "/";
+                    strResult += AppRoutines.GetAge(client.DateOfBirth).ToString();
+                }
+            }
+            
+            foreach (var mbr in familyList)
+            {
+                var age = AppRoutines.GetAge(mbr.DateOfBirth);
+                if (age >= 18)
+                {
+                    strResult += ", " + mbr.FirstName + " " + mbr.LastName + "/";
+                    strResult += AppRoutines.GetAge(mbr.DateOfBirth).ToString();
+                }
+            }
+            return strResult;
+        }
+
+        private static string GetKidsNamesAges(List<FamilyMember> familyList)
+        {
+            var strResult = "";
+            foreach (var mbr in familyList)
+            {
+                var age = AppRoutines.GetAge(mbr.DateOfBirth);
+                if (age <= 17)
+                {
+                    if (strResult.Length != 0)
+                    { strResult += ", "; }
+                    strResult += mbr.FirstName + " " + mbr.LastName + "/";
+                    strResult += AppRoutines.GetAge(mbr.DateOfBirth).ToString();
+                }
+            }
+            return strResult;
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Management.Instrumentation;
 using System.Runtime.InteropServices;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
@@ -87,10 +86,13 @@ namespace BHelp
             }
             return getZipCodesSelectList;
         }
-        private static int GetDeliveriesCountThisMonth(int clientId, DateTime dt)
+        public static int GetDeliveriesCountThisMonth(int clientId, DateTime dt)
         {
             var startDate = new DateTime(dt.Year, dt.Month, 1);
             var endDate = new DateTime(dt.Year, dt.Month, DateTime.DaysInMonth(dt.Year, dt.Month));
+            //if (clientId == 1511)
+            //{
+            //    clientId = 1511;}
             using (var db = new BHelpContext())
             {
                 var dtm= db.Deliveries.Count(i => i.ClientId == clientId
@@ -183,8 +185,8 @@ namespace BHelp
         }
         public static int GetAge(DateTime dob, [Optional] DateTime today)
         {
-            if (today.ToString(CultureInfo.CurrentCulture).IsNullOrEmpty())
-            { today = DateTime.Today; };
+            if (today.ToString(CultureInfo.CurrentCulture).IsNullOrEmpty() || today == DateTime.MinValue)
+            { today = DateTime.Now; };
             TimeSpan span = today - dob;
             // Because we start at year 1 for the Gregorian
             // calendar, we must subtract a year here.
