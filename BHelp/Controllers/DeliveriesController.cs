@@ -278,11 +278,6 @@ namespace BHelp.Controllers
                 viewModel.ClientNameAddress = client.LastName + ", " + client.FirstName
                                               + " " + client.StreetNumber + " " + client.StreetName + " " + client.Zip;
                 viewModel.Notes = client.Notes;
-                if (viewModel.Notes.Length > 32)
-                {
-                    viewModel.Notes = client.Notes.Substring(0, client.Notes.Length - 1);
-                }
-
                 viewModel.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
                 viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
             }

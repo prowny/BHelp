@@ -24,10 +24,12 @@
             <input type="hidden" name="HistoryStartDate" value="@Model.HistoryStartDate"/>
             <input type="hidden" name="HistoryEndDate" value="@Model.HistoryEndDate"/>
             @Html.AntiForgeryToken()
+            <h4>Edit Delivery</h4>
+                     <hr/>
             <div class="form-horizontal">
                 <table>
                     <tr>
-                        <td><strong>Edit Delivery</strong></td>
+                        @*<td><strong>Edit Delivery</strong></td>*@
                         <td style="color: darkmagenta">
                             @Html.Label(" (Snapshot of client when the delivery was created " +
                                         Model.LogDate.ToShortDateString() + ":)")
