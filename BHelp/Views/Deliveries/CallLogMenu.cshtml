@@ -8,12 +8,13 @@
     <title>CallLogHistory</title>
 </head>
 <body>
-<div>
-    <b>Call Log History</b>
-    <br />
-    <a href="@Url.Action("CallLogIndividual", "Deliveries")">History by Individual Client</a><br />
-    <a href="@Url.Action("CallLogByDate", "Deliveries")">History by Date Range</a><br />
-</div>
+    <div>
+        <b>Call Log History</b>
+        <br />
+        <a href="@Url.Action("CallLogIndividual", "Deliveries")">History by Individual Client</a><br />
+        <a href="@Url.Action("CallLogByLogDate", "Deliveries")">History by Log Date Range</a><br />
+        <a href="@Url.Action("CallLogByDateDelivered", "Deliveries")">History by Delivery Date Range</a><br />
+    </div>
 <br/>
 <div>
     @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new {})

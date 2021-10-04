@@ -438,8 +438,11 @@ namespace BHelp.Controllers
                         return RedirectToAction("CallLogIndividual", new {clientId = updateData.ClientId});
                 }
 
-                if (delivery.ReturnURL.Contains("CallLogByDate"))
-                { return RedirectToAction("CallLogByDate"); }
+                if (delivery.ReturnURL.Contains("CallLogByLogDate"))
+                { return RedirectToAction("CallLogByLogDate"); }
+
+                if (delivery.ReturnURL.Contains("CallLogByDateDelivered"))
+                { return RedirectToAction("CallLogByDateDelivered"); }
 
                 return RedirectToAction("Index");
             }
@@ -520,7 +523,7 @@ namespace BHelp.Controllers
             return RedirectToAction("CallLogIndividual", new { clientId = intClientId });
         }
 
-        public ActionResult CallLogByDate(DateTime? startDate, DateTime? endDate )
+        public ActionResult CallLogByLogDate(DateTime? startDate, DateTime? endDate )
         {
             if (!startDate.HasValue || !endDate.HasValue)  // default to today and 1 week ago
             {
@@ -537,6 +540,35 @@ namespace BHelp.Controllers
                 HistoryStartDate = Convert.ToDateTime(startDate),
                 HistoryEndDate = Convert.ToDateTime(endDate),
         };
+
+            foreach (var del in callLogView.DeliveryList)
+            {
+                del.DriverName = GetDriverName(del.DriverId);
+                if (del.DateDelivered.HasValue)
+                {
+                    del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                }
+            }
+            return View(callLogView);
+        }
+
+        public ActionResult CallLogByDateDelivered(DateTime? startDate, DateTime? endDate)
+        {
+            if (!startDate.HasValue || !endDate.HasValue)  // default to today and 1 week ago
+            {
+                startDate = DateTime.Today.AddDays(-7);
+                endDate = DateTime.Today;
+            }
+
+            List<Delivery> deliveries = db.Deliveries
+                .Where(d => d.DateDelivered >= startDate && d.DateDelivered <= endDate)
+                .OrderByDescending(d => d.DateDelivered).ToList();
+            var callLogView = new DeliveryViewModel
+            {
+                DeliveryList = deliveries,
+                HistoryStartDate = Convert.ToDateTime(startDate),
+                HistoryEndDate = Convert.ToDateTime(endDate),
+            };
 
             foreach (var del in callLogView.DeliveryList)
             {

@@ -481,6 +481,7 @@
     <Content Include="Views\Home\About.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Views\Deliveries\CallLogByDateDelivered.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
@@ -668,7 +669,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\OD\ConfirmCreateDelivery.cshtml" />
-    <Content Include="Views\Deliveries\CallLogByDate.cshtml" />
+    <Content Include="Views\Deliveries\CallLogByLogDate.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

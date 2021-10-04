@@ -7,7 +7,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Call Log By Date</title>
+    <title>Call Log By Log Date</title>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
@@ -18,7 +18,7 @@
 </head>
 <body>
 <div>
-    <b>Call Log History by Date Range</b>
+    <b>Call Log History by Log Date Range</b>
     <table>
         <tr>
             <td>Starting Date:</td>
@@ -56,9 +56,9 @@
             {
                 <tr>
                     <td>@delivery.LogDate.ToShortDateString()</td>
-                    @{ string name = delivery.LastName + ", " + delivery.FirstName; }
-                    @{ string addr = delivery.StreetNumber + " " + delivery.StreetName; }
-                    @{ bool cmpltd = delivery.Completed;}
+                    @{ var name = delivery.LastName + ", " + delivery.FirstName; }
+                    @{ var addr = delivery.StreetNumber + " " + delivery.StreetName; }
+                    @{ var cmpltd = delivery.Completed;}
                     <td>@name</td>
                     <td>@addr</td>
                     <td >@delivery.DriverName</td>
@@ -90,24 +90,24 @@
 </script>
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#StartDate").change(function() {
-            var stDate = $('#StartDate').val();
-            var endDt = $('#EndDate').val();
+        window.$("#StartDate").change(function() {
+            var stDate = window.$('#StartDate').val();
+            var endDt = window.$('#EndDate').val();
             //if ($('#StartDate').val() > $('#EndDate').val()) { endDt = stDate; }
             window.location.href =
-                '@Url.Action("CallLogByDate", "Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
+                '@Url.Action("CallLogByLogDate", "Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
         });
     });
 </script>
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#EndDate").change(function() {
-            var stDate = $('#StartDate').val();
-            $('#StartDate').val(stDate); 
-            var endDt = $('#EndDate').val();
+        window.$("#EndDate").change(function() {
+            var stDate = window.$('#StartDate').val();
+            window.$('#StartDate').val(stDate); 
+            var endDt = window.$('#EndDate').val();
             //if ($('#StartDate').val() > $('#EndDate').val()) { endDt = stDate; }
             window.location.href =
-                '@Url.Action("CallLogByDate", "Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
+                '@Url.Action("CallLogByLogDate", "Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
         });
     });
 </script>
