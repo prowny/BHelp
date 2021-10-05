@@ -158,7 +158,7 @@
                 @Html.ActionLink("Delete", "Delete", new { id = Model.Id }, new { id = "DeleteButton" })
             </div>
             <div>
-                @Html.ActionLink("Back to Delivery List", "CallLogByDateDelivered")
+                @Html.ActionLink("Back to Delivery List", "CallLogByDateDelivered", new{ startDate = Model.HistoryStartDate, endDate = Model.HistoryEndDate})
             </div>
             <div>
                 @Html.ActionLink("Return to Dashboard", "ReturnToDashboard")

@@ -473,7 +473,9 @@ namespace BHelp.Controllers
                 DateLastDelivery = GetLastGetDeliveryDate(delivery.Id),
                 DeliveryDate = delivery.DeliveryDate,
                 DateDelivered = delivery.DateDelivered,
-                Completed = delivery.Completed
+                Completed = delivery.Completed,
+                HistoryStartDate = Convert.ToDateTime(Session["CallLogStartDate"]),
+                HistoryEndDate = Convert.ToDateTime(Session["CallLogEndDate"])
             };
 
             if (Request.UrlReferrer != null)
