@@ -25,11 +25,10 @@
             <input type="hidden" name="HistoryEndDate" value="@Model.HistoryEndDate"/>
             @Html.AntiForgeryToken()
             <h4>Edit Delivery</h4>
-                     <hr/>
+                     <hr/>  // horizontal line
             <div class="form-horizontal">
                 <table>
                     <tr>
-                        @*<td><strong>Edit Delivery</strong></td>*@
                         <td style="color: darkmagenta">
                             @Html.Label(" (Snapshot of client when the delivery was created " +
                                         Model.LogDate.ToShortDateString() + ":)")
@@ -65,7 +64,7 @@
 
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             @Html.HiddenFor(model => model.Id)
-            <hr/>
+            <hr/>  // horizontal line
             <div class="form-group">
                 <table>
                     <tr>

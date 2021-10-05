@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -8,7 +7,6 @@ using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
 using Microsoft.AspNet.Identity;
-using ClosedXML.Excel;
 using Castle.Core.Internal;
 
 namespace BHelp.Controllers
@@ -137,48 +135,6 @@ namespace BHelp.Controllers
         {
             var result = AppRoutines.OpenDeliveriesToExcel();
             return result;
-        }
-
-        private OpenDeliveryViewModel GetOpenDeliveryViewModel()
-        {
-            var odv = new OpenDeliveryViewModel
-            {
-                ReportTitle = "Bethesda Help Open Deliveries"
-            };
-            var deliveryList = new List<Delivery>(db.Deliveries).Where(d => d.Completed == false)
-                .OrderBy(d => d.DeliveryDate)
-                .ThenBy(d => d.DriverId)
-                .ThenBy(z => z.Zip)
-                .ThenBy(n => n.LastName).ToList();
-            odv.OpenDeliveryCount = deliveryList.Count;
-            odv.OpenDeliveries = new string[deliveryList.Count , 12];
-            var i = 0;
-            foreach (var del in deliveryList)
-            {
-                var client = db.Clients.Find(del.ClientId);
-                odv.OpenDeliveries[i, 1] = del.DeliveryDate.ToShortDateString();
-
-                var driver = db.Users.Find(del.DriverId);
-                if (driver != null)
-                {
-                    odv.OpenDeliveries[i, 2] = driver.FullName;
-                }
-                odv.OpenDeliveries[i, 3] = del.Zip;
-                odv.OpenDeliveries[i, 4] = del.LastName + ", " + del.FirstName;
-                odv.OpenDeliveries[i, 5] = del.StreetNumber + " " + del.StreetName;
-                odv.OpenDeliveries[i, 6] = del.City;
-                odv.OpenDeliveries[i, 7] = del.Phone;
-                if (client != null)
-                {
-                    var familyMemberCount = db.FamilyMembers.Count(c => c.ClientId == client.Id);
-                    odv.OpenDeliveries[i, 8] = (familyMemberCount + 1).ToString();
-                    odv.OpenDeliveries[i, 9] = client.Notes;
-                }
-                odv.OpenDeliveries[i, 10] = del.ODNotes;
-                odv.OpenDeliveries[i, 11] = del.DriverNotes;
-                i++;
-            }
-            return odv;
         }
         public ActionResult ReturnToDashboard()
         {

@@ -386,8 +386,6 @@ namespace BHelp.Controllers
         }
 
         // POST: Deliveries/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(
@@ -449,8 +447,116 @@ namespace BHelp.Controllers
             return View(delivery);
         }
 
-        // GET: Deliveries/Delete/5
-        public ActionResult Delete(int? id)
+        // GET: Deliveries/EditDelivereds
+        public ActionResult EditDelivereds(int? id)
+        {
+            if (id == null)
+            { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
+            var delivery = db.Deliveries.Find(id);
+            if (delivery == null) { return HttpNotFound(); }
+            var viewModel = new DeliveryViewModel
+            {
+                Id = delivery.Id,
+                ClientId = delivery.ClientId,
+                LogDate = delivery.LogDate,
+                ODId = delivery.ODId,
+                ODList = AppRoutines.GetODSelectList(),
+                ODNotes = delivery.ODNotes,
+                DriverId = delivery.DriverId,
+                DriverName = GetDriverName(delivery.DriverId),
+                DriverNotes = delivery.DriverNotes,
+                DriversList = AppRoutines.GetDriversSelectList(),
+                NamesAgesInHH = delivery.NamesAgesInHH,
+                SnapshotFamily = GetSnapshotFamily(delivery.NamesAgesInHH),
+                FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId),
+                DatePriorDelivery = AppRoutines.GetPriorDeliveryDate(delivery.ClientId, delivery.LogDate),
+                DateLastDelivery = GetLastGetDeliveryDate(delivery.Id),
+                DeliveryDate = delivery.DeliveryDate,
+                DateDelivered = delivery.DateDelivered,
+                Completed = delivery.Completed
+            };
+
+            if (Request.UrlReferrer != null)
+            { viewModel.ReturnURL = Request.UrlReferrer.ToString(); }
+
+            foreach (var item in viewModel.DriversList)
+            { if (item.Value == viewModel.DriverId) { item.Selected = true; break; } }
+
+            foreach (var item in viewModel.ODList)
+            { if (item.Value == viewModel.ODId) { item.Selected = true; break; } }
+
+            if (delivery.Children != null) viewModel.KidsCount = (int)delivery.Children;
+            if (delivery.Adults != null) viewModel.AdultsCount = (int)delivery.Adults;
+            if (delivery.Seniors != null) viewModel.SeniorsCount = (int)delivery.Seniors;
+            if (delivery.GiftCardsEligible != null) viewModel.GiftCardsEligible = (int)delivery.GiftCardsEligible;
+            if (delivery.FullBags != null) viewModel.FullBags = (int)delivery.FullBags;
+            if (delivery.HalfBags != null) viewModel.HalfBags = (int)delivery.HalfBags;
+            if (delivery.KidSnacks != null) viewModel.KidSnacks = (int)delivery.KidSnacks;
+            if (delivery.GiftCards != null) viewModel.GiftCards = (int)delivery.GiftCards;
+
+            var client = db.Clients.Find(delivery.ClientId);
+            if (client != null)
+            {
+                viewModel.Client = client;
+                viewModel.ClientNameAddress = client.LastName + ", " + client.FirstName
+                                              + " " + client.StreetNumber + " " + client.StreetName + " " + client.Zip;
+                viewModel.Notes = client.Notes;
+                viewModel.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
+                viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
+            }
+
+            var yy = delivery.DateDelivered.Value.Year;
+            var mm = delivery.DateDelivered.Value.Month;
+            var dd = delivery.DateDelivered.Value.Day;
+            viewModel.NonNullDateDelivered = new DateTime(yy, mm, dd);
+            viewModel.DateDeliveredString = new DateTime(yy, mm, dd).ToString("MM/dd/yyyy");
+            viewModel.Zip = delivery.Zip;
+            return View(viewModel);
+        }
+
+        // POST: Deliveries/EditDelivereds/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditDelivereds(
+            [Bind(Include = "Id,ClientId,LogDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards," +
+                            "NonNullDateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId,Completed," +
+                            "DeliveryDate,ODId,ReturnURL")] DeliveryViewModel delivery)
+        {
+            if (ModelState.IsValid)
+            {
+                var updateData = db.Deliveries.Find(delivery.Id);
+
+                if (updateData != null)
+                {
+                    Client client = db.Clients.Find(updateData.ClientId);
+                    if (client != null) updateData.Zip = client.Zip;
+                    updateData.LogDate = delivery.LogDate;
+                    updateData.FullBags = delivery.FullBags;
+                    updateData.HalfBags = delivery.HalfBags;
+                    updateData.KidSnacks = delivery.KidSnacks;
+                    updateData.GiftCards = delivery.GiftCards;
+                    updateData.GiftCardsEligible = delivery.GiftCardsEligible;
+                    updateData.ODNotes = delivery.ODNotes;
+                    updateData.DriverId = delivery.DriverId;
+                    updateData.ODId = delivery.ODId;
+                    updateData.DriverNotes = delivery.DriverNotes;
+                    updateData.Completed = delivery.Completed;
+                    updateData.DeliveryDate = delivery.DeliveryDate;
+                    if (updateData.Completed  ==false)
+                    {
+                        updateData.DateDelivered = null;
+                    }
+                    
+                    db.Entry(updateData).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
+            return RedirectToAction("CallLogByDateDelivered");
+        }
+
+            // GET: Deliveries/Delete/5
+            public ActionResult Delete(int? id)
         {
             if (id == null)
             { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
@@ -560,6 +666,9 @@ namespace BHelp.Controllers
                 endDate = DateTime.Today;
             }
 
+            Session["CallLogStartDate"] = startDate;
+            Session["CallLogEndDate"] = endDate;
+
             List<Delivery> deliveries = db.Deliveries
                 .Where(d => d.DateDelivered >= startDate && d.DateDelivered <= endDate)
                 .OrderByDescending(d => d.DateDelivered).ToList();
@@ -580,6 +689,7 @@ namespace BHelp.Controllers
             }
             return View(callLogView);
         }
+
         public ActionResult ReportsMenu()
         {
             return View();

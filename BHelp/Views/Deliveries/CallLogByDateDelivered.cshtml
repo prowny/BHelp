@@ -44,11 +44,11 @@
                     <td></td>
                 </tr>
                 <tr>
-                    <td>Date Delivered</td>
-                    <td>Client Name</td>
-                    <td>Addess</td>
-                    <td>Driver</td>
-                    <td>Completed</td>
+                    <td><b>Date Delivered</b></td>
+                    <td><b>Client Name</b></td>
+                    <td><b>Address</b></td>
+                    <td><b>Driver</b></td>
+                    <td><b>Completed</b></td>
                 </tr>
                 @foreach (var delivery in Model.DeliveryList)
                 {
@@ -63,7 +63,7 @@
                         
                         <td style="text-align: center">@Html.CheckBox("Completed", cmpltd)</td>
                         <td>
-                            @Html.ActionLink("Edit", "Edit", new { id = delivery.Id })
+                            @Html.ActionLink("Edit", "EditDelivereds", new { id = delivery.Id })
                         </td>
                     </tr>
                 }
@@ -93,7 +93,7 @@
             var endDt = window.$('#EndDate').val();
             //if ($('#StartDate').val() > $('#EndDate').val()) { endDt = stDate; }
             window.location.href =
-                '@Url.Action("CallLogByLogDate", "Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
+                '@Url.Action("CallLogByDateDelivered", "Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
         });
     });
 </script>
@@ -105,7 +105,7 @@
             var endDt = window.$('#EndDate').val();
             //if ($('#StartDate').val() > $('#EndDate').val()) { endDt = stDate; }
             window.location.href =
-                '@Url.Action("CallLogByLogDate", "Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
+                '@Url.Action("CallLogByDateDelivered", "Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
         });
     });
 </script>
