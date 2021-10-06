@@ -153,7 +153,7 @@ namespace BHelp.Controllers
 
         public ActionResult OpenDeliveriesToExcel()
         {
-            var result = AppRoutines.OpenDeliveriesToExcel();
+            var result = AppRoutines.TempOpenDeliveriesToExcel();
             return result;
         }
 
@@ -250,7 +250,9 @@ namespace BHelp.Controllers
                 DateLastDelivery = GetLastGetDeliveryDate(delivery.Id),
                 DeliveryDate = delivery.DeliveryDate, 
                 DateDelivered = delivery.DateDelivered,
-                Completed = delivery.Completed
+                Completed = delivery.Completed,
+                HistoryStartDate = Convert.ToDateTime(Session["CallLogStartDate"]),
+                HistoryEndDate = Convert.ToDateTime(Session["CallLogEndDate"])
             };
 
             if (Request.UrlReferrer != null)
@@ -265,7 +267,11 @@ namespace BHelp.Controllers
             if (delivery.Children != null) viewModel.KidsCount = (int) delivery.Children;
             if (delivery.Adults != null) viewModel.AdultsCount = (int) delivery.Adults;
             if (delivery.Seniors != null) viewModel.SeniorsCount = (int) delivery.Seniors;
-            if (delivery.GiftCardsEligible != null) viewModel.GiftCardsEligible = (int) delivery.GiftCardsEligible;
+
+            //if (delivery.GiftCardsEligible != null) viewModel.GiftCardsEligible = (int) delivery.GiftCardsEligible;
+            viewModel.GiftCardsEligible = AppRoutines.GetGiftCardsEligible(delivery.ClientId, delivery.DeliveryDate);
+           
+
             if (delivery.FullBags != null) viewModel.FullBags = (int)delivery.FullBags;
             if (delivery.HalfBags != null) viewModel.HalfBags = (int)delivery.HalfBags;
             if (delivery.KidSnacks != null) viewModel.KidSnacks = (int)delivery.KidSnacks;
@@ -289,14 +295,14 @@ namespace BHelp.Controllers
                 // 1 per household of 3 or fewer; 1 per household per calendar month max
                 // 2 per household of 4 or more; 2 per household per calendar month max
                 var firstOfMonth = new DateTime(delivery.DeliveryDate.Year, delivery.DeliveryDate.Month, 1);
-                int totalThisMonth;
+                int totalGiftCardsThisMonth;
                 if (delivery.DateDelivered != null)
                 {
                     var yy = delivery.DateDelivered.Value.Year;
                     var mm = delivery.DateDelivered.Value.Month;
                     var dd = delivery.DateDelivered.Value.Day;
                     var dt2 = new DateTime(yy, mm, dd);
-                    totalThisMonth = GetGiftCardsSince(client.Id, firstOfMonth, dt2);
+                    totalGiftCardsThisMonth = GetGiftCardsSince(client.Id, firstOfMonth, dt2);
                 }
                 else  // this is probably an open delivery
                 {
@@ -304,67 +310,50 @@ namespace BHelp.Controllers
                     var mm = delivery.DeliveryDate.Month;
                     var dd = delivery.DeliveryDate.Day;
                     var dt2 = new DateTime(yy, mm, dd);
-                    totalThisMonth = GetGiftCardsSince(client.Id, firstOfMonth, dt2);
+                    totalGiftCardsThisMonth = GetGiftCardsSince(client.Id, firstOfMonth, dt2);
                 }
 
-                viewModel.GiftCardsThisMonth = totalThisMonth;
+                viewModel.GiftCardsThisMonth = totalGiftCardsThisMonth;
                 var numberInHousehold = delivery.Children + delivery.Adults + delivery.Seniors;
                 if (numberInHousehold <= 3) // 1 per household of 3 or fewer
                 {
                     delivery.GiftCardsEligible = 1;
-                    if (delivery.GiftCardsEligible + totalThisMonth > 1) delivery.GiftCardsEligible = 0;
+                    if (delivery.GiftCardsEligible + totalGiftCardsThisMonth > 1) delivery.GiftCardsEligible = 0;
                     viewModel.GiftCardsEligible = (int) delivery.GiftCardsEligible;
                 }
 
                 if (numberInHousehold >= 4) // 2 per household of 4 or more
                 {
                     delivery.GiftCardsEligible = 2;
-                    if (delivery.GiftCardsEligible + totalThisMonth > 2) delivery.GiftCardsEligible = 0;
+                    if (delivery.GiftCardsEligible + totalGiftCardsThisMonth > 2) delivery.GiftCardsEligible = 0;
                     viewModel.GiftCardsEligible = (int) delivery.GiftCardsEligible;
                 }
 
                 viewModel.GiftCards = viewModel.GiftCardsEligible;
-                // Full Bags:
-                if (numberInHousehold <= 2)
-                {
-                    viewModel.FullBags = 1;
-                }
+               
+                if (numberInHousehold <= 2)   // Full Bags:
+                { viewModel.FullBags = 1; }
 
                 if (numberInHousehold >= 3 && numberInHousehold <= 4)
-                {
-                    viewModel.FullBags = 2;
-                }
+                { viewModel.FullBags = 2; }
 
                 if (numberInHousehold == 5 || numberInHousehold == 6)
-                {
-                    viewModel.FullBags = 3;
-                }
+                { viewModel.FullBags = 3; }
 
                 if (numberInHousehold == 7 || numberInHousehold == 8)
-                {
-                    viewModel.FullBags = 4;
-                }
+                { viewModel.FullBags = 4; }
 
                 if (numberInHousehold >= 9)
-                {
-                    viewModel.FullBags = 5;
-                }
-
-                // Half Bags:
-                if (numberInHousehold <= 4)
-                {
-                    viewModel.HalfBags = 1;
-                }
+                { viewModel.FullBags = 5;  }
+              
+                if (numberInHousehold <= 4)   // Half Bags:
+                { viewModel.HalfBags = 1; }
 
                 if (numberInHousehold >= 5 && numberInHousehold <= 8)
-                {
-                    viewModel.HalfBags = 2;
-                }
+                { viewModel.HalfBags = 2; }
 
                 if (numberInHousehold >= 9)
-                {
-                    viewModel.HalfBags = 3;
-                }
+                { viewModel.HalfBags = 3; }
 
                 // Kid Snacks:
                 viewModel.KidSnacks = AppRoutines.GetNumberOfKids2_17(client.Id);
@@ -437,7 +426,8 @@ namespace BHelp.Controllers
                 }
 
                 if (delivery.ReturnURL.Contains("CallLogByLogDate"))
-                { return RedirectToAction("CallLogByLogDate"); }
+                { return RedirectToAction("CallLogByLogDate", 
+                    new{startDate = Session["CallLogStartDate"], endDate = Session["CallLogEndDate"]}); }
 
                 if (delivery.ReturnURL.Contains("CallLogByDateDelivered"))
                 { return RedirectToAction("CallLogByDateDelivered"); }
@@ -646,8 +636,11 @@ namespace BHelp.Controllers
             {
                 DeliveryList = deliveries,
                 HistoryStartDate = Convert.ToDateTime(startDate),
-                HistoryEndDate = Convert.ToDateTime(endDate),
+                HistoryEndDate = Convert.ToDateTime(endDate)
         };
+
+            Session["CallLogStartDate"] = callLogView.HistoryStartDate;
+            Session["CallLogEndDate"] = callLogView.HistoryEndDate;
 
             foreach (var del in callLogView.DeliveryList)
             {

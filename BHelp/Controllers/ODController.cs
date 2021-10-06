@@ -218,7 +218,8 @@ namespace BHelp.Controllers
             if (client == null)
             { RedirectToAction("Index"); }
 
-            HouseholdViewModel houseHold = new HouseholdViewModel
+            var dtLastDelivery = AppRoutines.GetLastDeliveryDate(Id);
+            var houseHold = new HouseholdViewModel
             {
                 ClientId = Id,
                 // ReSharper disable once PossibleNullReferenceException
@@ -234,17 +235,25 @@ namespace BHelp.Controllers
                 Notes = client.Notes,
                 FamilyMembers = AppRoutines.GetFamilyMembers(client.Id),
                 ZipCodes = AppRoutines.GetZipCodesSelectList(),
-                DateLastDelivery = AppRoutines.GetLastDeliveryDate(Id),
-                DateLastGiftCard = AppRoutines.GetDateLastGiftCard(Id),
+                //DateLastDelivery = AppRoutines.GetLastDeliveryDate(Id),
+                DateLastDelivery = dtLastDelivery,
+
                 DesiredDeliveryDate = DateTime.Today.AddDays(1),  // Desired Delivery Date
-                GiftCardsThisMonth = AppRoutines.GetGiftCardsThisMonth(Id, DateTime.Today.AddDays(1)),
+
+                //GiftCardsThisMonth = AppRoutines.GetAllGiftCardsThisMonth(Id, DateTime.Today.AddDays(1)),
+                ////DeliveriesThisMonth = AppRoutines.GetDeliveriesThisMonth(Id),
+                //NextDeliveryEligibleDate = AppRoutines.GetNextEligibleDeliveryDate(Id, DateTime.Today.AddDays(1)),
+                //NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id, DateTime.Today.AddDays(1)),
+
+                GiftCardsThisMonth = AppRoutines.GetPriorGiftCardsThisMonth(Id, DateTime.Today),
+                DateLastGiftCard = AppRoutines.GetDateLastGiftCard(Id,DateTime.Today),
                 //DeliveriesThisMonth = AppRoutines.GetDeliveriesThisMonth(Id),
-                NextDeliveryEligibleDate =AppRoutines.GetNextEligibleDeliveryDate(Id,DateTime.Today.AddDays(1)),
-                NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id, DateTime.Today.AddDays(1)),
-                
+                NextDeliveryEligibleDate =AppRoutines.GetNextEligibleDeliveryDate(Id,dtLastDelivery),
+                NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id, dtLastDelivery)
             };
-            if (houseHold.DateLastDelivery == DateTime.MinValue)
-            { }
+
+            if(houseHold.DateLastGiftCard == DateTime.MinValue)
+            {}
             foreach (var item in houseHold.ZipCodes)
             {
                 if (item.Value == client.Zip)

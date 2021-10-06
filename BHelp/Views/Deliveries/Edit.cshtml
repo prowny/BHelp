@@ -123,12 +123,12 @@
                     <tr>
                         <td>@Html.LabelFor(model => model.FullBags, htmlAttributes: new { @class = "control-label col-md-2" })</td>
                         <td>
-                            @Html.EditorFor(model => model.FullBags, new { htmlAttributes = new { style = "width:35px", min = 0, max = 20 } })
+                            @Html.EditorFor(model => model.FullBags, new { htmlAttributes = new { style = "width:35px", min = 0, max = 5 } })
                             @Html.ValidationMessageFor(model => model.FullBags, "", new { @class = "text-danger" })
                         </td>
                         <td>@Html.LabelFor(model => model.HalfBags, htmlAttributes: new { @class = "control-label col-md-2" })</td>
                         <td>
-                            @Html.EditorFor(model => model.HalfBags, new { htmlAttributes = new { style = "width:35px", min = 0, max = 20 } })
+                            @Html.EditorFor(model => model.HalfBags, new { htmlAttributes = new { style = "width:35px", min = 0, max = 3 } })
                             @Html.ValidationMessageFor(model => model.HalfBags, "", new { @class = "text-danger" })
                         </td>
                         <td>@Html.LabelFor(model => model.KidSnacks, htmlAttributes: new { @class = "control-label col-md-2" })</td>
@@ -138,7 +138,7 @@
                         </td>
                         <td>@Html.LabelFor(model => model.GiftCards, htmlAttributes: new { @class = "control-label col-md-2" })</td>
                         <td>
-                            @Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { style = "width:35px", min = 0, max = 20 } })
+                            @Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { style = "width:35px", min = 0, max = 2 } })
                             @Html.ValidationMessageFor(model => model.GiftCards, "", new { @class = "text-danger" })
                         </td>
                     </tr>
@@ -165,7 +165,7 @@
             <div>
                 @if (Model.ReturnURL.Contains("CallLogByLogDate"))
                 {
-                    @Html.ActionLink("Back to Delivery List", "CallLogByLogDate")
+                    @Html.ActionLink("Back to Delivery List", "CallLogByLogDate", new{ startDate = Model.HistoryStartDate, endDate = Model.HistoryEndDate})
                 }
 
                 @if (Model.ReturnURL.Contains("CallLogIndividual"))

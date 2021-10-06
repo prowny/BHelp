@@ -58,7 +58,7 @@ namespace BHelp
             var eligible = 0;
             var numberInHousehold = GetFamilyMembers(clientId).Count;
             var firstOfMonth = new DateTime(dt.Year, dt.Month, 1);
-            var totalThisMonth = GetGiftCardsThisMonth(clientId, firstOfMonth);
+            var totalThisMonth = GetAllGiftCardsThisMonth(clientId, firstOfMonth);
             if (numberInHousehold <= 3)   // 1 per household of 3 or fewer
             {
                 eligible = 1;
@@ -100,7 +100,7 @@ namespace BHelp
                 return dtm;
             }
         }
-        public static int GetGiftCardsThisMonth(int clientId, DateTime dt)
+        private static int GetAllGiftCardsThisMonth(int clientId, DateTime dt )
         {
             var giftCardCount = 0;
             var delList = GetAllDeliveriesThisMonth(clientId, dt);
@@ -108,6 +108,38 @@ namespace BHelp
             {
                 var cards = Convert.ToInt32(del.GiftCards);
                 if (del.GiftCards != null) giftCardCount += cards;
+            }
+            return giftCardCount;
+        }
+        public static DateTime GetDateLastGiftCard(int clientId, DateTime toDate)
+        {
+            using (var db = new BHelpContext())
+            {
+                var delList = db.Deliveries.Where(d => d.ClientId == clientId 
+                               && d.DateDelivered < toDate
+                               && d.GiftCards > 0).OrderByDescending(d => d.DateDelivered).ToList();
+                if (delList.Count != 0)
+                {
+                    var delivery = delList[0];
+                    if (delivery.DateDelivered.HasValue)
+                    {
+                        return (DateTime)delivery.DateDelivered;
+                    }
+                }
+                return DateTime.MinValue;
+            }
+        }
+        public static int GetPriorGiftCardsThisMonth(int clientId, DateTime dt)
+        {
+            var giftCardCount = 0;
+            var delList = GetAllDeliveriesThisMonth(clientId, dt);
+            foreach (var del in delList)
+            {
+                if (del.DeliveryDate < dt)
+                {
+                    var cards = Convert.ToInt32(del.GiftCards);
+                    if (del.GiftCards != null) giftCardCount += cards;
+                }
             }
             return giftCardCount;
         }
@@ -146,7 +178,7 @@ namespace BHelp
             var eligible = 0;
             var numberInHousehold = GetFamilyMembers(clientId).Count;
             var firstOfMonth = new DateTime(dt.Year, dt.Month, 1);
-            var totalThisMonth = GetGiftCardsThisMonth(clientId, firstOfMonth);
+            var totalThisMonth = GetAllGiftCardsThisMonth(clientId, firstOfMonth);
             if (numberInHousehold <= 3)   // 1 per household of 3 or fewer
             {
                 eligible = 1;
@@ -347,38 +379,71 @@ namespace BHelp
             var view = GetOpenDeliveryViewModel();
             XLWorkbook workbook = new XLWorkbook();
             IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
+           
             int activeRow = 1;
-            ws.Cell(activeRow, 1).SetValue(view.ReportTitle);
-            ws.Cell(activeRow, 2).SetValue(DateTime.Today.ToShortDateString());
+            ws.Cell(activeRow, 1).SetValue(view.ReportTitle).Style.Font.SetBold(true);
+            ws.Cell(activeRow, 1).Style.Alignment.WrapText=true;
+            ws.Columns("1").Width = 10;
+            var dtToday = DateTime.Today.ToShortDateString();
+            ws.Cell(activeRow, 2).SetValue(dtToday).Style.Font.SetBold(true);
+            ws.Columns("2").Width = 15;
             activeRow++;
-            ws.Cell(activeRow, 1).SetValue("Delivery Date");
-            ws.Cell(activeRow, 2).SetValue("Driver");
-            ws.Cell(activeRow, 3).SetValue("Zip Code");
-            ws.Cell(activeRow, 4).SetValue("Client");
-            ws.Cell(activeRow, 5).SetValue("Address");
-            ws.Cell(activeRow, 6).SetValue("City");
-            ws.Cell(activeRow, 7).SetValue("Phone");
-            ws.Cell(activeRow, 8).SetValue("# in HH");
-            ws.Cell(activeRow, 9).SetValue("Full Bags");
-            ws.Cell(activeRow, 10).SetValue("Half Bags");
-            ws.Cell(activeRow, 11).SetValue("Kid Snacks");
-            ws.Cell(activeRow, 12).SetValue("Gift Cards");
-            ws.Cell(activeRow, 13).SetValue("Client Notes");
-            ws.Cell(activeRow, 14).SetValue("OD Notes");
-            ws.Cell(activeRow, 15).SetValue("Driver Notes");
+            ws.Cell(activeRow, 1).SetValue("Delivery Date").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 1).Style.Alignment.WrapText = true;
+            ws.Columns("1").Width = 10;
+            ws.Cell(activeRow, 2).SetValue("Driver").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 3).SetValue("Zip Code").Style.Font.SetBold(true);
+            ws.Columns("3").Width = 6;
+            ws.Cell(activeRow, 3).Style.Alignment.WrapText = true;
+            ws.Cell(activeRow, 4).SetValue("Client").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 4).Style.Alignment.WrapText = true;
+            ws.Columns("4").Width = 15;
+            ws.Cell(activeRow, 5).SetValue("Address").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 5).Style.Alignment.WrapText = true;
+            ws.Columns("5").Width = 30;
+            ws.Cell(activeRow, 6).SetValue("City").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 5).Style.Alignment.WrapText = true;
+            ws.Columns("6").Width = 10;
+            ws.Cell(activeRow, 7).SetValue("Phone").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 7).Style.Alignment.WrapText = true;
+            ws.Columns("7").Width = 13;
+            ws.Cell(activeRow, 8).SetValue("# in HH").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 8).Style.Alignment.WrapText = true;
+            ws.Columns("8").Width = 4;
+            ws.Cell(activeRow, 9).SetValue("Full Bags").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 9).Style.Alignment.WrapText = true;
+            ws.Columns("9").Width = 4;
+            ws.Cell(activeRow, 10).SetValue("Half Bags").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 10).Style.Alignment.WrapText = true;
+            ws.Columns("10").Width = 4;
+            ws.Cell(activeRow, 11).SetValue("Kid Snacks").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 11).Style.Alignment.WrapText = true;
+            ws.Columns("11").Width = 6;
+            ws.Cell(activeRow, 12).SetValue("Gift Cards").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 12).Style.Alignment.WrapText = true;
+            ws.Columns("12").Width = 6;
+            ws.Cell(activeRow, 13).SetValue("Client Notes").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 13).Style.Alignment.WrapText = true;
+            ws.Columns("13").Width = 20;
+            ws.Cell(activeRow, 14).SetValue("OD Notes").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 14).Style.Alignment.WrapText = true;
+            ws.Columns("14").Width = 20;
+            ws.Cell(activeRow, 15).SetValue("Driver Notes").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 15).Style.Alignment.WrapText = true;
+            ws.Columns("15").Width = 20;
 
             for (var i = 0; i < view.OpenDeliveryCount; i++)
             {
                 activeRow++;
-                for (var j = 1; j < 16; j++)
+                for (var j = 1; j < 16; j++) 
                 {
                     ws.Cell(activeRow, j).SetValue(view.OpenDeliveries[i, j]);
-                    //ws.Cell(activeRow, j).Style.Font.FontSize=32;
+                    ws.Cell(activeRow, j).Style.Alignment.WrapText = true;
+                    ws.Cell(activeRow, j).Style.Font.FontSize=12;
                 }
             }
 
-
-            ws.Columns().AdjustToContents();
+            //ws.Columns().AdjustToContents();
             MemoryStream ms = new MemoryStream();
             workbook.SaveAs(ms);
             ms.Position = 0;
@@ -438,5 +503,158 @@ namespace BHelp
                 return odv;
             }
         }
+
+        public static FileStreamResult TempOpenDeliveriesToExcel()
+        {
+            var view = TempGetOpenDeliveryViewModel();
+            XLWorkbook workbook = new XLWorkbook();
+            IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
+
+            int activeRow = 1;
+            ws.Cell(activeRow, 1).SetValue(view.ReportTitle).Style.Font.SetBold(true);
+            ws.Cell(activeRow, 1).Style.Alignment.WrapText = true;
+            ws.Columns("1").Width = 10;
+            var dtToday = DateTime.Today.ToShortDateString();
+            ws.Cell(activeRow, 2).SetValue(dtToday).Style.Font.SetBold(true);
+            ws.Columns("2").Width = 15;
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue("Delivery Date").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 1).Style.Alignment.WrapText = true;
+            ws.Columns("1").Width = 12;
+            ws.Cell(activeRow, 2).SetValue("Driver").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 3).SetValue("Zip Code").Style.Font.SetBold(true);
+            ws.Columns("3").Width = 15;
+            ws.Cell(activeRow, 3).Style.Alignment.WrapText = true;
+            ws.Cell(activeRow, 4).SetValue("Client").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 4).Style.Alignment.WrapText = true;
+            ws.Columns("4").Width = 15;
+            ws.Cell(activeRow, 5).SetValue("Address").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 5).Style.Alignment.WrapText = true;
+            ws.Columns("5").Width = 15;
+            ws.Cell(activeRow, 6).SetValue("City").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 5).Style.Alignment.WrapText = true;
+            ws.Columns("6").Width = 15;
+            ws.Cell(activeRow, 7).SetValue("Phone").Style.Font.SetBold(true);
+            ws.Cell(activeRow, 7).Style.Alignment.WrapText = true;
+            ws.Columns("7").Width = 15;
+            //ws.Cell(activeRow, 8).SetValue("# in HH").Style.Font.SetBold(true);
+            //ws.Cell(activeRow, 8).Style.Alignment.WrapText = true;
+            //ws.Columns("8").Width = 4;
+            //ws.Cell(activeRow, 9).SetValue("Full Bags").Style.Font.SetBold(true);
+            //ws.Cell(activeRow, 9).Style.Alignment.WrapText = true;
+            //ws.Columns("9").Width = 4;
+            //ws.Cell(activeRow, 10).SetValue("Half Bags").Style.Font.SetBold(true);
+            //ws.Cell(activeRow, 10).Style.Alignment.WrapText = true;
+            //ws.Columns("10").Width = 4;
+            //ws.Cell(activeRow, 11).SetValue("Kid Snacks").Style.Font.SetBold(true);
+            //ws.Cell(activeRow, 11).Style.Alignment.WrapText = true;
+            //ws.Columns("11").Width = 6;
+            //ws.Cell(activeRow, 12).SetValue("Gift Cards").Style.Font.SetBold(true);
+            //ws.Cell(activeRow, 12).Style.Alignment.WrapText = true;
+            //ws.Columns("12").Width = 6;
+            //ws.Cell(activeRow, 13).SetValue("Client Notes").Style.Font.SetBold(true);
+            //ws.Cell(activeRow, 13).Style.Alignment.WrapText = true;
+            //ws.Columns("13").Width = 20;
+            //ws.Cell(activeRow, 14).SetValue("OD Notes").Style.Font.SetBold(true);
+            //ws.Cell(activeRow, 14).Style.Alignment.WrapText = true;
+            //ws.Columns("14").Width = 20;
+            //ws.Cell(activeRow, 15).SetValue("Driver Notes").Style.Font.SetBold(true);
+            //ws.Cell(activeRow, 15).Style.Alignment.WrapText = true;
+            //ws.Columns("15").Width = 20;
+            
+
+            for (var i = 0; i < view.OpenDeliveryCount; i++)
+            {
+                activeRow++;
+                for (var col = 1; col < 8; col++)
+                {
+                    //   TempOpenDeliveries[ Delivery, Column, Line ]
+                    ws.Cell(activeRow, col).SetValue(view.TempOpenDeliveries[i, col, 1]);
+                    ws.Cell(activeRow, col).Style.Alignment.WrapText = true;
+                    ws.Cell(activeRow, col).Style.Font.FontSize = 14;
+                }
+                activeRow++;  // Line 2
+                for (var col = 1; col < 8; col++)
+                {
+                    //   TempOpenDeliveries[ Delivery, Column, Line ]
+                    ws.Cell(activeRow, col).SetValue(view.TempOpenDeliveries[i, col, 2]);
+                    ws.Cell(activeRow, col).Style.Alignment.WrapText = true;
+                    ws.Cell(activeRow,col).Style.Font.FontSize = 14;
+                }
+                activeRow++; // Line 3
+                for (var col = 1; col < 8; col++)
+                {
+                    //   TempOpenDeliveries[ Delivery, Column, Line ]
+                    ws.Cell(activeRow, col).SetValue(view.TempOpenDeliveries[i, col, 3]);
+                    ws.Cell(activeRow, col).Style.Alignment.WrapText = true;
+                    ws.Cell(activeRow, col).Style.Font.FontSize = 14;
+                }
+            }
+
+            var ms = new MemoryStream();
+            workbook.SaveAs(ms);
+            ms.Position = 0;
+            return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            { FileDownloadName = view.ReportTitle + ".xlsx" };
+        }
+
+        private static OpenDeliveryViewModel TempGetOpenDeliveryViewModel()
+        {
+            var odv = new OpenDeliveryViewModel
+            //   OpenDeliveries[ Delivery, Column, Line ]
+            { ReportTitle = "Bethesda Help Open Deliveries" };
+
+            using (var db = new BHelpContext())
+            {
+                var deliveryList = new List<Delivery>(db.Deliveries)
+                    .Where(d => d.Completed == false)
+                    .OrderBy(d => d.DeliveryDate)
+                    .ThenBy(d => d.DriverId)
+                    .ThenBy(z => z.Zip)
+                    .ThenBy(n => n.LastName).ToList();
+                odv.OpenDeliveryCount = deliveryList.Count;
+                odv.TempOpenDeliveries = new string[deliveryList.Count, 8, 4];
+                var i = 0;
+                foreach (var del in deliveryList)
+                {
+                    var client = db.Clients.Find(del.ClientId);
+                    odv.TempOpenDeliveries[i, 1,1] = del.DeliveryDate.ToShortDateString();
+
+                    var driver = db.Users.Find(del.DriverId);
+                    if (driver != null)
+                    {
+                        odv.TempOpenDeliveries[i, 2,1] = driver.FullName;
+                    }
+
+                    odv.TempOpenDeliveries[i, 3,1] = del.Zip;
+                    odv.TempOpenDeliveries[i, 4,1] = del.LastName + ", " + del.FirstName;
+                    odv.TempOpenDeliveries[i, 5,1] = del.StreetNumber + " " + del.StreetName;
+                    odv.TempOpenDeliveries[i, 6,1] = del.City;
+                    odv.TempOpenDeliveries[i, 7,1] = del.Phone;
+
+                    if (client != null)
+                    {
+                        var familyMemberCount = db.FamilyMembers.Count(c => c.ClientId == client.Id);
+                        odv.TempOpenDeliveries[i, 1, 2] = "# in HH: " + (familyMemberCount + 1).ToString();
+                        odv.TempOpenDeliveries[i, 2, 3] = client.Notes;
+                    }
+                    odv.TempOpenDeliveries[i, 2, 2] = "Full Bags: " + del.FullBags.ToString();
+                    odv.TempOpenDeliveries[i, 3, 2] = "Half Bags: " + del.HalfBags.ToString();
+                    odv.TempOpenDeliveries[i, 4, 2] = "Kid Snacks: " + del.KidSnacks.ToString();
+                    odv.TempOpenDeliveries[i, 5, 2] = "Gift Cards: " + del.GiftCards.ToString();
+
+                    odv.TempOpenDeliveries[i, 1, 3] = "Client Notes: ";
+                    //odv.TempOpenDeliveries[i, 2, 3] = client.Notes;
+                    odv.TempOpenDeliveries[i, 3, 3] = "OD Notes: ";
+                    odv.TempOpenDeliveries[i, 4, 3] = del.ODNotes;
+                    odv.TempOpenDeliveries[i, 5, 3] = "Driver Notes: ";
+                    odv.TempOpenDeliveries[i, 6, 3] = del.DriverNotes;
+                    i++;
+                }
+
+                return odv;
+            }
+        }
+
     }
 }
