@@ -153,6 +153,12 @@ namespace BHelp.Controllers
 
         public ActionResult OpenDeliveriesToExcel()
         {
+            var result = AppRoutines.OpenDeliveriesToExcel();
+            return result;
+        }
+
+        public ActionResult TempOpenDeliveriesToExcel()
+        {
             var result = AppRoutines.TempOpenDeliveriesToExcel();
             return result;
         }

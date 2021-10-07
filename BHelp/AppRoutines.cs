@@ -523,46 +523,21 @@ namespace BHelp
             ws.Columns("1").Width = 12;
             ws.Cell(activeRow, 2).SetValue("Driver").Style.Font.SetBold(true);
             ws.Cell(activeRow, 3).SetValue("Zip Code").Style.Font.SetBold(true);
-            ws.Columns("3").Width = 15;
+            ws.Columns("3").Width = 12;
             ws.Cell(activeRow, 3).Style.Alignment.WrapText = true;
             ws.Cell(activeRow, 4).SetValue("Client").Style.Font.SetBold(true);
             ws.Cell(activeRow, 4).Style.Alignment.WrapText = true;
-            ws.Columns("4").Width = 15;
+            ws.Columns("4").Width = 16;
             ws.Cell(activeRow, 5).SetValue("Address").Style.Font.SetBold(true);
             ws.Cell(activeRow, 5).Style.Alignment.WrapText = true;
-            ws.Columns("5").Width = 15;
+            ws.Columns("5").Width = 16;
             ws.Cell(activeRow, 6).SetValue("City").Style.Font.SetBold(true);
             ws.Cell(activeRow, 5).Style.Alignment.WrapText = true;
-            ws.Columns("6").Width = 15;
+            ws.Columns("6").Width = 18;
             ws.Cell(activeRow, 7).SetValue("Phone").Style.Font.SetBold(true);
             ws.Cell(activeRow, 7).Style.Alignment.WrapText = true;
-            ws.Columns("7").Width = 15;
-            //ws.Cell(activeRow, 8).SetValue("# in HH").Style.Font.SetBold(true);
-            //ws.Cell(activeRow, 8).Style.Alignment.WrapText = true;
-            //ws.Columns("8").Width = 4;
-            //ws.Cell(activeRow, 9).SetValue("Full Bags").Style.Font.SetBold(true);
-            //ws.Cell(activeRow, 9).Style.Alignment.WrapText = true;
-            //ws.Columns("9").Width = 4;
-            //ws.Cell(activeRow, 10).SetValue("Half Bags").Style.Font.SetBold(true);
-            //ws.Cell(activeRow, 10).Style.Alignment.WrapText = true;
-            //ws.Columns("10").Width = 4;
-            //ws.Cell(activeRow, 11).SetValue("Kid Snacks").Style.Font.SetBold(true);
-            //ws.Cell(activeRow, 11).Style.Alignment.WrapText = true;
-            //ws.Columns("11").Width = 6;
-            //ws.Cell(activeRow, 12).SetValue("Gift Cards").Style.Font.SetBold(true);
-            //ws.Cell(activeRow, 12).Style.Alignment.WrapText = true;
-            //ws.Columns("12").Width = 6;
-            //ws.Cell(activeRow, 13).SetValue("Client Notes").Style.Font.SetBold(true);
-            //ws.Cell(activeRow, 13).Style.Alignment.WrapText = true;
-            //ws.Columns("13").Width = 20;
-            //ws.Cell(activeRow, 14).SetValue("OD Notes").Style.Font.SetBold(true);
-            //ws.Cell(activeRow, 14).Style.Alignment.WrapText = true;
-            //ws.Columns("14").Width = 20;
-            //ws.Cell(activeRow, 15).SetValue("Driver Notes").Style.Font.SetBold(true);
-            //ws.Cell(activeRow, 15).Style.Alignment.WrapText = true;
-            //ws.Columns("15").Width = 20;
+            ws.Columns("7").Width = 16;
             
-
             for (var i = 0; i < view.OpenDeliveryCount; i++)
             {
                 activeRow++;
@@ -589,6 +564,7 @@ namespace BHelp
                     ws.Cell(activeRow, col).Style.Alignment.WrapText = true;
                     ws.Cell(activeRow, col).Style.Font.FontSize = 14;
                 }
+                activeRow++;
             }
 
             var ms = new MemoryStream();
