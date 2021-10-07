@@ -136,6 +136,11 @@ namespace BHelp.Controllers
             var result = AppRoutines.OpenDeliveriesToExcel();
             return result;
         }
+        public ActionResult TempOpenDeliveriesToExcel()
+        {
+            var result = AppRoutines.TempOpenDeliveriesToExcel();
+            return result;
+        }
         public ActionResult ReturnToDashboard()
         {
             return RedirectToAction("Index", "Home");
