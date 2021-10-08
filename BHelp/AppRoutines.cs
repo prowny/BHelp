@@ -515,13 +515,16 @@ namespace BHelp
             ws.Cell(1, 1).SetValue(view.ReportTitle).Style.Font.SetBold(true);
             ws.Cell(1, 1).Style.Alignment.WrapText = true;
             ws.Cell(1, 1).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("2").Width = 12; // Driver/Date
-            var dtToday = DateTime.Today.ToShortDateString();
-            ws.Cell(1, 2).SetValue(dtToday).Style.Font.SetBold(true);
+            ws.Columns("2").Width = 12; // "Date" / "Driver"
+            ws.Cell(1, 2).SetValue(DateTime.Today.ToShortDateString()).Style.Font.SetBold(true);
             ws.Cell(1, 2).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-
-
-            //ws.Range(ws.Cell(activeRow,5), ws.Cell(activeRow,8)).Merge();
+            
+            const string key = "K = Kids 2-17, A = Adults 18+, HH = Household, F = Full Bags, H = Half Bags, " +
+                               "KS = Kids Snacks, G = Gift Cards";
+            ws.Cell(1, 8).SetValue(key);
+            ws.Cell(1, 8).Style.Alignment.WrapText = true;
+            ws.Cell(1, 8).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Range(ws.Cell(1,8), ws.Cell(1,14)).Merge();
 
             ws.Columns("1").Width = 10;
             ws.Cell(2, 1).SetValue("Delivery Date").Style.Font.SetBold(true);
@@ -553,42 +556,39 @@ namespace BHelp
             ws.Columns("9").Width = 3;
             ws.Cell(2, 9).SetValue("#A").Style.Font.SetBold(true);
             ws.Cell(2, 9).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("10").Width = 3;
-            ws.Cell(2, 10).SetValue("#S").Style.Font.SetBold(true);
+            ws.Columns("10").Width = 4;
+            ws.Cell(2, 10).SetValue("# in HH").Style.Font.SetBold(true);
+            ws.Cell(2, 10).Style.Alignment.WrapText = true;
             ws.Cell(2, 10).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("11").Width = 4;
-            ws.Cell(2, 11).SetValue("# in HH").Style.Font.SetBold(true);
-            ws.Cell(2, 11).Style.Alignment.WrapText = true;
+            ws.Columns("11").Width = 3;
+            ws.Cell(2, 11).SetValue("#F").Style.Font.SetBold(true);
             ws.Cell(2, 11).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
             ws.Columns("12").Width = 3;
-            ws.Cell(2, 12).SetValue("#F").Style.Font.SetBold(true);
+            ws.Cell(2, 12).SetValue("#H").Style.Font.SetBold(true);
             ws.Cell(2, 12).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("13").Width = 3;
-            ws.Cell(2, 13).SetValue("#H").Style.Font.SetBold(true);
+            ws.Columns("13").Width = 4;
+            ws.Cell(2, 13).SetValue("#KS").Style.Font.SetBold(true);
             ws.Cell(2, 13).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("14").Width = 4;
-            ws.Cell(2, 14).SetValue("#KS").Style.Font.SetBold(true);
+            ws.Columns("14").Width = 3;
+            ws.Cell(2, 14).SetValue("#G").Style.Font.SetBold(true);
             ws.Cell(2, 14).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("15").Width = 3;
-            ws.Cell(2, 15).SetValue("#G").Style.Font.SetBold(true);
+            ws.Columns("15").Width = 15;
+            ws.Cell(2, 15).SetValue("Client Notes").Style.Font.SetBold(true);
             ws.Cell(2, 15).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
             ws.Columns("16").Width = 15;
-            ws.Cell(2, 16).SetValue("Client Notes").Style.Font.SetBold(true);
+            ws.Cell(2, 16).SetValue("OD & Driver Notes").Style.Font.SetBold(true);
             ws.Cell(2, 16).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("17").Width = 15;
-            ws.Cell(2, 17).SetValue("OD & Driver Notes").Style.Font.SetBold(true);
-            ws.Cell(2, 17).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
             int activeRow = 2;
             for (var i = 0; i < view.OpenDeliveryCount; i++)
             {
                 activeRow++;
-                for (var col = 1; col < 18; col++)
+                for (var col = 1; col < 17; col++)
                 {
-                    //  TempOpenDeliveries[ Delivery, Column ]
                     ws.Cell(activeRow, col).SetValue(view.OpenDeliveries[i, col]);
                     ws.Cell(activeRow, col).Style.Alignment.WrapText = true;
                     ws.Cell(activeRow, col).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+                    ws.Cell(activeRow, col).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 }
                 activeRow++;
             }
@@ -615,7 +615,7 @@ namespace BHelp
                     .ThenBy(z => z.Zip)
                     .ThenBy(n => n.LastName).ToList();
                 odv.OpenDeliveryCount = deliveryList.Count;
-                odv.OpenDeliveries = new string[deliveryList.Count, 18];
+                odv.OpenDeliveries = new string[deliveryList.Count, 17];
                 var i = 0;
                 foreach (var del in deliveryList)
                 {
@@ -637,16 +637,16 @@ namespace BHelp
                     if (client != null)
                     {
                         var familyMembers= db.FamilyMembers.Where(c => c.ClientId == client.Id).ToList();
-                        odv.OpenDeliveries[i, 8] = GetNumberOfKids2_17(client.Id).ToString();
-                        odv.OpenDeliveries[i, 9] = "?";
-                        odv.OpenDeliveries[i, 10] = "?";
-                        odv.OpenDeliveries[i, 11] = (familyMembers.Count + 1).ToString();
-                        odv.OpenDeliveries[i, 17] = client.Notes;
+                        var kids2_17 = GetNumberOfKids2_17(client.Id);
+                        odv.OpenDeliveries[i, 8] = kids2_17.ToString();
+                        odv.OpenDeliveries[i, 9] = (familyMembers.Count + 1 - kids2_17).ToString(); // # Adults + Seniors
+                        odv.OpenDeliveries[i, 10] = (familyMembers.Count + 1 ).ToString();
+                        odv.OpenDeliveries[i, 15] = client.Notes;
                     }
-                    odv.OpenDeliveries[i, 12] =  del.FullBags.ToString();
-                    odv.OpenDeliveries[i, 13] =  del.HalfBags.ToString();
-                    odv.OpenDeliveries[i, 14] =  del.KidSnacks.ToString();
-                    odv.OpenDeliveries[i, 15] =  del.GiftCards.ToString();
+                    odv.OpenDeliveries[i, 11] =  del.FullBags.ToString();
+                    odv.OpenDeliveries[i, 12] =  del.HalfBags.ToString();
+                    odv.OpenDeliveries[i, 13] =  del.KidSnacks.ToString();
+                    odv.OpenDeliveries[i, 14] =  del.GiftCards.ToString();
                     odv.OpenDeliveries[i,16] = del.ODNotes + " " + del.DriverNotes;
                     i++;
                 }
