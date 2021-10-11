@@ -362,14 +362,51 @@ namespace BHelp
                 var client = db.Clients.Find(clientId);
                 if (client != null)
                 {
-                    var fromDate = DateTime.Today.AddYears(-17).ToShortDateString();
-                    var thruDate = DateTime.Today.AddYears(-2).ToShortDateString();
-                    var sqlString = "SELECT * FROM FamilyMembers ";
-                    sqlString += "WHERE Active > 0 AND ClientId =" + clientId;
-                    sqlString += " AND DateOfBirth >= '" + fromDate + "'";
-                    sqlString += " AND DateOfBirth <= '" + thruDate + "'";
-                    var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
+                    var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId
+                                                                 && c.DateOfBirth >= DateTime.Today.AddYears(-17)
+                                                                 && c.DateOfBirth <= DateTime.Today.AddYears(-2)).ToList();
                     return familyList.Count;
+                }
+            }
+            return 0;
+        }
+        private static int GetNumberOfChildren(int clientId)
+        {
+            // Assume Head of Household is not a Child
+            using (var db = new BHelpContext())
+            {
+                var childrenList = db.FamilyMembers.Where(f => f.ClientId == clientId
+                                                              && f.DateOfBirth >= DateTime.Today.AddYears(-17)
+                                                              && f.DateOfBirth <= DateTime.Today).ToList();
+                return childrenList.Count;
+            }
+        }
+
+        private static int GetNumberOfAdults(int clientId)
+        {
+            using (var db = new BHelpContext())
+            {
+                var client = db.Clients.Find(clientId);
+                if (client != null)
+                {
+                    var childrenList = db.FamilyMembers.Where(f => f.ClientId == clientId
+                                                                   && f.DateOfBirth >= DateTime.Today.AddYears(-17)
+                                                                   && f.DateOfBirth <= DateTime.Today).ToList();
+                    return childrenList.Count;
+                }
+            }
+            return 0;
+        }
+        private static int GetNumberOfSeniors(int clientId)
+        {
+            using (var db = new BHelpContext())
+            {
+                var client = db.Clients.Find(clientId);
+                if (client != null)
+                {
+                    var childrenList = db.FamilyMembers.Where(f => f.ClientId == clientId
+                                                           && f.DateOfBirth >= DateTime.Today.AddYears(- 60)).ToList();
+                    return childrenList.Count;
                 }
             }
             return 0;
@@ -503,7 +540,6 @@ namespace BHelp
                 return odv;
             }
         }
-
         public static FileStreamResult TempOpenDeliveriesToExcel()
         {
             var view = TempGetOpenDeliveryViewModel();
@@ -518,13 +554,13 @@ namespace BHelp
             ws.Columns("2").Width = 12; // "Date" / "Driver"
             ws.Cell(1, 2).SetValue(DateTime.Today.ToShortDateString()).Style.Font.SetBold(true);
             ws.Cell(1, 2).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            
-            const string key = "K = Kids 2-17, A = Adults 18+, HH = Household, F = Full Bags, H = Half Bags, " +
-                               "KS = Kids Snacks, G = Gift Cards";
+
+            var key = "K = Kids 0-17, A = Adults 18-59, S = Adults 60+, HH = Household, ";
+                key +="F = Full Bags, H = Half Bags, KS = Kids Snacks for ages 2-17, GC = Gift Cards";
             ws.Cell(1, 8).SetValue(key);
             ws.Cell(1, 8).Style.Alignment.WrapText = true;
             ws.Cell(1, 8).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Range(ws.Cell(1,8), ws.Cell(1,14)).Merge();
+            ws.Range(ws.Cell(1,8), ws.Cell(1,16)).Merge();
 
             ws.Columns("1").Width = 10;
             ws.Cell(2, 1).SetValue("Delivery Date").Style.Font.SetBold(true);
@@ -549,35 +585,51 @@ namespace BHelp
             ws.Columns("7").Width = 12;
             ws.Cell(2, 7).SetValue("Phone").Style.Font.SetBold(true);
             ws.Cell(2, 7).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("8").Width = 4;
-            ws.Cell(2, 8).SetValue("#K 2-17").Style.Font.SetBold(true);
+
+            ws.Columns("8").Width = 3;
+            ws.Cell(2, 8).SetValue("#K").Style.Font.SetBold(true);
             ws.Cell(2, 8).Style.Alignment.WrapText = true;
             ws.Cell(2, 8).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
             ws.Columns("9").Width = 3;
             ws.Cell(2, 9).SetValue("#A").Style.Font.SetBold(true);
             ws.Cell(2, 9).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("10").Width = 4;
-            ws.Cell(2, 10).SetValue("# in HH").Style.Font.SetBold(true);
-            ws.Cell(2, 10).Style.Alignment.WrapText = true;
+
+            ws.Columns("10").Width = 3;
+            ws.Cell(2, 10).SetValue("#S").Style.Font.SetBold(true);
             ws.Cell(2, 10).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("11").Width = 3;
-            ws.Cell(2, 11).SetValue("#F").Style.Font.SetBold(true);
+
+            ws.Columns("11").Width = 4;
+            ws.Cell(2, 11).SetValue("# in HH").Style.Font.SetBold(true);
+            ws.Cell(2, 11).Style.Alignment.WrapText = true;
             ws.Cell(2, 11).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("12").Width = 3;
-            ws.Cell(2, 12).SetValue("#H").Style.Font.SetBold(true);
+
+            ws.Columns("12").Width = 15;
+            ws.Cell(2, 12).SetValue("All Household Members/Ages").Style.Font.SetBold(true);
+            ws.Cell(2, 12).Style.Alignment.WrapText = true;
             ws.Cell(2, 12).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("13").Width = 4;
-            ws.Cell(2, 13).SetValue("#KS").Style.Font.SetBold(true);
+
+            ws.Columns("13").Width = 3;
+            ws.Cell(2, 13).SetValue("#F").Style.Font.SetBold(true);
             ws.Cell(2, 13).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
             ws.Columns("14").Width = 3;
-            ws.Cell(2, 14).SetValue("#G").Style.Font.SetBold(true);
+            ws.Cell(2, 14).SetValue("#H").Style.Font.SetBold(true);
             ws.Cell(2, 14).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("15").Width = 15;
-            ws.Cell(2, 15).SetValue("Client Notes").Style.Font.SetBold(true);
+
+            ws.Columns("15").Width = 4;
+            ws.Cell(2, 15).SetValue("#KS").Style.Font.SetBold(true);
             ws.Cell(2, 15).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("16").Width = 15;
-            ws.Cell(2, 16).SetValue("OD & Driver Notes").Style.Font.SetBold(true);
+
+            ws.Columns("16").Width = 4;
+            ws.Cell(2, 16).SetValue("#GC").Style.Font.SetBold(true);
             ws.Cell(2, 16).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("17").Width = 15;
+            ws.Cell(2, 17).SetValue("Client Permanent Notes").Style.Font.SetBold(true);
+            ws.Cell(2, 17).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("18").Width = 15;
+            ws.Cell(2, 18).SetValue("OD & Driver Delivery Notes").Style.Font.SetBold(true);
+            ws.Cell(2, 18).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
             int activeRow = 2;
             for (var i = 0; i < view.OpenDeliveryCount; i++)
@@ -599,7 +651,6 @@ namespace BHelp
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             { FileDownloadName = view.ReportTitle + ".xlsx" };
         }
-
         private static OpenDeliveryViewModel TempGetOpenDeliveryViewModel()
         {
             var odv = new OpenDeliveryViewModel
@@ -615,7 +666,7 @@ namespace BHelp
                     .ThenBy(z => z.Zip)
                     .ThenBy(n => n.LastName).ToList();
                 odv.OpenDeliveryCount = deliveryList.Count;
-                odv.OpenDeliveries = new string[deliveryList.Count, 17];
+                odv.OpenDeliveries = new string[deliveryList.Count, 20];
                 var i = 0;
                 foreach (var del in deliveryList)
                 {
@@ -624,12 +675,10 @@ namespace BHelp
 
                     var driver = db.Users.Find(del.DriverId);
                     if (driver != null)
-                    {
-                        odv.OpenDeliveries[i, 2] = driver.FullName;
-                    }
+                    { odv.OpenDeliveries[i, 2] = driver.FullName; }
 
                     odv.OpenDeliveries[i, 3] = del.Zip;
-                    odv.OpenDeliveries[i, 4] = del.LastName + ", " + del.FirstName;
+                    odv.OpenDeliveries[i, 4] = del.LastName + ", " + del.FirstName; // Client
                     odv.OpenDeliveries[i, 5] = del.StreetNumber + " " + del.StreetName;
                     odv.OpenDeliveries[i, 6] = del.City;
                     odv.OpenDeliveries[i, 7] = del.Phone;
@@ -637,17 +686,22 @@ namespace BHelp
                     if (client != null)
                     {
                         var familyMembers= db.FamilyMembers.Where(c => c.ClientId == client.Id).ToList();
-                        var kids2_17 = GetNumberOfKids2_17(client.Id);
-                        odv.OpenDeliveries[i, 8] = kids2_17.ToString();
-                        odv.OpenDeliveries[i, 9] = (familyMembers.Count + 1 - kids2_17).ToString(); // # Adults + Seniors
-                        odv.OpenDeliveries[i, 10] = (familyMembers.Count + 1 ).ToString();
-                        odv.OpenDeliveries[i, 15] = client.Notes;
+                        //var kids2_17 = GetNumberOfKids2_17(client.Id);
+                        var kidCount = AppRoutines.GetNumberOfChildren(client.Id);
+                        odv.OpenDeliveries[i, 8] = kidCount.ToString();
+                        odv.OpenDeliveries[i, 9] = AppRoutines.GetNumberOfAdults(client.Id).ToString();
+                        odv.OpenDeliveries[i, 10] = AppRoutines.GetNumberOfSeniors(client.Id).ToString();
+                        odv.OpenDeliveries[i, 11] = (familyMembers.Count + 1).ToString();
+                        odv.OpenDeliveries[i, 12] = GetNamesAgesOfAllInHousehold(client.Id);
+
+                        odv.OpenDeliveries[i, 17] = client.Notes;
                     }
-                    odv.OpenDeliveries[i, 11] =  del.FullBags.ToString();
-                    odv.OpenDeliveries[i, 12] =  del.HalfBags.ToString();
-                    odv.OpenDeliveries[i, 13] =  del.KidSnacks.ToString();
-                    odv.OpenDeliveries[i, 14] =  del.GiftCards.ToString();
-                    odv.OpenDeliveries[i,16] = del.ODNotes + " " + del.DriverNotes;
+                    
+                    odv.OpenDeliveries[i, 13] =  del.FullBags.ToString();
+                    odv.OpenDeliveries[i, 14] =  del.HalfBags.ToString();
+                    odv.OpenDeliveries[i, 15] =  del.KidSnacks.ToString();
+                    odv.OpenDeliveries[i, 16] =  del.GiftCards.ToString();
+                    odv.OpenDeliveries[i,17] = del.ODNotes + " " + del.DriverNotes;
                     i++;
                 }
 
@@ -655,5 +709,70 @@ namespace BHelp
             }
         }
 
+        //public static FileStreamResult OpenDeliveriesToCSV()
+        //{
+        //    return null;
+        //}
+
+        //private static OpenDeliveryViewModel GetOpenDeliveryViewModelCSV()
+        //{
+        //    var odv = new OpenDeliveryViewModel
+        //        { ReportTitle = "Bethesda Help Open Deliveries" };
+
+        //    using (var db = new BHelpContext())
+        //    {
+        //        var deliveryList = new List<Delivery>(db.Deliveries)
+        //            .Where(d => d.Completed == false)
+        //            .OrderBy(d => d.DeliveryDate)
+        //            .ThenBy(d => d.DriverId)
+        //            .ThenBy(z => z.Zip)
+        //            .ThenBy(n => n.LastName).ToList();
+        //        odv.OpenDeliveryCount = deliveryList.Count;
+        //        odv.OpenDeliveries = new string[deliveryList.Count, 16];
+        //        var i = 0;
+        //        foreach (var del in deliveryList)
+        //        {
+        //            var client = db.Clients.Find(del.ClientId);
+        //            odv.OpenDeliveries[i, 1] = del.DeliveryDate.ToShortDateString();
+
+        //            var driver = db.Users.Find(del.DriverId);
+        //            if (driver != null)
+        //            {
+        //                odv.OpenDeliveries[i, 2] = driver.FullName;
+        //            }
+
+        //            odv.OpenDeliveries[i, 3] = del.Zip;
+        //            odv.OpenDeliveries[i, 4] = del.LastName + ", " + del.FirstName;
+        //            odv.OpenDeliveries[i, 5] = del.StreetNumber + " " + del.StreetName;
+        //            odv.OpenDeliveries[i, 6] = del.City;
+        //            odv.OpenDeliveries[i, 7] = del.Phone;
+        //            if (client != null)
+        //            {
+        //                var familyMemberCount = db.FamilyMembers.Count(c => c.ClientId == client.Id);
+        //                odv.OpenDeliveries[i, 8] = (familyMemberCount + 1).ToString();
+        //                odv.OpenDeliveries[i, 9] = GetNamesAgesOfAllInHousehold(client.Id);
+        //                odv.OpenDeliveries[i, 13] = client.Notes;
+
+        //                var familyMembers = db.FamilyMembers.Where(c => c.ClientId == client.Id).ToList();
+        //                var kids2_17 = GetNumberOfKids2_17(client.Id);
+        //                odv.OpenDeliveries[i, 8] = kids2_17.ToString();
+        //                odv.OpenDeliveries[i, 9] = (familyMembers.Count + 1 - kids2_17).ToString(); // # Adults + Seniors
+        //                odv.OpenDeliveries[i, 10] = (familyMembers.Count + 1).ToString();
+        //                odv.OpenDeliveries[i, 15] = client.Notes;
+        //            }
+
+        //            odv.OpenDeliveries[i, 9] = del.FullBags.ToString();
+        //            odv.OpenDeliveries[i, 10] = del.HalfBags.ToString();
+        //            odv.OpenDeliveries[i, 11] = del.KidSnacks.ToString();
+        //            odv.OpenDeliveries[i, 12] = del.GiftCards.ToString();
+
+        //            odv.OpenDeliveries[i, 14] = del.ODNotes;
+        //            odv.OpenDeliveries[i, 15] = del.DriverNotes;
+        //            i++;
+        //        }
+
+        //        return odv;
+        //    }
+        //}
     }
 }
