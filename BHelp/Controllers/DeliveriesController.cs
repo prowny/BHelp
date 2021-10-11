@@ -157,6 +157,11 @@ namespace BHelp.Controllers
             return result;
         }
 
+        public ActionResult OpenDeliveriesToCSV()
+        {
+            var result = AppRoutines.OpenDeliveriesToCSV();
+            return result;
+        }
         public ActionResult TempOpenDeliveriesToExcel()
         {
             var result = AppRoutines.TempOpenDeliveriesToExcel();
