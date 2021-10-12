@@ -554,9 +554,9 @@ namespace BHelp
                 return odv;
             }
         }
-        public static FileStreamResult TempOpenDeliveriesToExcel()
+        public static FileStreamResult ExcelOpenDeliveries()
         {
-            var view = TempGetOpenDeliveryViewModel();
+            var view = GetOpenDeliveriesViewModel();
             XLWorkbook workbook = new XLWorkbook();
             IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
 
@@ -667,7 +667,7 @@ namespace BHelp
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             { FileDownloadName = view.ReportTitle + ".xlsx" };
         }
-        private static OpenDeliveryViewModel TempGetOpenDeliveryViewModel()
+        private static OpenDeliveryViewModel GetOpenDeliveriesViewModel()
         {
             var odv = new OpenDeliveryViewModel
             //   OpenDeliveries[ Delivery, Column, Line ]
@@ -725,10 +725,9 @@ namespace BHelp
                 return odv;
             }
         }
-
         public static FileStreamResult OpenDeliveriesToCSV()
         {
-            var view = TempGetOpenDeliveryViewModel();
+            var view = GetOpenDeliveriesViewModel();
             var sb = new StringBuilder();
 
             sb.Append(view.ReportTitle + ',');
@@ -788,65 +787,5 @@ namespace BHelp
             return null;
         }
 
-        //private static OpenDeliveryViewModel GetOpenDeliveryViewModelCSV()
-        //{
-        //    var odv = new OpenDeliveryViewModel
-        //        { ReportTitle = "Bethesda Help Open Deliveries" };
-
-        //    using (var db = new BHelpContext())
-        //    {
-        //        var deliveryList = new List<Delivery>(db.Deliveries)
-        //            .Where(d => d.Completed == false)
-        //            .OrderBy(d => d.DeliveryDate)
-        //            .ThenBy(d => d.DriverId)
-        //            .ThenBy(z => z.Zip)
-        //            .ThenBy(n => n.LastName).ToList();
-        //        odv.OpenDeliveryCount = deliveryList.Count;
-        //        odv.OpenDeliveries = new string[deliveryList.Count, 16];
-        //        var i = 0;
-        //        foreach (var del in deliveryList)
-        //        {
-        //            var client = db.Clients.Find(del.ClientId);
-        //            odv.OpenDeliveries[i, 1] = del.DeliveryDate.ToShortDateString();
-
-        //            var driver = db.Users.Find(del.DriverId);
-        //            if (driver != null)
-        //            {
-        //                odv.OpenDeliveries[i, 2] = driver.FullName;
-        //            }
-
-        //            odv.OpenDeliveries[i, 3] = del.Zip;
-        //            odv.OpenDeliveries[i, 4] = del.LastName + ", " + del.FirstName;
-        //            odv.OpenDeliveries[i, 5] = del.StreetNumber + " " + del.StreetName;
-        //            odv.OpenDeliveries[i, 6] = del.City;
-        //            odv.OpenDeliveries[i, 7] = del.Phone;
-        //            if (client != null)
-        //            {
-        //                var familyMemberCount = db.FamilyMembers.Count(c => c.ClientId == client.Id);
-        //                odv.OpenDeliveries[i, 8] = (familyMemberCount + 1).ToString();
-        //                odv.OpenDeliveries[i, 9] = GetNamesAgesOfAllInHousehold(client.Id);
-        //                odv.OpenDeliveries[i, 13] = client.Notes;
-
-        //                var familyMembers = db.FamilyMembers.Where(c => c.ClientId == client.Id).ToList();
-        //                var kids2_17 = GetNumberOfKids2_17(client.Id);
-        //                odv.OpenDeliveries[i, 8] = kids2_17.ToString();
-        //                odv.OpenDeliveries[i, 9] = (familyMembers.Count + 1 - kids2_17).ToString(); // # Adults + Seniors
-        //                odv.OpenDeliveries[i, 10] = (familyMembers.Count + 1).ToString();
-        //                odv.OpenDeliveries[i, 15] = client.Notes;
-        //            }
-
-        //            odv.OpenDeliveries[i, 9] = del.FullBags.ToString();
-        //            odv.OpenDeliveries[i, 10] = del.HalfBags.ToString();
-        //            odv.OpenDeliveries[i, 11] = del.KidSnacks.ToString();
-        //            odv.OpenDeliveries[i, 12] = del.GiftCards.ToString();
-
-        //            odv.OpenDeliveries[i, 14] = del.ODNotes;
-        //            odv.OpenDeliveries[i, 15] = del.DriverNotes;
-        //            i++;
-        //        }
-
-        //        return odv;
-        //    }
-        //}
     }
 }
