@@ -363,9 +363,11 @@ namespace BHelp
                 var client = db.Clients.Find(clientId);
                 if (client != null)
                 {
+                    var fromDate = DateTime.Today.AddYears(-17);
+                    var thruDate = DateTime.Today.AddYears(-2);
                     var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId
-                                                                 && c.DateOfBirth >= DateTime.Today.AddYears(-17)
-                                                                 && c.DateOfBirth <= DateTime.Today.AddYears(-2)).ToList();
+                                                                 && c.DateOfBirth >= fromDate
+                                                                 && c.DateOfBirth <= thruDate).ToList();
                     return familyList.Count;
                 }
             }
