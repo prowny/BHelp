@@ -50,7 +50,6 @@ namespace BHelp
             }
             return true;
         }
-
         public static Boolean UploadDeliveries()
         {
             var db = new BHelpContext();
@@ -199,7 +198,6 @@ namespace BHelp
             var unused = count.ToString() + " " + newCount.ToString();
             return true;
         }
-
         public static Boolean CopyClientZipToDelivery()
         {
             var db = new BHelpContext();
@@ -212,7 +210,6 @@ namespace BHelp
             //db.SaveChanges();
             return true;
         }
-
         public static Boolean CopySnapshotDataToDelivery()
         {
             var db = new BHelpContext();
@@ -237,7 +234,6 @@ namespace BHelp
         }
         private static int GetClientId(string lastName, string streetNumber, string streetName)
         {
-            // 07/26/21 Look up by Street # = Street Name.
             var db = new BHelpContext();
             var client= db.Clients.FirstOrDefault(c => c.StreetNumber == streetNumber
                                                        && c.StreetName == streetName);
@@ -258,14 +254,12 @@ namespace BHelp
                 }
             }
         }
-
         private static bool IsDate(string inputDate)
         {
             // ReSharper disable once NotAccessedVariable
             DateTime dat;
             return DateTime.TryParse(inputDate, out dat);
         }
-
         private static string GetUserId(string fullName)
         {
             if (fullName.Length < 5) { return ""; } //(Expect driver with only first name 'Jake')
@@ -284,7 +278,6 @@ namespace BHelp
                 return "";
             }
         }
-
         private static void AddFamily(DataRow row,  string[] familyArray, int clientId)
         {
             var db = new BHelpContext();
@@ -346,6 +339,13 @@ namespace BHelp
                     }
                 }
             }
+        }
+        public static void TestMySql()
+        {  // NOT WORKING 10/13/21 - hold and catch fire
+            var db = new MySqlContext();
+            var tester = db.Test.ToList();
+
+            var i = 1;
         }
     }
 }

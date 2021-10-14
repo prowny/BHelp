@@ -17,7 +17,9 @@ namespace BHelp.ViewModels
         public string ReportTitle { get; set; }  //  e.g. "Apr-Jun 2021 County Report"
         [Range(1, 4)] public int Quarter { get; set; }
         [Range( 2020, 2050)] public int Year { get; set; }
+        [Range(1, 12)] public int Month { get; set; }
         public string DateRangeTitle { get; set; }  // e.g. "April 2021 through June 2021"
+        public string MMyyyy { get; set; }  // used in Bethesda Helper report
         public string[] MonthYear { get; set; }
         public string ZipCode { get; set; }
         public List<string> ZipCodes { get; set; }

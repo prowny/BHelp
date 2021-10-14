@@ -228,6 +228,7 @@
     <Compile Include="DataAccessLayer\BHelpContext.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="DataAccessLayer\MySqlContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -334,6 +335,7 @@
     <Compile Include="ViewModels\AddEditUserRolesViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="ViewModels\MySqlViewModel.cs" />
     <Compile Include="ViewModels\OpenDeliveryViewModel.cs" />
     <Compile Include="ViewModels\ReportsViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

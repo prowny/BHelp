@@ -1,22 +1,21 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 using BHelp.Models;
 using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Diagnostics;
 
 namespace BHelp.DataAccessLayer
 {
     public class BHelpContext : IdentityDbContext<ApplicationUser>
     {
-        public static void EnableMigrations()
-        {
-            //Database.SetInitializer(new MigrateDatabaseToLatestVersion<BHelpContext>());
-        }
+        //public static void EnableMigrations()
+        //{
+        //    //Database.SetInitializer(new MigrateDatabaseToLatestVersion<BHelpContext>());
+        //}
 
-        public static void DropAndCreateDatabase()
-        {
-            Database.SetInitializer(new DropCreateDatabaseAlways<BHelpContext>());
-        }
+        //public static void DropAndCreateDatabase()
+        //{
+        //    Database.SetInitializer(new DropCreateDatabaseAlways<BHelpContext>());
+        //}
 
         public BHelpContext() : base("BHelpContext")
         {
@@ -31,11 +30,11 @@ namespace BHelp.DataAccessLayer
 
         public DbSet<Delivery> Deliveries { get; set; }
 
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-            //modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-        }
+        //protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        //{
+        //    base.OnModelCreating(modelBuilder);
+        //    //modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+        //}
 
         public static BHelpContext Create()
         {
@@ -43,5 +42,4 @@ namespace BHelp.DataAccessLayer
         }
 
     }
-
 }

@@ -83,6 +83,11 @@ namespace BHelp.Controllers
             Utilities.CopySnapshotDataToDelivery();
             return RedirectToAction("Index", "Home");
         }
+        public ActionResult TestMySql()
+        {
+            Utilities.TestMySql();
+            return RedirectToAction("Index", "Home");
+        }
 
     }
 }

@@ -724,6 +724,44 @@ namespace BHelp.Controllers
             return View(view);
         }
 
+        public ActionResult BethesdaHelperReport(string yy = "", string mm = "")
+        {
+            int reportYear;
+            int reportMonth;
+            if (yy.IsNullOrEmpty() || mm.IsNullOrEmpty())  // Default to this month
+            {
+                reportYear = Convert.ToInt32(DateTime.Now.Year.ToString());
+                reportMonth = Convert.ToInt32(DateTime.Now.Month.ToString());
+            }
+            else
+            {
+                reportYear = Convert.ToInt32(yy);
+                reportMonth = Convert.ToInt32(mm);
+            }
+            var view = GetBethesdaHelperReportView(reportYear, reportMonth);
+            return View(view);
+        }
+        private static ReportsViewModel GetBethesdaHelperReportView(int year, int month)
+        {
+            var view = new ReportsViewModel {Year = year, Month = month};
+            if (DateTimeFormatInfo.CurrentInfo != null)
+            {
+                view.DateRangeTitle = "Bethesda Help, Inc. "
+                    + DateTimeFormatInfo.CurrentInfo.GetMonthName(view.Month)
+                    + " " + view.Year.ToString() + " Delivery Totals";
+                view.ReportTitle ="Bethesda Helper Data "
+                                  + DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(view.Month) 
+                                  + " " + view.Year.ToString();
+            }
+            view.MonthYear = new string[2];
+            view.MonthYear[0] = new DateTime(view.Year, view.Month, 1).ToShortDateString();
+            var daysInMonth = DateTime.DaysInMonth(view.Year, view.Month);
+            view.MonthYear[1] = new DateTime(view.Year, view.Month, daysInMonth).ToShortDateString();
+            view.ZipCodes = AppRoutines.GetZipCodesList();
+
+
+            return view;
+        }
         private List<SelectListItem> GetSnapshotFamily(string listHH)
         {
             var i = 0;
@@ -737,11 +775,9 @@ namespace BHelp.Controllers
             }
             return familyList;
         }
-
         private ReportsViewModel GetCountyReportView(int yy, int qtr)
         {
-            var view = new ReportsViewModel()
-            { Year = yy, Quarter = qtr };
+            var view = new ReportsViewModel { Year = yy, Quarter = qtr };
             if (qtr == 1) { view.Months = new[] { 1, 2, 3 }; }
             if (qtr == 2) { view.Months = new[] { 4, 5, 6 }; }
             if (qtr == 3) { view.Months = new[] { 7, 8, 9 }; }
