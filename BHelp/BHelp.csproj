@@ -486,6 +486,7 @@
     </Content>
     <Content Include="Views\Deliveries\CallLogByDateDelivered.cshtml" />
     <Content Include="Views\Deliveries\EditDelivereds.cshtml" />
+    <Content Include="Views\Deliveries\HelperReport.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>

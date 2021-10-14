@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Globalization;
 using System.IO;
+using System.IO.Packaging;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -558,8 +559,8 @@ namespace BHelp.Controllers
             return RedirectToAction("CallLogByDateDelivered");
         }
 
-            // GET: Deliveries/Delete/5
-            public ActionResult Delete(int? id)
+        // GET: Deliveries/Delete/5
+        public ActionResult Delete(int? id)
         {
             if (id == null)
             { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
@@ -724,7 +725,7 @@ namespace BHelp.Controllers
             return View(view);
         }
 
-        public ActionResult BethesdaHelperReport(string yy = "", string mm = "")
+        public ActionResult HelperReport(string yy = "", string mm = "")
         {
             int reportYear;
             int reportMonth;
@@ -738,17 +739,16 @@ namespace BHelp.Controllers
                 reportYear = Convert.ToInt32(yy);
                 reportMonth = Convert.ToInt32(mm);
             }
-            var view = GetBethesdaHelperReportView(reportYear, reportMonth);
+            var view = GetHelperReportView(reportYear, reportMonth);
             return View(view);
         }
-        private static ReportsViewModel GetBethesdaHelperReportView(int year, int month)
+        private static ReportsViewModel GetHelperReportView(int year, int month)
         {
             var view = new ReportsViewModel {Year = year, Month = month};
             if (DateTimeFormatInfo.CurrentInfo != null)
             {
-                view.DateRangeTitle = "Bethesda Help, Inc. "
-                    + DateTimeFormatInfo.CurrentInfo.GetMonthName(view.Month)
-                    + " " + view.Year.ToString() + " Delivery Totals";
+                view.DateRangeTitle = DateTimeFormatInfo.CurrentInfo.GetMonthName(view.Month)
+                                      + " " + view.Year.ToString() + " Delivery Totals";
                 view.ReportTitle ="Bethesda Helper Data "
                                   + DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(view.Month) 
                                   + " " + view.Year.ToString();
@@ -757,7 +757,56 @@ namespace BHelp.Controllers
             view.MonthYear[0] = new DateTime(view.Year, view.Month, 1).ToShortDateString();
             var daysInMonth = DateTime.DaysInMonth(view.Year, view.Month);
             view.MonthYear[1] = new DateTime(view.Year, view.Month, daysInMonth).ToShortDateString();
+            view.HelperTitles = new string[19];
+            view.HelperTitles[1] = "# Households Distinct Served";
+            view.HelperTitles[2] = "# Distinct Residents Served";
+            view.HelperTitles[3] = "# Distinct Residents <18";
+            view.HelperTitles[4] = "# Distinct Adults 18-59";
+            view.HelperTitles[6] = "# Distinct Residents 60+";
+            view.HelperTitles[7] = "# Deliveries";
+            view.HelperTitles[8] = "# Repeat Deliveries";
+            view.HelperTitles[9] = "# Cumulative Residents Served Daily";
+            view.HelperTitles[10] = "# Cumulattive Residents Children <18";
+            view.HelperTitles[11] = "# Cumulative Residents Adults 18-59";
+            view.HelperTitles[12] = "# Cumulative Residents Seniors 60+";
+            view.HelperTitles[13] = "# Full Bags (10 lbs per bag)";
+            view.HelperTitles[14] = "# Half Bags (9 lbs per bag)";
+            view.HelperTitles[15] = "# Snacks";
+            view.HelperTitles[16] = "# Total lbs of Full Bags";
+            view.HelperTitles[17] = "# Total lbs of Half Bags";
+            view.HelperTitles[18] = "# Giant Gift Cards Disbursed";
+
             view.ZipCodes = AppRoutines.GetZipCodesList();
+            view.ZipCounts = new int[23, view.ZipCodes.Count + 1]; // ZipCodes, Counts
+            for (int zip = 1; zip < view.ZipCodes.Count + 1; zip++)
+            {
+                view.ZipCounts[1, zip] = 1;
+                view.ZipCounts[2, zip] = 2;
+                view.ZipCounts[3, zip] = 3;
+                view.ZipCounts[4, zip] = 4;
+                view.ZipCounts[5, zip] = 5;
+                view.ZipCounts[6, zip] = 6;
+                view.ZipCounts[7, zip] = 7;
+                view.ZipCounts[8, zip] = 8;
+                view.ZipCounts[9, zip] = 9;
+                view.ZipCounts[10, zip] = 10;
+                view.ZipCounts[11, zip] = 11;
+                view.ZipCounts[12, zip] = 12;
+                view.ZipCounts[13, zip] = 13;
+                view.ZipCounts[14, zip] = 14;
+                view.ZipCounts[15, zip] = 15;
+                view.ZipCounts[16, zip] = 16;
+                view.ZipCounts[17, zip] = 17;
+                view.ZipCounts[18, zip] = 18;
+            }
+
+
+            //for (int i = 0; i < 3; i++)
+            //{
+            //    var mY = view.MonthYear[i].Split(' ');
+            //    var mo = DateTime.ParseExact(mY[0], "MMMM", CultureInfo.CurrentCulture).Month;
+            //    var startDate = Convert.ToDateTime(mo.ToString() + "/01/" + mY[1]);
+            //}
 
 
             return view;
