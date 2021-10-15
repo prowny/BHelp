@@ -754,9 +754,11 @@ namespace BHelp.Controllers
                                   + " " + view.Year.ToString();
             }
             view.MonthYear = new string[2];
-            view.MonthYear[0] = new DateTime(view.Year, view.Month, 1).ToShortDateString();
+            var startDate = new DateTime(view.Year, view.Month, 1);
+            view.MonthYear[0] = startDate.ToShortDateString();
             var daysInMonth = DateTime.DaysInMonth(view.Year, view.Month);
-            view.MonthYear[1] = new DateTime(view.Year, view.Month, daysInMonth).ToShortDateString();
+            var thruDate = new DateTime(view.Year, view.Month, daysInMonth);
+            view.MonthYear[1] =thruDate.ToShortDateString();
             view.HelperTitles = new string[19];
             view.HelperTitles[1] = "# Households Distinct Served";
             view.HelperTitles[2] = "# Households Distinct Served";
@@ -779,28 +781,35 @@ namespace BHelp.Controllers
 
             view.ZipCodes = AppRoutines.GetZipCodesList();
             view.ZipCounts = new int[19, view.ZipCodes.Count + 2]; // ZipCodes, Counts
-            for (int zip = 1; zip < view.ZipCodes.Count + 2; zip++)
+            using (var db = new BHelpContext())
             {
-                view.ZipCounts[1, zip] = 1;
-                view.ZipCounts[2, zip] = 2;
-                view.ZipCounts[3, zip] = 3;
-                view.ZipCounts[4, zip] = 4;
-                view.ZipCounts[5, zip] = 5;
-                view.ZipCounts[6, zip] = 6;
-                view.ZipCounts[7, zip] = 7;
-                view.ZipCounts[8, zip] = 8;
-                view.ZipCounts[9, zip] = 9;
-                view.ZipCounts[10, zip] = 10;
-                view.ZipCounts[11, zip] = 11;
-                view.ZipCounts[12, zip] = 12;
-                view.ZipCounts[13, zip] = 13;
-                view.ZipCounts[14, zip] = 14;
-                view.ZipCounts[15, zip] = 15;
-                view.ZipCounts[16, zip] = 16;
-                view.ZipCounts[17, zip] = 17;
-                view.ZipCounts[18, zip] = 18;
+                for (int zip = 1; zip < view.ZipCodes.Count + 2; zip++)
+                {
+                    var stringZip = view.ZipCodes[zip].ToString();
+                    var deliveryData = db.Deliveries.Where(d => d.Zip == stringZip
+                                                                && d.DateDelivered >= startDate &&
+                                                                d.DateDelivered <= thruDate).ToList();
+                    view.ZipCounts[1, zip] = 1;
+                    view.ZipCounts[2, zip] = 2;
+                    view.ZipCounts[3, zip] = 3;
+                    view.ZipCounts[4, zip] = 4;
+                    view.ZipCounts[5, zip] = 5;
+                    view.ZipCounts[6, zip] = 6;
+                    view.ZipCounts[7, zip] = 7;
+                    view.ZipCounts[8, zip] = 8;
+                    view.ZipCounts[9, zip] = 9;
+                    view.ZipCounts[10, zip] = 10;
+                    view.ZipCounts[11, zip] = 11;
+                    view.ZipCounts[12, zip] = 12;
+                    view.ZipCounts[13, zip] = 13;
+                    view.ZipCounts[14, zip] = 14;
+                    view.ZipCounts[15, zip] = 15;
+                    view.ZipCounts[16, zip] = 16;
+                    view.ZipCounts[17, zip] = 17;
+                    view.ZipCounts[18, zip] = 18;
+                }
             }
-            
+
             return view;
         }
         private List<SelectListItem> GetSnapshotFamily(string listHH)
