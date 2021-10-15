@@ -760,7 +760,7 @@ namespace BHelp.Controllers
             var thruDate = new DateTime(view.Year, view.Month, daysInMonth);
             view.MonthYear[1] =thruDate.ToShortDateString();
             view.HelperTitles = new string[19];
-            view.HelperTitles[1] = "# Households Distinct Served";
+            view.HelperTitles[1] = "# Total Food Lbs";
             view.HelperTitles[2] = "# Households Distinct Served";
             view.HelperTitles[3] = "# Distinct Residents Served";
             view.HelperTitles[4] = "# Distinct Residents <18";
@@ -769,44 +769,62 @@ namespace BHelp.Controllers
             view.HelperTitles[7] = "# Deliveries";
             view.HelperTitles[8] = "# Repeat Deliveries";
             view.HelperTitles[9] = "# Cumulative Residents Served Daily";
-            view.HelperTitles[10] = "# Cumulattive Residents Children <18";
+            view.HelperTitles[10] = "# Cumulative Residents Children <18";
             view.HelperTitles[11] = "# Cumulative Residents Adults 18-59";
             view.HelperTitles[12] = "# Cumulative Residents Seniors 60+";
             view.HelperTitles[13] = "# Full Bags (10 lbs per bag)";
             view.HelperTitles[14] = "# Half Bags (9 lbs per bag)";
             view.HelperTitles[15] = "# Snacks";
-            view.HelperTitles[16] = "# Total lbs of Full Bags";
-            view.HelperTitles[17] = "# Total lbs of Half Bags";
+            view.HelperTitles[16] = "# Total Lbs of Full Bags";
+            view.HelperTitles[17] = "# Total Lbs of Half Bags";
             view.HelperTitles[18] = "# Giant Gift Cards Disbursed";
 
             view.ZipCodes = AppRoutines.GetZipCodesList();
             view.ZipCounts = new int[19, view.ZipCodes.Count + 2]; // ZipCodes, Counts
             using (var db = new BHelpContext())
             {
-                for (int zip = 1; zip < view.ZipCodes.Count + 2; zip++)
+                for (int zip = 0; zip < view.ZipCodes.Count; zip++)
                 {
                     var stringZip = view.ZipCodes[zip].ToString();
                     var deliveryData = db.Deliveries.Where(d => d.Zip == stringZip
-                                                                && d.DateDelivered >= startDate &&
-                                                                d.DateDelivered <= thruDate).ToList();
+                                 && d.DateDelivered >= startDate && d.DateDelivered <= thruDate).ToList();
+                    var residents = 0;
+                    var children = 0;
+                    var adults = 0;
+                    var seniors = 0;
+                    var fullBags = 0;
+                    var halfBags = 0;
+                    var snacks = 0;
+                    var cards = 0;
+                    foreach (var del in deliveryData)
+                    {
+                        if (del.Children != null) children += del.Children.Value;
+                        if (del.Adults != null) adults += del.Adults.Value;
+                        if (del.Seniors != null) seniors += del.Seniors.Value;
+                        if (del.FullBags != null) fullBags += del.FullBags.Value;
+                        if (del.HalfBags != null) halfBags += del.HalfBags.Value;
+                        if (del.KidSnacks != null) snacks += del.KidSnacks.Value;
+                        if (del.GiftCards != null) cards += del.GiftCards.Value;
+                    }
+                    // if (model != null) model = model.DistinctBy(x => x.Id).ToList();
                     view.ZipCounts[1, zip] = 1;
                     view.ZipCounts[2, zip] = 2;
                     view.ZipCounts[3, zip] = 3;
                     view.ZipCounts[4, zip] = 4;
                     view.ZipCounts[5, zip] = 5;
                     view.ZipCounts[6, zip] = 6;
-                    view.ZipCounts[7, zip] = 7;
+                    view.ZipCounts[7, zip] = deliveryData.Count;
                     view.ZipCounts[8, zip] = 8;
-                    view.ZipCounts[9, zip] = 9;
-                    view.ZipCounts[10, zip] = 10;
-                    view.ZipCounts[11, zip] = 11;
-                    view.ZipCounts[12, zip] = 12;
-                    view.ZipCounts[13, zip] = 13;
-                    view.ZipCounts[14, zip] = 14;
-                    view.ZipCounts[15, zip] = 15;
-                    view.ZipCounts[16, zip] = 16;
-                    view.ZipCounts[17, zip] = 17;
-                    view.ZipCounts[18, zip] = 18;
+                    view.ZipCounts[9, zip] = children + adults + seniors;
+                    view.ZipCounts[10, zip] = children + adults + seniors;
+                    view.ZipCounts[11, zip] = adults;
+                    view.ZipCounts[12, zip] = children;
+                    view.ZipCounts[13, zip] = adults;
+                    view.ZipCounts[14, zip] = seniors;
+                    view.ZipCounts[15, zip] = snacks;
+                    view.ZipCounts[16, zip] = fullBags;
+                    view.ZipCounts[17, zip] = halfBags;
+                    view.ZipCounts[18, zip] = cards;
                 }
             }
 
