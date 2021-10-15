@@ -759,9 +759,10 @@ namespace BHelp.Controllers
             view.MonthYear[1] = new DateTime(view.Year, view.Month, daysInMonth).ToShortDateString();
             view.HelperTitles = new string[19];
             view.HelperTitles[1] = "# Households Distinct Served";
-            view.HelperTitles[2] = "# Distinct Residents Served";
-            view.HelperTitles[3] = "# Distinct Residents <18";
-            view.HelperTitles[4] = "# Distinct Adults 18-59";
+            view.HelperTitles[2] = "# Households Distinct Served";
+            view.HelperTitles[3] = "# Distinct Residents Served";
+            view.HelperTitles[4] = "# Distinct Residents <18";
+            view.HelperTitles[5] = "# Distinct Adults 18-59";
             view.HelperTitles[6] = "# Distinct Residents 60+";
             view.HelperTitles[7] = "# Deliveries";
             view.HelperTitles[8] = "# Repeat Deliveries";
@@ -777,8 +778,8 @@ namespace BHelp.Controllers
             view.HelperTitles[18] = "# Giant Gift Cards Disbursed";
 
             view.ZipCodes = AppRoutines.GetZipCodesList();
-            view.ZipCounts = new int[23, view.ZipCodes.Count + 1]; // ZipCodes, Counts
-            for (int zip = 1; zip < view.ZipCodes.Count + 1; zip++)
+            view.ZipCounts = new int[19, view.ZipCodes.Count + 2]; // ZipCodes, Counts
+            for (int zip = 1; zip < view.ZipCodes.Count + 2; zip++)
             {
                 view.ZipCounts[1, zip] = 1;
                 view.ZipCounts[2, zip] = 2;
@@ -799,16 +800,7 @@ namespace BHelp.Controllers
                 view.ZipCounts[17, zip] = 17;
                 view.ZipCounts[18, zip] = 18;
             }
-
-
-            //for (int i = 0; i < 3; i++)
-            //{
-            //    var mY = view.MonthYear[i].Split(' ');
-            //    var mo = DateTime.ParseExact(mY[0], "MMMM", CultureInfo.CurrentCulture).Month;
-            //    var startDate = Convert.ToDateTime(mo.ToString() + "/01/" + mY[1]);
-            //}
-
-
+            
             return view;
         }
         private List<SelectListItem> GetSnapshotFamily(string listHH)

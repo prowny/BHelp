@@ -25,7 +25,7 @@ namespace BHelp.ViewModels
         public List<string> ZipCodes { get; set; }
         public int[,,] Counts { get; set; } // Note 3-dimensional: Month, Zip, Amount  
         public int[] Months { get; set; }   // month numbers for the quarter e.g. 1,2,3 or 7,8,9
-        public int[,] ZipCounts { get; set; } // for Behtesda Helper Data Report
+        public int[,] ZipCounts { get; set; } // for Bethesda Helper Data Report
         public string[] HelperTitles { get; set; }
     }
 }

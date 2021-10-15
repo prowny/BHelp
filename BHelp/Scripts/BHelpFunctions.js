@@ -91,6 +91,21 @@ function CountyReport() {
     });
 }
 
+function HelperReport() {
+    $.ajax({
+        url: "/Deliveries/HelperReport",
+        data: { yy: $("#Year").val(), mm: $("#Month").val() },
+        type: "POST",
+        success: function (data) {
+            $("body").html(data); // to refresh the page
+            //var dummy =xx;
+        },
+        error: function (jqxhr, status, exception) {
+            alert('Exception:', exception);
+        }
+    });
+}
+
 function EditCallLog()
 {
     $.ajax({
