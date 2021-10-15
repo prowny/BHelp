@@ -739,6 +739,9 @@ namespace BHelp.Controllers
                 reportYear = Convert.ToInt32(yy);
                 reportMonth = Convert.ToInt32(mm);
             }
+            // TEMP!!!!
+            reportYear = 2021;
+            reportMonth = 7;
             var view = GetHelperReportView(reportYear, reportMonth);
             return View(view);
         }
@@ -788,25 +791,38 @@ namespace BHelp.Controllers
                     var stringZip = view.ZipCodes[zip].ToString();
                     var deliveryData = db.Deliveries.Where(d => d.Zip == stringZip
                                  && d.DateDelivered >= startDate && d.DateDelivered <= thruDate).ToList();
-                    var residents = 0;
-                    var children = 0;
-                    var adults = 0;
-                    var seniors = 0;
+                    List<int> distinctList = new List<int>();
+                    foreach (var del in deliveryData)
+                    {
+                        for (int i = 0; i < deliveryData.Count; i++)
+                        {
+                            if (distinctList.Contains(del.ClientId))
+                                continue;
+                            distinctList.Add(del.ClientId);
+                        }
+                    }
+                    var cumulativeChildren = 0;
+                    var cumulativeAdults = 0;
+                    var cumulativeSeniors = 0;
+                    var distinctChildren = 0;
+                    var distinctAdults = 0;
+                    var distinctSeniors = 0;
                     var fullBags = 0;
                     var halfBags = 0;
                     var snacks = 0;
                     var cards = 0;
+
                     foreach (var del in deliveryData)
                     {
-                        if (del.Children != null) children += del.Children.Value;
-                        if (del.Adults != null) adults += del.Adults.Value;
-                        if (del.Seniors != null) seniors += del.Seniors.Value;
+                        if (del.Children != null) cumulativeChildren += del.Children.Value;
+                        if (del.Adults != null) cumulativeAdults += del.Adults.Value;
+                        if (del.Seniors != null) cumulativeSeniors += del.Seniors.Value;
                         if (del.FullBags != null) fullBags += del.FullBags.Value;
                         if (del.HalfBags != null) halfBags += del.HalfBags.Value;
                         if (del.KidSnacks != null) snacks += del.KidSnacks.Value;
                         if (del.GiftCards != null) cards += del.GiftCards.Value;
                     }
-                    // if (model != null) model = model.DistinctBy(x => x.Id).ToList();
+                   
                     view.ZipCounts[1, zip] = 1;
                     view.ZipCounts[2, zip] = 2;
                     view.ZipCounts[3, zip] = 3;
@@ -814,13 +830,13 @@ namespace BHelp.Controllers
                     view.ZipCounts[5, zip] = 5;
                     view.ZipCounts[6, zip] = 6;
                     view.ZipCounts[7, zip] = deliveryData.Count;
-                    view.ZipCounts[8, zip] = 8;
-                    view.ZipCounts[9, zip] = children + adults + seniors;
-                    view.ZipCounts[10, zip] = children + adults + seniors;
-                    view.ZipCounts[11, zip] = adults;
-                    view.ZipCounts[12, zip] = children;
-                    view.ZipCounts[13, zip] = adults;
-                    view.ZipCounts[14, zip] = seniors;
+                    view.ZipCounts[8, zip] = deliveryData.Count - distinctList.Count;
+                    view.ZipCounts[9, zip] = cumulativeChildren + cumulativeAdults + cumulativeSeniors;
+                    view.ZipCounts[10, zip] = cumulativeChildren + cumulativeAdults + cumulativeSeniors;
+                    view.ZipCounts[11, zip] = cumulativeAdults;
+                    view.ZipCounts[12, zip] = cumulativeChildren;
+                    view.ZipCounts[13, zip] = cumulativeAdults;
+                    view.ZipCounts[14, zip] = cumulativeSeniors;
                     view.ZipCounts[15, zip] = snacks;
                     view.ZipCounts[16, zip] = fullBags;
                     view.ZipCounts[17, zip] = halfBags;
