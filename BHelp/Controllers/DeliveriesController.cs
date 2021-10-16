@@ -583,12 +583,10 @@ namespace BHelp.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
-
         public ActionResult CallLogMenu()
         {
             return View();
         }
-
         public ActionResult CallLogIndividual(int? clientId)
         {
             var clientSelectList = new List<SelectListItem>();
@@ -624,14 +622,13 @@ namespace BHelp.Controllers
             }
             return View(callLogView);
         }
-         
+
         [HttpPost]
         public ActionResult CallLogIndividual(string id)
         {
             var intClientId = Convert.ToInt32(id);
             return RedirectToAction("CallLogIndividual", new { clientId = intClientId });
         }
-
         public ActionResult CallLogByLogDate(DateTime? startDate, DateTime? endDate )
         {
             if (!startDate.HasValue || !endDate.HasValue)  // default to today and 1 week ago
@@ -663,7 +660,6 @@ namespace BHelp.Controllers
             }
             return View(callLogView);
         }
-
         public ActionResult CallLogByDateDelivered(DateTime? startDate, DateTime? endDate)
         {
             if (!startDate.HasValue || !endDate.HasValue)  // default to today and 1 week ago
@@ -695,12 +691,10 @@ namespace BHelp.Controllers
             }
             return View(callLogView);
         }
-
         public ActionResult ReportsMenu()
         {
             return View();
         }
-
         public ActionResult CountyReport(string yy = "", string qtr = "")
         {
             int reportYear;
@@ -723,7 +717,6 @@ namespace BHelp.Controllers
             var view = GetCountyReportView(reportYear, reportQuarter);
             return View(view);
         }
-
         public ActionResult HelperReport(string yy = "", string mm = "")
         {
             int reportYear;
@@ -738,12 +731,49 @@ namespace BHelp.Controllers
                 reportYear = Convert.ToInt32(yy);
                 reportMonth = Convert.ToInt32(mm);
             }
-            // ********************** TEMP!!!! for testing  *************************
-            //reportYear = 2021;
-            //reportMonth = 7;
-
+        
             var view = GetHelperReportView(reportYear, reportMonth);
             return View(view);
+        }
+        public ActionResult HelperReportToExcel(string yy = "", string mm = "")
+        {
+            var year = Convert.ToInt32(yy);
+            var month = Convert.ToInt32(mm);
+            var view = GetHelperReportView(year, month);
+            var workbook = new XLWorkbook();
+            IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
+
+            int activeRow = 1;
+            var titleDate = new DateTime(year, month, 1);
+            var title = "Bethesda Help, Inc. " + titleDate.ToString("MMMM") + " " + year
+                        + " Delivery Totals";
+            ws.Cell(activeRow, 1).SetValue(title);
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue("Time Period");
+            for (int i = 0; i < view.ZipCodes.Count; i++)
+            { ws.Cell(activeRow, i + 2).SetValue(view.ZipCodes[i]); }
+            ws.Cell(activeRow, view.ZipCodes.Count + 2).SetValue("Total Zip Codes");
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue(view.MonthYear[0]);
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue(view.MonthYear[1]);
+            activeRow++;
+
+            for (var row = activeRow; row < activeRow + 18; row++)
+            {
+                ws.Cell(row, 1).SetValue(view.HelperTitles[row - 4]);
+                for (var col = 1; col < view.ZipCodes.Count + 2; col++)
+                {
+                    ws.Cell(row, col + 1).SetValue(view.ZipCounts[ row - 4, col]);
+                }
+            }
+           
+            ws.Columns().AdjustToContents();
+            MemoryStream ms = new MemoryStream();
+            workbook.SaveAs(ms);
+            ms.Position = 0;
+            return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            { FileDownloadName = view.ReportTitle + ".xlsx" };
         }
         private static ReportsViewModel GetHelperReportView(int year, int month)
         {
@@ -1006,7 +1036,6 @@ namespace BHelp.Controllers
             }
             return view;
         }
-
         public ActionResult CountyReportToExcel(int yy, int qtr)
         {
             var view = GetCountyReportView(yy, qtr);
@@ -1073,7 +1102,6 @@ namespace BHelp.Controllers
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 { FileDownloadName = view.ReportTitle +".xlsx" };
         }
-
         private  DateTime? GetLastGetDeliveryDate(int id)
         {
             DateTime? dt = db.Deliveries.Where(d => d.DateDelivered != null
@@ -1091,7 +1119,6 @@ namespace BHelp.Controllers
                 return (DateTime) dt;
             }
         }
-
         private int GetGiftCardsSince(int clientId, DateTime dt1, DateTime dt2)
         {
             var total = 0;
@@ -1108,7 +1135,6 @@ namespace BHelp.Controllers
             }
             return total;
         }
-
         private string GetDriverName(string id)
         {
             if (id != null)
@@ -1119,7 +1145,6 @@ namespace BHelp.Controllers
 
             return "(nobody yet)";
         }
-
         public ActionResult QuorkReport(string endingDate = "")
         {
             DateTime endDate;
@@ -1145,7 +1170,6 @@ namespace BHelp.Controllers
             var view = GetQuorkReportView(endDate);
             return View(view);
         }
-
         private ReportsViewModel GetQuorkReportView(DateTime endDate)
         {
             DateTime startDate = endDate.AddDays(-6); 
@@ -1188,7 +1212,6 @@ namespace BHelp.Controllers
             }
             return view;
         }
-
         public ActionResult QuorkReportToExcel(string endingDate)
         {
             var endDate = Convert.ToDateTime(endingDate);
