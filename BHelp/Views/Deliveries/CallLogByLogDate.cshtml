@@ -105,7 +105,6 @@
             var stDate = window.$('#StartDate').val();
             window.$('#StartDate').val(stDate); 
             var endDt = window.$('#EndDate').val();
-            //if ($('#StartDate').val() > $('#EndDate').val()) { endDt = stDate; }
             window.location.href =
                 '@Url.Action("CallLogByLogDate", "Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
         });

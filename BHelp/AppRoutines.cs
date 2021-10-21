@@ -162,11 +162,14 @@ namespace BHelp
             {
                 nextEligibleDate = lastDeliveryDate.AddMonths(1);
                 nextEligibleDate = new DateTime( nextEligibleDate.Year,
-                        nextEligibleDate.Month,1); // move it to next month
+                        nextEligibleDate.Month,1); // move it to 1st of next month
             }
 
-            if (lastDeliveryDate < DateTime.Today.AddDays(-30))
-            { nextEligibleDate = DateTime.Today; }
+            var firstOfThisMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            if (lastDeliveryDate < firstOfThisMonth) // Prior to this month
+            {
+                nextEligibleDate = firstOfThisMonth; // move it to 1st of this month
+            }
             return nextEligibleDate;
         }
         public static DateTime GetNextGiftCardEligibleDate(int clientId, DateTime dt)
@@ -174,31 +177,37 @@ namespace BHelp
             // GIFT CARDS ELIGIBLE:
             // 1 per household of 3 or fewer; 1 per household per calendar month max
             // 2 per household of 4 or more; 2 per household per calendar month max;
-            var eligible = 0;
+            var monthlyEligible = 0;
             var numberInHousehold = GetFamilyMembers(clientId).Count;
             var firstOfMonth = new DateTime(dt.Year, dt.Month, 1);
             var totalThisMonth = GetAllGiftCardsThisMonth(clientId, firstOfMonth);
             if (numberInHousehold <= 3)   // 1 per household of 3 or fewer
             {
-                eligible = 1;
-                if (eligible + totalThisMonth > 1) eligible = 0;
+                monthlyEligible = 1;
+                if (monthlyEligible + totalThisMonth > 1) monthlyEligible = 0;
             }
             if (numberInHousehold >= 4)    // 2 per household of 4 or more
             {
-                eligible = 2;
-                if (eligible + totalThisMonth > 2) eligible = 0;
+                monthlyEligible = 2;
+                if (monthlyEligible + totalThisMonth > 2) monthlyEligible = 0;
             }
 
             var lastGiftCardDate = GetDateLastGiftCard(clientId);
-            var nextEligibleDate = lastGiftCardDate.AddDays(7);
-            if (eligible == 0)
+            var nextEligibleGiftCardDate = lastGiftCardDate.AddDays(7);
+            if (monthlyEligible == 0)   // move eligibility to 1st of next month
             {
-                nextEligibleDate = nextEligibleDate.AddMonths(1);
-                nextEligibleDate = new DateTime(nextEligibleDate.Year,
-                    nextEligibleDate.Month, 1); // move it to next month
+                nextEligibleGiftCardDate = nextEligibleGiftCardDate.AddMonths(1);
+                nextEligibleGiftCardDate = new DateTime(nextEligibleGiftCardDate.Year,
+                    nextEligibleGiftCardDate.Month, 1); // move it to next month
             }
 
-            return nextEligibleDate;
+            var firstOfThisMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            if (lastGiftCardDate < firstOfThisMonth)
+            {
+                nextEligibleGiftCardDate = firstOfThisMonth;
+            }
+
+            return nextEligibleGiftCardDate;
         }
         public static List<string> GetZipCodesList()
         {
