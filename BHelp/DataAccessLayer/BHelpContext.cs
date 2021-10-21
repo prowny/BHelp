@@ -7,16 +7,6 @@ namespace BHelp.DataAccessLayer
 {
     public class BHelpContext : IdentityDbContext<ApplicationUser>
     {
-        //public static void EnableMigrations()
-        //{
-        //    //Database.SetInitializer(new MigrateDatabaseToLatestVersion<BHelpContext>());
-        //}
-
-        //public static void DropAndCreateDatabase()
-        //{
-        //    Database.SetInitializer(new DropCreateDatabaseAlways<BHelpContext>());
-        //}
-
         public BHelpContext() : base("BHelpContext")
         {
             Database.Log = msg => Debug.Write(msg);
@@ -29,12 +19,6 @@ namespace BHelp.DataAccessLayer
         public DbSet <FamilyMember> FamilyMembers { get; set;}
 
         public DbSet<Delivery> Deliveries { get; set; }
-
-        //protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        //{
-        //    base.OnModelCreating(modelBuilder);
-        //    //modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-        //}
 
         public static BHelpContext Create()
         {

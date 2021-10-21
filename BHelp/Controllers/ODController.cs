@@ -247,7 +247,7 @@ namespace BHelp.Controllers
 
                 GiftCardsThisMonth = AppRoutines.GetPriorGiftCardsThisMonth(Id, DateTime.Today),
                 DateLastGiftCard = AppRoutines.GetDateLastGiftCard(Id,DateTime.Today),
-                //DeliveriesThisMonth = AppRoutines.GetDeliveriesThisMonth(Id),
+                DeliveriesThisMonth = AppRoutines.GetDeliveriesCountThisMonth( Id,DateTime.Today) ,
                 NextDeliveryEligibleDate =AppRoutines.GetNextEligibleDeliveryDate(Id,dtLastDelivery),
                 NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id, dtLastDelivery)
             };

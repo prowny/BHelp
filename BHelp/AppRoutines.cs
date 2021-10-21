@@ -91,9 +91,7 @@ namespace BHelp
         {
             var startDate = new DateTime(dt.Year, dt.Month, 1);
             var endDate = new DateTime(dt.Year, dt.Month, DateTime.DaysInMonth(dt.Year, dt.Month));
-            //if (clientId == 1511)
-            //{
-            //    clientId = 1511;}
+
             using (var db = new BHelpContext())
             {
                 var dtm= db.Deliveries.Count(i => i.ClientId == clientId

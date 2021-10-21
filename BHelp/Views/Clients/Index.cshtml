@@ -24,8 +24,9 @@
     <table>
         <tr>
             <td>@Html.ActionLink("Create New Client", "Create")</td>
-            <td>&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })</td>
-            <td>&nbsp;&nbsp;@Html.ActionLink("Download To Excel File", "ClientListToExcel")</td>
+            <td>&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "ReturnToDashboard")</td>
+            <td>&nbsp;&nbsp;@Html.ActionLink("Download Running Client List To Excel File", "ClientListToExcel")</td>
+            <td style="color: darkmagenta"><i>&#8592;Click once & wait...</i></td>
         </tr>
     </table>
 
@@ -75,10 +76,15 @@
         </tr>
     }
 </table>
-
 <br/>
 <div id="ReturnToDashboard">
-    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new {})
+    <table>
+        <tr>
+            <td>@Html.ActionLink("Return to Dashboard", "ReturnToDashboard")</td>
+            <td>&nbsp;&nbsp;@Html.ActionLink("Download Running Client List To Excel File", "ClientListToExcel")</td>
+            <td style = "color: darkmagenta" ><i> &#8592;Click once & wait...</i></td>
+        </tr>
+    </table>
 </div>
 </body>
 </html>

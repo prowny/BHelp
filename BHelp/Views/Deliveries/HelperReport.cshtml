@@ -52,63 +52,6 @@
                 </tr>
             }
         </table>
-        @*@for (int mo = 0; mo < 3; mo++)
-            {
-                <table>
-                    <tr>
-                        <td style="color: red; text-align: center;">@Html.Label(Model.MonthYear[mo])</td>
-                        @for (int i = 0; i < Model.ZipCodes.Count; i++)
-                        {
-                            <td></td>}
-                        <td style="color: red; text-align: center;">@Html.Label("TOTAL")</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left">Zip Code</td>
-                        @foreach (var zip in Model.ZipCodes)
-                        {
-                            <td style="text-align: right">@zip</td>}
-                        <td style="text-align: center">All Zip Codes</td>
-                    </tr>
-
-                    <tr>
-                        <td style="text-align: right"># of Families</td>
-                        @for (int i = 0; i < Model.ZipCodes.Count + 1; i++)
-                        {
-                            <td style="text-align: right">@Model.Counts[Model.Months[mo], i, 0]</td>}
-                    </tr>
-                    <tr>
-                        <td style="text-align: right"># of Children (&#60;18)</td>
-                        @for (int i = 0; i < Model.ZipCodes.Count + 1; i++)
-                        {
-                            <td style="text-align: right">@Model.Counts[Model.Months[mo], i, 1]</td>}
-                    </tr>
-                    <tr>
-                        <td style="text-align: right"># of Adults(&#62;=18 and &#60;60)</td>
-                        @for (int i = 0; i < Model.ZipCodes.Count + 1; i++)
-                        {
-                            <td style="text-align: right">@Model.Counts[Model.Months[mo], i, 2]</td>}
-                    </tr>
-                    <tr>
-                        <td style="text-align: right"># of Seniors (&#62;=60)</td>
-                        @for (int i = 0; i < Model.ZipCodes.Count + 1; i++)
-                        {
-                            <td style="text-align: right">@Model.Counts[Model.Months[mo], i, 3]</td>}
-                    </tr>
-                    <tr>
-                        <td style="text-align: right"># of Residents</td>
-                        @for (int i = 0; i < Model.ZipCodes.Count + 1; i++)
-                        {
-                            <td style="text-align: right">@Model.Counts[Model.Months[mo], i, 4]</td>}
-                    </tr>
-                    <tr>
-                        <td style="text-align: right"># of Pounds of Food</td>
-                        @for (int i = 0; i < Model.ZipCodes.Count + 1; i++)
-                        {
-                            <td style="text-align: right">@Model.Counts[Model.Months[mo], i, 5]</td>}
-                    </tr>
-                    <tr></tr>
-                </table>
-            }*@
     </div>
     <br />
     <div>

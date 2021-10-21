@@ -340,12 +340,11 @@ namespace BHelp
                 }
             }
         }
-        public static void TestMySql()
-        {  // NOT WORKING 10/13/21 - hold and catch fire
-            var db = new MySqlContext();
-            var tester = db.Test.ToList();
-
-            var i = 1;
+        public static void TestMySql()   // NOT WORKING 10/13/21 - hold and catch fire
+        { 
+            //var db = new MySqlContext();
+            //var tester = db.Test.ToList();
+            //var i = 1;
         }
     }
 }
