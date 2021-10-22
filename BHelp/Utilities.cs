@@ -136,7 +136,7 @@ namespace BHelp
                         }
                         catch
                         {
-                            //delivery.DateDelivered = null;
+                            delivery.DateDelivered = null;
                         }
 
                         delivery.DriverId = GetUserId(row[15].ToString());
