@@ -173,12 +173,12 @@ namespace BHelp.Controllers
                 // Kid Snacks:
                 delivery.KidSnacks = AppRoutines.GetNumberOfKids2_17(clientId);
 
-                delivery.FirstDelivery = false;
-                var priorDeliveriesCount = db.Deliveries.Count(d => d.ClientId == clientId);
-                if (priorDeliveriesCount == 0)
-                { delivery.FirstDelivery = true; }
+                //delivery.FirstDelivery = false;
+                //var priorDeliveriesCount = db.Deliveries.Count(d => d.ClientId == clientId);
+                //if (priorDeliveriesCount == 0)
+                //{ delivery.FirstDelivery = true; }
 
-                delivery.Status = 0;  // 0 = Open
+                //delivery.Status = 0;  // 0 = Open
 
                 db.Deliveries.Add(delivery);
                 db.SaveChanges();
