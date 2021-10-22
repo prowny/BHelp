@@ -307,9 +307,9 @@
     <Compile Include="Migrations\202108172001493_ChangeDeliveryDateType.designer.cs">
       <DependentUpon>202108172001493_ChangeDeliveryDateType.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202110222021018_AddDeliveryFields.cs" />
-    <Compile Include="Migrations\202110222021018_AddDeliveryFields.designer.cs">
-      <DependentUpon>202110222021018_AddDeliveryFields.cs</DependentUpon>
+    <Compile Include="Migrations\202110222030410_AddDeliveryFields.cs" />
+    <Compile Include="Migrations\202110222030410_AddDeliveryFields.designer.cs">
+      <DependentUpon>202110222030410_AddDeliveryFields.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs">
@@ -766,8 +766,8 @@
     <EmbeddedResource Include="Migrations\202108172001493_ChangeDeliveryDateType.resx">
       <DependentUpon>202108172001493_ChangeDeliveryDateType.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202110222021018_AddDeliveryFields.resx">
-      <DependentUpon>202110222021018_AddDeliveryFields.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202110222030410_AddDeliveryFields.resx">
+      <DependentUpon>202110222030410_AddDeliveryFields.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -13,7 +13,7 @@ namespace BHelp.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "202110222021018_AddDeliveryFields"; }
+            get { return "202110222030410_AddDeliveryFields"; }
         }
         
         string IMigrationMetadata.Source
