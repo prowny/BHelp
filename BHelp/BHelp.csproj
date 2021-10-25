@@ -307,6 +307,14 @@
     <Compile Include="Migrations\202108172001493_ChangeDeliveryDateType.designer.cs">
       <DependentUpon>202108172001493_ChangeDeliveryDateType.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202110251601420_AddFirstDelivery.cs" />
+    <Compile Include="Migrations\202110251601420_AddFirstDelivery.designer.cs">
+      <DependentUpon>202110251601420_AddFirstDelivery.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202110251927382_AddStatusAndSecondODId.cs" />
+    <Compile Include="Migrations\202110251927382_AddStatusAndSecondODId.designer.cs">
+      <DependentUpon>202110251927382_AddStatusAndSecondODId.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -761,6 +769,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202108172001493_ChangeDeliveryDateType.resx">
       <DependentUpon>202108172001493_ChangeDeliveryDateType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202110251601420_AddFirstDelivery.resx">
+      <DependentUpon>202110251601420_AddFirstDelivery.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202110251927382_AddStatusAndSecondODId.resx">
+      <DependentUpon>202110251927382_AddStatusAndSecondODId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
