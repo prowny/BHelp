@@ -240,6 +240,11 @@ namespace BHelp.Controllers
 
                 DesiredDeliveryDate = DateTime.Today.AddDays(1),  // Desired Delivery Date
 
+                //GiftCardsThisMonth = AppRoutines.GetAllGiftCardsThisMonth(Id, DateTime.Today.AddDays(1)),
+                ////DeliveriesThisMonth = AppRoutines.GetDeliveriesThisMonth(Id),
+                //NextDeliveryEligibleDate = AppRoutines.GetNextEligibleDeliveryDate(Id, DateTime.Today.AddDays(1)),
+                //NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id, DateTime.Today.AddDays(1)),
+
                 GiftCardsThisMonth = AppRoutines.GetPriorGiftCardsThisMonth(Id, DateTime.Today),
                 DateLastGiftCard = AppRoutines.GetDateLastGiftCard(Id,DateTime.Today),
                 DeliveriesThisMonth = AppRoutines.GetDeliveriesCountThisMonth( Id,DateTime.Today) ,
