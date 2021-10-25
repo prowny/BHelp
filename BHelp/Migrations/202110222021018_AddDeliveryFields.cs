@@ -1,7 +1,5 @@
-﻿namespace BHelp.Migrations
-{
-    using System;
-    using System.Data.Entity.Migrations;
+﻿using System;
+using System.Data.Entity.Migrations;
     
     public partial class AddDeliveryFields : DbMigration
     {
@@ -19,4 +17,3 @@
             DropColumn("dbo.Deliveries", "FirstDelivery");
         }
     }
-}
