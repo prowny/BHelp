@@ -57,11 +57,11 @@ namespace BHelp.Models
         public Boolean Completed { get; set; }
         public string ODNotes { get; set; }
         public string DriverNotes { get; set; }
-        //public Boolean FirstDelivery { get; set; }  // First-time delivery for this client
+        public Boolean FirstDelivery { get; set; }  // First-time delivery for this client
 
         [StringLength(128)]
-        //public string DeliveryDateODId { get; set; }  // OD on the actual delivery date
-        //public int Status { get; set; }  // 0 = Open,  1 = Completed/Delivered, 2 = Undelivered/Undeliverable
+        public string DeliveryDateODId { get; set; }  // OD on the actual delivery date
+        public int Status { get; set; }  // 0 = Open,  1 = Completed/Delivered, 2 = Undelivered/Undeliverable
         
         [NotMapped]
         public IEnumerable<SelectListItem> DriversList { get; set; }
