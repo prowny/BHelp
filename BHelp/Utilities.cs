@@ -5,6 +5,7 @@ using System.IO;
 using BHelp.Models;
 using LumenWorks.Framework.IO.Csv;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using DataTable = System.Data.DataTable;
 
@@ -345,6 +346,24 @@ namespace BHelp
             //var db = new MySqlContext();
             //var tester = db.Test.ToList();
             //var i = 1;
+        }
+
+        public static void RemoteTest()
+        {
+            using (SqlConnection connection = new SqlConnection("Data Source=A2NWPLSK14SQL-v02.shr.prod.iad2.secureserver.net;MultipleActiveResultSets=True;Initial Catalog=ph18083214535_;Persist Security Info=False;User ID=bhelpadmin;Password=BethesdaHelp2013!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=True"))
+            {
+                using (SqlCommand command = new SqlCommand("SELECT * From Clients", connection))
+                {
+                    connection.Open();
+                   SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Console.WriteLine(((IDataRecord)reader)[1]);
+                    }
+                }
+            }
+            //< add name = "Production" connectionString = "Data Source=A2NWPLSK14SQL-v02.shr.prod.iad2.secureserver.net;MultipleActiveResultSets=True;Initial Catalog=ph18083214535_;Persist Security Info=False;User ID=bhelpadmin;Password=&quot;BethesdaHelp2013!&quot;;Connect Timeout=30;Encrypt=True;TrustServerCertificate=True" providerName = "System.Data.SqlClient" />
+
         }
     }
 }

@@ -89,6 +89,12 @@ namespace BHelp.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        public ActionResult RemoteTest()
+        {
+            Utilities.RemoteTest();
+            return RedirectToAction("Index", "Home");
+        }
+
     }
 }
 
