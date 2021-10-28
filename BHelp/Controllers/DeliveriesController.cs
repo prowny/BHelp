@@ -802,11 +802,6 @@ namespace BHelp.Controllers
             view.HelperTitles[7] = "# Deliveries";
             view.HelperTitles[8] = "# Repeat Deliveries";
             view.HelperTitles[9] = "# First-Time Deliveries";
-            if (year == 2021 && month == 7)
-            {
-                view.HelperTitles[9] = "(undefined)";
-            }
-
             view.HelperTitles[10] = "# Cumulative Residents Served Daily";
             view.HelperTitles[11] = "# Cumulative Residents Children <18";
             view.HelperTitles[12] = "# Cumulative Residents Adults 18-59";
@@ -822,7 +817,6 @@ namespace BHelp.Controllers
             view.ZipCounts = new int[20, view.ZipCodes.Count + 2]; // ZipCodes, Counts
             var totalDistinctHouseholds = 0;
             var totalCumulativeRepeatDeliveries = 0;
-            var totalFirstDeliveries = 0;
             var totalCumulativeFirstDeliveries = 0;
             var totalDistinctChildren = 0;
             var totalDistinctAdults = 0;
@@ -843,24 +837,7 @@ namespace BHelp.Controllers
                     var deliveryData = db.Deliveries.Where(d => d.Zip == stringZip
                                  && d.DateDelivered >= startDate && d.DateDelivered <= thruDate).ToList();
                     totalDeliveries += deliveryData.Count;
-
-                    foreach (var del in deliveryData)
-                    {
-                        if (del.FirstDelivery)
-                        {
-                            totalFirstDeliveries++;
-                            totalCumulativeFirstDeliveries++;
-                        }
-                    }
-
-                   //var priorDeliveries = db.Deliveries.Count(d => d.Zip == stringZip
-                   //                                                    && d.DateDelivered <= thruDate);
-                   //if (priorDeliveries == 0)
-                   //{
-                   //    totalFirstDeliveries++;
-                   //    totalCumulativeFirstDeliveries++;
-                   //}
-
+                    
                     List<int> distinctList = new List<int>();
                     var distinctChildren = 0; 
                     var distinctAdults = 0;
@@ -884,6 +861,8 @@ namespace BHelp.Controllers
                     totalDistinctHouseholds += distinctList.Count;
                     var totalRepeatDeliveries = deliveryData.Count - distinctList.Count;
                     totalCumulativeRepeatDeliveries += totalRepeatDeliveries;
+
+                    var totalFirstDeliveries = 0;
                     var cumulativeChildren = 0;
                     var cumulativeAdults = 0;
                     var cumulativeSeniors = 0;
@@ -893,6 +872,11 @@ namespace BHelp.Controllers
                     var cards = 0;
                     foreach (var del in deliveryData)
                     {
+                        if (del.FirstDelivery)
+                        {
+                            totalFirstDeliveries++;
+                            totalCumulativeFirstDeliveries++;
+                        }
                         if (del.Children != null)
                         {
                             cumulativeChildren += del.Children.Value;

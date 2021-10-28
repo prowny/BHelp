@@ -5,7 +5,6 @@ using System.IO;
 using BHelp.Models;
 using LumenWorks.Framework.IO.Csv;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using DataTable = System.Data.DataTable;
 
@@ -341,29 +340,21 @@ namespace BHelp
                 }
             }
         }
-        public static void TestMySql()   // NOT WORKING 10/13/21 - hold and catch fire
-        { 
-            //var db = new MySqlContext();
-            //var tester = db.Test.ToList();
-            //var i = 1;
-        }
-
-        public static void RemoteTest()
+        public static void SetFirstDeliveries()
         {
-            using (SqlConnection connection = new SqlConnection("Data Source=A2NWPLSK14SQL-v02.shr.prod.iad2.secureserver.net;MultipleActiveResultSets=True;Initial Catalog=ph18083214535_;Persist Security Info=False;User ID=bhelpadmin;Password=BethesdaHelp2013!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=True"))
+            var db = new BHelpContext();
+            var listPost06302021Clients = db.Clients.Where(c => c.Id > 1588).ToList();
+            foreach (Client client in listPost06302021Clients)
             {
-                using (SqlCommand command = new SqlCommand("SELECT * From Clients", connection))
+                var delCount = db.Deliveries.Count(d => d.ClientId == client.Id);
+                if (delCount > 0)   // Get first delivery
                 {
-                    connection.Open();
-                   SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        Console.WriteLine(((IDataRecord)reader)[1]);
-                    }
+                    var del = db.Deliveries.First(d => d.ClientId == client.Id);
+                    //del.FirstDelivery = true;
+                    //db.SaveChanges();
                 }
-            }
-            //< add name = "Production" connectionString = "Data Source=A2NWPLSK14SQL-v02.shr.prod.iad2.secureserver.net;MultipleActiveResultSets=True;Initial Catalog=ph18083214535_;Persist Security Info=False;User ID=bhelpadmin;Password=&quot;BethesdaHelp2013!&quot;;Connect Timeout=30;Encrypt=True;TrustServerCertificate=True" providerName = "System.Data.SqlClient" />
 
+            }
         }
     }
 }

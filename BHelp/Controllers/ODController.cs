@@ -172,12 +172,8 @@ namespace BHelp.Controllers
                 if (numberInHousehold >= 9) { delivery.HalfBags = 3; }
                 // Kid Snacks:
                 delivery.KidSnacks = AppRoutines.GetNumberOfKids2_17(clientId);
-
-                delivery.FirstDelivery = false;
-                if (db.Deliveries.Count(d => d.ClientId == clientId) == 0)
-                {
-                    delivery.FirstDelivery = true;
-                }
+                
+                delivery.FirstDelivery = db.Deliveries.Count(d => d.ClientId == clientId) == 0;
                 
                 db.Deliveries.Add(delivery);
                 db.SaveChanges();

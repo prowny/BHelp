@@ -133,7 +133,9 @@ namespace BHelp.Controllers
                 }
 
                 db.SaveChanges();
-                return RedirectToAction("UpdateHousehold", "OD", new {client.Id });
+                // insert Changes Saved! notice
+                return RedirectToAction("ConfirmChangesSaved", new { clientId = client.Id });
+             //   return RedirectToAction("UpdateHousehold", "OD", new {client.Id });
             }
             return null;
         }
@@ -159,7 +161,6 @@ namespace BHelp.Controllers
             }
             return View(client);
         }
-
         
         public ActionResult Edit(int? Id)
         {
@@ -172,6 +173,12 @@ namespace BHelp.Controllers
         public ActionResult ReturnToDashboard()
         {
             return RedirectToAction("Index", "Home");
+        }
+
+        public ActionResult ConfirmChangesSaved(int clientId)
+        {
+            var newDeliveryView = new HouseholdViewModel { ClientId = clientId };
+            return View(newDeliveryView);
         }
     }
 }

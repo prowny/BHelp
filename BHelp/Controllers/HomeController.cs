@@ -59,42 +59,31 @@ namespace BHelp.Controllers
             Utilities.UploadClients();
             return RedirectToAction("Index", "Home");
         }
-
         public ActionResult GetZipCodes()
         {
             AppRoutines.GetZipCodesSelectList();
             return RedirectToAction("Index", "Home");
         }
-
         public ActionResult UploadDeliveries()
         {
             Utilities.UploadDeliveries();
             return RedirectToAction("Index", "Home");
         }
-
         public ActionResult CopyClientZipToDelivery()
         {
             Utilities.CopyClientZipToDelivery();
             return RedirectToAction("Index", "Home");
         }
-
         public ActionResult CopySnapshotDataToDelivery()
         {
             Utilities.CopySnapshotDataToDelivery();
             return RedirectToAction("Index", "Home");
         }
-        public ActionResult TestMySql()
+        public ActionResult SetFirstDeliveries()
         {
-            Utilities.TestMySql();
+            Utilities.SetFirstDeliveries();
             return RedirectToAction("Index", "Home");
         }
-
-        public ActionResult RemoteTest()
-        {
-            Utilities.RemoteTest();
-            return RedirectToAction("Index", "Home");
-        }
-
     }
 }
 
