@@ -174,11 +174,11 @@ namespace BHelp.Controllers
         {
             return RedirectToAction("Index", "Home");
         }
-
         public ActionResult ConfirmChangesSaved(int clientId)
         {
             var newDeliveryView = new HouseholdViewModel { ClientId = clientId };
             return View(newDeliveryView);
         }
+        
     }
 }

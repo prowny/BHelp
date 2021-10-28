@@ -171,20 +171,20 @@
                                     <td>Head of Household</td>}
                                 @if (Model.FamilyMembers[i].ClientId < 0) // AddNew household member was added with ClientId = -1
                                 {
-                                <tr>
-                                    <td></td>
-                                    <td>@Html.EditorFor(mbr => Model.FamilyMembers[i].FirstName, new { htmlAttributes = new { @class = "form-control" } })</td>
-                                    <td>@Html.EditorFor(m => Model.FamilyMembers[i].LastName, new { htmlAttributes = new { @class = "form-control" } })</td>
-                                    <td>@Html.EditorFor(m => Model.FamilyMembers[i].Age, new { htmlAttributes = new { type = "number", min = "0", max = "110" } }) </td>
-                                    <td>
-                                        <input type="submit" value="Add Member" class="btn btn-default" id="AddButton" />
-                                        @*Redirects to HouseholdController/Index POST:*@
-                                        <input type="submit" value="Delete Checked Members" class="btn btn-default" id="DeleteButton" />
-                                    </td>
-                                </tr>
-                            }
-                                </tr>
-                            }
+                                    <tr>
+                                        <td></td>
+                                        <td>@Html.EditorFor(mbr => Model.FamilyMembers[i].FirstName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                                        <td>@Html.EditorFor(m => Model.FamilyMembers[i].LastName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                                        <td>@Html.EditorFor(m => Model.FamilyMembers[i].Age, new { htmlAttributes = new { type = "number", min = "0", max = "110" } }) </td>
+                                        <td>
+                                            <input type="submit" value="Add Member" class="btn btn-default" id="AddButton" />
+                                            @*Redirects to HouseholdController/Index POST:*@
+                                            <input type="submit" value="Delete Checked Members" class="btn btn-default" id="DeleteButton" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tr>
+                        }
                     </table>
                 </div>
                 <br />
@@ -194,14 +194,16 @@
                         <input type="submit" value="Save Changes" class="btn btn-default" id="SaveButton" />
                         <span style="color: darkmagenta">&#8592;Click this first if you made ANY changes</span>
                     </div>
-                    @if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("Administrator"))
-                    {
-                        <div>
-                            @Html.ActionLink("Create a Delivery", "AddDelivery", "OD", new { clientId = Model.ClientId, desiredDeliveryDate = Model.DesiredDeliveryDate }, null)
-                        </div>
-                    }
                 </div>
             </div>
+
+            @if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("Administrator"))
+            {
+                <div>
+                    @Html.ActionLink("Create a Delivery", "AddDelivery", "OD", new { clientId = Model.ClientId, desiredDeliveryDate = Model.DesiredDeliveryDate }, null)
+                    @*@Html.ActionLink("Create a Delivery", "AddDelivery",new { clientId = Model.ClientId })*@
+                </div>
+            }
             <div>
                 @Html.ActionLink("Back to Select Page", "Index")
             </div>

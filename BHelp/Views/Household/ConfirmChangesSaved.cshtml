@@ -12,8 +12,11 @@
     <div>
         <strong>Changes to Household Saved!</strong>
     </div>
-    <div>
-        @Html.ActionLink("Back to Select Page", "Index")
-    </div>
+<div>
+    @Html.ActionLink("Back to Household Page", "UpdateHousehold", "OD", new {Id = Model.ClientId}, null)
+</div>
+<div>
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+</div>
 </body>
 </html>

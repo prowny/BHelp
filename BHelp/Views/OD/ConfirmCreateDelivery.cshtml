@@ -1,4 +1,4 @@
-﻿@model BHelp.ViewModels.DeliveryViewModel
+﻿﻿@model BHelp.ViewModels.DeliveryViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -8,19 +8,20 @@
     <title>ConfirmCreateDelivery</title>
 </head>
 <body>
+
+Delivery to:
+@Html.DisplayFor(model => model.FullName) &nbsp;
+@Html.DisplayFor(model => model.StreetNumber)
+@Html.DisplayFor(model => model.StreetName) &nbsp;
+<strong>Created!</strong>
+<br />
+The delivery is now listed in <strong>Open Deliveries</strong>.
+<span style="color: darkmagenta"> (where you add OD notes & assign driver)</span><br />
+<br />
+<br/>
 <div>
-    Delivery to:
-    @Html.DisplayFor(model => model.FullName) &nbsp;
-    @Html.DisplayFor(model => model.StreetNumber)
-    @Html.DisplayFor(model => model.StreetName) &nbsp;
-    <strong>Created!</strong>
-    <br />
-    The delivery is now listed in <strong>Open Deliveries</strong>.
-    <span style="color: darkmagenta"> (where you add OD notes & assign driver)</span><br />
-    <br />
-    <br/>
-    <div>
-        @Html.ActionLink("Back to Select Page", "Index")
+    @Html.ActionLink("Back to Select Page", "Index")
+    <div> 
     </div>
 </div>
 </body>
