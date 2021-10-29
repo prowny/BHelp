@@ -275,7 +275,8 @@ namespace BHelp.Controllers
             foreach (var item in viewModel.ODList)
             { if (item.Value == viewModel.ODId) { item.Selected = true; break; } }
 
-            foreach (var item in viewModel.DeliveryDateODList)
+            viewModel.DeliveryDateODList = viewModel.ODList;
+            foreach (var item in viewModel.ODList)
             { if (item.Value == viewModel.DeliveryDateODId) { item.Selected = true; break; } }
 
             if (delivery.Children != null) viewModel.KidsCount = (int) delivery.Children;
