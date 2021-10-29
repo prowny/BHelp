@@ -248,6 +248,7 @@ namespace BHelp.Controllers
                 ClientId = delivery.ClientId,
                 LogDate = Convert.ToDateTime(delivery.LogDate.ToString("MM/dd/yyyy")),
                 ODId = delivery.ODId,
+                DeliveryDateODId = delivery.DeliveryDateODId,
                 ODList = AppRoutines.GetODSelectList(),
                 ODNotes = delivery.ODNotes,
                 DriverId = delivery.DriverId,
@@ -403,7 +404,7 @@ namespace BHelp.Controllers
         public ActionResult Edit(
             [Bind(Include = "Id,ClientId,LogDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards," +
             "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId,Completed," +
-            "DeliveryDate,ODId,ReturnURL")] DeliveryViewModel delivery)
+            "DeliveryDate,ODId,DeliveryDateODId,ReturnURL")] DeliveryViewModel delivery)
         {
             if (ModelState.IsValid)
             {
@@ -422,6 +423,7 @@ namespace BHelp.Controllers
                     updateData.ODNotes = delivery.ODNotes;
                     updateData.DriverId = delivery.DriverId;
                     updateData.ODId = delivery.ODId;
+                    updateData.DeliveryDateODId = delivery.DeliveryDateODId;
                     updateData.DriverNotes = delivery.DriverNotes;
                     updateData.Completed = delivery.Completed;
                     var previouslyCompleted = updateData.Completed;
