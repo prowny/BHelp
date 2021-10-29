@@ -13,6 +13,7 @@ namespace BHelp.ViewModels
         public int Id { get; set; }
         public int ClientId { get; set; }
         public string ODId { get; set; }
+        public string DeliveryDateODId { get; set; }
 
         [DisplayName("Call Log Date")]
         [Column(TypeName = "Date")]
@@ -94,6 +95,7 @@ namespace BHelp.ViewModels
         public string ClientNameAddress { get; set; }
         public IEnumerable<SelectListItem> DriversList { get; set; }
         public IEnumerable<SelectListItem> ODList { get; set; }
+        public IEnumerable<SelectListItem> DeliveryDateODList { get; set; }
         public List<Delivery> DeliveryList { get; set; }
         public IEnumerable<SelectListItem> DeliveriesList { get; set; }
         public IEnumerable<SelectListItem> ClientSelectList { get; set; }

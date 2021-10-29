@@ -275,6 +275,9 @@ namespace BHelp.Controllers
             foreach (var item in viewModel.ODList)
             { if (item.Value == viewModel.ODId) { item.Selected = true; break; } }
 
+            foreach (var item in viewModel.DeliveryDateODList)
+            { if (item.Value == viewModel.DeliveryDateODId) { item.Selected = true; break; } }
+
             if (delivery.Children != null) viewModel.KidsCount = (int) delivery.Children;
             if (delivery.Adults != null) viewModel.AdultsCount = (int) delivery.Adults;
             if (delivery.Seniors != null) viewModel.SeniorsCount = (int) delivery.Seniors;
@@ -297,6 +300,14 @@ namespace BHelp.Controllers
                 viewModel.Notes = client.Notes;
                 viewModel.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
                 viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
+                if (client.Notes != null)
+                {
+                    //viewModel.Notes = client.Notes;
+                    viewModel.NotesToolTip = client.Notes.Replace(" ", "\u00a0");
+                    var s = viewModel.Notes;
+                    s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                    viewModel.Notes = s;
+                }
             }
 
             if (delivery.Completed == false)

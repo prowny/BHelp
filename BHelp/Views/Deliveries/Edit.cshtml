@@ -39,8 +39,11 @@
                 <span>
                     <b>Client:</b>&nbsp;@Html.Label(Model.ClientNameAddress)&nbsp;
                     <b>Phone:</b>&nbsp;@Html.Label(Model.Client.Phone)&nbsp;
-                    <b>Notes:</b>&nbsp;@Html.Label(Model.Notes)
+                    @*<b>Notes:</b>&nbsp;@Html.Label(Model.Notes)*@
                 </span>
+                <b>Notes:</b>&nbsp;@Html.TextBoxFor(n => n.Notes,
+                                       new {@readonly = "readonly",
+                                        style = "width: 80px", title = Model.NotesToolTip })
             </div>
             <span>
                 <b>Family:</b>&nbsp;
@@ -73,7 +76,9 @@
                             @Html.TextBoxFor(model => model.LogDate, Model.LogDate.ToString("MM/dd/yyyy"),
                                 new { id = "LogDate", style = "width: 75px;" })
                         </td>
-                        <td style="color: darkmagenta"> &#8592;Click to change</td>
+                        @*<td style="color: darkmagenta"> &#8592;Click to change</td>*@
+                        <td style="color: darkmagenta"></td>
+
                         <td> &nbsp;&nbsp;Desired Delivery Date:</td>
                         <td>
                             @Html.TextBoxFor(model => model.DeliveryDate, Model.DeliveryDate.ToString("MM/dd/yyyy"),
@@ -83,36 +88,40 @@
                     </tr>
                 </table>
 
-                <table>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td> OD Notes</td>
-                        <td></td>
-                        <td></td>
-                        <td>Driver Notes</td>
+            <table>
+            <tr>
+                <td>&nbsp;Originating OD:</td>
+                <td>&nbsp;Delivery Date OD:</td>
+                <td>&nbsp;Driver:</td>
+            </tr>
+            <tr>
+                @if (Model.ODList != null)
+                {
+                    <td>
+                        @Html.DropDownListFor(model => model.ODId, new SelectList(Model.ODList, "Value", "Text"), new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.ODId, "", new { @class = "text-danger" })
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(model => model.DeliveryDateODId, new SelectList(Model.ODList, "Value", "Text"), new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.DeliveryDateODId, "", new { @class = "text-danger" })
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(model => model.DriverId, new SelectList(Model.DriversList, "Value", "Text"), new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.DriverId, "", new { @class = "text-danger" })
+                    </td>
+                }
+            </tr>
+            </table>
+            <table>
+                <tr>
+                    <td>&nbsp;OD Notes:</td>
+                    <td>&nbsp;Driver Notes:</td>
                     </tr>
                     <tr>
-                        <td>&nbsp; OD:</td>
-                        @if (Model.ODList != null)
-                        {
-                            <td>
-                                @Html.DropDownListFor(model => model.ODId, new SelectList(Model.ODList, "Value", "Text"), new { @class = "form-control" })
-                                @Html.ValidationMessageFor(model => model.ODId, "", new { @class = "text-danger" })
-                            </td>
-                        }
                         <td>
                             @Html.EditorFor(model => model.ODNotes, new { htmlAttributes = new { @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.ODNotes, "", new { @class = "text-danger" })
                         </td>
-                        <td>&nbsp;Driver:</td>
-                        @if (Model.DriversList != null)
-                        {
-                            <td>
-                                @Html.DropDownListFor(model => model.DriverId, new SelectList(Model.DriversList, "Value", "Text"), new { @class = "form-control" })
-                                @Html.ValidationMessageFor(model => model.DriverId, "", new { @class = "text-danger" })
-                            </td>
-                        }
                         <td>
                             @Html.EditorFor(model => model.DriverNotes, new { htmlAttributes = new { @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.DriverNotes, "", new { @class = "text-danger" })
@@ -145,7 +154,7 @@
                 </table>
             </div>
             <div class="form-group">
-                @Html.Label("Date Delivered")
+                @Html.Label("Date Delivered:")
                 @Html.TextBoxFor(model => model.DateDelivered, "{0:MM/dd/yyyy}",
                     new { id = "DateDelivered", style = "width: 75px;" })
                 <span style="color: darkmagenta"> &#8592;Enter valid date (mm/dd/yyyy)</span> @*Html left-arrow*@
