@@ -24,6 +24,8 @@ namespace BHelp.ViewModels
         [Column(TypeName = "Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DeliveryDate { get; set; }
+        public int Status { get; set; }  // 0 = Open, 1 = Completed, 2 = Undelivered
+        public string SelectedStatus { get; set; }
 
         [DataType(DataType.MultilineText)]
         public string Notes { get; set; }   // Client/Household Notes

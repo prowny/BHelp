@@ -263,9 +263,22 @@ namespace BHelp.Controllers
                 DeliveryDate = delivery.DeliveryDate, 
                 DateDelivered = delivery.DateDelivered,
                 Completed = delivery.Completed,
+                Status = delivery.Status,
                 HistoryStartDate = Convert.ToDateTime(Session["CallLogStartDate"]),
                 HistoryEndDate = Convert.ToDateTime(Session["CallLogEndDate"])
             };
+            switch (delivery.Status)
+            {
+                case 0:
+                    viewModel.SelectedStatus = "Open";
+                    break;
+                case 1:
+                    viewModel.SelectedStatus = "Delivered";
+                    break;
+                case 2:
+                    viewModel.SelectedStatus = "Undelivered";
+                    break;
+            }
 
             if (Request.UrlReferrer != null)
             { viewModel.ReturnURL = Request.UrlReferrer.ToString(); }
@@ -383,7 +396,8 @@ namespace BHelp.Controllers
                 viewModel.KidSnacks = AppRoutines.GetNumberOfKids2_17(client.Id);
             }
 
-            if (delivery.Completed && delivery.DateDelivered == null)  // failed delivery
+            //if (delivery.Completed && delivery.DateDelivered == null)  // failed delivery
+            if (delivery.Status == 2)  // failed delivery
             {
                 var yy = delivery.DeliveryDate.Year;
                 var mm = delivery.DeliveryDate.Month;
@@ -404,7 +418,7 @@ namespace BHelp.Controllers
         public ActionResult Edit(
             [Bind(Include = "Id,ClientId,LogDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards," +
             "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId,Completed," +
-            "DeliveryDate,ODId,DeliveryDateODId,ReturnURL")] DeliveryViewModel delivery)
+            "DeliveryDate,ODId,DeliveryDateODId,ReturnURL,SelectedStatus")] DeliveryViewModel delivery)
         {
             if (ModelState.IsValid)
             {
@@ -428,10 +442,25 @@ namespace BHelp.Controllers
                     updateData.Completed = delivery.Completed;
                     var previouslyCompleted = updateData.Completed;
                     updateData.DeliveryDate = delivery.DeliveryDate;
+
+                    switch (delivery.SelectedStatus)
+                    {
+                        case "Open":
+                            updateData.Status = 0;
+                            break;
+                        case "Delivered":
+                            updateData.Status = 1;
+                            break;
+                        case "Undelivered":
+                            updateData.Status = 2;
+                            break;
+                    }
+
                     if (delivery.DateDelivered != null)
                     {
                         updateData.DateDelivered = (DateTime)delivery.DateDelivered;
                         updateData.Completed = true;
+                        updateData.Status = 1;
                     }
                     else
                     {
@@ -559,7 +588,7 @@ namespace BHelp.Controllers
                     updateData.DriverNotes = delivery.DriverNotes;
                     updateData.Completed = delivery.Completed;
                     updateData.DeliveryDate = delivery.DeliveryDate;
-                    if (updateData.Completed  ==false)
+                    if (updateData.Completed == false)
                     {
                         updateData.DateDelivered = null;
                     }
@@ -1132,7 +1161,7 @@ namespace BHelp.Controllers
         private  DateTime? GetLastGetDeliveryDate(int id)
         {
             DateTime? dt = db.Deliveries.Where(d => d.DateDelivered != null
-                                                    && d.Id == id && d.Completed)
+                                                    && d.Id == id)
                 .OrderByDescending(x => x.DeliveryDate).Select(d => d.DateDelivered)
                 .FirstOrDefault();
 

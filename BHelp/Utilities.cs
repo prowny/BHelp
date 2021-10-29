@@ -353,7 +353,29 @@ namespace BHelp
                     //del.FirstDelivery = true;
                     //db.SaveChanges();
                 }
+            }
+        }
 
+        public static void SetStatusFlags()
+        {
+            var db = new BHelpContext();
+            var listNullDelDates = db.Deliveries.Where(d => d.DateDelivered == null).ToList();
+            foreach (var del in listNullDelDates)
+            { // null & completed = undelivered;  null & not completed = open
+                var delivery = db.Deliveries.Find(del.Id);
+                if (delivery.Completed)
+                {
+                    delivery.Status = 2; // Undelivered
+                    //db.SaveChanges();
+                }
+            }
+
+            var listDelDates = db.Deliveries.Where(d => d.DateDelivered != null).ToList();
+            foreach (var del in listDelDates)
+            {
+                var delivery = db.Deliveries.Find(del.Id);
+                delivery.Status = 1;    // Delivered
+                //db.SaveChanges();
             }
         }
     }

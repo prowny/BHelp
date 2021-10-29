@@ -84,6 +84,11 @@ namespace BHelp.Controllers
             Utilities.SetFirstDeliveries();
             return RedirectToAction("Index", "Home");
         }
+        public ActionResult SetStatusFlags()
+        {
+            Utilities.SetStatusFlags();
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
 
