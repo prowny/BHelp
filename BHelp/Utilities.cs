@@ -355,7 +355,6 @@ namespace BHelp
                 }
             }
         }
-
         public static void SetStatusFlags()
         {
             var db = new BHelpContext();

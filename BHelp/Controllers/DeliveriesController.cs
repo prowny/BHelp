@@ -297,10 +297,8 @@ namespace BHelp.Controllers
             if (delivery.Adults != null) viewModel.AdultsCount = (int) delivery.Adults;
             if (delivery.Seniors != null) viewModel.SeniorsCount = (int) delivery.Seniors;
 
-            //if (delivery.GiftCardsEligible != null) viewModel.GiftCardsEligible = (int) delivery.GiftCardsEligible;
             viewModel.GiftCardsEligible = AppRoutines.GetGiftCardsEligible(delivery.ClientId, delivery.DeliveryDate);
            
-
             if (delivery.FullBags != null) viewModel.FullBags = (int)delivery.FullBags;
             if (delivery.HalfBags != null) viewModel.HalfBags = (int)delivery.HalfBags;
             if (delivery.KidSnacks != null) viewModel.KidSnacks = (int)delivery.KidSnacks;
@@ -440,7 +438,7 @@ namespace BHelp.Controllers
                     updateData.DeliveryDateODId = delivery.DeliveryDateODId;
                     updateData.DriverNotes = delivery.DriverNotes;
                     updateData.Completed = delivery.Completed;
-                    var previouslyCompleted = updateData.Completed;
+                    //var previouslyCompleted = updateData.Completed;
                     updateData.DeliveryDate = delivery.DeliveryDate;
 
                     switch (delivery.SelectedStatus)
@@ -456,10 +454,6 @@ namespace BHelp.Controllers
                             break;
                     }
                     
-                    // if delivery was previously Completed and now changed to False, make it False:
-                    //if (previouslyCompleted && delivery.Completed == false)
-                    //{ updateData.Completed = false; }
-
                     db.Entry(updateData).State = EntityState.Modified;
                     db.SaveChanges();
                 }
