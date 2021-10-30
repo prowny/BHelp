@@ -4,9 +4,20 @@
 <!DOCTYPE html>
 
 <style>
-    #SaveButton {background-color: blue;color: white}
-    #DeleteButton {background-color: red;color: white}
-    #AddButton {background-color: green;color: white}
+    #SaveButton {
+        background-color: blue;
+        color: white
+    }
+
+    #DeleteButton {
+        background-color: red;
+        color: white
+    }
+
+    #AddButton {
+        background-color: green;
+        color: white
+    }
 </style>
 <html>
 <head>
@@ -21,12 +32,12 @@
     <section id="editForm">
         @using (Html.BeginForm("Edit", "Deliveries", FormMethod.Post))
         {
-            <input type="hidden" name="ReturnUrl" value="@Model.ReturnURL"/>
-            <input type="hidden" name="HistoryStartDate" value="@Model.HistoryStartDate"/>
-            <input type="hidden" name="HistoryEndDate" value="@Model.HistoryEndDate"/>
+            <input type="hidden" name="ReturnUrl" value="@Model.ReturnURL" />
+            <input type="hidden" name="HistoryStartDate" value="@Model.HistoryStartDate" />
+            <input type="hidden" name="HistoryEndDate" value="@Model.HistoryEndDate" />
             @Html.AntiForgeryToken()
             <h4>Edit Delivery</h4>
-                     <hr/>  // horizontal line
+            <hr /> // horizontal line
             <div class="form-horizontal">
                 <table>
                     <tr>
@@ -43,8 +54,12 @@
                     @*<b>Notes:</b>&nbsp;@Html.Label(Model.Notes)*@
                 </span>
                 <b>Notes:</b>&nbsp;@Html.TextBoxFor(n => n.Notes,
-                                       new {@readonly = "readonly",
-                                        style = "width: 80px", title = Model.NotesToolTip })
+ new
+      {
+          @readonly = "readonly",
+  style = "width: 80px",
+          title = Model.NotesToolTip
+      })
             </div>
             <span>
                 <b>Family:</b>&nbsp;
@@ -64,11 +79,11 @@
                 <b>&nbsp;Gift Cards This Month:&nbsp;</b>@Html.Label(Model.GiftCardsThisMonth.ToString())
                 <b>&nbsp;Gift Cards Eligible:</b>&nbsp;@Html.Label(Model.GiftCardsEligible.ToString())
             </span>
-            <br/>
+            <br />
 
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             @Html.HiddenFor(model => model.Id)
-            <hr/>  // horizontal line
+            <hr /> // horizontal line
             <div class="form-group">
                 <table>
                     <tr>
@@ -89,34 +104,34 @@
                     </tr>
                 </table>
 
-            <table>
-            <tr>
-                <td>&nbsp;Originating OD:</td>
-                <td>&nbsp;Delivery Date OD:</td>
-                <td>&nbsp;Driver:</td>
-            </tr>
-            <tr>
-                @if (Model.ODList != null)
-                {
-                    <td>
-                        @Html.DropDownListFor(model => model.ODId, new SelectList(Model.ODList, "Value", "Text"), new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.ODId, "", new { @class = "text-danger" })
-                    </td>
-                    <td>
-                        @Html.DropDownListFor(model => model.DeliveryDateODId, new SelectList(Model.ODList, "Value", "Text"), new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.DeliveryDateODId, "", new { @class = "text-danger" })
-                    </td>
-                    <td>
-                        @Html.DropDownListFor(model => model.DriverId, new SelectList(Model.DriversList, "Value", "Text"), new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.DriverId, "", new { @class = "text-danger" })
-                    </td>
-                }
-            </tr>
-            </table>
-            <table>
-                <tr>
-                    <td>&nbsp;OD Notes:</td>
-                    <td>&nbsp;Driver Notes:</td>
+                <table>
+                    <tr>
+                        <td>&nbsp;Originating OD:</td>
+                        <td>&nbsp;Delivery Date OD:</td>
+                        <td>&nbsp;Driver:</td>
+                    </tr>
+                    <tr>
+                        @if (Model.ODList != null)
+                        {
+                            <td>
+                                @Html.DropDownListFor(model => model.ODId, new SelectList(Model.ODList, "Value", "Text"), new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.ODId, "", new { @class = "text-danger" })
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(model => model.DeliveryDateODId, new SelectList(Model.ODList, "Value", "Text"), new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.DeliveryDateODId, "", new { @class = "text-danger" })
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(model => model.DriverId, new SelectList(Model.DriversList, "Value", "Text"), new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.DriverId, "", new { @class = "text-danger" })
+                            </td>
+                        }
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td>&nbsp;OD Notes:</td>
+                        <td>&nbsp;Driver Notes:</td>
                     </tr>
                     <tr>
                         <td>
@@ -158,7 +173,6 @@
                 @Html.Label("Date Delivered:")
                 @Html.TextBoxFor(model => model.DateDelivered, "{0:MM/dd/yyyy}",
                     new { id = "DateDelivered", style = "width: 75px;" })
-                <!--<span style="color: darkmagenta"> &#8592;Enter valid date (mm/dd/yyyy)</span>--> @*Html left-arrow*@
                 <span style="color: darkmagenta"> &#8592;Click to change</span>
                 @Html.Label("Status:")&nbsp;
                 @Html.Label("Open")
@@ -170,20 +184,20 @@
 
                 @*@Html.EditorFor(model => model.Completed)*@
             </div>
-            <br/>
+            <br />
 
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
+                    <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
                     @Html.ActionLink("Delete", "Delete", new { id = Model.Id }, new { id = "DeleteButton" })
                 </div>
             </div>
 
-            <br/>
+            <br />
             <div>
                 @if (Model.ReturnURL.Contains("CallLogByLogDate"))
                 {
-                    @Html.ActionLink("Back to Delivery List", "CallLogByLogDate", new{ startDate = Model.HistoryStartDate, endDate = Model.HistoryEndDate})
+                    @Html.ActionLink("Back to Delivery List", "CallLogByLogDate", new { startDate = Model.HistoryStartDate, endDate = Model.HistoryEndDate })
                 }
 
                 @if (Model.ReturnURL.Contains("CallLogIndividual"))
@@ -204,16 +218,21 @@
     });
 </script> @*LogDate datepicker*@
 <script>
-            $(function () {
-               window.$("#DesiredDeliveryDate").datepicker();
-            });
-</script> @*DeliveryDate datepicker*@
-@*<script type="text/javascript">
-    $("#DesiredDeliveryDate").change(function () {
-        var dDDate = window.$("#DesiredDeliveryDate").val();
-        UpdateDesiredDeliveryDate(dDDate);
+    $(function () {
+        window.$("#DesiredDeliveryDate").datepicker();
     });
-</script>*@
+</script> @*DeliveryDate datepicker*@
+<script>
+    $(function () {
+        window.$("#DateDelivered").datepicker();
+    });
+</script> @*DateDelivered datepicker*@
+@*<script type="text/javascript">
+        $("#DesiredDeliveryDate").change(function () {
+            var dDDate = window.$("#DesiredDeliveryDate").val();
+            UpdateDesiredDeliveryDate(dDDate);
+        });
+    </script>*@
 <script>
     $(document).ready(function () {
         ".datepicker".datepicker({

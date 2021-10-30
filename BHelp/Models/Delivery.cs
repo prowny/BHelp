@@ -80,5 +80,8 @@ namespace BHelp.Models
 
         [NotMapped]
         public string DriverName { get; set; }
+
+        [NotMapped]
+        public string SelectedStatus { get; set; }
     }
 }

@@ -350,7 +350,7 @@ namespace BHelp
                 if (delCount > 0)   // Get first delivery
                 {
                     var del = db.Deliveries.First(d => d.ClientId == client.Id);
-                    //del.FirstDelivery = true;
+                    del.FirstDelivery = true;
                     //db.SaveChanges();
                 }
             }

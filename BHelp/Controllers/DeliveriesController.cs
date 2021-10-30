@@ -455,20 +455,10 @@ namespace BHelp.Controllers
                             updateData.Status = 2;
                             break;
                     }
-
-                    if (delivery.DateDelivered != null)
-                    {
-                        updateData.DateDelivered = (DateTime)delivery.DateDelivered;
-                        updateData.Completed = true;
-                        updateData.Status = 1;
-                    }
-                    else
-                    {
-                        updateData.DateDelivered = null;
-                    }
+                    
                     // if delivery was previously Completed and now changed to False, make it False:
-                    if (previouslyCompleted && delivery.Completed == false)
-                    { updateData.Completed = false; }
+                    //if (previouslyCompleted && delivery.Completed == false)
+                    //{ updateData.Completed = false; }
 
                     db.Entry(updateData).State = EntityState.Modified;
                     db.SaveChanges();
@@ -660,6 +650,20 @@ namespace BHelp.Controllers
                     if (del.DateDelivered.HasValue)
                     {
                         del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                    }
+
+                    switch (del.Status)
+                    {
+                        case 0:
+                            del.SelectedStatus = "Open";
+                            break;
+                        case 1:
+                            del.SelectedStatus = "Delivered";
+                            break;
+                        case 2:
+                            del.SelectedStatus = "Undelivered";
+                            del.DateDeliveredString = "";
+                            break;
                     }
                 }
             }
