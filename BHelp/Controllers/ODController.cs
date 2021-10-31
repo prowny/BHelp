@@ -130,7 +130,8 @@ namespace BHelp.Controllers
                     Children = 0,
                     Adults = 0,
                     Seniors = 0,
-                    DeliveryDate =  DateTime.Today.AddDays(1)  // Desired Delivery Date
+                    DeliveryDate =  DateTime.Today.AddDays(1),  // Desired Delivery Date
+                    DateDelivered = DateTime.Today.AddDays(1)
                 };
                 var familyList = AppRoutines.GetFamilyMembers(clientId);
                 if (familyList != null)

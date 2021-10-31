@@ -21,7 +21,7 @@ namespace BHelp.Controllers
         // GET: Deliveries
         public ActionResult Index()
         {
-            var listDeliveries = new List<Delivery>(db.Deliveries).Where(d =>  d.Completed == false)
+            var listDeliveries = new List<Delivery>(db.Deliveries).Where(d =>  d.Status == 0)
                 .OrderBy(z => z.Zip).ToList();
             var listDeliveryViewModels = new List<DeliveryViewModel>();
             foreach (var delivery in listDeliveries)
@@ -393,8 +393,7 @@ namespace BHelp.Controllers
                 // Kid Snacks:
                 viewModel.KidSnacks = AppRoutines.GetNumberOfKids2_17(client.Id);
             }
-
-            //if (delivery.Completed && delivery.DateDelivered == null)  // failed delivery
+            
             if (delivery.Status == 2)  // failed delivery
             {
                 var yy = delivery.DeliveryDate.Year;
@@ -438,9 +437,8 @@ namespace BHelp.Controllers
                     updateData.DeliveryDateODId = delivery.DeliveryDateODId;
                     updateData.DriverNotes = delivery.DriverNotes;
                     updateData.Completed = delivery.Completed;
-                    //var previouslyCompleted = updateData.Completed;
                     updateData.DeliveryDate = delivery.DeliveryDate;
-
+                    updateData.DateDelivered = delivery.DateDelivered; 
                     switch (delivery.SelectedStatus)
                     {
                         case "Open":
