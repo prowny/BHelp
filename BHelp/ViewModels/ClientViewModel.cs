@@ -52,7 +52,7 @@ namespace BHelp.ViewModels
         
         public string SearchString { get; set; }
         
-        public string CurrentUserFullName { get; set; }
+        //public string CurrentUserFullName { get; set; }
         public string StreetToolTip { get; set; }
         public string CityToolTip { get; set; }
         public string PhoneToolTip { get; set; }

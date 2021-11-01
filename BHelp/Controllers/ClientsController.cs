@@ -244,11 +244,6 @@ namespace BHelp.Controllers
             {
                 for (var col = 1; col < columns +1; col++)
                 {
-                    var x = 0;
-                    if (col == 13)
-                    {
-                        x = 0;
-                    }
                     if (view.ClientStrings[i, col] != null)
                     {
                         if (view.ClientStrings[i, col].Contains(","))
@@ -260,7 +255,6 @@ namespace BHelp.Controllers
                         {
                             sb.Append(view.ClientStrings[i, col] + ",");
                         }
-
                     }
                     else
                     {
