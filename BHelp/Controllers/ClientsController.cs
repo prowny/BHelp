@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
@@ -219,10 +220,71 @@ namespace BHelp.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult ClientListToCSV()
+        {
+            var view = GetClientViewModel();
+            int columns = 22;
+            var curMonth = DateTime.Now.ToString("MMMM");
+            var curYear = DateTime.Now.Year.ToString();
+
+            var sb = new StringBuilder();
+            sb.Append(view.ReportTitle + ',');
+            sb.Append(DateTime.Today.ToShortDateString() + ',');
+            sb.AppendLine();
+
+            sb.Append("Active,Last Name,First Name,Age,Street #,Street Name,City,Zip,");
+            sb.Append("Phone,Children,Adults,Seniors,Adults Names/Ages,Kids Names/Ages,");
+            sb.Append("# In HH,Notes,Date Last Delivery,Date Last Gift Card,");
+            sb.Append("Next Eligeble for Food on,Next Eligible for Gift Card(s) on,");
+            sb.Append("# Deliveries " + curMonth + " " + curYear + ",");
+            sb.Append("Internal Client ID");
+            sb.AppendLine();
+
+            for (var i = 0; i < view.ClientCount; i++)
+            {
+                for (var col = 1; col < columns +1; col++)
+                {
+                    var x = 0;
+                    if (col == 13)
+                    {
+                        x = 0;
+                    }
+                    if (view.ClientStrings[i, col] != null)
+                    {
+                        if (view.ClientStrings[i, col].Contains(","))
+                        {
+                            //sb.Append("\"" + view.ClientStrings[i, col] + "\"" + ",");
+                            sb.Append(view.ClientStrings[i, col].Replace(",", ";") + ",");
+                        }
+                        else
+                        {
+                            sb.Append(view.ClientStrings[i, col] + ",");
+                        }
+
+                    }
+                    else
+                    {
+                        sb.Append(view.ClientStrings[i, col] + ",");
+                    }
+                }
+                sb.AppendLine();
+            }
+
+            var response = System.Web.HttpContext.Current.Response;
+            response.BufferOutput = true;
+            response.Clear();
+            response.ClearHeaders();
+            response.ContentEncoding = Encoding.Unicode;
+            response.AddHeader("content-disposition", "attachment;filename=" + view.ReportTitle + ".csv");
+            response.ContentType = "text/plain";
+            response.Write(sb.ToString());
+            response.End();
+            return null;
+        }
         public ActionResult ClientListToExcel()
         {
             var view = GetClientViewModel();
-            int columns = 21;
+            int columns = 22;
             var curMonth = DateTime.Now.ToString("MMMM");
             var curYear = DateTime.Now.Year.ToString();
             XLWorkbook workbook = new XLWorkbook();
@@ -254,6 +316,8 @@ namespace BHelp.Controllers
             ws.Cell(activeRow, 19).SetValue("Next Eligible for Food on");
             ws.Cell(activeRow, 20).SetValue("Next Eligible for Gift Card(s) on");
             ws.Cell(activeRow, 21).SetValue("# Deliveries " + curMonth + " " + curYear );
+            ws.Cell(activeRow, 22).SetValue("Internal Client ID");
+
             for (var i = 1; i < columns + 1; i++)
             { ws.Cell(activeRow, i).Style.Font.Bold = true; }
 
@@ -278,7 +342,7 @@ namespace BHelp.Controllers
         private static ClientViewModel GetClientViewModel()
         {
             var cvm = new ClientViewModel { ReportTitle  = "BH Food Client List" };
-            var columns = 21;
+            var columns = 22;
 
             using (var db = new BHelpContext())
             {
@@ -289,6 +353,7 @@ namespace BHelp.Controllers
                 var i = 0;
                 foreach (var cli in clientList)
                 {
+                    cvm.Id = cli.Id;
                     cvm.ClientStrings[i, 1] = cli.Active.ToString();
                     cvm.ClientStrings[i, 2] = cli.LastName;
                     cvm.ClientStrings[i, 3] = cli.FirstName;
@@ -335,6 +400,9 @@ namespace BHelp.Controllers
                     { cvm.ClientStrings[i, 20] = nextGCED.ToShortDateString(); }
 
                     cvm.ClientStrings[i, 21] = AppRoutines.GetDeliveriesCountThisMonth(cli.Id, DateTime.Now).ToString();
+                    
+                    cvm.ClientStrings[i,22] = cli.Id.ToString();
+               
                     i++;
                 }
                 return cvm;

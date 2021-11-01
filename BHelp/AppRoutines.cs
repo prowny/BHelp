@@ -787,12 +787,6 @@ namespace BHelp
             response.ContentType = "text/plain";
             response.Write(sb.ToString());
             response.End();
-            //var ms = new MemoryStream();
-            //ms.(sb.ToString());
-            //ms.Position = 0;
-            ////return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-            //return new FileStreamResult(ms, "text/csv")
-            //{ FileDownloadName = view.ReportTitle + ".csv" };
             return null;
         }
 

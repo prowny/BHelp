@@ -23,9 +23,15 @@
     <h3>Add/Edit Clients</h3>
     <table>
         <tr>
-            <td>@Html.ActionLink("Create New Client", "Create")</td>
-            <td>&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "ReturnToDashboard")</td>
-            <td>&nbsp;&nbsp;@Html.ActionLink("Download Running Client List To Excel File", "ClientListToExcel")</td>
+            <td>@Html.ActionLink("Create New Client", "Create")
+                &nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "ReturnToDashboard")</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td>@Html.ActionLink("Download  Client List To Excel File", "ClientListToExcel")</td>
+            <td style="color: darkmagenta"><i>&#8592;Click once & wait...</i></td>
+            <td>@Html.ActionLink("Download Client List To CSV File", "ClientListToCSV")</td>
             <td style="color: darkmagenta"><i>&#8592;Click once & wait...</i></td>
         </tr>
     </table>
