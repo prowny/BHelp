@@ -250,6 +250,7 @@ namespace BHelp.Controllers
                 ODId = delivery.ODId,
                 DeliveryDateODId = delivery.DeliveryDateODId,
                 ODList = AppRoutines.GetODSelectList(),
+                ZipCodes = AppRoutines.GetZipCodesSelectList(),
                 ODNotes = delivery.ODNotes,
                 DriverId = delivery.DriverId,
                 DriverName = GetDriverName(delivery.DriverId),
@@ -288,6 +289,9 @@ namespace BHelp.Controllers
 
             foreach (var item in viewModel.ODList)
             { if (item.Value == viewModel.ODId) { item.Selected = true; break; } }
+
+            foreach (var item in viewModel.ZipCodes)
+            { if (item.Value == viewModel.Zip) { item.Selected = true; break; } }
 
             viewModel.DeliveryDateODList = viewModel.ODList;
             foreach (var item in viewModel.ODList)
@@ -415,7 +419,7 @@ namespace BHelp.Controllers
         public ActionResult Edit(
             [Bind(Include = "Id,ClientId,LogDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards," +
             "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId,Completed," +
-            "DeliveryDate,ODId,DeliveryDateODId,ReturnURL,SelectedStatus")] DeliveryViewModel delivery)
+            "DeliveryDate,ODId,DeliveryDateODId,ReturnURL,SelectedStatus,Zip")] DeliveryViewModel delivery)
         {
             if (ModelState.IsValid)
             {
@@ -438,7 +442,8 @@ namespace BHelp.Controllers
                     updateData.DriverNotes = delivery.DriverNotes;
                     updateData.Completed = delivery.Completed;
                     updateData.DeliveryDate = delivery.DeliveryDate;
-                    updateData.DateDelivered = delivery.DateDelivered; 
+                    updateData.DateDelivered = delivery.DateDelivered;
+                    updateData.Zip = delivery.Zip;
                     switch (delivery.SelectedStatus)
                     {
                         case "Open":

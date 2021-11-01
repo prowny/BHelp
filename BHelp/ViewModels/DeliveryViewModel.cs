@@ -98,6 +98,7 @@ namespace BHelp.ViewModels
         public IEnumerable<SelectListItem> DriversList { get; set; }
         public IEnumerable<SelectListItem> ODList { get; set; }
         public IEnumerable<SelectListItem> DeliveryDateODList { get; set; }
+        public IEnumerable<SelectListItem>ZipCodes { get; set; }
         public List<Delivery> DeliveryList { get; set; }
         public IEnumerable<SelectListItem> DeliveriesList { get; set; }
         public IEnumerable<SelectListItem> ClientSelectList { get; set; }

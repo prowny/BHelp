@@ -109,6 +109,7 @@
                         <td>&nbsp;Originating OD:</td>
                         <td>&nbsp;Delivery Date OD:</td>
                         <td>&nbsp;Driver:</td>
+                        <td>Zip Code:</td>
                     </tr>
                     <tr>
                         @if (Model.ODList != null)
@@ -124,6 +125,10 @@
                             <td>
                                 @Html.DropDownListFor(model => model.DriverId, new SelectList(Model.DriversList, "Value", "Text"), new { @class = "form-control" })
                                 @Html.ValidationMessageFor(model => model.DriverId, "", new { @class = "text-danger" })
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(model => model.Zip, new SelectList(Model.ZipCodes, "Value", "Text"), new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Zip, "", new { @class = "text-danger" })
                             </td>
                         }
                     </tr>
