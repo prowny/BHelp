@@ -151,12 +151,6 @@ namespace BHelp.Controllers
             return View(listDeliveryViewModels);
         }
 
-        public ActionResult OpenDeliveriesToExcel()
-        {
-            var result = AppRoutines.ExcelOpenDeliveries();
-            return result;
-        }
-
         public ActionResult OpenDeliveriesToCSV()
         {
             var result = AppRoutines.OpenDeliveriesToCSV();
@@ -237,7 +231,6 @@ namespace BHelp.Controllers
                     break;
                 }
             }
-
             TempData["CurrentDeliveryId"] = id.ToString();
 
             var delivery = db.Deliveries.Find(id);
@@ -294,19 +287,20 @@ namespace BHelp.Controllers
             { if (item.Value == viewModel.Zip) { item.Selected = true; break; } }
 
             viewModel.DeliveryDateODList = viewModel.ODList;
-            foreach (var item in viewModel.ODList)
+            foreach (var item in viewModel.DeliveryDateODList)
             { if (item.Value == viewModel.DeliveryDateODId) { item.Selected = true; break; } }
 
             if (delivery.Children != null) viewModel.KidsCount = (int) delivery.Children;
             if (delivery.Adults != null) viewModel.AdultsCount = (int) delivery.Adults;
             if (delivery.Seniors != null) viewModel.SeniorsCount = (int) delivery.Seniors;
 
-            viewModel.GiftCardsEligible = AppRoutines.GetGiftCardsEligible(delivery.ClientId, delivery.DeliveryDate);
+           // viewModel.GiftCardsEligible = AppRoutines.GetGiftCardsEligible(delivery.ClientId, delivery.DeliveryDate);
            
             if (delivery.FullBags != null) viewModel.FullBags = (int)delivery.FullBags;
             if (delivery.HalfBags != null) viewModel.HalfBags = (int)delivery.HalfBags;
             if (delivery.KidSnacks != null) viewModel.KidSnacks = (int)delivery.KidSnacks;
             if (delivery.GiftCards != null) viewModel.GiftCards = (int)delivery.GiftCards;
+            if (delivery.GiftCardsEligible != null) viewModel.GiftCardsEligible = (int)delivery.GiftCardsEligible;
 
             var client = db.Clients.Find(delivery.ClientId);
             if (client != null)
@@ -319,93 +313,11 @@ namespace BHelp.Controllers
                 viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
                 if (client.Notes != null)
                 {
-                    //viewModel.Notes = client.Notes;
                     viewModel.NotesToolTip = client.Notes.Replace(" ", "\u00a0");
                     var s = viewModel.Notes;
                     s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
                     viewModel.Notes = s;
                 }
-            }
-
-            if (delivery.Completed == false)
-            {
-                // Calculate # of Full, Half, Snacks, and Gift Cards
-                // GIFT CARDS ELIGIBLE, based on DesiredDeliveryDate:
-                // 1 per household of 3 or fewer; 1 per household per calendar month max
-                // 2 per household of 4 or more; 2 per household per calendar month max
-                var firstOfMonth = new DateTime(delivery.DeliveryDate.Year, delivery.DeliveryDate.Month, 1);
-                int totalGiftCardsThisMonth;
-                if (delivery.DateDelivered != null)
-                {
-                    var yy = delivery.DateDelivered.Value.Year;
-                    var mm = delivery.DateDelivered.Value.Month;
-                    var dd = delivery.DateDelivered.Value.Day;
-                    var dt2 = new DateTime(yy, mm, dd);
-                    totalGiftCardsThisMonth = GetGiftCardsSince(client.Id, firstOfMonth, dt2);
-                }
-                else  // this is probably an open delivery
-                {
-                    var yy = delivery.DeliveryDate.Year;
-                    var mm = delivery.DeliveryDate.Month;
-                    var dd = delivery.DeliveryDate.Day;
-                    var dt2 = new DateTime(yy, mm, dd);
-                    totalGiftCardsThisMonth = GetGiftCardsSince(client.Id, firstOfMonth, dt2);
-                }
-
-                viewModel.GiftCardsThisMonth = totalGiftCardsThisMonth;
-                var numberInHousehold = delivery.Children + delivery.Adults + delivery.Seniors;
-                if (numberInHousehold <= 3) // 1 per household of 3 or fewer
-                {
-                    delivery.GiftCardsEligible = 1;
-                    if (delivery.GiftCardsEligible + totalGiftCardsThisMonth > 1) delivery.GiftCardsEligible = 0;
-                    viewModel.GiftCardsEligible = (int) delivery.GiftCardsEligible;
-                }
-
-                if (numberInHousehold >= 4) // 2 per household of 4 or more
-                {
-                    delivery.GiftCardsEligible = 2;
-                    if (delivery.GiftCardsEligible + totalGiftCardsThisMonth > 2) delivery.GiftCardsEligible = 0;
-                    viewModel.GiftCardsEligible = (int) delivery.GiftCardsEligible;
-                }
-
-                viewModel.GiftCards = viewModel.GiftCardsEligible;
-               
-                if (numberInHousehold <= 2)   // Full Bags:
-                { viewModel.FullBags = 1; }
-
-                if (numberInHousehold >= 3 && numberInHousehold <= 4)
-                { viewModel.FullBags = 2; }
-
-                if (numberInHousehold == 5 || numberInHousehold == 6)
-                { viewModel.FullBags = 3; }
-
-                if (numberInHousehold == 7 || numberInHousehold == 8)
-                { viewModel.FullBags = 4; }
-
-                if (numberInHousehold >= 9)
-                { viewModel.FullBags = 5;  }
-              
-                if (numberInHousehold <= 4)   // Half Bags:
-                { viewModel.HalfBags = 1; }
-
-                if (numberInHousehold >= 5 && numberInHousehold <= 8)
-                { viewModel.HalfBags = 2; }
-
-                if (numberInHousehold >= 9)
-                { viewModel.HalfBags = 3; }
-
-                // Kid Snacks:
-                viewModel.KidSnacks = AppRoutines.GetNumberOfKids2_17(client.Id);
-            }
-            
-            if (delivery.Status == 2)  // failed delivery
-            {
-                var yy = delivery.DeliveryDate.Year;
-                var mm = delivery.DeliveryDate.Month;
-                var dd = delivery.DeliveryDate.Day;
-                var firstOfMonth = new DateTime(delivery.DeliveryDate.Year, delivery.DeliveryDate.Month, 1);
-                var dt2 = new DateTime(yy, mm, dd);
-                viewModel.GiftCardsThisMonth = GetGiftCardsSince(client.Id, firstOfMonth, dt2);
             }
 
             viewModel.Zip = delivery.Zip;
@@ -1192,6 +1104,7 @@ namespace BHelp.Controllers
             }
             return total;
         }
+
         private string GetDriverName(string id)
         {
             if (id != null)

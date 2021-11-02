@@ -117,6 +117,7 @@ namespace BHelp.Controllers
                 Delivery delivery = new Delivery
                 {
                     ODId = userIid,
+                    DeliveryDateODId = userIid,
                     ClientId = clientId,
                     LogDate = DateTime.Today,
                     FirstName = client.FirstName,
@@ -158,7 +159,7 @@ namespace BHelp.Controllers
                 if (numberInHousehold >= 4)    // 2 per household of 4 or more
                 {
                     delivery.GiftCardsEligible = 2;
-                    if (delivery.GiftCardsEligible + totalThisMonth > 2) delivery.GiftCardsEligible = 0;
+                    if (delivery.GiftCardsEligible + totalThisMonth > 2) {delivery.GiftCardsEligible = 0;}
                     delivery.GiftCards = delivery.GiftCardsEligible;
                 }
                 // Full Bags:

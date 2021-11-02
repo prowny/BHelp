@@ -370,12 +370,25 @@ namespace BHelp
                 var client = db.Clients.Find(clientId);
                 if (client != null)
                 {
-                    var fromDate = DateTime.Today.AddYears(-17);
-                    var thruDate = DateTime.Today.AddYears(-2);
-                    var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId
-                                                                 && c.DateOfBirth >= fromDate
-                                                                 && c.DateOfBirth <= thruDate).ToList();
-                    return familyList.Count;
+                    
+                    var count2_17 = 0;
+                    var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId).ToList();
+                    foreach (var member in familyList)
+                    {
+                        var age = GetAge(member.DateOfBirth);
+                        if (age >= 2 && age <= 17)
+                        {
+                            count2_17++;
+                        }
+                    }
+
+                    //var fromDate = DateTime.Today.AddYears(-17);  // this doesn't work 11/03/2021t
+                    //var thruDate = DateTime.Today.AddYears(-2);
+                    //var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId
+                    //                                             && c.DateOfBirth >= fromDate
+                    //                                             && c.DateOfBirth <= thruDate).ToList();
+
+                    return count2_17;
                 }
             }
             return 0;
@@ -434,9 +447,9 @@ namespace BHelp
             }
             return 0;
         }
-        public static FileStreamResult OpenDeliveriesToExcel()
+        public static FileStreamResult XOpenDeliveriesToExcel()
         {
-            var view = GetOpenDeliveryViewModel();
+            var view = XGetOpenDeliveryViewModel();
             XLWorkbook workbook = new XLWorkbook();
             IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
            
@@ -510,7 +523,7 @@ namespace BHelp
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 { FileDownloadName = view.ReportTitle + ".xlsx" };
         }
-        private static OpenDeliveryViewModel GetOpenDeliveryViewModel()
+        private static OpenDeliveryViewModel XGetOpenDeliveryViewModel()
         {
             var odv = new OpenDeliveryViewModel
                 {ReportTitle = "Bethesda Help Open Deliveries"};
@@ -568,8 +581,7 @@ namespace BHelp
             var view = GetOpenDeliveriesViewModel();
             XLWorkbook workbook = new XLWorkbook();
             IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
-
-           
+            
             ws.Columns("1").Width = 8; 
             ws.Cell(1, 1).SetValue(view.ReportTitle).Style.Font.SetBold(true);
             ws.Cell(1, 1).Style.Alignment.WrapText = true;
@@ -685,7 +697,7 @@ namespace BHelp
             using (var db = new BHelpContext())
             {
                 var deliveryList = new List<Delivery>(db.Deliveries)
-                    .Where(d => d.Completed == false)
+                    .Where(d => d.Status == 0)
                     .OrderBy(d => d.DeliveryDate)
                     .ThenBy(d => d.DriverId)
                     .ThenBy(z => z.Zip)
