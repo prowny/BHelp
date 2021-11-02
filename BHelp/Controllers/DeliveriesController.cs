@@ -150,7 +150,6 @@ namespace BHelp.Controllers
             }
             return View(listDeliveryViewModels);
         }
-
         public ActionResult OpenDeliveriesToCSV()
         {
             var result = AppRoutines.OpenDeliveriesToCSV();
@@ -422,7 +421,7 @@ namespace BHelp.Controllers
             };
 
             if (Request.UrlReferrer != null)
-            { viewModel.ReturnURL = Request.UrlReferrer.ToString(); }
+            {viewModel.ReturnURL = Request.UrlReferrer.ToString(); }
 
             foreach (var item in viewModel.DriversList)
             { if (item.Value == viewModel.DriverId) { item.Selected = true; break; } }
@@ -456,6 +455,21 @@ namespace BHelp.Controllers
             viewModel.NonNullDateDelivered = new DateTime(yy, mm, dd);
             viewModel.DateDeliveredString = new DateTime(yy, mm, dd).ToString("MM/dd/yyyy");
             viewModel.Zip = delivery.Zip;
+            switch (delivery.Status)
+            {
+                case 0:
+                    viewModel.SelectedStatus = "Open";
+                    break;
+                case 1:
+                    viewModel.SelectedStatus = "Delivered";
+                    break;
+                case 2:
+                    viewModel.SelectedStatus = "Undelivered";
+                    viewModel.DateDeliveredString = "";
+                    break;
+            }
+           
+
             return View(viewModel);
         }
 
@@ -643,6 +657,18 @@ namespace BHelp.Controllers
                 if (del.DateDelivered.HasValue)
                 {
                     del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                }
+                switch (del.Status)
+                {
+                    case 0:
+                        del.SelectedStatus = "Open";
+                        break;
+                    case 1:
+                        del.SelectedStatus = "Delivered";
+                        break;
+                    case 2:
+                        del.SelectedStatus = "Undelivered";
+                        break;
                 }
             }
             return View(callLogView);

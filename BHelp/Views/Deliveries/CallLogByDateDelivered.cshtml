@@ -27,7 +27,7 @@
                         new {id = "StartDate", style = "width: 65px;"})
                     <span style="color: darkmagenta">&#8592;Click to change</span>
                 </td> @*Html left-arrow*@
-                <td> Ending Date:</td>
+                <td>&nbsp;&nbsp; Ending Date:</td>
                 <td>
                     @Html.TextBox("Ending Date:", @Model.HistoryEndDate, "{0:MM/dd/yyyy}",
                         new {id = "EndDate", style = "width: 65px;"})
@@ -48,7 +48,7 @@
                     <td><b>Client Name</b></td>
                     <td><b>Address</b></td>
                     <td><b>Driver</b></td>
-                    <td><b>Completed</b></td>
+                    <td><b>Status</b></td>
                 </tr>
                 @foreach (var delivery in Model.DeliveryList)
                 {
@@ -56,12 +56,10 @@
                         <td>@delivery.DateDeliveredString</td>
                         @{ var name = delivery.LastName + ", " + delivery.FirstName; }
                         @{ var addr = delivery.StreetNumber + " " + delivery.StreetName; }
-                        @{ var cmpltd = delivery.Completed;}
                         <td>@name</td>
                         <td>@addr</td>
                         <td>@delivery.DriverName</td>
-                        
-                        <td style="text-align: center">@Html.CheckBox("Completed", cmpltd)</td>
+                        <td>@delivery.SelectedStatus</td>
                         <td>
                             @Html.ActionLink("Edit", "EditDelivereds", new { id = delivery.Id })
                         </td>
@@ -91,7 +89,6 @@
         window.$("#StartDate").change(function() {
             var stDate = window.$('#StartDate').val();
             var endDt = window.$('#EndDate').val();
-            //if ($('#StartDate').val() > $('#EndDate').val()) { endDt = stDate; }
             window.location.href =
                 '@Url.Action("CallLogByDateDelivered", "Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
         });
@@ -103,7 +100,6 @@
             var stDate = window.$('#StartDate').val();
             window.$('#StartDate').val(stDate);
             var endDt = window.$('#EndDate').val();
-            //if ($('#StartDate').val() > $('#EndDate').val()) { endDt = stDate; }
             window.location.href =
                 '@Url.Action("CallLogByDateDelivered", "Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
         });

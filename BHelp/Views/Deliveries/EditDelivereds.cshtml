@@ -142,11 +142,15 @@
                         @Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { style = "width:35px", min = 0, max = 2 } })
                         @Html.ValidationMessageFor(model => model.GiftCards, "", new { @class = "text-danger" })
                     </td>
-                    <td>&nbsp;Completed:</td>
-                    <td>
-                        @Html.CheckBoxFor(model => model.Completed)
-                    </td>
-                    <td style="color: darkmagenta"> &#8592;Blank checkmark will erase Date Delivered when saved</td>
+
+                    <td>@Html.Label("Status:")&nbsp;</td>
+                    <td>@Html.Label("Open")</td>
+                    <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Open") </td>
+                    <td>@Html.Label("Delivered")
+                    <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Delivered")</td>
+                    <td>@Html.Label("Undelivered")
+                    <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Undelivered")</td>
+
                 </tr>
             </table>
         </div>
@@ -171,8 +175,8 @@
 
 <script>
     $(function () {
-        window.$("#DateDelivered").datepicker();
-    });
+                        window.$("#DateDelivered").datepicker();
+                    });
 </script> @*DateDelivered datepicker*@
 <script>
     $(function () {
