@@ -284,36 +284,77 @@ namespace BHelp.Controllers
             XLWorkbook workbook = new XLWorkbook();
             IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
             int activeRow = 1;
-            ws.Cell(activeRow, 1).SetValue(view.ReportTitle);
-            ws.Cell(activeRow, 1).Style.Font.Bold = true;
-            ws.Cell(activeRow, 2).SetValue(DateTime.Today.ToShortDateString());
-            ws.Cell(activeRow, 2).Style.Font.Bold = true;
+            ws.Cell(activeRow, 1).SetValue(view.ReportTitle + "  " + DateTime.Today.ToShortDateString());
+            ws.Cell(activeRow, 1).Style.Alignment.WrapText = true;
+            ws.Cell(activeRow, 1).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Range(ws.Cell(activeRow, 1), ws.Cell(activeRow, 3)).Merge();
+            
+            ws.Cell(activeRow, 10).SetValue("#");
+            ws.Cell(activeRow, 11).SetValue("#");
+            ws.Cell(activeRow, 12).SetValue("#");
+            ws.Cell(activeRow, 15).SetValue("#");
+            ws.Cell(activeRow, 17).SetValue("Date");
+            ws.Cell(activeRow, 18).SetValue("Date");
+            ws.Cell(activeRow, 19).SetValue("Next");
+            ws.Cell(activeRow, 20).SetValue("Next");
+            ws.Cell(activeRow, 21).SetValue("Deliveies");
+            ws.Cell(activeRow, 22).SetValue("Internal");
+            for (var i = 10; i < columns + 1; i++)
+            {
+                ws.Cell(activeRow, i).Style.Font.Bold = true;
+                ws.Cell(activeRow, i).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+            }
+            
             activeRow++;
+            ws.Columns("1").Width = 5;
             ws.Cell(activeRow, 1).SetValue("Active");
+            ws.Columns("2").Width = 12;
             ws.Cell(activeRow, 2).SetValue("Last Name");
+            ws.Columns("3").Width = 12;
             ws.Cell(activeRow, 3).SetValue("First Name");
+            ws.Columns("4").Width = 4;
             ws.Cell(activeRow, 4).SetValue("Age");
+            ws.Columns("5").Width = 7;
             ws.Cell(activeRow, 5).SetValue("Street #");
+            ws.Columns("6").Width = 15;
             ws.Cell(activeRow, 6).SetValue("Street Name");
+            ws.Columns("7").Width = 10;
             ws.Cell(activeRow, 7).SetValue("City");
+            ws.Columns("8").Width = 6;
             ws.Cell(activeRow, 8).SetValue("Zip");
+            ws.Columns("9").Width = 13;
             ws.Cell(activeRow, 9).SetValue("Phone");
-            ws.Cell(activeRow, 10).SetValue("Children");
-            ws.Cell(activeRow, 11).SetValue("Adults");
-            ws.Cell(activeRow, 12).SetValue("Seniors");
+            ws.Columns("10").Width = 3;
+            ws.Cell(activeRow, 10).SetValue("C");
+            ws.Columns("11").Width = 3;
+            ws.Cell(activeRow, 11).SetValue("A");
+            ws.Columns("12").Width = 3;
+            ws.Cell(activeRow, 12).SetValue("S");
+            ws.Columns("13").Width = 20;
             ws.Cell(activeRow, 13).SetValue("Adults Names/Ages");
+            ws.Columns("14").Width = 20;
             ws.Cell(activeRow, 14).SetValue("Kids Names/Ages");
-            ws.Cell(activeRow, 15).SetValue("# in HH");
+            ws.Columns("15").Width = 3;
+            ws.Cell(activeRow, 15).SetValue("HH");
+            ws.Columns("16").Width = 20;
             ws.Cell(activeRow, 16).SetValue("Notes");
+            ws.Columns("17").Width =13;
             ws.Cell(activeRow, 17).SetValue("Date Last Delivery");
-            ws.Cell(activeRow, 18).SetValue("Date Last Gift Card");
-            ws.Cell(activeRow, 19).SetValue("Next Eligible for Food on");
-            ws.Cell(activeRow, 20).SetValue("Next Eligible for Gift Card(s) on");
-            ws.Cell(activeRow, 21).SetValue("# Deliveries " + curMonth + " " + curYear );
-            ws.Cell(activeRow, 22).SetValue("Internal Client ID");
+            ws.Columns("18").Width = 13;
+            ws.Cell(activeRow, 18).SetValue("Last Gift Card");
+            ws.Columns("19").Width = 13;
+            ws.Cell(activeRow, 19).SetValue("Eligible for Food on");
+            ws.Columns("20").Width = 13;
+            ws.Cell(activeRow, 20).SetValue("Eligible for Gift Card(s) on");
+            ws.Cell(activeRow, 21).SetValue(curMonth + " " + curYear );
+            ws.Columns("22").Width = 7;
+            ws.Cell(activeRow, 22).SetValue("ClientID");
 
             for (var i = 1; i < columns + 1; i++)
-            { ws.Cell(activeRow, i).Style.Font.Bold = true; }
+            {
+                ws.Cell(activeRow, i).Style.Font.Bold = true;
+                ws.Cell(activeRow, i).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+            }
 
             for (var i = 0; i < view.ClientCount; i++)
             {
@@ -321,10 +362,12 @@ namespace BHelp.Controllers
                 for (var j = 1; j < columns + 1; j++)
                 {
                     ws.Cell(activeRow, j).SetValue(view.ClientStrings[i, j]);
+                    ws.Cell(activeRow, j).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+                    ws.Cell(activeRow, j).Style.Alignment.WrapText = true;
                 }
             }
 
-            ws.Columns().AdjustToContents();
+            //ws.Columns().AdjustToContents();
             MemoryStream ms = new MemoryStream();
             workbook.SaveAs(ms);
             ms.Position = 0;
