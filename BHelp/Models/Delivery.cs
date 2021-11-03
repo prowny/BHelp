@@ -83,5 +83,8 @@ namespace BHelp.Models
 
         [NotMapped]
         public string SelectedStatus { get; set; }
+
+        [NotMapped]
+        public string LogDateString { get; set; }
     }
 }

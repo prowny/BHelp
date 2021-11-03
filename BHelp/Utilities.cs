@@ -99,7 +99,7 @@ namespace BHelp
                         Client client = db.Clients.Find(delivery.ClientId);
                         // Create new delivery
                         count++;
-                        delivery.LogDate = Convert.ToDateTime(row[0].ToString());
+                        delivery.DateDelivered = Convert.ToDateTime(row[0].ToString());
                         //delivery.DeliveryDate = null;
                         delivery.ODId = GetUserId(row[1].ToString());
                         try

@@ -49,15 +49,13 @@
             @foreach (var delivery in Model.DeliveryList)
             {
                 <tr>
-                    <td>@delivery.LogDate.ToShortDateString()</td>
+                    <td>@delivery.LogDateString</td>
                     @{ string name = delivery.LastName + ", " + delivery.FirstName; }
                     @{ string addr = delivery.StreetNumber + " " + delivery.StreetName; }
-                    @*@{ bool cmpltd = delivery.Completed;}*@
                     <td>@name</td>
                     <td>@addr</td>
                     <td>@delivery.DriverName</td>
                     <td style="text-align: center">@delivery.DateDeliveredString</td>
-                    @*<td style="text-align: center">@Html.CheckBox("Completed", cmpltd)</td>*@
                     <td style="text-align: center" >@delivery.SelectedStatus</td>
                     <td>
                         @Html.ActionLink("Edit", "Edit", new { id = delivery.Id })

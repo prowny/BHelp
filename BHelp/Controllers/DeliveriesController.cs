@@ -238,7 +238,7 @@ namespace BHelp.Controllers
             {
                 Id = delivery.Id,
                 ClientId = delivery.ClientId,
-                LogDate = Convert.ToDateTime(delivery.LogDate.ToString("MM/dd/yyyy")),
+                LogDate = delivery.LogDate,
                 ODId = delivery.ODId,
                 DeliveryDateODId = delivery.DeliveryDateODId,
                 ODList = AppRoutines.GetODSelectList(),
@@ -340,7 +340,7 @@ namespace BHelp.Controllers
                 {
                     Client client = db.Clients.Find(updateData.ClientId);
                     if (client != null) updateData.Zip = client.Zip;
-                    updateData.LogDate = delivery.LogDate;
+                    updateData.DateDelivered = delivery.LogDate;
                     updateData.FullBags = delivery.FullBags;
                     updateData.HalfBags = delivery.HalfBags;
                     updateData.KidSnacks = delivery.KidSnacks;
@@ -411,7 +411,7 @@ namespace BHelp.Controllers
                 NamesAgesInHH = delivery.NamesAgesInHH,
                 SnapshotFamily = GetSnapshotFamily(delivery.NamesAgesInHH),
                 FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId),
-                DatePriorDelivery = AppRoutines.GetPriorDeliveryDate(delivery.ClientId, delivery.LogDate),
+                DatePriorDelivery = AppRoutines.GetPriorDeliveryDate(delivery.ClientId,delivery.LogDate),
                 DateLastDelivery = GetLastGetDeliveryDate(delivery.Id),
                 DeliveryDate = delivery.DeliveryDate,
                 DateDelivered = delivery.DateDelivered,
@@ -489,7 +489,7 @@ namespace BHelp.Controllers
                 {
                     Client client = db.Clients.Find(updateData.ClientId);
                     if (client != null) updateData.Zip = client.Zip;
-                    updateData.LogDate = delivery.LogDate;
+                    updateData.DateDelivered = delivery.LogDate;
                     updateData.FullBags = delivery.FullBags;
                     updateData.HalfBags = delivery.HalfBags;
                     updateData.KidSnacks = delivery.KidSnacks;
@@ -565,20 +565,25 @@ namespace BHelp.Controllers
             else
             {
                 var deliveryList = db.Deliveries.Where(d => d.ClientId == clientId)
-                    .OrderByDescending(d => d.LogDate).ToList();
+                    .OrderByDescending(d => d.DateDelivered).ToList();
                 callLogView.DeliveryList = deliveryList;
                 foreach (var del in callLogView.DeliveryList)
                 {
                     del.DriverName = GetDriverName(del.DriverId);
-                    if (del.DateDelivered.HasValue)
+                    if (del.Status == 1)
                     {
-                        del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                        if (del.DateDelivered.HasValue)
+                        {
+                            del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                        }
                     }
 
+                    del.LogDateString = $"{del.LogDate:MM/dd/yyyy}";
                     switch (del.Status)
                     {
                         case 0:
                             del.SelectedStatus = "Open";
+                            del.DateDeliveredString = "";
                             break;
                         case 1:
                             del.SelectedStatus = "Delivered";
@@ -608,14 +613,14 @@ namespace BHelp.Controllers
             }  
          
             List<Delivery> deliveries = db.Deliveries
-                .Where(d => d.LogDate >= startDate && d.LogDate <= endDate)
-                .OrderByDescending(d => d.LogDate).ToList();
+                .Where(d => d.DateDelivered >= startDate && d.DateDelivered <= endDate)
+                .OrderByDescending(d => d.DateDelivered).ToList();
             var callLogView = new DeliveryViewModel
             {
                 DeliveryList = deliveries,
                 HistoryStartDate = Convert.ToDateTime(startDate),
                 HistoryEndDate = Convert.ToDateTime(endDate)
-        };
+            };
 
             Session["CallLogStartDate"] = callLogView.HistoryStartDate;
             Session["CallLogEndDate"] = callLogView.HistoryEndDate;
@@ -626,6 +631,19 @@ namespace BHelp.Controllers
                 if (del.DateDelivered.HasValue)
                 {
                     del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                }
+                del.LogDateString = $"{del.LogDate:MM/dd/yyyy}";
+                switch (del.Status)
+                {
+                    case 0:
+                        del.SelectedStatus = "Open";
+                        break;
+                    case 1:
+                        del.SelectedStatus = "Delivered";
+                        break;
+                    case 2:
+                        del.SelectedStatus = "Undelivered";
+                        break;
                 }
             }
             return View(callLogView);
@@ -662,12 +680,14 @@ namespace BHelp.Controllers
                 {
                     case 0:
                         del.SelectedStatus = "Open";
+                        del.DateDeliveredString = "";
                         break;
                     case 1:
                         del.SelectedStatus = "Delivered";
                         break;
                     case 2:
                         del.SelectedStatus = "Undelivered";
+                        del.DateDeliveredString = "";
                         break;
                 }
             }

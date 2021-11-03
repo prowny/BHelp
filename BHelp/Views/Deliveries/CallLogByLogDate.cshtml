@@ -50,24 +50,24 @@
                  <td><b>Addess</b></td>
                 <td><b>Driver</b></td>
                 <td><b>Date Delivered</b></td>
-                <td><b>Completed</b></td>
+                <td><b>Status</b></td>
             </tr>
             @foreach (var delivery in Model.DeliveryList)
             {
-                <tr>
-                    <td>@delivery.LogDate.ToShortDateString()</td>
-                    @{ var name = delivery.LastName + ", " + delivery.FirstName; }
-                    @{ var addr = delivery.StreetNumber + " " + delivery.StreetName; }
-                    @{ var cmpltd = delivery.Completed;}
-                    <td>@name</td>
-                    <td>@addr</td>
-                    <td >@delivery.DriverName</td>
-                    <td>@delivery.DateDeliveredString</td>
-                    <td style="text-align: center">@Html.CheckBox("Completed", cmpltd)</td>
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new {id = delivery.Id})
-                    </td>
-                </tr>
+        <tr>
+            <td>@delivery.LogDateString</td>
+            @{ var name = delivery.LastName + ", " + delivery.FirstName; }
+            @{ var addr = delivery.StreetNumber + " " + delivery.StreetName; }
+            @{ var cmpltd = delivery.Completed;}
+            <td>@name</td>
+            <td>@addr</td>
+            <td>@delivery.DriverName</td>
+            <td>@delivery.DateDeliveredString</td>
+            <td>@delivery.SelectedStatus</td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = delivery.Id })
+            </td>
+        </tr>
             }
         </table>
     }

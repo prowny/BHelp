@@ -32,7 +32,7 @@
                     <tr>
                         <td style="color: darkmagenta">
                             @Html.Label(" (Snapshot of client when the delivery was created " +
-                                        Model.LogDate.ToShortDateString() + ":)")
+                                        Model.LogDate.ToString("MM/dd/yyyy") + ":)")
                         </td>
                         <td style="display: none" id="Id">@Html.Label(Model.Id.ToString())</td>
                     </tr>
@@ -46,7 +46,7 @@
  new
       {
           @readonly = "readonly",
-  style = "width: 80px",
+  style = "width: 90px",
           title = Model.NotesToolTip
       })
             </div>
