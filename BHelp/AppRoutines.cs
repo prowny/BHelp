@@ -168,17 +168,7 @@ namespace BHelp
                     nextEligibleDate = lastDeliveryDate.AddDays(7);
                 }
             }
-            
-            var succeedingMonthDate = lastDeliveryDate.AddMonths(1);
-            var firstOfSucceedingMonth = new DateTime(succeedingMonthDate.Year, succeedingMonthDate.Month, 1);
-            if (lastDeliveryDate < firstOfSucceedingMonth) // Prior to this month
-            {
-                nextEligibleDate = firstOfSucceedingMonth; // move it to 1st of this month, unless less than 7 days
-                if (nextEligibleDate < lastDeliveryDate.AddDays(7))
-                {
-                    nextEligibleDate = lastDeliveryDate.AddDays(7);
-                }
-            }
+      
             return nextEligibleDate;
         }
         public static DateTime GetNextGiftCardEligibleDate(int clientId, DateTime dt)
