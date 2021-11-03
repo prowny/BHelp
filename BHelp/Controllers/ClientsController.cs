@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
@@ -246,6 +248,8 @@ namespace BHelp.Controllers
                 {
                     if (view.ClientStrings[i, col] != null)
                     {
+                        // Remove carriage returns. line feeds, tabs:
+                        view.ClientStrings[i,col]= Regex.Replace(view.ClientStrings[i, col], @"\t|\n|\r", "");
                         if (view.ClientStrings[i, col].Contains(","))
                         {
                             //sb.Append("\"" + view.ClientStrings[i, col] + "\"" + ",");
@@ -411,7 +415,6 @@ namespace BHelp.Controllers
                     var numberInHousehold = familyList.Count + 1;
                     cvm.ClientStrings[i, 15] = numberInHousehold.ToString();
                     cvm.ClientStrings[i, 16] = cli.Notes;
-
                     var lastDD = AppRoutines.GetLastDeliveryDate(cli.Id);
                     if (lastDD.Year < 2000)
                     { cvm.ClientStrings[i, 17] = " - - "; }
