@@ -223,6 +223,7 @@ namespace BHelp.Controllers
             { RedirectToAction("Index"); }
 
             var dtLastDelivery = AppRoutines.GetLastDeliveryDate(Id);
+            var dtLastGiftCard = AppRoutines.GetDateLastGiftCard(Id, DateTime.Today);
             var houseHold = new HouseholdViewModel
             {
                 ClientId = Id,
@@ -250,14 +251,15 @@ namespace BHelp.Controllers
                 //NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id, DateTime.Today.AddDays(1)),
 
                 GiftCardsThisMonth = AppRoutines.GetPriorGiftCardsThisMonth(Id, DateTime.Today),
-                DateLastGiftCard = AppRoutines.GetDateLastGiftCard(Id,DateTime.Today),
+                //DateLastGiftCard = AppRoutines.GetDateLastGiftCard(Id,DateTime.Today),
+                DateLastGiftCard = dtLastGiftCard,
                 DeliveriesThisMonth = AppRoutines.GetDeliveriesCountThisMonth( Id,DateTime.Today) ,
                 NextDeliveryEligibleDate =AppRoutines.GetNextEligibleDeliveryDate(Id,dtLastDelivery),
-                NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id, dtLastDelivery)
+                //NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id, dtLastDelivery)
+                NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id, dtLastGiftCard)
+
             };
 
-            if(houseHold.DateLastGiftCard == DateTime.MinValue)
-            {}
             foreach (var item in houseHold.ZipCodes)
             {
                 if (item.Value == client.Zip)

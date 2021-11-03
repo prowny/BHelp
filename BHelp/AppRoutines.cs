@@ -162,13 +162,22 @@ namespace BHelp
             {
                 nextEligibleDate = lastDeliveryDate.AddMonths(1);
                 nextEligibleDate = new DateTime( nextEligibleDate.Year,
-                        nextEligibleDate.Month,1); // move it to 1st of next month
+                        nextEligibleDate.Month,1); // move it to 1st of next month, unless less than 7 days
+                if (nextEligibleDate < lastDeliveryDate.AddDays(7))
+                {
+                    nextEligibleDate = lastDeliveryDate.AddDays(7);
+                }
             }
-
-            var firstOfThisMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            if (lastDeliveryDate < firstOfThisMonth) // Prior to this month
+            
+            var succeedingMonthDate = lastDeliveryDate.AddMonths(1);
+            var firstOfSucceedingMonth = new DateTime(succeedingMonthDate.Year, succeedingMonthDate.Month, 1);
+            if (lastDeliveryDate < firstOfSucceedingMonth) // Prior to this month
             {
-                nextEligibleDate = firstOfThisMonth; // move it to 1st of this month
+                nextEligibleDate = firstOfSucceedingMonth; // move it to 1st of this month, unless less than 7 days
+                if (nextEligibleDate < lastDeliveryDate.AddDays(7))
+                {
+                    nextEligibleDate = lastDeliveryDate.AddDays(7);
+                }
             }
             return nextEligibleDate;
         }
@@ -201,10 +210,11 @@ namespace BHelp
                     nextEligibleGiftCardDate.Month, 1); // move it to next month
             }
 
-            var firstOfThisMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            if (lastGiftCardDate < firstOfThisMonth)
+            var succeedingMonthDate = lastGiftCardDate.AddMonths(1);
+            var firstOfSucceedingMonth = new DateTime(succeedingMonthDate.Year, succeedingMonthDate.Month, 1);
+            if (lastGiftCardDate < firstOfSucceedingMonth)
             {
-                nextEligibleGiftCardDate = firstOfThisMonth;
+                nextEligibleGiftCardDate = firstOfSucceedingMonth;
             }
 
             return nextEligibleGiftCardDate;
