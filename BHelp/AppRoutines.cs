@@ -398,10 +398,23 @@ namespace BHelp
             // Assume Head of Household is not a Child
             using (var db = new BHelpContext())
             {
-                var startDate = DateTime.Today.AddYears(-18);
-                var childrenList = db.FamilyMembers.Where(f => f.ClientId == clientId
-                                                              && f.DateOfBirth >= startDate).ToList();
-                return childrenList.Count;
+                //var startDate = DateTime.Today.AddYears(-18);
+                //var childrenList = db.FamilyMembers.Where(f => f.ClientId == clientId
+                //                                              && f.DateOfBirth >= startDate).ToList();
+
+                var kidCount = 0;
+                var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId).ToList();
+                foreach (var member in familyList)
+                {
+                    var age = GetAge(member.DateOfBirth);
+                    if (age <= 17)
+                    {
+                        kidCount++;
+                    }
+                }
+
+                return kidCount;
+                //return childrenList.Count;
             }
         }
         private static int GetNumberOfAdults(int clientId)
