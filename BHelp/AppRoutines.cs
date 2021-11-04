@@ -370,7 +370,6 @@ namespace BHelp
                 var client = db.Clients.Find(clientId);
                 if (client != null)
                 {
-                    
                     var count2_17 = 0;
                     var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId).ToList();
                     foreach (var member in familyList)
@@ -381,13 +380,6 @@ namespace BHelp
                             count2_17++;
                         }
                     }
-
-                    //var fromDate = DateTime.Today.AddYears(-17);  // this doesn't work 11/03/2021t
-                    //var thruDate = DateTime.Today.AddYears(-2);
-                    //var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId
-                    //                                             && c.DateOfBirth >= fromDate
-                    //                                             && c.DateOfBirth <= thruDate).ToList();
-
                     return count2_17;
                 }
             }
@@ -398,10 +390,6 @@ namespace BHelp
             // Assume Head of Household is not a Child
             using (var db = new BHelpContext())
             {
-                //var startDate = DateTime.Today.AddYears(-18);
-                //var childrenList = db.FamilyMembers.Where(f => f.ClientId == clientId
-                //                                              && f.DateOfBirth >= startDate).ToList();
-
                 var kidCount = 0;
                 var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId).ToList();
                 foreach (var member in familyList)
@@ -412,9 +400,7 @@ namespace BHelp
                         kidCount++;
                     }
                 }
-
                 return kidCount;
-                //return childrenList.Count;
             }
         }
         private static int GetNumberOfAdults(int clientId)

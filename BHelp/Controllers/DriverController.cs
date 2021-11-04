@@ -79,15 +79,12 @@ namespace BHelp.Controllers
         public ActionResult Edit(int? id)
         {
             if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Delivery delivery = db.Deliveries.Find(id);
+            { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
 
+            Delivery delivery = db.Deliveries.Find(id);
             if (delivery != null)
             {
                 delivery.DriversList = AppRoutines.GetDriversSelectList();
-
                 foreach (var item in delivery.DriversList)
                 {
                     if (item.Value == delivery.DriverId)
@@ -96,8 +93,19 @@ namespace BHelp.Controllers
                         break;
                     }
                 }
-
                 delivery.NumberOfKids2_17 = AppRoutines.GetNumberOfKids2_17(delivery.ClientId);
+                switch (delivery.Status)
+                {
+                    case 0:
+                        delivery.SelectedStatus = "Open";
+                        break;
+                    case 1:
+                        delivery.SelectedStatus = "Delivered";
+                        break;
+                    case 2:
+                        delivery.SelectedStatus = "Undelivered";
+                        break;
+                }
                 return View(delivery);
             }
             return RedirectToAction("Index");

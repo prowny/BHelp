@@ -56,6 +56,8 @@ namespace BHelp.Models
 
         public Boolean Completed { get; set; }
         public string ODNotes { get; set; }
+
+        [DataType(DataType.MultilineText)]
         public string DriverNotes { get; set; }
         public Boolean FirstDelivery { get; set; }
         public int Status { get; set; }  // 0 = Open, 1 = Completed, 2 = Undelivered

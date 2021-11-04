@@ -1,4 +1,5 @@
-﻿@model BHelp.Models.Delivery
+﻿@using System.Web.Mvc.Html
+@model BHelp.Models.Delivery
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -93,19 +94,26 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Date Delivered:&nbsp;</td>
+                    <td>Date Delivered:</td>
                     <td>
-                        @Html.EditorFor(model => model.DateDelivered, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.DateDelivered, "", new { @class = "text-danger" })
-                    </td>
+                        @Html.TextBoxFor(model => model.DateDelivered,"{0:MM/dd/yyyy}",
+                            new {id = "DateDelivered", style = "width: 75px;"})
+                    </td> 
+                    <td style="color: darkmagenta">&#8592;Click to change</td> 
                 </tr>
+            </table>
+            <table>
                 <tr>
-                    <td>Completed:&nbsp;</td>
-                    <td>
-                        @Html.EditorFor(model => model.Completed, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Completed, "", new { @class = "text-danger" })
-                    </td>
+                    <td>@Html.Label("Status:")</td>
+                    <td>@Html.Label("Open")</td>
+                    <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Open")&nbsp;&nbsp;&nbsp;</td>
+                    <td>@Html.Label("Delivered")</td>
+                    <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Delivered")&nbsp;&nbsp;&nbsp;</td>
+                    <td>@Html.Label("Undelivered")</td>
+                    <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Undelivered")</td>
                 </tr>
+            </table>
+            <table>
                 <tr>
                     <td>Driver Notes:&nbsp;</td>
                     <td>
@@ -133,7 +141,7 @@
 </div>
 <script>
     $(function () {
-        window.$("#DeliveryDate").datepicker();
+        window.$("#DateDelivered").datepicker();
     });
 </script> @*DeliveryDate datepicker*@
 </body>
