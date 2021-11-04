@@ -50,13 +50,6 @@
             </table>
             <table>
                 <tr>
-                    <td>Desired Delivery Date:</td>
-                    <td>
-                        @Html.TextBoxFor(model => model.DeliveryDate, Model.DeliveryDate.ToString("MM/dd/yyyy"),
-                            new {id = "DeliveryDate", style = "width: 75px;"})
-                    </td> 
-                    <td style="color: darkmagenta">&#8592;Click to change</td> 
-                    <td>&nbsp;&nbsp;</td>
                     <td>Driver:</td>
                     <td>
                         @Html.DropDownListFor(model => model.DriverId, new SelectList(Model.DriversList, "Value", "Text"), new { @class = "form-control" })
@@ -64,42 +57,42 @@
                     </td>
                 </tr>
             </table>
-            <br/>
             <table>
                 <tr>
+                    <td>Delivery Date:</td>
+                    <td>
+                        @Html.TextBoxFor(model => model.DateDelivered, "{0:MM/dd/yyyy}",
+                            new { id = "DateDelivered", style = "width: 75px;" })
+                    </td>
+                    <td style="color: darkmagenta">&#8592;Click to change</td>
+                </tr>
+                <tr>
                     <td>Full Bags:&nbsp;</td>
-                    <td>@Html.EditorFor(model => model.FullBags, new { htmlAttributes = new { @min = "0", max = "9" } })
+                    <td>@Html.EditorFor(model => model.FullBags, new { htmlAttributes = new { style = "width:30px", @min = "0", max = "9" } })
                         @Html.ValidationMessageFor(model => model.FullBags, "", new { @class = "text-danger" })
                     </td>
                 </tr>
                 <tr>
                     <td>Half Bags:&nbsp;</td>
                     <td>
-                        @Html.EditorFor(model => model.HalfBags, new { htmlAttributes = new { @min = "0", max = "9" } })
+                        @Html.EditorFor(model => model.HalfBags, new { htmlAttributes = new { style = "width:30px", @min = "0", max = "9" } })
                         @Html.ValidationMessageFor(model => model.HalfBags, "", new { @class = "text-danger" })
                     </td>
                 </tr>
                 <tr>
                     <td>Kid Snacks:&nbsp;</td>
                     <td>
-                        @Html.EditorFor(model => model.KidSnacks, new { htmlAttributes = new { @min = "0", max = "9" } })
+                        @Html.EditorFor(model => model.KidSnacks, new { htmlAttributes = new { style = "width:30px", @min = "0", max = "9" } })
                         @Html.ValidationMessageFor(model => model.KidSnacks, "", new { @class = "text-danger" })
                     </td>
                 </tr>
                 <tr>
                     <td>Giant Cards:&nbsp;</td>
+                    @*<td>@Html.Label(Model.GiftCards.ToString())</td>*@
                     <td>
-                        @Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new {@min = "0", @max = Model.GiftCardsEligible}})
+                        @Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { style = "width:30px", @min = "0", @max =2}})
                         @Html.ValidationMessageFor(model => model.GiftCards, "", new { @class = "text-danger" })
                     </td>
-                </tr>
-                <tr>
-                    <td>Date Delivered:</td>
-                    <td>
-                        @Html.TextBoxFor(model => model.DateDelivered,"{0:MM/dd/yyyy}",
-                            new {id = "DateDelivered", style = "width: 75px;"})
-                    </td> 
-                    <td style="color: darkmagenta">&#8592;Click to change</td> 
                 </tr>
             </table>
             <table>

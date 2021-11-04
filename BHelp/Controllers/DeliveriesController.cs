@@ -468,7 +468,6 @@ namespace BHelp.Controllers
                     viewModel.DateDeliveredString = "";
                     break;
             }
-           
 
             return View(viewModel);
         }

@@ -38,8 +38,7 @@ namespace BHelp.Controllers
             };
            
             if (userId.IsNullOrEmpty()) { System.Web.HttpContext.Current.User.Identity.GetUserId(); }
-            // 09/09/2021: change to driver sees all open deliveries
-            var deliveryList = new List<Delivery>(db.Deliveries).Where(d => d.Completed == false)
+            var deliveryList = new List<Delivery>(db.Deliveries).Where(d => d.Status == 0)
                 .OrderBy(d => d.DeliveryDate).ThenBy(z => z.Zip)
                 .ThenBy(n => n.LastName).ToList();
             foreach (var delivery in deliveryList)
@@ -82,33 +81,30 @@ namespace BHelp.Controllers
             { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
 
             Delivery delivery = db.Deliveries.Find(id);
-            if (delivery != null)
+            if (delivery == null) return RedirectToAction("Index");
+            delivery.DriversList = AppRoutines.GetDriversSelectList();
+            foreach (var item in delivery.DriversList)
             {
-                delivery.DriversList = AppRoutines.GetDriversSelectList();
-                foreach (var item in delivery.DriversList)
+                if (item.Value == delivery.DriverId)
                 {
-                    if (item.Value == delivery.DriverId)
-                    {
-                        item.Selected = true;
-                        break;
-                    }
+                    item.Selected = true;
+                    break;
                 }
-                delivery.NumberOfKids2_17 = AppRoutines.GetNumberOfKids2_17(delivery.ClientId);
-                switch (delivery.Status)
-                {
-                    case 0:
-                        delivery.SelectedStatus = "Open";
-                        break;
-                    case 1:
-                        delivery.SelectedStatus = "Delivered";
-                        break;
-                    case 2:
-                        delivery.SelectedStatus = "Undelivered";
-                        break;
-                }
-                return View(delivery);
             }
-            return RedirectToAction("Index");
+            delivery.NumberOfKids2_17 = AppRoutines.GetNumberOfKids2_17(delivery.ClientId);
+            switch (delivery.Status)
+            {
+                case 0:
+                    delivery.SelectedStatus = "Open";
+                    break;
+                case 1:
+                    delivery.SelectedStatus = "Delivered";
+                    break;
+                case 2:
+                    delivery.SelectedStatus = "Undelivered";
+                    break;
+            }
+            return View(delivery);
         }
 
         // POST: Driver/Edit/5
@@ -117,7 +113,7 @@ namespace BHelp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,FullBags,HalfBags,KidSnacks,GiftCards," +
-                    "DateDelivered,Completed,DriverNotes,DeliveryDate,DriverId")] Delivery delivery)
+                    "DateDelivered,Completed,DriverNotes,DriverId,SelectedStatus")] Delivery delivery)
         {
             if (ModelState.IsValid)
             {
@@ -128,10 +124,21 @@ namespace BHelp.Controllers
                     del.FullBags = delivery.FullBags;
                     del.HalfBags = delivery.HalfBags;
                     del.KidSnacks = delivery.KidSnacks;
-                    del.GiftCards = delivery.GiftCards;
-                    del.Completed = delivery.Completed;
+                    //del.GiftCards = delivery.GiftCards; // don't update
                     del.DriverNotes = delivery.DriverNotes;
-                    del.DeliveryDate = delivery.DeliveryDate;
+                    del.DateDelivered = delivery.DateDelivered;
+                    switch (delivery.SelectedStatus)
+                    {
+                        case "Open":
+                            del.Status = 0;
+                            break;
+                        case "Delivered":
+                            del.Status = 1;
+                            break;
+                        case "Undelivered":
+                            del.Status = 2;
+                            break;
+                    }
                 }
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -144,11 +151,7 @@ namespace BHelp.Controllers
             var result = AppRoutines.ExcelOpenDeliveries();
             return result;
         }
-        public ActionResult TempOpenDeliveriesToExcel()
-        {
-            var result = AppRoutines.ExcelOpenDeliveries();
-            return result;
-        }
+
         public ActionResult ReturnToDashboard()
         {
             return RedirectToAction("Index", "Home");
