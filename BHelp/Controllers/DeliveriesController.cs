@@ -78,8 +78,6 @@ namespace BHelp.Controllers
                         delivery.DeliveryDate.Month, 1);
                     DateTime thrudate = delivery.DeliveryDate.AddDays(-1);
                     deliveryView.GiftCardsThisMonth = GetGiftCardsSince(client.Id, since1, thrudate );
-                    deliveryView.GiftCardsEligible = AppRoutines.GetGiftCardsEligible(client.Id, delivery.DeliveryDate );
-                    deliveryView.GiftCards = deliveryView.GiftCardsEligible;
                     if (delivery.DriverId != null)
                     {
                         var driver = db.Users.Find(delivery.DriverId);

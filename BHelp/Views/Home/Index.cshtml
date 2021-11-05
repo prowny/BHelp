@@ -13,13 +13,13 @@
     <link rel="icon" href="~/images/bhelp.ico" type="image/x-icon" />
 </head>
 <body>
-
     <div>
         <table>
-            <tr><td>&nbsp;&nbsp; Welcome  @User.Identity.Name !</td></tr>
+            @{ string userName = @User.Identity.Name + "!"; }
+            <tr><td>&nbsp;&nbsp; Welcome @userName</td></tr>
             <tr>
                 <td>
-                    <p style="text-decoration:underline" class="indent"><strong>Bethesda Help Food Delivery Program Dashboard</strong></p>
+                    <p style="text-decoration: underline" class="indent"><strong>Bethesda Help Food Delivery Program Dashboard</strong></p>
                 </td>
             </tr>
         </table>

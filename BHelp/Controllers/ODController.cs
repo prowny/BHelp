@@ -279,6 +279,12 @@ namespace BHelp.Controllers
         {
             return RedirectToAction("Create", "Clients");
         }
+
+        public ActionResult FlagChanges()
+        {
+            return null;
+        }
+
         public ActionResult ReturnToDashboard()
         {
             return RedirectToAction("Index", "Home");

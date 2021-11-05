@@ -4,7 +4,7 @@
         data: { callLogDate: callLogDate },
         type: "POST",
         success: function(data) {
-            $("body").html(data); // to refresh the page
+            window.$("body").html(data); // to refresh the page
             //alert('Ajax hit'); 
         },
         error: function(jqxhr, status, exception) {
@@ -19,7 +19,7 @@ function UpdateDriverLogDate(callLogDate) {
         data: { logDate: callLogDate },
         type: "POST",
         success: function (data) {
-            $("body").html(data); // to refresh the page
+            window.$("body").html(data); // to refresh the page
             //alert('Ajax hit'); 
         },
         error: function (jqxhr, status, exception) {
@@ -30,9 +30,9 @@ function UpdateDriverLogDate(callLogDate) {
 
 function SearchClients()
 {
-    $.ajax({
+    window.$.ajax({
         url: "/OD/SearchHouseholds",
-        data: { searchString: $("#SearchText").val() },
+        data: { searchString: window.$("#SearchText").val() },
         type: "POST",
         success: function () {
             //var dummy = "";
@@ -53,7 +53,7 @@ function SearchHouseholds(text) {
         success: function (result) {
             // After success, update # of records found label           
             //var dummy = "";
-            $('body').html(result);
+            window.$('body').html(result);
         },
         Error: function () {
             //var dummy = "";
@@ -62,9 +62,9 @@ function SearchHouseholds(text) {
 }
 
 function GetFamilyDetails() {
-    $.ajax({
+    window.$.ajax({
         url: "/FamilyMembers/Edit",
-        data: { Id: $("#client_Id").val() },
+        data: { Id: window.$("#client_Id").val() },
         type: "POST",
         success: function() {
             //var dummy = "";
@@ -77,12 +77,12 @@ function GetFamilyDetails() {
 }
 
 function CountyReport() {
-    $.ajax({
+    window.$.ajax({
         url: "/Deliveries/CountyReport",
-        data: { yy: $("#Year").val(), qtr: $("#Quarter").val() },
+        data: { yy: window.$("#Year").val(), qtr: window.$("#Quarter").val() },
         type: "POST",
         success: function (data) {
-            $("body").html(data); // to refresh the page
+            window.$("body").html(data); // to refresh the page
             //var dummy =xx;
         },
         error: function(jqxhr, status, exception) {
@@ -119,6 +119,21 @@ function EditCallLog()
         error: function (jqxhr, status, exception) {
             alert('Exception:', exception);
             //var dummy = "";       
+        }
+    });
+}
+
+function flagChanges() {
+    $.ajax({
+        url: "/OD/FlagChanges",
+        data: { Id: $("#client_Id").val() },
+        type: "POST",
+        success: function() {
+            //var dummy = "";
+        },
+        error: function(jqxhr, status, exception) {
+            alert('Exception:', exception);
+            //var dummy = "";
         }
     });
 }
