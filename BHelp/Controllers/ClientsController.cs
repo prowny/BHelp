@@ -114,7 +114,6 @@ namespace BHelp.Controllers
                     Zip = client.Zip,
                     Notes = client.Notes + ""
                 };
-                
                 db.Clients.Add(newClient);
                 db.SaveChanges();
                 int clientId = newClient.Id;
@@ -139,6 +138,7 @@ namespace BHelp.Controllers
                 return RedirectToAction("Index");
             }
 
+            client.ZipCodes = AppRoutines.GetZipCodesSelectList();
             return View(client);
         }
 

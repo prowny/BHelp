@@ -15,6 +15,7 @@ namespace BHelp.ViewModels
         [DisplayName("Client First Name")]
         public string FirstName { get; set; }
 
+        [Required]
         [DisplayName("Client Last Name")]
         public string LastName { get; set; }
 
@@ -23,15 +24,19 @@ namespace BHelp.ViewModels
         [DisplayName("Age")]
         public int Age { get; set; }
         
+        [Required]
         [DisplayName("Street Number")]
         public string StreetNumber { get; set; }
         
+        [Required]
         [DisplayName("Street Name")]
         public string StreetName { get; set; }
         
+        [Required]
         [DisplayName("City")]
         public string City { get; set; }
         
+        [Required]
         [DisplayName("Zip Code")]
         public string Zip { get; set; }
 
