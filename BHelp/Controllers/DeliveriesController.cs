@@ -833,8 +833,9 @@ namespace BHelp.Controllers
                 for (int zip = 0; zip < view.ZipCodes.Count; zip++)
                 {
                     var stringZip = view.ZipCodes[zip];
-                    var deliveryData = db.Deliveries.Where(d => d.Zip == stringZip
-                                 && d.DateDelivered >= startDate && d.DateDelivered <= thruDate).ToList();
+                    var deliveryData = db.Deliveries.Where(d =>  d.Status == 1 
+                                                && d.Zip == stringZip && d.DateDelivered >= startDate
+                                                && d.DateDelivered <= thruDate).ToList();
                     totalDeliveries += deliveryData.Count;
                     
                     List<int> distinctList = new List<int>();
