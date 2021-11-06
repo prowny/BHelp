@@ -657,7 +657,7 @@ namespace BHelp.Controllers
             Session["CallLogEndDate"] = endDate;
 
             List<Delivery> deliveries = db.Deliveries
-                .Where(d => d.DateDelivered >= startDate && d.DateDelivered <= endDate)
+                .Where(d => d.Status == 1 && d.DateDelivered >= startDate && d.DateDelivered <= endDate)
                 .OrderByDescending(d => d.DateDelivered).ToList();
             var callLogView = new DeliveryViewModel
             {
@@ -1023,7 +1023,8 @@ namespace BHelp.Controllers
                 }
                
                 var deliveries = db.Deliveries
-                    .Where(d => d.DateDelivered >= startDate && d.DateDelivered < endDate).ToList();
+                    .Where(d => d.Status == 1 && d.DateDelivered >= startDate 
+                                && d.DateDelivered < endDate).ToList();
                  
                 foreach (var delivery in deliveries)
                 {
@@ -1199,7 +1200,8 @@ namespace BHelp.Controllers
             // Load Counts - extra zip code is for totals column.
             view.Counts = new int[1, view.ZipCodes.Count + 1, 8]; // 0 (unused), ZipCodes, Counts
             var deliveries = db.Deliveries
-                .Where(d => d.DateDelivered >= startDate && d.DateDelivered < endDate).ToList();
+                .Where(d => d.Status == 1 &&d.DateDelivered >= startDate
+                                          && d.DateDelivered < endDate).ToList();
 
             foreach (var delivery in deliveries)
             {
