@@ -204,8 +204,8 @@ namespace BHelp.Controllers
         private int GetGiftCardsSince(int id, DateTime dt)
         {
             var total = 0;
-            var dList = db.Deliveries.Where(d => d.Id == id && d.Completed
-                                                            && d.DeliveryDate >= dt).Select(g => g.GiftCards).ToList();
+            var dList = db.Deliveries.Where(d => d.Id == id && d.Status == 1
+                                           && d.DateDelivered >= dt).Select(g => g.GiftCards).ToList();
             foreach (var i in dList)
             {
                 if (i != null)
