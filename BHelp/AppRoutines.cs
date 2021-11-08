@@ -22,7 +22,7 @@ namespace BHelp
             using (var db = new BHelpContext())
             {
                 var delivery = db.Deliveries.Where(i => i.ClientId == clientId
-                                                        && i.DateDelivered != null)
+                                       && i.Status == 1 && i.DateDelivered != null)
                     .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
                 if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
             }
@@ -34,7 +34,7 @@ namespace BHelp
             using (var db = new BHelpContext())
             {
                 var delivery = db.Deliveries.Where(i => i.ClientId == clientId
-                                                        && i.DateDelivered < callLogDate)
+                                         && i.Status == 1 && i.DateDelivered < callLogDate)
                     .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
                 if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
             }
@@ -45,8 +45,8 @@ namespace BHelp
             var dt = DateTime.MinValue;
             using (var db = new BHelpContext())
             {
-                var delivery = db.Deliveries.Where(i => i.ClientId == clientId && i.GiftCards > 0)
-                    .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
+                var delivery = db.Deliveries.Where(i => i.ClientId == clientId && i.GiftCards > 0
+                    && i.Status == 1).OrderByDescending(d => d.DateDelivered).FirstOrDefault();
                 if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
             }
             return dt;
@@ -94,7 +94,7 @@ namespace BHelp
 
             using (var db = new BHelpContext())
             {
-                var dtm= db.Deliveries.Count(i => i.ClientId == clientId
+                var dtm= db.Deliveries.Count(i => i.ClientId == clientId && i.Status == 1 
                                  && i.DateDelivered >= startDate && i.DateDelivered <= endDate);
                 return dtm;
             }
@@ -115,7 +115,7 @@ namespace BHelp
             using (var db = new BHelpContext())
             {
                 var delList = db.Deliveries.Where(d => d.ClientId == clientId 
-                               && d.DateDelivered < toDate
+                               && d.Status == 1 && d.DateDelivered < toDate
                                && d.GiftCards > 0).OrderByDescending(d => d.DateDelivered).ToList();
                 if (delList.Count != 0)
                 {
@@ -148,7 +148,7 @@ namespace BHelp
             var endDate = new DateTime(dt.Year, dt.Month, DateTime.DaysInMonth(dt.Year, dt.Month));
             using (var db = new BHelpContext())
             {
-                return db.Deliveries.Where(i => i.ClientId == clientId
+                return db.Deliveries.Where(i => i.ClientId == clientId && i.Status == 1 
                 && i.DateDelivered >= startDate && i.DateDelivered <= endDate).ToList();
             }
         }

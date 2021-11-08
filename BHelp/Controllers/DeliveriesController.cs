@@ -392,8 +392,10 @@ namespace BHelp.Controllers
         {
             if (id == null)
             { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
+
             var delivery = db.Deliveries.Find(id);
             if (delivery == null) { return HttpNotFound(); }
+
             var viewModel = new DeliveryViewModel
             {
                 Id = delivery.Id,
