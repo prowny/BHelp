@@ -39,7 +39,12 @@ namespace BHelp.Controllers
             return View(houseHoldView);
         }
 
-        public ActionResult SearchResults()
+        public ActionResult SaveHouseholdChanges(HouseholdViewModel household)
+        {
+            return RedirectToAction("Index", "Household");
+           
+         }
+            public ActionResult SearchResults()
         {
             var householdView = new List<HouseholdViewModel>();
             if (TempData["SearchResults"] is IEnumerable<HouseholdViewModel> searchList)
@@ -108,16 +113,23 @@ namespace BHelp.Controllers
             return (householdView);
         }
 
-        public ActionResult AddDelivery(int clientId)
+        public ActionResult AddDelivery(HouseholdViewModel household, string btnAdd, string btnSave)
         {
-            var userIid = System.Web.HttpContext.Current.User.Identity.GetUserId();
+            if ((string)TempData["UpdateHouseholdDirty"] == "true")
+            {
+                // redirect to save changes}
+                TempData["UpdateHouseholdDirty"] = "false";
+            }
+
+            var clientId = household.ClientId;
+            var userid = System.Web.HttpContext.Current.User.Identity.GetUserId();
             var client = db.Clients.Find(clientId);
             if (client != null)
             {
                 Delivery delivery = new Delivery
                 {
-                    ODId = userIid,
-                    DeliveryDateODId = userIid,
+                    ODId = userid,
+                    //DeliveryDateODId not specified
                     ClientId = clientId,
                     LogDate = DateTime.Today,
                     FirstName = client.FirstName,
@@ -144,25 +156,13 @@ namespace BHelp.Controllers
                         if (mbr.Age >= 60) { delivery.Seniors += 1; }
                     }
                 }
-                // GIFT CARDS ELIGIBLE, based on DesiredDeliveryDate:
-                // 1 per household of 3 or fewer; 1 per household per calendar month max
-                // 2 per household of 4 or more; 2 per household per calendar month max
-                var firstOfMonth = new DateTime(delivery.DeliveryDate.Year, delivery.DeliveryDate.Month, 1);
-                var totalThisMonth = GetGiftCardsSince(client.Id, firstOfMonth);
-                var numberInHousehold = delivery.Children + delivery.Adults + delivery.Seniors;
-                if (numberInHousehold <= 3)   // 1 per household of 3 or fewer
-                {
-                    delivery.GiftCardsEligible = 1;
-                    if (delivery.GiftCardsEligible + totalThisMonth > 1) delivery.GiftCardsEligible = 0;
-                    delivery.GiftCards = delivery.GiftCardsEligible;
-                }
-                if (numberInHousehold >= 4)    // 2 per household of 4 or more
-                {
-                    delivery.GiftCardsEligible = 2;
-                    if (delivery.GiftCardsEligible + totalThisMonth > 2) {delivery.GiftCardsEligible = 0;}
-                    delivery.GiftCards = delivery.GiftCardsEligible;
-                }
+                
+                var dateDelivered = delivery.DateDelivered.Value;
+                delivery.GiftCardsEligible = AppRoutines.GetGiftCardsEligible(delivery.ClientId, dateDelivered);
+                delivery.GiftCards = delivery.GiftCardsEligible;
+
                 // Full Bags:
+                var numberInHousehold = delivery.Children + delivery.Adults + delivery.Seniors;
                 if (numberInHousehold <= 2) { delivery.FullBags = 1; }
                 if (numberInHousehold >= 3 && numberInHousehold <= 4) { delivery.FullBags = 2; }
                 if (numberInHousehold == 5 || numberInHousehold == 6) { delivery.FullBags = 3; }
@@ -200,25 +200,9 @@ namespace BHelp.Controllers
             }
             return null;
         }
-
-        private int GetGiftCardsSince(int id, DateTime dt)
-        {
-            var total = 0;
-            var dList = db.Deliveries.Where(d => d.Id == id && d.Status == 1
-                                           && d.DateDelivered >= dt).Select(g => g.GiftCards).ToList();
-            foreach (var i in dList)
-            {
-                if (i != null)
-                {
-                    var gc = (int)i;
-                    total += gc;
-                }
-            }
-            return total;
-        }
         public ActionResult UpdateHousehold(int Id) //Launches 2nd page of OD call log
         {
-            Client client = db.Clients.Find( Id);
+            var client = db.Clients.Find( Id);
             if (client == null)
             { RedirectToAction("Index"); }
 
@@ -240,24 +224,13 @@ namespace BHelp.Controllers
                 Notes = client.Notes,
                 FamilyMembers = AppRoutines.GetFamilyMembers(client.Id),
                 ZipCodes = AppRoutines.GetZipCodesSelectList(),
-                //DateLastDelivery = AppRoutines.GetLastDeliveryDate(Id),
                 DateLastDelivery = dtLastDelivery,
-
                 DesiredDeliveryDate = DateTime.Today.AddDays(1),  // Desired Delivery Date
-
-                //GiftCardsThisMonth = AppRoutines.GetAllGiftCardsThisMonth(Id, DateTime.Today.AddDays(1)),
-                ////DeliveriesThisMonth = AppRoutines.GetDeliveriesThisMonth(Id),
-                //NextDeliveryEligibleDate = AppRoutines.GetNextEligibleDeliveryDate(Id, DateTime.Today.AddDays(1)),
-                //NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id, DateTime.Today.AddDays(1)),
-
                 GiftCardsThisMonth = AppRoutines.GetPriorGiftCardsThisMonth(Id, DateTime.Today),
-                //DateLastGiftCard = AppRoutines.GetDateLastGiftCard(Id,DateTime.Today),
                 DateLastGiftCard = dtLastGiftCard,
                 DeliveriesThisMonth = AppRoutines.GetDeliveriesCountThisMonth( Id,DateTime.Today) ,
                 NextDeliveryEligibleDate =AppRoutines.GetNextEligibleDeliveryDate(Id,dtLastDelivery),
-                //NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id, dtLastDelivery)
                 NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id, dtLastGiftCard)
-
             };
 
             foreach (var item in houseHold.ZipCodes)
@@ -272,6 +245,7 @@ namespace BHelp.Controllers
             houseHold.FamilyMembers.Add(newMember);  // Blank line for adding new member.
             newMember.ClientId = -1;
             newMember.Delete = false;
+            TempData["UpdateHouseholdDirty"] = "false";
             return View(houseHold); // Launches page UpdateHousehold.cshtml
         }
 
@@ -282,6 +256,7 @@ namespace BHelp.Controllers
 
         public ActionResult FlagChanges()
         {
+            TempData["UpdateHouseholdDirty"] = "true";
             return null;
         }
 

@@ -156,8 +156,16 @@ namespace BHelp
         {
             var deliveriesThisMonth = GetDeliveriesCountThisMonth(clientId, dt);
             var lastDeliveryDate = GetLastDeliveryDate(clientId);
-            var nextEligibleDate = lastDeliveryDate.AddDays(7);
-          
+            DateTime nextEligibleDate;
+            if (lastDeliveryDate == DateTime.MinValue)
+            {
+                nextEligibleDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            }
+            else
+            {
+                nextEligibleDate = lastDeliveryDate.AddDays(7);
+            }
+
             if (deliveriesThisMonth >= 3)    // if already 3 this month, no more
             {
                 nextEligibleDate = lastDeliveryDate.AddMonths(1);
@@ -178,6 +186,7 @@ namespace BHelp
             // 2 per household of 4 or more; 2 per household per calendar month max;
             var monthlyEligible = 0;
             var numberInHousehold = GetFamilyMembers(clientId).Count;
+            if (dt == DateTime.MinValue) {  dt = DateTime.Today; } 
             var firstOfMonth = new DateTime(dt.Year, dt.Month, 1);
             var totalThisMonth = GetAllGiftCardsThisMonth(clientId, firstOfMonth);
             if (numberInHousehold <= 3)   // 1 per household of 3 or fewer
@@ -200,6 +209,7 @@ namespace BHelp
                     nextEligibleGiftCardDate.Month, 1); // move it to next month
             }
 
+            if (lastGiftCardDate == DateTime.MinValue){ lastGiftCardDate= DateTime.Today.AddMonths(-1); }
             var succeedingMonthDate = lastGiftCardDate.AddMonths(1);
             var firstOfSucceedingMonth = new DateTime(succeedingMonthDate.Year, succeedingMonthDate.Month, 1);
             if (lastGiftCardDate < firstOfSucceedingMonth)

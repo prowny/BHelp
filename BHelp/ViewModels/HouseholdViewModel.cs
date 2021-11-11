@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
 using BHelp.Models;
+using DataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace BHelp.ViewModels
 {
@@ -61,5 +62,6 @@ namespace BHelp.ViewModels
         public DateTime NextDeliveryEligibleDate { get; set; }
         public DateTime NextGiftCardEligibleDate { get; set; }
         public DateTime DesiredDeliveryDate { get; set; }
+        public Boolean SaveAndExitFlag { get; set; }
     }
 }

@@ -61,7 +61,7 @@
                         <td>@delivery.DriverName</td>
                         <td>@delivery.SelectedStatus</td>
                         <td>
-                            @Html.ActionLink("Edit", "EditDelivereds", new { id = delivery.Id })
+                            @Html.ActionLink("Edit", "Edit", new { id = delivery.Id, delivery.DateDeliveredString })
                         </td>
                     </tr>
                 }

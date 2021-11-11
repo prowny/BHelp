@@ -39,7 +39,7 @@ namespace BHelp.Controllers
                     familyMembers.Add(member);
                 }
 
-                var household = new HouseholdViewModel()
+                var household = new HouseholdViewModel
                 {
                     ClientId = client.Id,
                     FirstName = client.FirstName,
@@ -57,6 +57,7 @@ namespace BHelp.Controllers
                     Notes = client.Notes,
                     // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
                     NotesToolTip = client.Notes.Replace(" ", "\u00a0"),
+                    SaveAndExitFlag = false
                 };
 
                 var s = household.StreetName; // For display, abbreviate to 10 characters:           
@@ -74,14 +75,14 @@ namespace BHelp.Controllers
 
                 householdView.Add(household);
             }
-            Session["OriginalModel"] = householdView;
+            Session["OriginalHouseholdModel"] = householdView;
             return View(householdView);
         }
 
-        // POST: Household
+        // POST: Save Household
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Index(HouseholdViewModel household, string deleteId)
+        public ActionResult Index(HouseholdViewModel household)
         {
             // Check Client data
             var client = db.Clients.Find(household.ClientId);
@@ -135,7 +136,6 @@ namespace BHelp.Controllers
                 db.SaveChanges();
                 // insert Changes Saved! notice
                 return RedirectToAction("ConfirmChangesSaved", new { clientId = client.Id });
-             //   return RedirectToAction("UpdateHousehold", "OD", new {client.Id });
             }
             return null;
         }
