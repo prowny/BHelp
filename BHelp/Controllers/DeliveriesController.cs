@@ -339,6 +339,7 @@ namespace BHelp.Controllers
                     Client client = db.Clients.Find(updateData.ClientId);
                     if (client != null) updateData.Zip = client.Zip;
                     updateData.DateDelivered = delivery.LogDate;
+                    updateData.LogDate=delivery.LogDate;
                     updateData.FullBags = delivery.FullBags;
                     updateData.HalfBags = delivery.HalfBags;
                     updateData.KidSnacks = delivery.KidSnacks;
