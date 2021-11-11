@@ -22,9 +22,11 @@ namespace BHelp.Controllers
                 db.Clients.Where(a => a.Active).OrderBy(n => n.LastName).ToList();
             foreach (var client in clientList)
             {
-                var sqlString = "SELECT * FROM FamilyMembers ";
-                sqlString += "WHERE Active > 0 AND ClientId =" + clientId;
-                var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
+                //var sqlString = "SELECT * FROM FamilyMembers ";
+                //sqlString += "WHERE Active > 0 AND ClientId =" + clientId;
+                //var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
+                var familyList = db.FamilyMembers.Where(
+                    m => m.ClientId == clientId && m.Active).ToList();
                 FamilyMember headOfHousehold = new FamilyMember()
                 {
                     FirstName = client.LastName,
@@ -57,7 +59,6 @@ namespace BHelp.Controllers
                     Notes = client.Notes,
                     // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
                     NotesToolTip = client.Notes.Replace(" ", "\u00a0"),
-                    SaveAndExitFlag = false
                 };
 
                 var s = household.StreetName; // For display, abbreviate to 10 characters:           
@@ -79,6 +80,10 @@ namespace BHelp.Controllers
             return View(householdView);
         }
 
+        public ActionResult SaveHousehold(HouseholdViewModel household)
+        {
+            return RedirectToAction("Index", household);
+        }
         // POST: Save Household
         [HttpPost]
         [ValidateAntiForgeryToken]

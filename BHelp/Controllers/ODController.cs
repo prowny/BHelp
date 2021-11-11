@@ -38,12 +38,7 @@ namespace BHelp.Controllers
 
             return View(houseHoldView);
         }
-
-        public ActionResult SaveHouseholdChanges(HouseholdViewModel household)
-        {
-            return RedirectToAction("Index", "Household");
-           
-         }
+        
             public ActionResult SearchResults()
         {
             var householdView = new List<HouseholdViewModel>();
@@ -113,14 +108,22 @@ namespace BHelp.Controllers
             return (householdView);
         }
 
-        public ActionResult AddDelivery(HouseholdViewModel household, string btnAdd, string btnSave)
+        public ActionResult HouseholdAndDeliveryActions(HouseholdViewModel household,
+            string btnAddMember, string btnDeleteMember, string btnAdd, string btnSave)
         {
-            if ((string)TempData["UpdateHouseholdDirty"] == "true")
+            if (btnSave != null) // Button Save and Exit was pressed
             {
-                // redirect to save changes}
-                TempData["UpdateHouseholdDirty"] = "false";
-            }
+                SaveHouseholdData(household);
+                return RedirectToAction("ReturnToDashboard");
+            }  // Button Save and Exit was pressed
 
+            if (btnAddMember != null || btnDeleteMember != null) // Button Add or Delete Family Member was pressed
+            {
+                SaveHouseholdData(household);
+                var id = Convert.ToInt32(household.ClientId);
+                return RedirectToAction("UpdateHousehold", new { id });
+            }
+             // Button Create Delivery was pressed
             var clientId = household.ClientId;
             var userid = System.Web.HttpContext.Current.User.Identity.GetUserId();
             var client = db.Clients.Find(clientId);
@@ -185,6 +188,59 @@ namespace BHelp.Controllers
             return RedirectToAction("Index");
         }
 
+        private void SaveHouseholdData(HouseholdViewModel household) //, List<FamilyMember> famList)
+        {
+            var cli = db.Clients.Find(household.ClientId);
+            if (cli != null) // update client
+            {
+                cli.StreetNumber = household.StreetNumber + "";
+                cli.StreetName = household.StreetName + "";
+                cli.City = household.City + "";
+                cli.Zip = household.Zip;
+                cli.Notes = household.Notes + "";
+                cli.Phone = household.Phone + "";
+
+                foreach (var member in household.FamilyMembers)
+                {
+                    if (member.Id == 0 && member.ClientId == 0) // is Head of Household
+                    {
+                        cli.FirstName = member.FirstName;
+                        cli.LastName = member.LastName;
+                        cli.DateOfBirth = DateTime.Today.AddYears(-member.Age);
+                    }
+                    else if (member.Id == 0 && member.ClientId < 0) //Adding new member (ClientId = -1)
+                    {
+                        var familyMember = new FamilyMember();
+                        if (member.FirstName != null || member.LastName != null)
+                        {
+                            familyMember.ClientId = cli.Id;
+                            familyMember.Active = true;
+                            familyMember.Delete = false;
+                            familyMember.FirstName = member.FirstName;
+                            familyMember.LastName = member.LastName;
+                            familyMember.DateOfBirth = DateTime.Today.AddYears(-member.Age);
+                            db.FamilyMembers.Add(familyMember);
+                        }
+                    }
+                    else
+                    {
+                        var familyMember = db.FamilyMembers.Find(member.Id);
+                        if (familyMember != null)
+                        {
+                            familyMember.FirstName = member.FirstName;
+                            familyMember.LastName = member.LastName;
+                            familyMember.DateOfBirth = DateTime.Today.AddYears(-member.Age);
+                            if (member.Delete)
+                            {
+                                db.FamilyMembers.Remove(familyMember);
+                            }
+                        }
+                    }
+                }
+                db.SaveChanges();
+            }
+        }
+
         public ActionResult ConfirmCreateDelivery(int? newId)
         {
             var delivery = db.Deliveries.Find(newId);
@@ -200,12 +256,14 @@ namespace BHelp.Controllers
             }
             return null;
         }
+
         public ActionResult UpdateHousehold(int Id) //Launches 2nd page of OD call log
         {
             var client = db.Clients.Find( Id);
             if (client == null)
             { RedirectToAction("Index"); }
 
+            
             var dtLastDelivery = AppRoutines.GetLastDeliveryDate(Id);
             var dtLastGiftCard = AppRoutines.GetDateLastGiftCard(Id, DateTime.Today);
             var houseHold = new HouseholdViewModel
@@ -230,7 +288,8 @@ namespace BHelp.Controllers
                 DateLastGiftCard = dtLastGiftCard,
                 DeliveriesThisMonth = AppRoutines.GetDeliveriesCountThisMonth( Id,DateTime.Today) ,
                 NextDeliveryEligibleDate =AppRoutines.GetNextEligibleDeliveryDate(Id,dtLastDelivery),
-                NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id, dtLastGiftCard)
+                NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id, dtLastGiftCard),
+                OpenDeliveryExists = false
             };
 
             foreach (var item in houseHold.ZipCodes)
@@ -245,6 +304,10 @@ namespace BHelp.Controllers
             houseHold.FamilyMembers.Add(newMember);  // Blank line for adding new member.
             newMember.ClientId = -1;
             newMember.Delete = false;
+
+            var openCount= db.Deliveries.Count(d => d.ClientId == client.Id && d.Status == 0);
+            if (openCount > 0)
+            { houseHold.OpenDeliveryExists = true;}
             TempData["UpdateHouseholdDirty"] = "false";
             return View(houseHold); // Launches page UpdateHousehold.cshtml
         }

@@ -62,6 +62,6 @@ namespace BHelp.ViewModels
         public DateTime NextDeliveryEligibleDate { get; set; }
         public DateTime NextGiftCardEligibleDate { get; set; }
         public DateTime DesiredDeliveryDate { get; set; }
-        public Boolean SaveAndExitFlag { get; set; }
+        public Boolean OpenDeliveryExists { get; set; }
     }
 }
