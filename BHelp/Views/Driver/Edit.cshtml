@@ -88,15 +88,8 @@
                 </tr>
                 <tr>
                     <td>Giant Cards:&nbsp;</td>
-                    @if (!User.IsInRole("Staff") && !User.IsInRole("Administrator"))
-                    {
-                        <td>@Html.Label(Model.GiftCards.ToString())</td>
-                    }
-                    else
-                    {
-                        <td>@Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { style = "width:30px", @min = "0", @max = 2 } })</td>
-                        @Html.ValidationMessageFor(model => model.GiftCards, "", new { @class = "text-danger" })
-                    }
+                    <td>@Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { style = "width:30px", @min = "0", @max = 2 } })</td>
+                    @Html.ValidationMessageFor(model => model.GiftCards, "", new { @class = "text-danger" })
                 </tr>
             </table>
 
