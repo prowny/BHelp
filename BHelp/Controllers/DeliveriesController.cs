@@ -159,6 +159,43 @@ namespace BHelp.Controllers
             return result;
         }
 
+        public ActionResult OpenFilters()
+        {
+            var deliveryList = db.Deliveries.Where(d => d.Status == 0).ToList();   // get all open deliveries
+            var view = new OpenDeliveryViewModel()
+            {
+                OpenDeliveryCount = deliveryList.Count,
+                DeliveryDatesList = new List<string>(), 
+                DriverList = new List<string>()
+            };
+
+            var uniqueDatesList = deliveryList.Select(d => d.DateDelivered).Distinct().ToList();
+            foreach (var y in uniqueDatesList)
+            {
+                int delCountThisDate = deliveryList.Count(z => z.DateDelivered == y);
+                view.DeliveryDatesList.Add ( y == null ? "-none-  (" + delCountThisDate  +")":
+                    y.Value.ToString("MM/dd/yyyy") + " (" + delCountThisDate + ")");
+            }
+
+            var uniqueDriverIdList = deliveryList.Select(d => d.DriverId).Distinct().ToList();
+            foreach (var y in uniqueDriverIdList)
+            {
+                int delCountThisDriver = deliveryList.Count(z => z.DriverId == y);
+                string driverName;
+                var driver = db.Users.Find(y);
+                if (driver == null)
+                {
+                    driverName = "(nobody yet)";
+                }
+                else
+                {
+                    driverName = driver.FullName;
+                }
+                view.DriverList.Add( driverName + " (" + delCountThisDriver + ")");
+            }
+
+            return View(view);
+        }
         // GET: Deliveries/Details/5
         public ActionResult Details(int? id)
         {
@@ -339,14 +376,14 @@ namespace BHelp.Controllers
                     Client client = db.Clients.Find(updateData.ClientId);
                     if (client != null) updateData.Zip = client.Zip;
                     updateData.DateDelivered = delivery.LogDate;
-                    updateData.LogDate=delivery.LogDate;
+                    updateData.LogDate = delivery.LogDate;
                     updateData.FullBags = delivery.FullBags;
                     updateData.HalfBags = delivery.HalfBags;
                     updateData.KidSnacks = delivery.KidSnacks;
                     updateData.GiftCards = delivery.GiftCards;
                     updateData.GiftCardsEligible = delivery.GiftCardsEligible;
                     updateData.ODNotes = delivery.ODNotes;
-                    updateData.DriverId = delivery.DriverId;
+                    updateData.DriverId = updateData.DriverId == "0" ? null : delivery.DriverId;
                     updateData.ODId = delivery.ODId;
                     updateData.DeliveryDateODId = delivery.DeliveryDateODId;
                     updateData.DriverNotes = delivery.DriverNotes;

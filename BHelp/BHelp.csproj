@@ -514,6 +514,7 @@
     <Content Include="Views\Deliveries\HelperReport.cshtml" />
     <Content Include="Views\Household\ConfirmChangesSaved.cshtml" />
     <Content Include="Views\OD\ConfirmCreateDelivery.cshtml" />
+    <Content Include="Views\Deliveries\OpenFilters.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>

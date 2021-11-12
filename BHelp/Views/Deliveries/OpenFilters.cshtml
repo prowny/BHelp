@@ -1,0 +1,25 @@
+﻿@model BHelp.ViewModels.OpenDeliveryViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>OpenFilters</title>
+</head>
+
+<body>
+    <div>
+        @Html.Label("Open Deliveries Count:")
+        @Html.Label(Model.OpenDeliveryCount.ToString())&nbsp;
+        @if (Model.OpenDeliveryCount > 0)
+        {
+            @Html.Label(" with " + Model.DeliveryDatesList.Count + " Delivery Dates  ") 
+            @Html.DropDownListFor(m => Model.ReportTitle, new SelectList(Model.DeliveryDatesList))
+            @Html.Label(" and " + Model.DriverList.Count +  " Drivers ") 
+            @Html.DropDownListFor(m => Model.ReportTitle, new SelectList(Model.DriverList))
+        } 
+    </div>
+</body>
+
+</html>

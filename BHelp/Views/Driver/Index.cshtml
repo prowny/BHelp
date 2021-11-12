@@ -1,5 +1,4 @@
-﻿@*@model IEnumerable<BHelp.Models.Delivery>*@
-@model BHelp.ViewModels.DeliveryViewModel
+﻿@model BHelp.ViewModels.DeliveryViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -13,7 +12,7 @@
     <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
 </head>
 <body>
-<h4>Open Deliveries</h4>
+<h4>All Open Deliveries</h4>
 @if (Model.DeliveryList != null && Model.DeliveryList.Any())
 {
     foreach (var item in Model.DeliveryList)
