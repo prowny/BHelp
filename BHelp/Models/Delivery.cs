@@ -84,9 +84,15 @@ namespace BHelp.Models
         public string DriverName { get; set; }
 
         [NotMapped]
+        public string DeliveryDateODName { get; set; }
+
+        [NotMapped]
         public string SelectedStatus { get; set; }
 
         [NotMapped]
         public string LogDateString { get; set; }
+        
+        [NotMapped]
+        public Boolean Checked { get; set; }    // for open delivery filtering
     }
 }

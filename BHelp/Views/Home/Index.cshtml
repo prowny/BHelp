@@ -61,7 +61,7 @@
     <span style="color: darkmagenta"> (Go to OD Select Client page)</span><br />
     <a href="@Url.Action("CallLogMenu", "Deliveries")">Maintain Call Log History</a><br />
     <a href="@Url.Action("Index", "Deliveries")">Maintain Open Deliveries</a><br />
-    <a href="@Url.Action("OpenFilters", "Deliveries")">Filter Open Deliveries</a><br />
+    <a href="@Url.Action("OpenFilters", "Deliveries", new{ open = true })">Filter Open Deliveries</a><br />
     <a href="@Url.Action("ReportsMenu", "Deliveries")">Reports</a><br />
 </div>
     }

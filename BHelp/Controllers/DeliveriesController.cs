@@ -158,29 +158,39 @@ namespace BHelp.Controllers
             var result = AppRoutines.ExcelOpenDeliveries();
             return result;
         }
-
+       
+        // GET: Open Delivery Filters
         public ActionResult OpenFilters()
         {
-            var deliveryList = db.Deliveries.Where(d => d.Status == 0).ToList();   // get all open deliveries
+            var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0).ToList();   // get all open deliveries
             var view = new OpenDeliveryViewModel()
             {
-                OpenDeliveryCount = deliveryList.Count,
+                OpenDeliveryCount = listAllOpenDeliveries.Count,
                 DeliveryDatesList = new List<string>(), 
+                DeliveryDatesSelectList = new List<SelectListItem>(),
+                SelectedDeliveriesList = new List<Delivery>(),
                 DriverList = new List<string>()
             };
 
-            var uniqueDatesList = deliveryList.Select(d => d.DateDelivered).Distinct().ToList();
-            foreach (var y in uniqueDatesList)
+            var distinctDatesList = listAllOpenDeliveries.Select(d => d.DateDelivered).Distinct().ToList();
+            foreach (var y in distinctDatesList)
             {
-                int delCountThisDate = deliveryList.Count(z => z.DateDelivered == y);
+                int delCountThisDate = listAllOpenDeliveries.Count(z => z.DateDelivered == y);
                 view.DeliveryDatesList.Add ( y == null ? "-none-  (" + delCountThisDate  +")":
                     y.Value.ToString("MM/dd/yyyy") + " (" + delCountThisDate + ")");
+
+                if (y != null)
+                    view.DeliveryDatesSelectList.Add(new SelectListItem()
+                        { Value = y.Value.ToString("MM/dd/yyyy"), Text = y.Value.ToString("MM/dd/yyyy") });
             }
 
-            var uniqueDriverIdList = deliveryList.Select(d => d.DriverId).Distinct().ToList();
-            foreach (var y in uniqueDriverIdList)
+            TempData["DeliveryDatesList"] = view.DeliveryDatesList;
+            TempData["DeliveryDatesSelectList"] = view.DeliveryDatesSelectList;
+            
+            var distinctDriverIdList = listAllOpenDeliveries.Select(d => d.DriverId).Distinct().ToList();
+            foreach (var y in distinctDriverIdList)
             {
-                int delCountThisDriver = deliveryList.Count(z => z.DriverId == y);
+                int delCountThisDriver = listAllOpenDeliveries.Count(z => z.DriverId == y);
                 string driverName;
                 var driver = db.Users.Find(y);
                 if (driver == null)
@@ -193,9 +203,54 @@ namespace BHelp.Controllers
                 }
                 view.DriverList.Add( driverName + " (" + delCountThisDriver + ")");
             }
+            TempData["DriverList"] = view.DriverList;
 
             return View(view);
         }
+
+        // POST: 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult OpenFilters(OpenDeliveryViewModel model, string btnByDate)
+        {
+            if (btnByDate != null)
+            {
+                var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0).ToList();   // get all open deliveries
+                var view = new OpenDeliveryViewModel()
+                {
+                    OpenDeliveryCount = listAllOpenDeliveries.Count,
+                    DeliveryDatesList = TempData["DeliveryDatesList"] as List<string>,
+                    SelectedDeliveriesList = new List<Delivery>(),
+                    DeliveryDatesSelectList =TempData["DeliveryDatesSelectList"] as List<SelectListItem>,
+                    DriverList =TempData["DriverList"] as List<string>
+                };
+                TempData.Keep("DeliveryDatesList");
+                TempData.Keep("DeliveryDatesSelectList");
+                TempData.Keep("DriverList");
+
+                var selectedDeliveries = db.Deliveries.Where(d => d.Status == 0
+                                                          && d.DateDelivered == model.SelectedDeliveryDate).ToList();
+                foreach (var del in selectedDeliveries)
+                {
+                    del.Checked = true;
+                    del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                    if (del.DeliveryDateODId != null)
+                    {
+                        var _od = db.Users.Find(del.DeliveryDateODId);
+                        del.DeliveryDateODName = _od.FullName;
+                    }
+                    else
+                    {
+                        del.DeliveryDateODName ="(nobody yet)";
+                    }
+                    view.SelectedDeliveriesList.Add(del);
+                }
+
+                return View(view);
+            }
+            return null;
+        }
+
         // GET: Deliveries/Details/5
         public ActionResult Details(int? id)
         {
@@ -290,7 +345,6 @@ namespace BHelp.Controllers
                 DateLastDelivery = GetLastGetDeliveryDate(delivery.Id),
                 DeliveryDate = delivery.DeliveryDate, 
                 DateDelivered = delivery.DateDelivered,
-                Completed = delivery.Completed,
                 Status = delivery.Status,
                 HistoryStartDate = Convert.ToDateTime(Session["CallLogStartDate"]),
                 HistoryEndDate = Convert.ToDateTime(Session["CallLogEndDate"])
@@ -387,7 +441,6 @@ namespace BHelp.Controllers
                     updateData.ODId = delivery.ODId;
                     updateData.DeliveryDateODId = delivery.DeliveryDateODId;
                     updateData.DriverNotes = delivery.DriverNotes;
-                    updateData.Completed = delivery.Completed;
                     updateData.DeliveryDate = delivery.DeliveryDate;
                     updateData.DateDelivered = delivery.DateDelivered;
                     updateData.Zip = delivery.Zip;
@@ -1063,7 +1116,6 @@ namespace BHelp.Controllers
             }
             return total;
         }
-
         private string GetDriverName(string id)
         {
             if (id != null)
