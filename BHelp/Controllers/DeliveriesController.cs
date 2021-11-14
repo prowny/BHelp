@@ -234,6 +234,7 @@ namespace BHelp.Controllers
                 {
                     del.Checked = true;
                     del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                    
                     if (del.DeliveryDateODId != null)
                     {
                         var _od = db.Users.Find(del.DeliveryDateODId);
@@ -242,6 +243,31 @@ namespace BHelp.Controllers
                     else
                     {
                         del.DeliveryDateODName ="(nobody yet)";
+                    }
+
+                    if (del.DriverId != null)
+                    {
+                        var _driver = db.Users.Find(del.DriverId);
+                        del.DriverName = _driver.FullName;
+                    }
+                    else
+                    {
+                        del.DriverName = "(nobody yet)";
+                    }
+
+                    var _client = db.Clients.Find(del.ClientId);
+                    if (_client != null)
+                        del.ClientNameAddress = _client.LastName + ", " + _client.FirstName
+                                                + " " + _client.StreetNumber + " " + _client.StreetName;
+
+                    if (del.DeliveryDateODId != null)
+                    {
+                        var _ddod = db.Users.Find(del.DeliveryDateODId);
+                        del.DeliveryDateODName = _ddod.FullName;
+                    }
+                    else
+                    {
+                        del.DeliveryDateODName = "(nobody yet)";
                     }
                     view.SelectedDeliveriesList.Add(del);
                 }
