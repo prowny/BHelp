@@ -94,5 +94,8 @@ namespace BHelp.Models
         
         [NotMapped]
         public Boolean Checked { get; set; }    // for open delivery filtering
+
+        [NotMapped]
+        public string NameAddressToolTip { get; set; }    // for open delivery filtering
     }
 }

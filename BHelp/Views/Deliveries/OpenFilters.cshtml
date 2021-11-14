@@ -40,8 +40,9 @@
                             <td><b>@Html.Label("Chk")</b></td>
                             <td><b>@Html.Label("Delv Date")</b></td>
                             <td style="text-align: center"><b>@Html.Label("Driver")</b></td>
-                            <td style="text-align: center"><b>@Html.Label("DelvDate OD")</b></td>
-                            <td><b>@Html.Label("Client")</b></td>
+                            <td style="text-align: center"><b>@Html.Label("DelvDateOD")</b></td>
+                            <td style="text-align: center"><b>@Html.Label("Client")</b></td>
+                            <td><b>F</b></td><td><b>H</b></td><td><b>S</b></td><td><b>G</b></td>
                         </tr>
                     @for (int i = 0; i < Model.SelectedDeliveriesList.Count; i++)
                     {
@@ -50,7 +51,11 @@
                         <td style="text-align: center">@Html.Label(Model.SelectedDeliveriesList[i].DateDeliveredString)</td>
                         <td>@Model.SelectedDeliveriesList[i].DriverName</td>
                         <td>@Model.SelectedDeliveriesList[i].DeliveryDateODName</td>
-                        <td>@Model.SelectedDeliveriesList[i].ClientNameAddress</td>
+                        <td title=@Model.SelectedDeliveriesList[i].NameAddressToolTip>@Model.SelectedDeliveriesList[i].ClientNameAddress</td>
+                        <td style="text-align: center">@Model.SelectedDeliveriesList[i].FullBags</td>
+                        <td style="text-align: center">@Model.SelectedDeliveriesList[i].HalfBags</td>
+                        <td style="text-align: center">@Model.SelectedDeliveriesList[i].KidSnacks</td>
+                        <td style="text-align: center">@Model.SelectedDeliveriesList[i].GiftCards</td>
                     </tr>
                     }
                     </table>

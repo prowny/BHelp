@@ -244,7 +244,7 @@ namespace BHelp.Controllers
                     {
                         del.DeliveryDateODName ="(nobody yet)";
                     }
-
+              
                     if (del.DriverId != null)
                     {
                         var _driver = db.Users.Find(del.DriverId);
@@ -257,8 +257,14 @@ namespace BHelp.Controllers
 
                     var _client = db.Clients.Find(del.ClientId);
                     if (_client != null)
+                    {
                         del.ClientNameAddress = _client.LastName + ", " + _client.FirstName
                                                 + " " + _client.StreetNumber + " " + _client.StreetName;
+                        del.NameAddressToolTip = del.ClientNameAddress.Replace(" ", "\u00a0");
+                        var s = del.ClientNameAddress;
+                        s = s.Length <= 30 ? s : s.Substring(0, 30) + "...";
+                        del.ClientNameAddress = s;
+                    }
 
                     if (del.DeliveryDateODId != null)
                     {
@@ -776,7 +782,7 @@ namespace BHelp.Controllers
                                       + " " + view.Year.ToString() + " Delivery Totals";
                 view.ReportTitle ="Bethesda Helper Data "
                                   + DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(view.Month) 
-                                  + " " + view.Year.ToString();
+                                  + " " + view.Year;
             }
             view.MonthYear = new string[2];
             var startDate = new DateTime(view.Year, view.Month, 1);
