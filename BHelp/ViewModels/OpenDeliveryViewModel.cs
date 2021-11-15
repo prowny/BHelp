@@ -14,6 +14,8 @@ namespace BHelp.ViewModels
         public List<SelectListItem> DeliveryDatesSelectList { get; set; }
         public DateTime SelectedDeliveryDate { get; set; }
         public List<string> DriverList { get; set; }
+        public List<SelectListItem> DriversSelectList { get; set; }
+        public string SelectedDriver { get; set; } 
         public List<Delivery> SelectedDeliveriesList { get; set; }
     }
 }

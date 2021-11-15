@@ -87,5 +87,10 @@ namespace BHelp.Models
 
         [NotMapped]
         public bool Delete { get; set; }
+
+        [NotMapped]
+        public string ClientNameAddress { get; set; }
+        [NotMapped]
+        public string NameAddressToolTip { get; set; }    // for open delivery filtering
     }
 }

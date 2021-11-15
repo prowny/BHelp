@@ -93,9 +93,12 @@ namespace BHelp.Models
         public string LogDateString { get; set; }
         
         [NotMapped]
-        public Boolean Checked { get; set; }    // for open delivery filtering
+        public Boolean IsChecked { get; set; }    // for open delivery filtering
 
         [NotMapped]
         public string NameAddressToolTip { get; set; }    // for open delivery filtering
+
+        [NotMapped]
+        public Client Client { get; set; }  // for open delivery filtering
     }
 }

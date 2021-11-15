@@ -7,6 +7,12 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>OpenFilters</title>
+    <style>
+        #SaveButton {background-color: blue;color: white}
+        #ClearAllButton {background-color: yellow;color: black}
+        #CheckAllButton {background-color: green;color: white}
+        .agewidth {width: 10px}
+    </style>
 </head>
 
 <body>
@@ -28,8 +34,14 @@
             <hr />
             <div>
                 @Html.Label("Show Open Deliveries for Delivery Date ")
-                @Html.DropDownListFor(m => Model.SelectedDeliveryDate,Model.DeliveryDatesSelectList)
-                <input name="btnByDate" type="submit" value="Go" class="btn btn-default" id="ByDateButton" />
+                @Html.DropDownListFor(m => Model.SelectedDeliveryDate, Model.DeliveryDatesSelectList)
+                <input name="btnByDateCheckAll" type="submit" value="Go - Check All" class="btn btn-default" id="CheckAllButton" />
+                <input name="btnByDateClearAll" type="submit" value="Go - Uncheck All" class="btn btn-default" id="ClearAllButton" />
+                <br/>
+                @Html.Label("Show Open Deliveries for Driver ")
+                @Html.DropDownListFor(m => Model.SelectedDriver, Model.DriversSelectList)
+                <input name="btnByDriverCheckAll" type="submit" value="Go - Check All" class="btn btn-default" id="CheckAllButton" />
+                <input name="btnByDriverClearAll" type="submit" value="Go - Uncheck All" class="btn btn-default" id="ClearAllButton" />
             </div>
 
             <div id="SelectedDeliveries">
@@ -47,11 +59,12 @@
                     @for (int i = 0; i < Model.SelectedDeliveriesList.Count; i++)
                     {
                     <tr>
-                        <td style="text-align: center">@Html.CheckBoxFor(c => c.SelectedDeliveriesList[i].Checked)</td>
+                        <td style="text-align: center">@Html.CheckBoxFor(c => c.SelectedDeliveriesList[i].IsChecked)</td>
+                        
                         <td style="text-align: center">@Html.Label(Model.SelectedDeliveriesList[i].DateDeliveredString)</td>
                         <td>@Model.SelectedDeliveriesList[i].DriverName</td>
                         <td>@Model.SelectedDeliveriesList[i].DeliveryDateODName</td>
-                        <td title=@Model.SelectedDeliveriesList[i].NameAddressToolTip>@Model.SelectedDeliveriesList[i].ClientNameAddress</td>
+                        <td title=@Model.SelectedDeliveriesList[i].NameAddressToolTip>@Model.SelectedDeliveriesList[i].Client.ClientNameAddress</td>
                         <td style="text-align: center">@Model.SelectedDeliveriesList[i].FullBags</td>
                         <td style="text-align: center">@Model.SelectedDeliveriesList[i].HalfBags</td>
                         <td style="text-align: center">@Model.SelectedDeliveriesList[i].KidSnacks</td>

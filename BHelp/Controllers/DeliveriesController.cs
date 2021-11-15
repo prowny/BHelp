@@ -169,41 +169,36 @@ namespace BHelp.Controllers
                 DeliveryDatesList = new List<string>(), 
                 DeliveryDatesSelectList = new List<SelectListItem>(),
                 SelectedDeliveriesList = new List<Delivery>(),
-                DriverList = new List<string>()
+                DriverList = new List<string>(),
+                DriversSelectList = new List<SelectListItem>()
             };
 
             var distinctDatesList = listAllOpenDeliveries.Select(d => d.DateDelivered).Distinct().ToList();
-            foreach (var y in distinctDatesList)
+            foreach (var dt in distinctDatesList)
             {
-                int delCountThisDate = listAllOpenDeliveries.Count(z => z.DateDelivered == y);
-                view.DeliveryDatesList.Add ( y == null ? "-none-  (" + delCountThisDate  +")":
-                    y.Value.ToString("MM/dd/yyyy") + " (" + delCountThisDate + ")");
+                int delCountThisDate = listAllOpenDeliveries.Count(d => d.DateDelivered == dt);
+                view.DeliveryDatesList.Add ( dt == null ? "-none-  (" + delCountThisDate  +")":
+                    dt.Value.ToString("MM/dd/yyyy") + " (" + delCountThisDate + ")");
 
-                if (y != null)
+                if (dt != null)
                     view.DeliveryDatesSelectList.Add(new SelectListItem()
-                        { Value = y.Value.ToString("MM/dd/yyyy"), Text = y.Value.ToString("MM/dd/yyyy") });
+                        { Value = dt.Value.ToString("MM/dd/yyyy"), Text = dt.Value.ToString("MM/dd/yyyy") });
             }
 
             TempData["DeliveryDatesList"] = view.DeliveryDatesList;
             TempData["DeliveryDatesSelectList"] = view.DeliveryDatesSelectList;
             
             var distinctDriverIdList = listAllOpenDeliveries.Select(d => d.DriverId).Distinct().ToList();
-            foreach (var y in distinctDriverIdList)
+            foreach (var dr in distinctDriverIdList)
             {
-                int delCountThisDriver = listAllOpenDeliveries.Count(z => z.DriverId == y);
-                string driverName;
-                var driver = db.Users.Find(y);
-                if (driver == null)
-                {
-                    driverName = "(nobody yet)";
-                }
-                else
-                {
-                    driverName = driver.FullName;
-                }
+                int delCountThisDriver = listAllOpenDeliveries.Count(d => d.DriverId == dr);
+                var driver = db.Users.Find(dr);
+                var driverName = dr == null ? "(nobody yet)" : driver.FullName;
                 view.DriverList.Add( driverName + " (" + delCountThisDriver + ")");
+                view.DriversSelectList.Add(new SelectListItem { Value = dr, Text = driverName });
             }
             TempData["DriverList"] = view.DriverList;
+            TempData["DriversSelectList"] = view.DriversSelectList;
 
             return View(view);
         }
@@ -211,75 +206,107 @@ namespace BHelp.Controllers
         // POST: 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult OpenFilters(OpenDeliveryViewModel model, string btnByDate)
+        public ActionResult OpenFilters(OpenDeliveryViewModel model,
+            string btnByDateCheckAll, string btnByDateClearAll,
+            string btnByDriverCheckAll, string btnByDriverClearAll)
         {
-            if (btnByDate != null)
+            ModelState.Clear(); // if not cleared, checkboxfor IsChecked displays incorrectly
+            var view = GetOpenDeliveryViewModel();
+            if (btnByDateCheckAll != null || btnByDateClearAll !=null)
             {
-                var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0).ToList();   // get all open deliveries
-                var view = new OpenDeliveryViewModel()
-                {
-                    OpenDeliveryCount = listAllOpenDeliveries.Count,
-                    DeliveryDatesList = TempData["DeliveryDatesList"] as List<string>,
-                    SelectedDeliveriesList = new List<Delivery>(),
-                    DeliveryDatesSelectList =TempData["DeliveryDatesSelectList"] as List<SelectListItem>,
-                    DriverList =TempData["DriverList"] as List<string>
-                };
-                TempData.Keep("DeliveryDatesList");
-                TempData.Keep("DeliveryDatesSelectList");
-                TempData.Keep("DriverList");
+                //var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0).ToList();   // get all open deliveries
+                //var view = new OpenDeliveryViewModel()
+                //{
+                //    OpenDeliveryCount = listAllOpenDeliveries.Count,
+                //    DeliveryDatesList = TempData["DeliveryDatesList"] as List<string>,
+                //    SelectedDeliveriesList = new List<Delivery>(),
+                //    DeliveryDatesSelectList =TempData["DeliveryDatesSelectList"] as List<SelectListItem>,
+                //    DriverList =TempData["DriverList"] as List<string>
+                //};
+                //TempData.Keep("DeliveryDatesList");
+                //TempData.Keep("DeliveryDatesSelectList");
+                //TempData.Keep("DriverList");
 
                 var selectedDeliveries = db.Deliveries.Where(d => d.Status == 0
-                                                          && d.DateDelivered == model.SelectedDeliveryDate).ToList();
+                                            && d.DateDelivered == model.SelectedDeliveryDate).ToList();
                 foreach (var del in selectedDeliveries)
                 {
-                    del.Checked = true;
+                    if (btnByDateCheckAll !=null) {del.IsChecked = true;}
+                    if (btnByDateClearAll != null) { del.IsChecked = false; }
+
                     del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
-                    
-                    if (del.DeliveryDateODId != null)
-                    {
-                        var _od = db.Users.Find(del.DeliveryDateODId);
-                        del.DeliveryDateODName = _od.FullName;
-                    }
-                    else
-                    {
-                        del.DeliveryDateODName ="(nobody yet)";
-                    }
-              
-                    if (del.DriverId != null)
-                    {
-                        var _driver = db.Users.Find(del.DriverId);
-                        del.DriverName = _driver.FullName;
-                    }
-                    else
-                    {
-                        del.DriverName = "(nobody yet)";
-                    }
+                    del.DeliveryDateODName = GetODName(del.DeliveryDateODId);
+                    del.DriverName = GetDriverName(del.DriverId);
+                    del.Client = GetClientData(del.ClientId);
+                    del.DeliveryDateODName = GetODName(del.DeliveryDateODId);
+                    //if (del.DeliveryDateODId != null)
+                    //{
+                    //    var _ddod = db.Users.Find(del.DeliveryDateODId);
+                    //    del.DeliveryDateODName = _ddod.FullName;
+                    //}
+                    //else
+                    //{
+                    //    del.DeliveryDateODName = "(nobody yet)";
+                    //}
 
-                    var _client = db.Clients.Find(del.ClientId);
-                    if (_client != null)
-                    {
-                        del.ClientNameAddress = _client.LastName + ", " + _client.FirstName
-                                                + " " + _client.StreetNumber + " " + _client.StreetName;
-                        del.NameAddressToolTip = del.ClientNameAddress.Replace(" ", "\u00a0");
-                        var s = del.ClientNameAddress;
-                        s = s.Length <= 30 ? s : s.Substring(0, 30) + "...";
-                        del.ClientNameAddress = s;
-                    }
-
-                    if (del.DeliveryDateODId != null)
-                    {
-                        var _ddod = db.Users.Find(del.DeliveryDateODId);
-                        del.DeliveryDateODName = _ddod.FullName;
-                    }
-                    else
-                    {
-                        del.DeliveryDateODName = "(nobody yet)";
-                    }
                     view.SelectedDeliveriesList.Add(del);
                 }
 
                 return View(view);
             }
+
+            if (btnByDriverCheckAll != null || btnByDriverClearAll != null)
+            {
+
+            }
+            return null;
+        }
+
+        private OpenDeliveryViewModel GetOpenDeliveryViewModel()
+        {
+            var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0).ToList();   // get all open deliveries
+            var view = new OpenDeliveryViewModel()
+            {
+                OpenDeliveryCount = listAllOpenDeliveries.Count,
+                DeliveryDatesList = TempData["DeliveryDatesList"] as List<string>,
+                SelectedDeliveriesList = new List<Delivery>(),
+                DeliveryDatesSelectList = TempData["DeliveryDatesSelectList"] as List<SelectListItem>,
+                DriverList = TempData["DriverList"] as List<string>,
+                DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>
+            };
+            TempData.Keep("DeliveryDatesList");
+            TempData.Keep("DeliveryDatesSelectList");
+            TempData.Keep("DriverList");
+            TempData.Keep("DriversSelectList");
+            return view;
+        }
+        private string GetODName(string id)
+        {
+            if (id != null)
+            {
+                var _od = db.Users.Find(id);
+                return _od.FullName;
+            }
+            else
+            {
+               return "(nobody yet)";
+            }
+        }
+
+        private Client GetClientData(int id)
+        {
+            var _client = db.Clients.Find(id);
+            if (_client != null)
+            {
+                _client.ClientNameAddress = _client.LastName + ", " + _client.FirstName
+                                            + " " + _client.StreetNumber + " " + _client.StreetName;
+                _client.NameAddressToolTip = _client.ClientNameAddress.Replace(" ", "\u00a0");
+                var s = _client.ClientNameAddress;
+                s = s.Length <= 30 ? s : s.Substring(0, 30) + "...";
+                _client.ClientNameAddress = s;
+                return _client;
+            }
+
             return null;
         }
 
