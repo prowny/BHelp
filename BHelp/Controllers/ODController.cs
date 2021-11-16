@@ -109,8 +109,12 @@ namespace BHelp.Controllers
         }
 
         public ActionResult HouseholdAndDeliveryActions(HouseholdViewModel household,
-            string btnAddMember, string btnDeleteMember, string btnAdd, string btnSave)
+            string btnAddMember, string btnDeleteMember, string btnAdd, string btnSave, string btnDeliveryConfirmed )
         {
+            if (btnDeliveryConfirmed != null)
+            {
+                household = (HouseholdViewModel)Session["ConfirmHousehold"];
+            }
             if (btnSave != null) // Button Save and Exit was pressed
             {
                 SaveHouseholdData(household);
@@ -122,8 +126,10 @@ namespace BHelp.Controllers
                 SaveHouseholdData(household);
                 var id = Convert.ToInt32(household.ClientId);
                 return RedirectToAction("UpdateHousehold", new { id });
-            }
-             // Button Create Delivery was pressed
+            } // Button Add or Delete Family Member was pressed
+
+            //  ===== Button Create Delivery OR btnDeliveryConfirmed was pressed =====
+
             var clientId = household.ClientId;
             var userid = System.Web.HttpContext.Current.User.Identity.GetUserId();
             var client = db.Clients.Find(clientId);
@@ -149,6 +155,7 @@ namespace BHelp.Controllers
                     DeliveryDate =  DateTime.Today.AddDays(1),  // Desired Delivery Date
                     DateDelivered = DateTime.Today.AddDays(1)
                 };
+
                 var familyList = AppRoutines.GetFamilyMembers(clientId);
                 if (familyList != null)
                 {
@@ -159,9 +166,21 @@ namespace BHelp.Controllers
                         if (mbr.Age >= 60) { delivery.Seniors += 1; }
                     }
                 }
-                
-                var dateDelivered = delivery.DateDelivered.Value;
-                delivery.GiftCardsEligible = AppRoutines.GetGiftCardsEligible(delivery.ClientId, dateDelivered);
+
+                if (btnDeliveryConfirmed == null)
+                {
+                    var nextDeliveryEligible =
+                        AppRoutines.GetNextEligibleDeliveryDate(clientId, delivery.DateDelivered.Value);
+                    if (delivery.DateDelivered < nextDeliveryEligible)
+                    {
+                        // go to confirm page
+                        TempData["NextEligibleDeliveryDate"] = nextDeliveryEligible;
+                        Session["ConfirmHousehold"] = household;
+                        return RedirectToAction("ConfirmCreateDelivery", new { delivery.ClientId });
+                    }
+                }
+
+                delivery.GiftCardsEligible = AppRoutines.GetGiftCardsEligible(delivery.ClientId, delivery.DateDelivered.Value);
                 delivery.GiftCards = delivery.GiftCardsEligible;
 
                 // Full Bags:
@@ -183,7 +202,7 @@ namespace BHelp.Controllers
                 db.Deliveries.Add(delivery);
                 db.SaveChanges();
                 db.Entry(delivery).GetDatabaseValues();
-                return RedirectToAction("ConfirmCreateDelivery", new { newId = delivery.Id });
+                return RedirectToAction("AdviseDeliveryCreated", new { newId = delivery.Id });
             }
             return RedirectToAction("Index");
         }
@@ -241,7 +260,28 @@ namespace BHelp.Controllers
             }
         }
 
-        public ActionResult ConfirmCreateDelivery(int? newId)
+        public ActionResult ConfirmCreateDelivery(int? clientId)
+        {
+            var dt = TempData["NextEligibleDeliveryDate"];
+            var client = db.Clients.Find(clientId);
+            if (client != null)
+            {
+                if (dt != null)
+                {
+                    var newDeliveryView = new DeliveryViewModel
+                    {
+                        FullName = client.LastName + ", " + client.FirstName,
+                        StreetNumber = client.StreetNumber,
+                        StreetName = client.StreetName,
+                        DateDelivered = (DateTime)dt
+                    };
+                    return View(newDeliveryView);
+                }
+            }
+            return null;
+        }
+
+        public ActionResult AdviseDeliveryCreated(int? newId)
         {
             var delivery = db.Deliveries.Find(newId);
             if (delivery != null)

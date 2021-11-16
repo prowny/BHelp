@@ -21,8 +21,7 @@
     <tr>
         <th></th>   @*for "Edit"*@
         <th>@Html.Label("Delv Date")</th>
-        <th><div class="col100">@Html.Label("OD Name")</div></th><th>
-            <div class="col50">@Html.Label("Last Name")</div></th>
+        <th><div class="col50">@Html.Label("Last Name")</div></th>
         <th><div class="col50">@Html.Label("First Name")</div></th>
         <th><div class="col50">@Html.Label("Street No")</div></th>
         <th><div class="col100">@Html.Label("Street Name")</div></th>
@@ -50,8 +49,7 @@
                 @*@Html.ActionLink("Edit", "Edit", new { id = item.Id, desiredDeliveryDate = item.DeliveryDate })*@
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id, desiredDeliveryDate = item.DateDelivered})
             </td>
-            <td>@Html.DisplayFor(modelItem => item.LogDate)</td>
-            <td>@Html.DisplayFor(modelItem => item.ODName, new { style = "width:100px" })</td>
+            <td>@Html.DisplayFor(modelItem => item.DateDeliveredString)</td>
             <td>@Html.DisplayFor(modelItem => item.LastName)</td>
             <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
             <td>@Html.DisplayFor(modelItem => item.StreetNumber)</td>

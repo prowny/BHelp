@@ -102,5 +102,7 @@ namespace BHelp.ViewModels
         public DateTime HistoryEndDate { get; set; }
         public  string ReturnURL { get; set; }
         public IEnumerable<SelectListItem> SnapshotFamily { get; set; }
+        public HouseholdViewModel Household { get; set; }
+        public string DateDeliveredString { get; set; }
     }
 }

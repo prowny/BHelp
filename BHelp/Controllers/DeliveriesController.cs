@@ -74,17 +74,21 @@ namespace BHelp.Controllers
                     if (delivery.GiftCardsEligible != null) deliveryView.GiftCardsEligible = (int) delivery.GiftCardsEligible;
                     deliveryView.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
                     deliveryView.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
+          
                     //var since1 = new DateTime(delivery.DeliveryDate.Year, delivery.DeliveryDate.Month, 1);
                     var dateDelivered = DateTime.Today.AddDays(-1);
                     if (delivery.DateDelivered != null)
                     {
                          dateDelivered = delivery.DateDelivered.Value;
                     }
-                  
                     var since1 = new DateTime(dateDelivered.Year, dateDelivered.Month, 1);
                     //DateTime thrudate = delivery.DeliveryDate.AddDays(-1);
                     DateTime thrudate = dateDelivered.AddDays(-1);
                     deliveryView.GiftCardsThisMonth = GetGiftCardsSince(client.Id, since1, thrudate );
+
+                    if (delivery.DateDelivered != null)
+                    { deliveryView.DateDeliveredString = delivery.DateDelivered.Value.ToString("MM/dd/yyyy"); }
+
                     if (delivery.DriverId != null)
                     {
                         var driver = db.Users.Find(delivery.DriverId);
