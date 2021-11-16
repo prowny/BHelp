@@ -20,7 +20,7 @@
 <table class="table">
     <tr>
         <th></th>   @*for "Edit"*@
-        <th>@Html.Label("Log Date")</th>
+        <th>@Html.Label("Delv Date")</th>
         <th><div class="col100">@Html.Label("OD Name")</div></th><th>
             <div class="col50">@Html.Label("Last Name")</div></th>
         <th><div class="col50">@Html.Label("First Name")</div></th>
@@ -47,7 +47,8 @@
     {
         <tr>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id, desiredDeliveryDate = item.DeliveryDate })
+                @*@Html.ActionLink("Edit", "Edit", new { id = item.Id, desiredDeliveryDate = item.DeliveryDate })*@
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id, desiredDeliveryDate = item.DateDelivered})
             </td>
             <td>@Html.DisplayFor(modelItem => item.LogDate)</td>
             <td>@Html.DisplayFor(modelItem => item.ODName, new { style = "width:100px" })</td>

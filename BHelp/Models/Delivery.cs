@@ -100,5 +100,8 @@ namespace BHelp.Models
 
         [NotMapped]
         public Client Client { get; set; }  // for open delivery filtering
+
+        [NotMapped]
+        public Boolean AllZeroProducts { get; set; }
     }
 }
