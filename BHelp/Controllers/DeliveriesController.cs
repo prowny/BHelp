@@ -242,6 +242,8 @@ namespace BHelp.Controllers
                     if (del.FullBags == 0 && del.HalfBags == 0 && del.KidSnacks == 0 && del.GiftCards == 0)
                     { del.AllZeroProducts = true;}
                 }
+
+                TempData["SelectedDeliveriesList"] = selectedDeliveries;
                 return View(view);
             }
 
@@ -265,6 +267,28 @@ namespace BHelp.Controllers
                     { del.AllZeroProducts = true; }
                 }
                 return View(view);
+            }
+
+            if (btnReplacementDeliveryDate != null)
+            {
+                // set IsChecked flags 
+                List<Delivery> selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
+                for (var i = 0; i < selectedDeliveries.Count; i++)
+                {
+                    selectedDeliveries[i].IsChecked = model.SelectedDeliveriesList[i].IsChecked;
+                }
+                
+                foreach (var dlv in selectedDeliveries)
+                {
+                    if (dlv.IsChecked)
+                    {
+                        var rec = db.Deliveries.Find(dlv.Id);
+                        if (rec != null) rec.DateDelivered = view.ReplacementDeliveryDate;
+                        db.SaveChanges();
+                    }
+                }
+
+                return RedirectToAction("OpenFilters");
             }
             return null;
         }

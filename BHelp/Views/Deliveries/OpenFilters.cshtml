@@ -84,6 +84,7 @@
                                     <td style="text-align: center">@Model.SelectedDeliveriesList[i].KidSnacks</td>
                                     <td style="text-align: center">@Model.SelectedDeliveriesList[i].GiftCards</td>
                                 }
+                                
                             </tr>
                         }
                     </table>
@@ -101,8 +102,10 @@
                 @Html.TextBoxFor(m => m.ReplacementDeliveryDate, "{0:MM/dd/yyyy}",
                     new { id = "ReplacementDeliveryDate", style = "width: 75px;" })
                 <span style="color: darkmagenta"> &#8592;Click to change</span>
-                <input name="btnReplacementDeliveryDate" type="submit" value="Go" class="btn btn-default" id="GoButton" />
-
+                @if (Model.SelectedDeliveriesList.Count > 0)
+                {
+                    <input name="btnReplacementDeliveryDate" type="submit" value="Go" class="btn btn-default" id="GoButton"/>
+                }
                 <br />
                 <br />
                 <span style="color: blue; ">
