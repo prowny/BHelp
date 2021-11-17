@@ -181,7 +181,8 @@ namespace BHelp.Controllers
                 DeliveryDatesSelectList = new List<SelectListItem>(),
                 SelectedDeliveriesList = new List<Delivery>(),
                 DriverList = new List<string>(),
-                DriversSelectList = new List<SelectListItem>()
+                DriversSelectList = new List<SelectListItem>(),
+                ReplacementDeliveryDate = DateTime.Today
             };
 
             var distinctDatesList = listAllOpenDeliveries.Select(d => d.DateDelivered).Distinct().ToList();
@@ -219,7 +220,8 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult OpenFilters(OpenDeliveryViewModel model,
             string btnByDateCheckAll, string btnByDateClearAll,
-            string btnByDriverCheckAll, string btnByDriverClearAll)
+            string btnByDriverCheckAll, string btnByDriverClearAll,
+            string btnReplacementDeliveryDate)
         {
             ModelState.Clear(); // if not cleared, checkboxfor IsChecked displays incorrectly
             var view = GetOpenDeliveryViewModel(model);
@@ -277,7 +279,8 @@ namespace BHelp.Controllers
                 SelectedDeliveriesList = new List<Delivery>(),
                 DeliveryDatesSelectList = TempData["DeliveryDatesSelectList"] as List<SelectListItem>,
                 DriverList = TempData["DriverList"] as List<string>,
-                DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>
+                DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>,
+                ReplacementDeliveryDate = view.ReplacementDeliveryDate
             };
             TempData.Keep("DeliveryDatesList");
             TempData.Keep("DriverList");
