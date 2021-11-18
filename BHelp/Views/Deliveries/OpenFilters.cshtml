@@ -26,24 +26,24 @@
             @Html.Label(Model.OpenDeliveryCount.ToString())&nbsp;
             @if (Model.OpenDeliveryCount > 0)
             {
-                @Html.Label(" with " + Model.DeliveryDatesList.Count + " Delivery Dates  ")
-                @Html.DropDownListFor(m => Model.ReportTitle, new SelectList(Model.DeliveryDatesList))
-                @Html.Label(" and " + Model.DriverList.Count + " Drivers ")
-                @Html.DropDownListFor(m => Model.ReportTitle, new SelectList(Model.DriverList))
+                @Html.Label(" with " + Model.DistinctDeliveryDatesList.Count + " Delivery Dates  ")
+                @Html.DropDownListFor(m => Model.ReportTitle, new SelectList(Model.DistinctDeliveryDatesList))
+                @Html.Label(" and " + Model.DistinctDriverList.Count + " Drivers ")
+                @Html.DropDownListFor(m => Model.ReportTitle, new SelectList(Model.DistinctDriverList))
             }
         </div>
         <div id="FilterOptions">
             <hr />
             <div>
                 @Html.Label("Show Open Deliveries for Delivery Date ")
-                @Html.DropDownListFor(m => Model.SelectedDeliveryDate, Model.DeliveryDatesSelectList)
-                <input name="btnByDateCheckAll" type="submit" value="Go - Check All" class="btn btn-default" id="CheckAllButton" />
-                <input name="btnByDateClearAll" type="submit" value="Go - Uncheck All" class="btn btn-default" id="ClearAllButton" />
+                @Html.DropDownListFor(m => Model.SelectedDistinctDeliveryDate, Model.DistinctDeliveryDatesSelectList)
+                <input name="btnByDateCheckAll" type="submit" value="Select - Check All" class="btn btn-default" id="CheckAllButton" />
+                <input name="btnByDateClearAll" type="submit" value="Select - Uncheck All" class="btn btn-default" id="ClearAllButton" />
                 <br />
                 @Html.Label("Show Open Deliveries for Driver ")
-                @Html.DropDownListFor(m => Model.SelectedDriverId, Model.DriversSelectList)
-                <input name="btnByDriverCheckAll" type="submit" value="Go - Check All" class="btn btn-default" id="CheckAllButton" />
-                <input name="btnByDriverClearAll" type="submit" value="Go - Uncheck All" class="btn btn-default" id="ClearAllButton" />
+                @Html.DropDownListFor(m => Model.SelectedDistinctDriverId, Model.DistinctDriversSelectList)
+                <input name="btnByDriverCheckAll" type="submit" value="Select - Check All" class="btn btn-default" id="CheckAllButton" />
+                <input name="btnByDriverClearAll" type="submit" value="Select - Uncheck All" class="btn btn-default" id="ClearAllButton" />
             </div>
 
             <div id="SelectedDeliveries">
@@ -93,18 +93,23 @@
 
             <div>
                 <br />
-                <span><b>Update </b></span>
-                <span style="text-decoration: underline"><b>all</b></span>
-                <span><b>checked deliveries:</b></span>
-                (not implemented yet)
-                <br />
-                Repace Delivery Date with this date:
-                @Html.TextBoxFor(m => m.ReplacementDeliveryDate, "{0:MM/dd/yyyy}",
-                    new { id = "ReplacementDeliveryDate", style = "width: 75px;" })
-                <span style="color: darkmagenta"> &#8592;Click to change</span>
                 @if (Model.SelectedDeliveriesList.Count > 0)
                 {
-                    <input name="btnReplacementDeliveryDate" type="submit" value="Go" class="btn btn-default" id="GoButton"/>
+                    <div>
+                        <span><b>Update </b></span>
+                        <span style="text-decoration: underline"><b>all</b></span>
+                        <span><b>checked deliveries:</b></span>
+                        <br />
+                        Repace Delivery Date with this date:
+                        @Html.TextBoxFor(m => m.ReplacementDeliveryDate, "{0:MM/dd/yyyy}",
+                            new { id = "ReplacementDeliveryDate", style = "width: 75px;" })
+                        <span style="color: darkmagenta"> &#8592;Click to change</span>
+                        <input name="btnReplacementDeliveryDate" type="submit" value="Go" class="btn btn-default" id="GoButton"/>
+                        <br/>
+                        Replace Driver with this Driver:
+                        @Html.DropDownListFor(m => Model.ReplacementDriverId, Model.DriversSelectList))
+                        <input name="btnReplacementDriverId" type="submit" value="Go" class="btn btn-default" id="GoButton"/>
+                        </div>
                 }
                 <br />
                 <br />
