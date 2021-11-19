@@ -420,17 +420,22 @@ namespace BHelp
                 var client = db.Clients.Find(clientId);
                 if (client != null)
                 {
-                    var fromDate = DateTime.Today.AddYears(-59);
-                    var thruDate = DateTime.Today.AddYears(-18);
-                    var adultList = db.FamilyMembers.Where(f => f.ClientId == clientId
-                                                        && f.DateOfBirth >= fromDate 
-                                                        && f.DateOfBirth <= thruDate).ToList();
-                    var adultCount = adultList.Count;
-                    if (client.DateOfBirth >= fromDate && client.DateOfBirth <= thruDate)
+                    var adultCount = 0;
+                    var clientAge = GetAge(client.DateOfBirth);
+                    if (clientAge >= 18 && clientAge <= 59)
                     {
-                        adultCount += 1;
-                    }
+                        adultCount++;
 
+                    }
+                    var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId).ToList();
+                    foreach (var member in familyList)
+                    {
+                        var age = GetAge(member.DateOfBirth);
+                        if (age >= 18 && age <= 59)
+                        {
+                            adultCount++;
+                        }
+                    }
                     return adultCount;
                 }
             }
@@ -443,147 +448,26 @@ namespace BHelp
                 var client = db.Clients.Find(clientId);
                 if (client != null)
                 {
-                    var fromDate = DateTime.Today.AddYears(-60);
-                    var seniorsList = db.FamilyMembers.Where(f => f.ClientId == clientId
-                                                           && f.DateOfBirth <= fromDate).ToList();
-                    var seniorsCount = seniorsList.Count;
-                    if (client.DateOfBirth <= fromDate)
+                    var seniorsCount = 0;
+                    var clientAge = GetAge(client.DateOfBirth);
+                    if (clientAge >= 60)
                     {
-                        seniorsCount += 1;
+                        seniorsCount++;
+
+                    }
+                    var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId).ToList();
+                    foreach (var member in familyList)
+                    {
+                        var age = GetAge(member.DateOfBirth);
+                        if (age >= 60)
+                        {
+                            seniorsCount++;
+                        }
                     }
                     return seniorsCount;
                 }
             }
             return 0;
-        }
-        public static FileStreamResult XOpenDeliveriesToExcel()
-        {
-            var view = XGetOpenDeliveryViewModel();
-            XLWorkbook workbook = new XLWorkbook();
-            IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
-           
-            int activeRow = 1;
-            ws.Cell(activeRow, 1).SetValue(view.ReportTitle).Style.Font.SetBold(true);
-            ws.Cell(activeRow, 1).Style.Alignment.WrapText=true;
-            ws.Columns("1").Width = 10;
-            var dtToday = DateTime.Today.ToShortDateString();
-            ws.Cell(activeRow, 2).SetValue(dtToday).Style.Font.SetBold(true);
-            ws.Columns("2").Width = 15;
-            activeRow++;
-            ws.Cell(activeRow, 1).SetValue("Delivery Date").Style.Font.SetBold(true);
-            ws.Cell(activeRow, 1).Style.Alignment.WrapText = true;
-            ws.Columns("1").Width = 10;
-            ws.Cell(activeRow, 2).SetValue("Driver").Style.Font.SetBold(true);
-            ws.Cell(activeRow, 3).SetValue("Zip Code").Style.Font.SetBold(true);
-            ws.Columns("3").Width = 6;
-            ws.Cell(activeRow, 3).Style.Alignment.WrapText = true;
-            ws.Cell(activeRow, 4).SetValue("Client").Style.Font.SetBold(true);
-            ws.Cell(activeRow, 4).Style.Alignment.WrapText = true;
-            ws.Columns("4").Width = 15;
-            ws.Cell(activeRow, 5).SetValue("Address").Style.Font.SetBold(true);
-            ws.Cell(activeRow, 5).Style.Alignment.WrapText = true;
-            ws.Columns("5").Width = 30;
-            ws.Cell(activeRow, 6).SetValue("City").Style.Font.SetBold(true);
-            ws.Cell(activeRow, 5).Style.Alignment.WrapText = true;
-            ws.Columns("6").Width = 10;
-            ws.Cell(activeRow, 7).SetValue("Phone").Style.Font.SetBold(true);
-            ws.Cell(activeRow, 7).Style.Alignment.WrapText = true;
-            ws.Columns("7").Width = 13;
-            ws.Cell(activeRow, 8).SetValue("# in HH").Style.Font.SetBold(true);
-            ws.Cell(activeRow, 8).Style.Alignment.WrapText = true;
-            ws.Columns("8").Width = 4;
-            ws.Cell(activeRow, 9).SetValue("Full Bags").Style.Font.SetBold(true);
-            ws.Cell(activeRow, 9).Style.Alignment.WrapText = true;
-            ws.Columns("9").Width = 4;
-            ws.Cell(activeRow, 10).SetValue("Half Bags").Style.Font.SetBold(true);
-            ws.Cell(activeRow, 10).Style.Alignment.WrapText = true;
-            ws.Columns("10").Width = 4;
-            ws.Cell(activeRow, 11).SetValue("Kid Snacks").Style.Font.SetBold(true);
-            ws.Cell(activeRow, 11).Style.Alignment.WrapText = true;
-            ws.Columns("11").Width = 6;
-            ws.Cell(activeRow, 12).SetValue("Gift Cards").Style.Font.SetBold(true);
-            ws.Cell(activeRow, 12).Style.Alignment.WrapText = true;
-            ws.Columns("12").Width = 6;
-            ws.Cell(activeRow, 13).SetValue("Client Notes").Style.Font.SetBold(true);
-            ws.Cell(activeRow, 13).Style.Alignment.WrapText = true;
-            ws.Columns("13").Width = 20;
-            ws.Cell(activeRow, 14).SetValue("OD Notes").Style.Font.SetBold(true);
-            ws.Cell(activeRow, 14).Style.Alignment.WrapText = true;
-            ws.Columns("14").Width = 20;
-            ws.Cell(activeRow, 15).SetValue("Driver Notes").Style.Font.SetBold(true);
-            ws.Cell(activeRow, 15).Style.Alignment.WrapText = true;
-            ws.Columns("15").Width = 20;
-
-            for (var i = 0; i < view.OpenDeliveryCount; i++)
-            {
-                activeRow++;
-                for (var j = 1; j < 16; j++) 
-                {
-                    ws.Cell(activeRow, j).SetValue(view.OpenDeliveries[i, j]);
-                    ws.Cell(activeRow, j).Style.Alignment.WrapText = true;
-                    ws.Cell(activeRow, j).Style.Font.FontSize=12;
-                }
-            }
-
-            //ws.Columns().AdjustToContents();
-            MemoryStream ms = new MemoryStream();
-            workbook.SaveAs(ms);
-            ms.Position = 0;
-            return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                { FileDownloadName = view.ReportTitle + ".xlsx" };
-        }
-        private static OpenDeliveryViewModel XGetOpenDeliveryViewModel()
-        {
-            var odv = new OpenDeliveryViewModel
-                {ReportTitle = "Bethesda Help Open Deliveries"};
-
-            using (var db = new BHelpContext())
-            { 
-                var deliveryList = new List<Delivery>(db.Deliveries)
-                    .Where(d => d.Completed == false)
-                    .OrderBy(d => d.DeliveryDate)
-                    .ThenBy(d => d.DriverId)
-                    .ThenBy(z => z.Zip)
-                    .ThenBy(n => n.LastName).ToList();
-                odv.OpenDeliveryCount = deliveryList.Count;
-                odv.OpenDeliveries = new string[deliveryList.Count, 16];
-                var i = 0;
-                foreach (var del in deliveryList)
-                {
-                    var client = db.Clients.Find(del.ClientId);
-                    odv.OpenDeliveries[i, 1] = del.DeliveryDate.ToShortDateString();
-
-                    var driver = db.Users.Find(del.DriverId);
-                    if (driver != null)
-                    {
-                        odv.OpenDeliveries[i, 2] = driver.FullName;
-                    }
-
-                    odv.OpenDeliveries[i, 3] = del.Zip;
-                    odv.OpenDeliveries[i, 4] = del.LastName + ", " + del.FirstName;
-                    odv.OpenDeliveries[i, 5] = del.StreetNumber + " " + del.StreetName;
-                    odv.OpenDeliveries[i, 6] = del.City;
-                    odv.OpenDeliveries[i, 7] = del.Phone;
-                    if (client != null)
-                    {
-                        var familyMemberCount = db.FamilyMembers.Count(c => c.ClientId == client.Id);
-                        odv.OpenDeliveries[i, 8] = (familyMemberCount + 1).ToString();
-                        
-                        odv.OpenDeliveries[i, 13] = client.Notes;
-                    }
-
-                    odv.OpenDeliveries[i, 9] = del.FullBags.ToString();
-                    odv.OpenDeliveries[i, 10] = del.HalfBags.ToString();
-                    odv.OpenDeliveries[i, 11] = del.KidSnacks.ToString();
-                    odv.OpenDeliveries[i, 12] = del.GiftCards.ToString();
-
-                    odv.OpenDeliveries[i, 14] = del.ODNotes;
-                    odv.OpenDeliveries[i, 15] = del.DriverNotes;
-                    i++;
-                }
-
-                return odv;
-            }
         }
         public static FileStreamResult ExcelOpenDeliveries()
         {
