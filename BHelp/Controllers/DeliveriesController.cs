@@ -173,25 +173,27 @@ namespace BHelp.Controllers
         // GET: Open Delivery Filters
         public ActionResult OpenFilters()
         {
-            var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0).ToList();   // get all open deliveries
+            var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0).ToList(); // get all open deliveries
             var view = new OpenDeliveryViewModel()
             {
                 OpenDeliveryCount = listAllOpenDeliveries.Count,
-                DistinctDeliveryDatesList = new List<string>(), 
+                DistinctDeliveryDatesList = new List<string>(),
                 DistinctDeliveryDatesSelectList = new List<SelectListItem>(),
                 SelectedDeliveriesList = new List<Delivery>(),
                 DistinctDriverList = new List<string>(),
                 DistinctDriversSelectList = new List<SelectListItem>(),
                 ReplacementDeliveryDate = DateTime.Today,
-                DriversSelectList = new List<SelectListItem>()
+                DriversSelectList = new List<SelectListItem>(),
+                ODSelectList = new List<SelectListItem>()
             };
 
             var distinctDatesList = listAllOpenDeliveries.Select(d => d.DateDelivered).Distinct().ToList();
             foreach (var dt in distinctDatesList)
             {
                 int delCountThisDate = listAllOpenDeliveries.Count(d => d.DateDelivered == dt);
-                view.DistinctDeliveryDatesList.Add ( dt == null ? "-none-  (" + delCountThisDate  +")":
-                    dt.Value.ToString("MM/dd/yyyy") + " (" + delCountThisDate + ")");
+                view.DistinctDeliveryDatesList.Add(dt == null
+                    ? "-none-  (" + delCountThisDate + ")"
+                    : dt.Value.ToString("MM/dd/yyyy") + " (" + delCountThisDate + ")");
 
                 if (dt != null)
                     view.DistinctDeliveryDatesSelectList.Add(new SelectListItem()
@@ -200,53 +202,49 @@ namespace BHelp.Controllers
 
             TempData["DistinctDeliveryDatesList"] = view.DistinctDeliveryDatesList;
             TempData["DistinctDeliveryDatesSelectList"] = view.DistinctDeliveryDatesSelectList;
-            
+
             var distinctDriverIdList = listAllOpenDeliveries.Select(d => d.DriverId).Distinct().ToList();
-            foreach (var dr in distinctDriverIdList)
+            foreach (var drId in distinctDriverIdList)
             {
-                int delCountThisDriver = listAllOpenDeliveries.Count(d => d.DriverId == dr);
+                int delCountThisDriver = listAllOpenDeliveries.Count(d => d.DriverId == drId);
 
-                var driverName = "(nobody yet)";
-                var driver = db.Users.Find(dr);
-                if (driver != null && dr != "0")
-                { driverName = driver.FullName; }
-
-                view.DistinctDriverList.Add( driverName + " (" + delCountThisDriver + ")");
-                view.DistinctDriversSelectList.Add(new SelectListItem { Value = dr, Text = driverName });
+                var driver = db.Users.Find(drId);
+                if (driver != null)
+                {
+                    var driverName = driver.FullName + " (" + delCountThisDriver + ")";
+                    view.DistinctDriverList.Add(driverName);
+                    view.DistinctDriversSelectList.Add(new SelectListItem { Value = drId, Text = driverName });
+                }
+                else
+                {
+                    var driverName = "(nobody yet)" + " (" + delCountThisDriver + ")";
+                    view.DistinctDriversSelectList.Add(new SelectListItem { Value = "0", Text = driverName });
+                }
             }
+
             TempData["DistinctDriverList"] = view.DistinctDriverList;
             TempData["DistinctDriversSelectList"] = view.DistinctDriversSelectList;
 
-            var sqlString= "SELECT " +
-                           "AspNetUsers.Id FROM AspNetUsers " +
-            "LEFT JOIN AspNetUserRoles ON AspNetUserRoles.UserId = AspNetUsers.Id " +
-            "LEFT JOIN AspNetRoles ON AspNetRoles.Id = AspNetUserRoles.RoleId " +
-            "WHERE AspNetRoles.Name = 'Driver'";
-            var listDriverIds = db.Database.SqlQuery<string>(sqlString).ToList();
-            view.DriversSelectList = new List<SelectListItem>();
-            var driversUnsortedSelectList = new List<SelectListItem>
-                { new SelectListItem() { Value = "0", Text = @"(nobody yet)" } };
-            foreach (var id in listDriverIds)
-            {
-                var driver = db.Users.Find(id);
-                driversUnsortedSelectList.Add(new SelectListItem() 
-                    { Value = id, Text = driver.LastName + @", " + driver.FirstName});
-            }
-            view.DriversSelectList = new List<SelectListItem>
-                (driversUnsortedSelectList.OrderBy(t => t.Text));
-            view.DriversSelectList[0].Selected = true;
-            view.ReplacementDriverId = view.DriversSelectList[0].Value;
-            TempData["DriversSelectList"] = view.DriversSelectList;
-            return View(view);
+                view.DriversSelectList = AppRoutines.GetDriversSelectList();
+                view.ReplacementDriverId = view.DriversSelectList[0].Value;
+                TempData["DriversSelectList"] = view.DriversSelectList;
+
+                view.ODSelectList = AppRoutines.GetODSelectList();
+                view.ReplacementDeliveryDateODId = view.ODSelectList[0].Value;
+                TempData["ODSelectList"] = view.ODSelectList;
+
+                return View(view);
             }
 
-            // POST: 
+            
+        // POST: 
             [HttpPost]
             [ValidateAntiForgeryToken]
             public ActionResult OpenFilters(OpenDeliveryViewModel model,
                 string btnByDateCheckAll, string btnByDateClearAll,
                 string btnByDriverCheckAll, string btnByDriverClearAll,
-                string btnReplacementDeliveryDate, string btnReplacementDriverId)
+                string btnReplacementDeliveryDate, string btnReplacementDriverId,
+                string btnReplacementDeliveryDateODId, string btnSetStatusToDelivered)
             {
                 ModelState.Clear(); // if not cleared, checkboxfor IsChecked displays incorrectly
                 var view = GetOpenDeliveryViewModel(model);
@@ -278,9 +276,11 @@ namespace BHelp.Controllers
                             del.AllZeroProducts = true;
                         }
                     }
-
+                    view.DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>;
+                    view.ODSelectList = TempData["ODSelectList"] as List<SelectListItem>;
                     TempData["SelectedDeliveriesList"] = selectedDeliveries;
                     return View(view);
+
                 }
 
                 if (btnByDriverCheckAll != null || btnByDriverClearAll != null)
@@ -315,13 +315,14 @@ namespace BHelp.Controllers
                             del.AllZeroProducts = true;
                         }
                     }
-                    TempData["SelectedDeliveriesList"] = selectedDeliveries;
+                view.DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>;
+                view.ODSelectList = TempData["ODSelectList"] as List<SelectListItem>;
+                TempData["SelectedDeliveriesList"] = selectedDeliveries;
                 return View(view);
                 }
 
                 if (btnReplacementDeliveryDate != null)
                 {
-                    // set IsChecked flags: 
                     List<Delivery> selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
                     if (selectedDeliveries != null)
                     {
@@ -333,24 +334,21 @@ namespace BHelp.Controllers
                                 selectedDeliveries[i].IsChecked = model.SelectedDeliveriesList[i].IsChecked;
                             }
                         }
+                    } // Set IsChecked flags
 
-                        foreach (var rec in from dlv in selectedDeliveries
-                            where dlv.IsChecked
-                            select db.Deliveries.Find(dlv.Id))
-                        {
-                            if (rec != null) rec.DateDelivered = view.ReplacementDeliveryDate;
-                            db.SaveChanges();
-                        }
+                    foreach (var rec in from dlv in selectedDeliveries
+                        where dlv.IsChecked
+                        select db.Deliveries.Find(dlv.Id))
+                    {
+                        if (rec != null) rec.DateDelivered = view.ReplacementDeliveryDate;
+                        db.SaveChanges();
                     }
-
                     return RedirectToAction("OpenFilters");
                 }
-
+                
                 if (btnReplacementDriverId != null)
                 {
-                    // set IsChecked flags: 
-                    List<Delivery> selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
-                   
+                    var selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
                     for (var i = 0; i < selectedDeliveries.Count; i++)
                     {
                         // selected deliveries count may have changed
@@ -358,13 +356,61 @@ namespace BHelp.Controllers
                         {
                             selectedDeliveries[i].IsChecked = model.SelectedDeliveriesList[i].IsChecked;
                         }
-                    }
-                
+                    }  // set IsChecked flags: 
+
                     foreach (var rec in from dlv in selectedDeliveries
                         where dlv.IsChecked
                         select db.Deliveries.Find(dlv.Id))
                     {
                         if (rec != null) rec.DriverId = view.ReplacementDriverId;
+                        db.SaveChanges();
+                    }
+
+                return RedirectToAction("OpenFilters");
+                }
+
+                if (btnReplacementDeliveryDateODId !=null)
+                {
+                    var selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
+                    for (var i = 0; i < selectedDeliveries.Count; i++)
+                    {
+                        // selected deliveries count may have changed
+                        if (i < model.SelectedDeliveriesList.Count)
+                        {
+                            selectedDeliveries[i].IsChecked = model.SelectedDeliveriesList[i].IsChecked;
+                        }
+                    }  // set IsChecked flags: 
+
+                    foreach (var rec in from dlv in selectedDeliveries
+                        where dlv.IsChecked
+                        select db.Deliveries.Find(dlv.Id))
+                    {
+                        if (rec != null)
+                        {
+                            rec.DeliveryDateODId = model.ReplacementDeliveryDateODId;
+                            db.SaveChanges();
+                        }
+                    }
+                return RedirectToAction("OpenFilters");
+                }
+
+                if (btnSetStatusToDelivered != null)
+                {
+                    List<Delivery> selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
+                    for (var i = 0; i < selectedDeliveries.Count; i++)
+                    {
+                        // selected deliveries count may have changed
+                        if (i < model.SelectedDeliveriesList.Count)
+                        {
+                            selectedDeliveries[i].IsChecked = model.SelectedDeliveriesList[i].IsChecked;
+                        }
+                    } // Set IsChecked flags
+
+                    foreach (var rec in from dlv in selectedDeliveries
+                        where dlv.IsChecked
+                        select db.Deliveries.Find(dlv.Id))
+                    {
+                        if (rec != null) rec.Status = 1;
                         db.SaveChanges();
                     }
                     return RedirectToAction("OpenFilters");
@@ -386,12 +432,14 @@ namespace BHelp.Controllers
                     DistinctDriversSelectList = TempData["DistinctDriversSelectList"] as List<SelectListItem>,
                     ReplacementDeliveryDate = view.ReplacementDeliveryDate,
                     ReplacementDriverId = view.ReplacementDriverId,
-                    DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>
+                    DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>,
+                    ODSelectList = TempData["OdSelectList"] as List<SelectListItem>
                 };
                 if (view.ReplacementDeliveryDate == DateTime.MinValue){ newView.ReplacementDeliveryDate = DateTime.Today; }
                 TempData.Keep("DistinctDeliveryDatesList");
                 TempData.Keep("DistinctDriverList");
                 TempData.Keep("DriversSelectList");
+                TempData.Keep("ODSelectList");
 
                 var newSort = false;
                 if (newView.DistinctDeliveryDatesSelectList != null)
@@ -1492,11 +1540,11 @@ namespace BHelp.Controllers
             {
                 return RedirectToAction("ReportsMenu");
             }
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            { db.Dispose(); }
-            base.Dispose(disposing);
-        }
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                { db.Dispose(); }
+                base.Dispose(disposing);
+            }
     }
 }

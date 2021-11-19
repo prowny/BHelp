@@ -17,11 +17,19 @@ namespace BHelp.ViewModels
         public List<string> DistinctDriverList { get; set; }
         public List<SelectListItem> DistinctDriversSelectList { get; set; }
         public string SelectedDistinctDriverId { get; set; } 
+
         public List<Delivery> SelectedDeliveriesList { get; set; }
-        public DateTime ReplacementDeliveryDate { get; set; }
+
+        public DateTime ReplacementDeliveryDate { get; set; } 
+        
         public List<SelectListItem> DriversSelectList { get; set; }
 
         [StringLength(128)]
         public string ReplacementDriverId { get; set; }
+
+        public List<SelectListItem> ODSelectList { get; set; }
+
+        [StringLength(128)]
+        public string ReplacementDeliveryDateODId { get; set; }
     }
 }
