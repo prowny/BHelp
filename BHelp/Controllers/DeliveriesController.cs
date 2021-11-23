@@ -241,6 +241,7 @@ namespace BHelp.Controllers
             [HttpPost]
             [ValidateAntiForgeryToken]
             public ActionResult OpenFilters(OpenDeliveryViewModel model,
+                string btnAllCheckAll, string btnAllClearAll,
                 string btnByDateCheckAll, string btnByDateClearAll,
                 string btnByDriverCheckAll, string btnByDriverClearAll,
                 string btnReplacementDeliveryDate, string btnReplacementDriverId,
@@ -248,6 +249,35 @@ namespace BHelp.Controllers
             {
                 ModelState.Clear(); // if not cleared, checkboxfor IsChecked displays incorrectly
                 var view = GetOpenDeliveryViewModel(model);
+
+                if (btnAllCheckAll != null || btnAllClearAll != null)
+                {
+                    var selectedDeliveries = db.Deliveries
+                        .Where(d => d.Status == 0).ToList();
+                     view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnAllCheckAll);
+                     view.ButtonGroupName = "All";
+                     
+                     //foreach (var del in selectedDeliveries)
+                    //{
+                    //    if (btnAllCheckAll != null)
+                    //    { del.IsChecked = true; }
+                    //    if (btnAllClearAll != null) { del.IsChecked = false; }
+
+                    //    del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                    //    del.DeliveryDateODName = GetODName(del.DeliveryDateODId);
+                    //    del.DriverName = GetDriverName(del.DriverId);
+                    //    del.Client = GetClientData(del.ClientId);
+                    //    view.SelectedDeliveriesList.Add(del);
+                    //    if (del.FullBags == 0 && del.HalfBags == 0 && del.KidSnacks == 0 && del.GiftCards == 0)
+                    //    {
+                    //        del.AllZeroProducts = true;
+                    //    }
+                    //}
+                    //view.DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>;
+                    //view.ODSelectList = TempData["ODSelectList"] as List<SelectListItem>;
+                    //TempData["SelectedDeliveriesList"] = selectedDeliveries;
+                    return View(view);
+                }
 
                 if (btnByDateCheckAll != null || btnByDateClearAll != null)
                 {
@@ -419,6 +449,32 @@ namespace BHelp.Controllers
                 return null;
             }
 
+            private OpenDeliveryViewModel LoadSelectedDeliveriesIntoView(OpenDeliveryViewModel view,
+                List<Delivery> selectedDeliveries, string btnCheckAll)
+            {
+                foreach (var del in selectedDeliveries)
+                {
+                    if (btnCheckAll != null)
+                    { del.IsChecked = true; }
+                    else
+                    { del.IsChecked = false; }
+
+                    del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                    del.DeliveryDateODName = GetODName(del.DeliveryDateODId);
+                    del.DriverName = GetDriverName(del.DriverId);
+                    del.Client = GetClientData(del.ClientId);
+                    view.SelectedDeliveriesList.Add(del);
+                    if (del.FullBags == 0 && del.HalfBags == 0 && del.KidSnacks == 0 && del.GiftCards == 0)
+                    {
+                        del.AllZeroProducts = true;
+                    }
+                }
+                view.DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>;
+                view.ODSelectList = TempData["ODSelectList"] as List<SelectListItem>;
+                TempData["SelectedDeliveriesList"] = selectedDeliveries;
+
+                return view;
+            }
             private OpenDeliveryViewModel GetOpenDeliveryViewModel(OpenDeliveryViewModel view)
             {
                 var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0).ToList();   // get all open deliveries

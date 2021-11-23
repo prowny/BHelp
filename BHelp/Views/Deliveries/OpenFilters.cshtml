@@ -22,6 +22,9 @@
     {
         @Html.AntiForgeryToken()
         <div>
+            
+        </div>
+        <div>
             @Html.Label("Open Deliveries Count:")
             @Html.Label(Model.OpenDeliveryCount.ToString())&nbsp;
             @if (Model.OpenDeliveryCount > 0)
@@ -32,99 +35,120 @@
                 @Html.DropDownListFor(m => Model.ReportTitle, new SelectList(Model.DistinctDriverList))
             }
         </div>
+        <hr />
         <div id="FilterOptions">
-            <hr />
-            <div>
-                @Html.Label("Show Open Deliveries for Delivery Date ")
-                @Html.DropDownListFor(m => Model.SelectedDistinctDeliveryDate, Model.DistinctDeliveryDatesSelectList)
-                <input name="btnByDateCheckAll" type="submit" value="Select - Check All" class="btn btn-default" id="CheckAllButton" />
-                <input name="btnByDateClearAll" type="submit" value="Select - Uncheck All" class="btn btn-default" id="ClearAllButton" />
-                <br />
-                @Html.Label("Show Open Deliveries for Driver ")
-                @Html.DropDownListFor(m => Model.SelectedDistinctDriverId, Model.DistinctDriversSelectList)
-                <input name="btnByDriverCheckAll" type="submit" value="Select - Check All" class="btn btn-default" id="CheckAllButton" />
-                <input name="btnByDriverClearAll" type="submit" value="Select - Uncheck All" class="btn btn-default" id="ClearAllButton" />
-            </div>
-
-            <div id="SelectedDeliveries">
-                @if (Model.SelectedDeliveriesList.Count > 0)
-                {
-                    <table>
-                        <tr>
-                            <td><b>@Html.Label("Chk")</b></td>
-                            <td><b>@Html.Label("Delv Date")</b></td>
-                            <td style="text-align: center"><b>@Html.Label("Driver")</b></td>
-                            <td style="text-align: center"><b>@Html.Label("DelvDateOD")</b></td>
-                            <td style="text-align: center"><b>@Html.Label("Client")</b></td>
-                            <td><b>F</b></td>
-                            <td><b>H</b></td>
-                            <td><b>S</b></td>
-                            <td><b>G</b></td>
-                        </tr>
-                        @for (int i = 0; i < Model.SelectedDeliveriesList.Count; i++)
-                        {
-                            <tr>
-                                <td style="text-align: center">@Html.CheckBoxFor(c => c.SelectedDeliveriesList[i].IsChecked)</td>
-
-                                <td style="text-align: center">@Html.Label(Model.SelectedDeliveriesList[i].DateDeliveredString)</td>
-                                <td>@Model.SelectedDeliveriesList[i].DriverName</td>
-                                <td>@Model.SelectedDeliveriesList[i].DeliveryDateODName</td>
-                                <td title=@Model.SelectedDeliveriesList[i].NameAddressToolTip>@Model.SelectedDeliveriesList[i].Client.ClientNameAddress</td>
-                                @if (Model.SelectedDeliveriesList[i].AllZeroProducts)
-                                {
-                                    <td style="text-align: center; color: red; font-weight: bold">@Model.SelectedDeliveriesList[i].FullBags</td>
-                                    <td style="text-align: center; color: red; font-weight: bold">@Model.SelectedDeliveriesList[i].HalfBags</td>
-                                    <td style="text-align: center; color: red; font-weight: bold">@Model.SelectedDeliveriesList[i].KidSnacks</td>
-                                    <td style="text-align: center; color: red; font-weight: bold">@Model.SelectedDeliveriesList[i].GiftCards</td>
-                                }
-                                else
-                                {
-                                    <td style="text-align: center">@Model.SelectedDeliveriesList[i].FullBags</td>
-                                    <td style="text-align: center">@Model.SelectedDeliveriesList[i].HalfBags</td>
-                                    <td style="text-align: center">@Model.SelectedDeliveriesList[i].KidSnacks</td>
-                                    <td style="text-align: center">@Model.SelectedDeliveriesList[i].GiftCards</td>
-                                }
-
-                            </tr>
-                        }
-                    </table>
-                }
-            </div>
-
-            <div>
-                <br />
-                @if (Model.SelectedDeliveriesList.Count > 0)
-                {
-            <div>
-                <span><b>Update </b></span>
-                <span style="text-decoration: underline"><b>all</b></span>
-                <span><b>checked deliveries:</b></span>
-                <br />
-                Repace Delivery Date with this date:
-                @Html.TextBoxFor(m => m.ReplacementDeliveryDate, "{0:MM/dd/yyyy}",
-                    new { id = "ReplacementDeliveryDate", style = "width: 75px;" })
-                <span style="color: darkmagenta"> &#8592;Click to change</span>
-                <input name="btnReplacementDeliveryDate" type="submit" value="Go" class="btn btn-default" id="GoButton" />
-                <br />
-                Replace Driver with this Driver:
-                @Html.DropDownListFor(m => Model.ReplacementDriverId, Model.DriversSelectList)
-                <input name="btnReplacementDriverId" type="submit" value="Go" class="btn btn-default" id="GoButton" />
-                <br />
-                Replace Delivery Date OD with this OD:
-                @Html.DropDownListFor(m => Model.ReplacementDeliveryDateODId, Model.ODSelectList)
-                <input name="btnReplacementDeliveryDateODId" type="submit" value="Go" class="btn btn-default" id="GoButton" />
-                <br />
-                Set Delivery Status to Delivered
-                <input name="btnSetStatusToDelivered" type="submit" value="Go" class="btn btn-default" id="GoButton" />
-            </div>
-                }
-            </div>
-
-            <div>
-                <br />
-                @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
-            </div>  @*Return to Dashboard*@
+            <table>
+                <tr>
+                    <td style="text-align: right">
+                        @Html.Label("Show ALL Open Deliveries")&nbsp;
+                    </td>
+                    <td>
+                        <input name="btnAllCheckAll" type="submit" value="Select - Check All" class="btn btn-default" id="CheckAllButton" />
+                        <input name="btnAllClearAll" type="submit" value="Select - Uncheck All" class="btn btn-default" id="ClearAllButton" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.Label("Show Open Deliveries for Delivery Date ")
+                        @Html.DropDownListFor(m => Model.SelectedDistinctDeliveryDate, Model.DistinctDeliveryDatesSelectList)
+                    </td>
+                    <td>
+                        <input name="btnByDateCheckAll" type="submit" value="Select - Check All" class="btn btn-default" id="CheckAllButton" />
+                        <input name="btnByDateClearAll" type="submit" value="Select - Uncheck All" class="btn btn-default" id="ClearAllButton" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.Label("Show Open Deliveries for Driver ")
+                        @Html.DropDownListFor(m => Model.SelectedDistinctDriverId, Model.DistinctDriversSelectList)
+                    </td>
+                    <td>
+                        <input name="btnByDriverCheckAll" type="submit" value="Select - Check All" class="btn btn-default" id="CheckAllButton" />
+                        <input name="btnByDriverClearAll" type="submit" value="Select - Uncheck All" class="btn btn-default" id="ClearAllButton" />
+                    </td>
+                </tr>
+            </table>
         </div>
+        <hr />
+        <div id="SelectedDeliveries">
+            @if (Model.SelectedDeliveriesList.Count > 0)
+            {
+                <table>
+                    <tr>
+                        <td><b>@Html.Label("Chk")</b></td>
+                        <td><b>@Html.Label("Delv Date")</b></td>
+                        <td style="text-align: center"><b>@Html.Label("Driver")</b></td>
+                        <td style="text-align: center"><b>@Html.Label("DelvDateOD")</b></td>
+                        <td style="text-align: center"><b>@Html.Label("Client")</b></td>
+                        <td><b>F</b></td>
+                        <td><b>H</b></td>
+                        <td><b>S</b></td>
+                        <td><b>G</b></td>
+                    </tr>
+                    @for (int i = 0; i < Model.SelectedDeliveriesList.Count; i++)
+                    {
+                        <tr>
+                            <td style="text-align: center">@Html.CheckBoxFor(c => c.SelectedDeliveriesList[i].IsChecked)</td>
+
+                            <td style="text-align: center">@Html.Label(Model.SelectedDeliveriesList[i].DateDeliveredString)</td>
+                            <td>@Model.SelectedDeliveriesList[i].DriverName</td>
+                            <td>@Model.SelectedDeliveriesList[i].DeliveryDateODName</td>
+                            <td title=@Model.SelectedDeliveriesList[i].Client.NameAddressToolTip>@Model.SelectedDeliveriesList[i].Client.ClientNameAddress</td>
+                            @if (Model.SelectedDeliveriesList[i].AllZeroProducts)
+                            {
+                                <td style="text-align: center; color: red; font-weight: bold">@Model.SelectedDeliveriesList[i].FullBags</td>
+                                <td style="text-align: center; color: red; font-weight: bold">@Model.SelectedDeliveriesList[i].HalfBags</td>
+                                <td style="text-align: center; color: red; font-weight: bold">@Model.SelectedDeliveriesList[i].KidSnacks</td>
+                                <td style="text-align: center; color: red; font-weight: bold">@Model.SelectedDeliveriesList[i].GiftCards</td>
+                            }
+                            else
+                            {
+                                <td style="text-align: center">@Model.SelectedDeliveriesList[i].FullBags</td>
+                                <td style="text-align: center">@Model.SelectedDeliveriesList[i].HalfBags</td>
+                                <td style="text-align: center">@Model.SelectedDeliveriesList[i].KidSnacks</td>
+                                <td style="text-align: center">@Model.SelectedDeliveriesList[i].GiftCards</td>
+                            }
+
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+
+        <div>
+            <br />
+            @if (Model.SelectedDeliveriesList.Count > 0)
+            {
+                <div>
+                    <span><b>Update </b></span>
+                    <span style="text-decoration: underline"><b>all</b></span>
+                    <span><b>checked deliveries:</b></span>
+                    <br />
+                    Repace Delivery Date with this date:
+                    @Html.TextBoxFor(m => m.ReplacementDeliveryDate, "{0:MM/dd/yyyy}",
+                        new { id = "ReplacementDeliveryDate", style = "width: 75px;" })
+                    <span style="color: darkmagenta"> &#8592;Click to change</span>
+                    <input name="btnReplacementDeliveryDate" type="submit" value="Go" class="btn btn-default" id="GoButton" />
+                    <br />
+                    Replace Driver with this Driver:
+                    @Html.DropDownListFor(m => Model.ReplacementDriverId, Model.DriversSelectList)
+                    <input name="btnReplacementDriverId" type="submit" value="Go" class="btn btn-default" id="GoButton" />
+                    <br />
+                    Replace Delivery Date OD with this OD:
+                    @Html.DropDownListFor(m => Model.ReplacementDeliveryDateODId, Model.ODSelectList)
+                    <input name="btnReplacementDeliveryDateODId" type="submit" value="Go" class="btn btn-default" id="GoButton" />
+                    <br />
+                    Set Delivery Status to Delivered
+                    <input name="btnSetStatusToDelivered" type="submit" value="Go" class="btn btn-default" id="GoButton" />
+                </div>
+            }
+        </div>
+
+        <div>
+            <br />
+            @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+        </div> @*Return to Dashboard*@
+
     }
 </body>
 </html>

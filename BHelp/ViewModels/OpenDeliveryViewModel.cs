@@ -31,5 +31,7 @@ namespace BHelp.ViewModels
 
         [StringLength(128)]
         public string ReplacementDeliveryDateODId { get; set; }
+
+        public string ButtonGroupName { get; set; }
     }
 }
