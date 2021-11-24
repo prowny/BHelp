@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
+using BHelp.Migrations;
 using BHelp.Models;
 using BHelp.ViewModels;
 using Castle.Core.Internal;
@@ -295,11 +296,7 @@ namespace BHelp
                     };
                     familyMembers.Add(headOfHousehold);
                 }
-
-                var sqlString = "SELECT * FROM FamilyMembers ";
-                sqlString += "WHERE Active > 0 AND ClientId =" + clientId;
-                var familyList = db.Database.SqlQuery<FamilyMember>(sqlString).ToList();
-
+                var familyList = db.FamilyMembers.Where(d => d.Active && d.ClientId == clientId).ToList();
                 foreach (FamilyMember member in familyList)
                 {
                     member.Age = GetAge(member.DateOfBirth, DateTime.Today);
@@ -639,6 +636,7 @@ namespace BHelp
                 return odv;
             }
         }
+        
         public static FileStreamResult OpenDeliveriesToCSV()
         {
             var view = GetOpenDeliveriesViewModel();
@@ -649,7 +647,7 @@ namespace BHelp
             sb.Append(",,,,,");
             var key = "K = Kids 0-17, A = Adults 18-59, S = Adults 60+, HH = Household, ";
             key += "F = Full Bags, H = Half Bags, KS = Kids Snacks for ages 2-17, GC = Gift Cards";
-            sb.Append("\"" + key + "\"" );
+            sb.Append("\"" + key + "\"");
             sb.AppendLine();
 
             sb.Append("Delivery Date,Driver,ZipCode,Client,Address,City,Phone,#K,#A,#S,# in HH,");
@@ -663,7 +661,7 @@ namespace BHelp
                 {
                     if (view.OpenDeliveries[i, col] != null)
                     {
-                        if (view.OpenDeliveries[i,col].Contains(","))
+                        if (view.OpenDeliveries[i, col].Contains(","))
                         {
                             sb.Append("\"" + view.OpenDeliveries[i, col] + "\"" + ",");
                         }
@@ -695,5 +693,56 @@ namespace BHelp
             return null;
         }
 
+        public static FileStreamResult CallLogHistoryResultToCSV(DeliveryViewModel view)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append(view.ReportTitle + ',');
+            sb.AppendLine();
+
+            sb.Append("Log Date,Name,Address,Driver,Delivery Date,Status,# in HH,#Children,");
+            sb.Append("#Adults 18-59,# Seniors >=60,#Full Bags,#HalfBags,#Kid Snacks,");
+            sb.Append("#Gift Cards,#Pounds of Food");
+            sb.AppendLine();
+
+            for (var i = 0; i < view.DeliveryList.Count; i++)
+            {
+                if (view.DeliveryList[i] != null)
+                {
+                    sb.Append(view.DeliveryList[i].LogDate.ToShortDateString() + ",");
+                    sb.Append(view.DeliveryList[i].LastName + ",");
+                }
+            }
+                //                if (view.DeliveryList[i].Contains(","))
+                    //                {
+                    //                    sb.Append("\"" + view.DeliveryList[i] + "\"" + ",");
+                    //                }
+                    //                else
+                    //                {
+                    //                    sb.Append(view.DeliveryList[i] + ",");
+                    //                }
+
+                    //            }
+                    //        else
+                    //        {
+                    //            sb.Append(view.OpenDeliveries[i, col] + ",");
+                    //        }
+                    //    }
+
+                    //    sb.Append("\"" + view.OpenDeliveries[i, 18] + "\"");
+                    //    sb.AppendLine();
+                    //}
+
+                    var response = System.Web.HttpContext.Current.Response;
+            response.BufferOutput = true;
+            response.Clear();
+            response.ClearHeaders();
+            response.ContentEncoding = Encoding.Unicode;
+            response.AddHeader("content-disposition", "attachment;filename=" + view.ReportTitle + ".csv");
+            response.ContentType = "text/plain";
+            response.Write(sb.ToString());
+            response.End();
+            return null;
+        }
     }
 }

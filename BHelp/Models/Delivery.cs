@@ -96,12 +96,12 @@ namespace BHelp.Models
         public Boolean IsChecked { get; set; }    // for open delivery filtering
 
         [NotMapped]
-        public string NameAddressToolTip { get; set; }    // for open delivery filtering
-
-        [NotMapped]
         public Client Client { get; set; }  // for open delivery filtering
 
         [NotMapped]
         public Boolean AllZeroProducts { get; set; }
+
+        [NotMapped]
+        public int PoundsOfFood { get; set; }
     }
 }

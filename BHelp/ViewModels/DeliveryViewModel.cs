@@ -104,5 +104,6 @@ namespace BHelp.ViewModels
         public IEnumerable<SelectListItem> SnapshotFamily { get; set; }
         public HouseholdViewModel Household { get; set; }
         public string DateDeliveredString { get; set; }
+        public string ReportTitle { get; set; }
     }
 }

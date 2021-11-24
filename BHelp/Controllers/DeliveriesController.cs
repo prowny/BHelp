@@ -517,56 +517,6 @@ namespace BHelp.Controllers
                 return null;
             }
 
-            // GET: Deliveries/Details/5
-            public ActionResult Details(int? id)
-            {
-                if (id == null)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                }
-
-                Delivery delivery = db.Deliveries.Find(id);
-                if (delivery == null)
-                {
-                    return HttpNotFound();
-                }
-
-                return View(delivery);
-            }
-
-            // GET: Deliveries/Create
-            public ActionResult Create()
-            {
-                return null;
-            }
-
-            // POST: Deliveries/Create
-            [HttpPost]
-            [ValidateAntiForgeryToken]
-            public ActionResult Create(
-                [Bind(Include = "Id,ClientId,LogDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards")]
-                Delivery delivery)
-            {
-                if (ModelState.IsValid)
-                {
-                    Client client = db.Clients.Find(delivery.ClientId);
-                    if (client != null)
-                    {
-                        delivery.FirstName = client.FirstName;
-                        delivery.LastName = client.LastName;
-                        delivery.StreetNumber = client.StreetNumber;
-                        delivery.StreetName = delivery.StreetName;
-                        delivery.NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id);
-                        delivery.Zip = client.Zip;
-
-                        db.Deliveries.Add(delivery);
-                        db.SaveChanges();
-                        return View(delivery);
-                    }
-                }
-                return RedirectToAction("Index");
-            }
-
             // GET: Deliveries/Edit/5
             public ActionResult Edit(int? id, string desiredDeliveryDate)
             {
@@ -647,9 +597,7 @@ namespace BHelp.Controllers
                 if (delivery.Children != null) viewModel.KidsCount = (int) delivery.Children;
                 if (delivery.Adults != null) viewModel.AdultsCount = (int) delivery.Adults;
                 if (delivery.Seniors != null) viewModel.SeniorsCount = (int) delivery.Seniors;
-
-                // viewModel.GiftCardsEligible = AppRoutines.GetGiftCardsEligible(delivery.ClientId, delivery.DeliveryDate);
-           
+                
                 if (delivery.FullBags != null) viewModel.FullBags = (int)delivery.FullBags;
                 if (delivery.HalfBags != null) viewModel.HalfBags = (int)delivery.HalfBags;
                 if (delivery.KidSnacks != null) viewModel.KidSnacks = (int)delivery.KidSnacks;
@@ -791,40 +739,56 @@ namespace BHelp.Controllers
                 }
                 var callLogView = new DeliveryViewModel { ClientSelectList = clientSelectList };
                 if (clientId == null)
-                {    return View(callLogView);}
-                else
+                { return View(callLogView);}
+              
+                var deliveryList = db.Deliveries.Where(d => d.ClientId == clientId)
+                    .OrderByDescending(d => d.DateDelivered).ToList();
+                callLogView.DeliveryList = deliveryList;
+                foreach (var del in callLogView.DeliveryList)
                 {
-                    var deliveryList = db.Deliveries.Where(d => d.ClientId == clientId)
-                        .OrderByDescending(d => d.DateDelivered).ToList();
-                    callLogView.DeliveryList = deliveryList;
-                    foreach (var del in callLogView.DeliveryList)
+                    del.DriverName = GetDriverName(del.DriverId);
+                    if (del.Status == 1) // Show delivery date
                     {
-                        del.DriverName = GetDriverName(del.DriverId);
-                        if (del.Status == 1)
+                        if (del.DateDelivered.HasValue)
                         {
-                            if (del.DateDelivered.HasValue)
-                            {
-                                del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
-                            }
+                            del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
                         }
+                    } // Show delivery date
+                    del.LogDateString = $"{del.LogDate:MM/dd/yyyy}";
+                    switch (del.Status)
+                    {
+                        case 0:
+                            del.SelectedStatus = "Open";
+                            del.DateDeliveredString = "";
+                            break;
+                        case 1:
+                            del.SelectedStatus = "Delivered";
+                            break;
+                        case 2:
+                            del.SelectedStatus = "Undelivered";
+                            del.DateDeliveredString = "";
+                            break;
+                    }
 
-                        del.LogDateString = $"{del.LogDate:MM/dd/yyyy}";
-                        switch (del.Status)
+                    var familyList = AppRoutines.GetFamilyMembers(del.ClientId); // includes HH
+                    if (familyList != null)
+                    {
+                        del.Children = 0;
+                        del.Seniors = 0;
+                        del.Adults = 0;
+                        del.HouseoldCount = familyList.Count();
+                        foreach (var member in familyList)
                         {
-                            case 0:
-                                del.SelectedStatus = "Open";
-                                del.DateDeliveredString = "";
-                                break;
-                            case 1:
-                                del.SelectedStatus = "Delivered";
-                                break;
-                            case 2:
-                                del.SelectedStatus = "Undelivered";
-                                del.DateDeliveredString = "";
-                                break;
+                            if (member.Age <= 17) { del.Children++;}
+                            if (member.Age >= 60) { del.Seniors++;}
+                            if (member.Age >= 18 && member.Age <= 59) { del.Adults++; }
                         }
                     }
+
+                    var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
+                    if (fullWeight != null) del.PoundsOfFood = (int)fullWeight;
                 }
+                Session["CallLogIndividualList"] = callLogView;
                 return View(callLogView);
             }
 
@@ -834,6 +798,28 @@ namespace BHelp.Controllers
                 var intClientId = Convert.ToInt32(id);
                 return RedirectToAction("CallLogIndividual", new { clientId = intClientId });
             }
+
+            public void CallLogByIndividualToCSV()
+            {
+                if (Session["CallLogIndividualList"] != null)
+                {
+                    var view = Session["CallLogIndividualList"] as DeliveryViewModel;
+                    try
+                    {
+                        view.ReportTitle = view.DeliveryList[0].LastName
+                                           + view.DeliveryList[0].FirstName.Substring(0,1)
+                                           + " CallLog" + DateTime.Today.ToString("MM-dd-yy");
+                    }
+                    catch (Exception e)
+                    {
+                        view.ReportTitle = " CallLog" + DateTime.Today.ToString("MM-dd-yy");
+                    }
+
+                    var result = AppRoutines.CallLogHistoryResultToCSV(view);
+
+                } 
+            }
+
             public ActionResult CallLogByLogDate(DateTime? startDate, DateTime? endDate )
             {
                 if (!startDate.HasValue || !endDate.HasValue)  // default to today and 1 week ago
