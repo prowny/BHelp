@@ -45,6 +45,8 @@
                     <td>
                         <input name="btnAllCheckAll" type="submit" value="Select - Check All" class="btn btn-default" id="CheckAllButton" />
                         <input name="btnAllClearAll" type="submit" value="Select - Uncheck All" class="btn btn-default" id="ClearAllButton" />
+                        @if(Model.ButtonGroupName == "All")
+                        {@Html.Label(((char)0x221A).ToString(), new {style="color: red; font-weight: bold"})}
                     </td>
                 </tr>
                 <tr>
@@ -55,6 +57,8 @@
                     <td>
                         <input name="btnByDateCheckAll" type="submit" value="Select - Check All" class="btn btn-default" id="CheckAllButton" />
                         <input name="btnByDateClearAll" type="submit" value="Select - Uncheck All" class="btn btn-default" id="ClearAllButton" />
+                        @if(Model.ButtonGroupName == "ByDate")
+                        {@Html.Label(((char)0x221A).ToString(), new {style="color: red; font-weight: bold"})}
                     </td>
                 </tr>
                 <tr>
@@ -65,6 +69,8 @@
                     <td>
                         <input name="btnByDriverCheckAll" type="submit" value="Select - Check All" class="btn btn-default" id="CheckAllButton" />
                         <input name="btnByDriverClearAll" type="submit" value="Select - Uncheck All" class="btn btn-default" id="ClearAllButton" />
+                        @if (Model.ButtonGroupName == "ByDriver")
+                        {@Html.Label(((char)0x221A).ToString(), new { style = "color: red; font-weight: bold" })}
                     </td>
                 </tr>
             </table>
@@ -114,7 +120,6 @@
                 </table>
             }
         </div>
-
         <div>
             <br />
             @if (Model.SelectedDeliveriesList.Count > 0)

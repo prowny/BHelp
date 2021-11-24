@@ -82,7 +82,8 @@
     }
 </table>
 <div>
-    @Html.ActionLink("Filter Open Deliveries", "OpenFilters")
+    <br/>
+    @Html.ActionLink("Filter Open Deliveries", "OpenFilters", new { btnAllCheckAll = "True" })
     <br/>
     @Html.ActionLink("Printable Delivery List for Drivers", "ExcelOpenDeliveries")
     <br/>

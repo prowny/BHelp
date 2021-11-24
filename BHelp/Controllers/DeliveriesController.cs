@@ -171,7 +171,7 @@ namespace BHelp.Controllers
         }
        
         // GET: Open Delivery Filters
-        public ActionResult OpenFilters()
+        public ActionResult OpenFilters(string btnAllCheckAll)
         {
             var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0).ToList(); // get all open deliveries
             var view = new OpenDeliveryViewModel()
@@ -225,18 +225,24 @@ namespace BHelp.Controllers
             TempData["DistinctDriverList"] = view.DistinctDriverList;
             TempData["DistinctDriversSelectList"] = view.DistinctDriversSelectList;
 
-                view.DriversSelectList = AppRoutines.GetDriversSelectList();
-                view.ReplacementDriverId = view.DriversSelectList[0].Value;
-                TempData["DriversSelectList"] = view.DriversSelectList;
+            view.DriversSelectList = AppRoutines.GetDriversSelectList();
+            view.ReplacementDriverId = view.DriversSelectList[0].Value;
+            TempData["DriversSelectList"] = view.DriversSelectList;
 
-                view.ODSelectList = AppRoutines.GetODSelectList();
-                view.ReplacementDeliveryDateODId = view.ODSelectList[0].Value;
-                TempData["ODSelectList"] = view.ODSelectList;
+            view.ODSelectList = AppRoutines.GetODSelectList();
+            view.ReplacementDeliveryDateODId = view.ODSelectList[0].Value;
+            TempData["ODSelectList"] = view.ODSelectList;
 
-                return View(view);
+            if (btnAllCheckAll != "True") return View(view);
+            {
+                var selectedDeliveries = db.Deliveries
+                    .Where(d => d.Status == 0).ToList();
+                view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnAllCheckAll);
+                view.ButtonGroupName = "All";
             }
+            return View(view);
+        }
 
-            
         // POST: 
             [HttpPost]
             [ValidateAntiForgeryToken]
@@ -255,105 +261,34 @@ namespace BHelp.Controllers
                     var selectedDeliveries = db.Deliveries
                         .Where(d => d.Status == 0).ToList();
                      view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnAllCheckAll);
-                     view.ButtonGroupName = "All";
-                     
-                     //foreach (var del in selectedDeliveries)
-                    //{
-                    //    if (btnAllCheckAll != null)
-                    //    { del.IsChecked = true; }
-                    //    if (btnAllClearAll != null) { del.IsChecked = false; }
-
-                    //    del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
-                    //    del.DeliveryDateODName = GetODName(del.DeliveryDateODId);
-                    //    del.DriverName = GetDriverName(del.DriverId);
-                    //    del.Client = GetClientData(del.ClientId);
-                    //    view.SelectedDeliveriesList.Add(del);
-                    //    if (del.FullBags == 0 && del.HalfBags == 0 && del.KidSnacks == 0 && del.GiftCards == 0)
-                    //    {
-                    //        del.AllZeroProducts = true;
-                    //    }
-                    //}
-                    //view.DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>;
-                    //view.ODSelectList = TempData["ODSelectList"] as List<SelectListItem>;
-                    //TempData["SelectedDeliveriesList"] = selectedDeliveries;
-                    return View(view);
+                     view.ButtonGroupName = $"All";
+                     return View(view);
                 }
 
                 if (btnByDateCheckAll != null || btnByDateClearAll != null)
                 {
                     var selectedDeliveries = db.Deliveries.Where(d => d.Status == 0
-                                                                      && d.DateDelivered ==
-                                                                      model.SelectedDistinctDeliveryDate).ToList();
-                    foreach (var del in selectedDeliveries)
-                    {
-                        if (btnByDateCheckAll != null)
-                        {
-                            del.IsChecked = true;
-                        }
-
-                        if (btnByDateClearAll != null)
-                        {
-                            del.IsChecked = false;
-                        }
-
-                        del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
-                        del.DeliveryDateODName = GetODName(del.DeliveryDateODId);
-                        del.DriverName = GetDriverName(del.DriverId);
-                        del.Client = GetClientData(del.ClientId);
-                        view.SelectedDeliveriesList.Add(del);
-                        if (del.FullBags == 0 && del.HalfBags == 0 && del.KidSnacks == 0 && del.GiftCards == 0)
-                        {
-                            del.AllZeroProducts = true;
-                        }
-                    }
-                    view.DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>;
-                    view.ODSelectList = TempData["ODSelectList"] as List<SelectListItem>;
-                    TempData["SelectedDeliveriesList"] = selectedDeliveries;
+                                     && d.DateDelivered == model.SelectedDistinctDeliveryDate).ToList();
+                    view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnByDateCheckAll);
+                    view.ButtonGroupName = $"ByDate";
                     return View(view);
-
                 }
 
                 if (btnByDriverCheckAll != null || btnByDriverClearAll != null)
                 {
-                    if (model.SelectedDistinctDriverId == null)
-                    {
-                        model.SelectedDistinctDriverId = null;
-                    }
-
-                    var selectedDeliveries = db.Deliveries.Where(d => d.Status == 0
-                                                                      && d.DriverId == model.SelectedDistinctDriverId)
-                        .ToList();
-                    foreach (var del in selectedDeliveries)
-                    {
-                        if (btnByDriverCheckAll != null)
-                        {
-                            del.IsChecked = true;
-                        }
-
-                        if (btnByDriverClearAll != null)
-                        {
-                            del.IsChecked = false;
-                        }
-
-                        del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
-                        del.DeliveryDateODName = GetODName(del.DeliveryDateODId);
-                        del.DriverName = GetDriverName(del.DriverId);
-                        del.Client = GetClientData(del.ClientId);
-                        view.SelectedDeliveriesList.Add(del);
-                        if (del.FullBags == 0 && del.HalfBags == 0 && del.KidSnacks == 0 && del.GiftCards == 0)
-                        {
-                            del.AllZeroProducts = true;
-                        }
-                    }
-                view.DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>;
-                view.ODSelectList = TempData["ODSelectList"] as List<SelectListItem>;
-                TempData["SelectedDeliveriesList"] = selectedDeliveries;
-                return View(view);
+                    var selDistinctDriverId = model.SelectedDistinctDriverId;
+                    if (selDistinctDriverId == "0") { selDistinctDriverId = null;}
+                    var selectedDeliveries = db.Deliveries
+                                    .Where(d => d.Status == 0
+                                    && d.DriverId == selDistinctDriverId).ToList();
+                    view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnByDriverCheckAll);
+                    view.ButtonGroupName = $"ByDriver";
+                    return View(view);
                 }
 
                 if (btnReplacementDeliveryDate != null)
                 {
-                    List<Delivery> selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
+                    var selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
                     if (selectedDeliveries != null)
                     {
                         for (var i = 0; i < selectedDeliveries.Count; i++)
@@ -364,7 +299,7 @@ namespace BHelp.Controllers
                                 selectedDeliveries[i].IsChecked = model.SelectedDeliveriesList[i].IsChecked;
                             }
                         }
-                    } // Set IsChecked flags
+                    } // Set "IsChecked" flags
 
                     foreach (var rec in from dlv in selectedDeliveries
                         where dlv.IsChecked
@@ -470,9 +405,11 @@ namespace BHelp.Controllers
                     }
                 }
                 view.DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>;
+                TempData.Keep("DriversSelectList");
                 view.ODSelectList = TempData["ODSelectList"] as List<SelectListItem>;
+                TempData.Keep("ODSelectList");
                 TempData["SelectedDeliveriesList"] = selectedDeliveries;
-
+                TempData.Keep("SelectedDeliveriesList");
                 return view;
             }
             private OpenDeliveryViewModel GetOpenDeliveryViewModel(OpenDeliveryViewModel view)
@@ -533,7 +470,8 @@ namespace BHelp.Controllers
                 }
             
                 TempData["DistinctDeliveryDatesSelectList"] = newView.DistinctDeliveryDatesSelectList;
-            
+                TempData.Keep("DistinctDeliveryDatesSelectList");
+
                 if (newView.DistinctDriversSelectList != null)
                 {
                     foreach (var dr in newView.DistinctDriversSelectList)
