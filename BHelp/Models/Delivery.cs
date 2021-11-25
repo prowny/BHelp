@@ -33,16 +33,16 @@ namespace BHelp.Models
         public string Phone { get; set; }
         public string NamesAgesInHH { get; set; }
 
-        public int? Children { get; set; }  // # of children in this delivery
-        public int? Adults { get; set; }     // # of adults in this delivery
-        public int? Seniors { get; set; }    // # of seniors in this delivery
+        public int Children { get; set; }  // # of children in this delivery
+        public int Adults { get; set; }     // # of adults in this delivery
+        public int Seniors { get; set; }    // # of seniors in this delivery
        
         public string Notes { get; set; }  // Notes entered by drivers, baggers. etc. (as opposed to OD notes or Household notes)
-        public int? FullBags { get; set; }
-        public int? HalfBags { get; set; }
-        public int? KidSnacks { get; set; }
-        public int? GiftCardsEligible { get; set; }
-        public int? GiftCards { get; set; }
+        public int FullBags { get; set; }
+        public int HalfBags { get; set; }
+        public int KidSnacks { get; set; }
+        public int GiftCardsEligible { get; set; }
+        public int GiftCards { get; set; }
 
         [StringLength(128)]
         public string ODId { get; set; }

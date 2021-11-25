@@ -146,7 +146,7 @@ namespace BHelp
                         }
                         catch
                         {
-                            delivery.FullBags = null;
+                            delivery.FullBags = 0;
                         }
 
                         try
@@ -155,7 +155,7 @@ namespace BHelp
                         }
                         catch
                         {
-                            delivery.HalfBags = null;
+                            delivery.HalfBags = 0;
                         }
 
                         try
@@ -164,7 +164,7 @@ namespace BHelp
                         }
                         catch
                         {
-                            delivery.KidSnacks = null;
+                            delivery.KidSnacks = 0;
                         }
 
                         try
@@ -173,7 +173,7 @@ namespace BHelp
                         }
                         catch
                         {
-                            delivery.GiftCards = null;
+                            delivery.GiftCards = 0;
                         }
 
                         delivery.Completed = true;
@@ -357,25 +357,25 @@ namespace BHelp
         }
         public static void SetStatusFlags()
         {
-            var db = new BHelpContext();
-            var listNullDelDates = db.Deliveries.Where(d => d.DateDelivered == null).ToList();
-            foreach (var del in listNullDelDates)
-            { // null & completed = undelivered;  null & not completed = open
-                var delivery = db.Deliveries.Find(del.Id);
-                if (delivery.Completed)
-                {
-                    delivery.Status = 2; // Undelivered
-                    //db.SaveChanges();
-                }
-            }
+            //var db = new BHelpContext();
+            //var listNullDelDates = db.Deliveries.Where(d => d.DateDelivered == null).ToList();
+            //foreach (var del in listNullDelDates)
+            //{ // null & completed = undelivered;  null & not completed = open
+            //    var delivery = db.Deliveries.Find(del.Id);
+            //    if (delivery.Completed)
+            //    {
+            //        delivery.Status = 2; // Undelivered
+            //        //db.SaveChanges();
+            //    }
+            //}
 
-            var listDelDates = db.Deliveries.Where(d => d.DateDelivered != null).ToList();
-            foreach (var del in listDelDates)
-            {
-                var delivery = db.Deliveries.Find(del.Id);
-                delivery.Status = 1;    // Delivered
-                //db.SaveChanges();
-            }
+            //var listDelDates = db.Deliveries.Where(d => d.DateDelivered != null).ToList();
+            //foreach (var del in listDelDates)
+            //{
+            //    var delivery = db.Deliveries.Find(del.Id);
+            //    delivery.Status = 1;    // Delivered
+            //    db.SaveChanges();
+            //}
         }
     }
 }

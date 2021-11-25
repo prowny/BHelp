@@ -42,38 +42,55 @@
     {
         <table>
             <tr>
-                <td></td>
-            </tr>
-            <tr>
+                <td></td>  @*// for Edit button*@
                 <td><b>Log Date</b></td>
-                 <td><b>Client Name</b></td>
-                 <td><b>Addess</b></td>
+                <td><b>Client Name</b></td>
+                <td><b>Addess</b></td>
                 <td><b>Driver</b></td>
-                <td><b>Date Delivered</b></td>
+                <td><b>DelivDate</b></td>
                 <td><b>Status</b></td>
+                <td style="text-align: center"><b>#HH</b></td>
+                <td style="text-align: center"><b>#C</b></td>
+                <td style="text-align: center"><b>#A</b></td>
+                <td style="text-align: center"><b>#S</b></td>
+                <td style="text-align: center"><b>#F</b></td>
+                <td style="text-align: center"><b>#H</b></td>
+                <td style="text-align: center"><b>#KS</b></td>
+                <td style="text-align: center"><b>#GC</b></td>
+                <td style="text-align: center"><b>Lbs.</b></td>
             </tr>
             @foreach (var delivery in Model.DeliveryList)
             {
-        <tr>
-            <td>@delivery.LogDateString</td>
-            @{ var name = delivery.LastName + ", " + delivery.FirstName; }
-            @{ var addr = delivery.StreetNumber + " " + delivery.StreetName; }
-            <td>@name</td>
-            <td>@addr</td>
-            <td>@delivery.DriverName</td>
-            <td>@delivery.DateDeliveredString</td>
-            <td>@delivery.SelectedStatus</td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = delivery.Id })
-            </td>
-        </tr>
+                <tr>
+                    <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id })</td>
+                    <td>@delivery.LogDateString</td>
+                    @{ var name = delivery.LastName + ", " + delivery.FirstName; }
+                    @{ var addr = delivery.StreetNumber + " " + delivery.StreetName; }
+                    <td>@name</td>
+                    <td>@addr</td>
+                    <td>@delivery.DriverName</td>
+                    <td>@delivery.DateDeliveredString</td>
+                    <td>@delivery.SelectedStatus</td>
+                    <td style="text-align: center">@delivery.HouseoldCount</td>
+                    <td style="text-align: center">@delivery.Children</td>
+                    <td style="text-align: center">@delivery.Adults</td>
+                    <td style="text-align: center">@delivery.Seniors</td>
+                    <td style="text-align: center">@delivery.FullBags</td>
+                    <td style="text-align: center">@delivery.HalfBags</td>
+                    <td style="text-align: center">@delivery.KidSnacks</td>
+                    <td style="text-align: center">@delivery.GiftCards</td>
+                    <td style="text-align: center">@delivery.PoundsOfFood</td>
+                    <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id })</td>
+                </tr>
             }
         </table>
     }
 </div>
 <br/>
 <div>
-    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new {})
+    @Html.ActionLink("Download to CSV File", "CallLogByLogDateToCSV", new { })
+    <br/>
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard")
 </div>
 </body>
 </html>

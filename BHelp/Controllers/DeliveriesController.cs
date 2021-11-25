@@ -67,11 +67,11 @@ namespace BHelp.Controllers
                     deliveryView.KidsCount = deliveryView.Kids.Count();
                     deliveryView.AdultsCount = deliveryView.Adults.Count();
                     deliveryView.SeniorsCount = deliveryView.Seniors.Count();
-                    if (delivery.FullBags != null) deliveryView.FullBags = (int) delivery.FullBags;
-                    if (delivery.HalfBags != null) deliveryView.HalfBags = (int) delivery.HalfBags;
-                    if (delivery.KidSnacks != null) deliveryView.KidSnacks = (int) delivery.KidSnacks;
-                    if (delivery.GiftCards != null) deliveryView.GiftCards = (int) delivery.GiftCards;
-                    if (delivery.GiftCardsEligible != null) deliveryView.GiftCardsEligible = (int) delivery.GiftCardsEligible;
+                    deliveryView.FullBags = delivery.FullBags;
+                    deliveryView.HalfBags = delivery.HalfBags;
+                    deliveryView.KidSnacks = delivery.KidSnacks;
+                    deliveryView.GiftCards = delivery.GiftCards;
+                     deliveryView.GiftCardsEligible = delivery.GiftCardsEligible;
                     deliveryView.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
                     deliveryView.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
           
@@ -594,15 +594,15 @@ namespace BHelp.Controllers
                 foreach (var item in viewModel.DeliveryDateODList)
                 { if (item.Value == viewModel.DeliveryDateODId) { item.Selected = true; break; } }
 
-                if (delivery.Children != null) viewModel.KidsCount = (int) delivery.Children;
-                if (delivery.Adults != null) viewModel.AdultsCount = (int) delivery.Adults;
-                if (delivery.Seniors != null) viewModel.SeniorsCount = (int) delivery.Seniors;
+                viewModel.KidsCount = delivery.Children;
+                viewModel.AdultsCount = delivery.Adults;
+                viewModel.SeniorsCount = delivery.Seniors;
                 
-                if (delivery.FullBags != null) viewModel.FullBags = (int)delivery.FullBags;
-                if (delivery.HalfBags != null) viewModel.HalfBags = (int)delivery.HalfBags;
-                if (delivery.KidSnacks != null) viewModel.KidSnacks = (int)delivery.KidSnacks;
-                if (delivery.GiftCards != null) viewModel.GiftCards = (int)delivery.GiftCards;
-                if (delivery.GiftCardsEligible != null) viewModel.GiftCardsEligible = (int)delivery.GiftCardsEligible;
+                viewModel.FullBags = delivery.FullBags;
+                viewModel.HalfBags = delivery.HalfBags;
+                viewModel.KidSnacks = delivery.KidSnacks;
+                viewModel.GiftCards = delivery.GiftCards;
+                viewModel.GiftCardsEligible = delivery.GiftCardsEligible;
 
                 var client = db.Clients.Find(delivery.ClientId);
                 if (client != null)
@@ -779,14 +779,14 @@ namespace BHelp.Controllers
                         del.HouseoldCount = familyList.Count();
                         foreach (var member in familyList)
                         {
-                            if (member.Age <= 17) { del.Children++;}
-                            if (member.Age >= 60) { del.Seniors++;}
-                            if (member.Age >= 18 && member.Age <= 59) { del.Adults++; }
+                            if (member.Age <= 17)  del.Children++;
+                            if (member.Age >= 60)  del.Seniors++;
+                            if (member.Age >= 18 && member.Age <= 59)  del.Adults++; 
                         }
                     }
 
                     var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
-                    if (fullWeight != null) del.PoundsOfFood = (int)fullWeight;
+                    del.PoundsOfFood = fullWeight;
                 }
                 Session["CallLogIndividualList"] = callLogView;
                 return View(callLogView);
@@ -807,9 +807,9 @@ namespace BHelp.Controllers
                     try
                     {
                         if (view != null)
-                            view.ReportTitle = view.DeliveryList[0].LastName
+                            view.ReportTitle = "CallLog " + view.DeliveryList[0].LastName
                             + view.DeliveryList[0].FirstName.Substring(0, 1)
-                            + " CallLog" + DateTime.Today.ToString("MM-dd-yy");
+                            + " " + DateTime.Today.ToString("MM-dd-yy");
                     }
                     catch (Exception)
                     {
@@ -823,6 +823,7 @@ namespace BHelp.Controllers
 
             public ActionResult CallLogByLogDate(DateTime? startDate, DateTime? endDate )
             {
+                Session["CallLogIndividualList"] = null;
                 if (!startDate.HasValue || !endDate.HasValue)  // default to today and 1 week ago
                 {
                     startDate = DateTime.Today.AddDays(-7);
@@ -849,6 +850,7 @@ namespace BHelp.Controllers
                     {
                         del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
                     }
+
                     del.LogDateString = $"{del.LogDate:MM/dd/yyyy}";
                     switch (del.Status)
                     {
@@ -862,8 +864,61 @@ namespace BHelp.Controllers
                             del.SelectedStatus = "Undelivered";
                             break;
                     }
+
+                    var familyList = AppRoutines.GetFamilyMembers(del.ClientId); // includes HH
+                    if (familyList != null)
+                    {
+                        del.Children = 0;
+                        del.Seniors = 0;
+                        del.Adults = 0;
+                        del.HouseoldCount = familyList.Count();
+                        foreach (var member in familyList)
+                        {
+                            if (member.Age <= 17) del.Children++;
+                            if (member.Age >= 60) del.Seniors++;
+                            if (member.Age >= 18 && member.Age <= 59) del.Adults++;
+                        }
+                    }
+
+                    if (del.Status == 2)  //  kill any amounts if undelivered
+                    {
+                        del.FullBags = 0;
+                        del.HalfBags = 0;
+                        del.KidSnacks = 0;
+                        del.GiftCards = 0;
+                    }
+                    var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
+                    del.PoundsOfFood = fullWeight;
                 }
+                Session["CallLogByLogDateList"] = callLogView;
                 return View(callLogView);
+            }
+            public ActionResult CallLogByLogDateToCSV()
+            {
+                if (Session["CallLogByLogDateList"] != null)
+                {
+                    var view = Session["CallLogByLogDateList"] as DeliveryViewModel;
+                    try
+                    {
+                        if (view != null)
+                        {
+                            var startDate = (Convert.ToDateTime(Session["CallLogStartDate"])).ToString("MM-dd-yy");
+                            var endDate= (Convert.ToDateTime(Session["CallLogEndDate"])).ToString("MM-dd-yy");
+
+                            view.ReportTitle = "CallLog " + startDate + " to " + endDate;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        if (view != null) view.ReportTitle = " CallLog" + DateTime.Today.ToString("MM-dd-yy");
+                    }
+
+                    AppRoutines.CallLogHistoryResultToCSV(view);
+                    Session["CallLogByLogDateList"] = null;
+                    
+                }
+                return RedirectToAction("CallLogByLogDate",
+                    new { startDate = Session["CallLogStartDate"], endDate = Session["CallLogEndDate"] });
             }
             public ActionResult CallLogByDateDelivered(DateTime? startDate, DateTime? endDate)
             {
@@ -907,8 +962,59 @@ namespace BHelp.Controllers
                             del.DateDeliveredString = "";
                             break;
                     }
+                    var familyList = AppRoutines.GetFamilyMembers(del.ClientId); // includes HH
+                    if (familyList != null)
+                    {
+                        del.Children = 0;
+                        del.Seniors = 0;
+                        del.Adults = 0;
+                        del.HouseoldCount = familyList.Count();
+                        foreach (var member in familyList)
+                        {
+                            if (member.Age <= 17) del.Children++;
+                            if (member.Age >= 60) del.Seniors++;
+                            if (member.Age >= 18 && member.Age <= 59) del.Adults++;
+                        }
+                        if (del.Status == 2)  //  kill any amounts if undelivered
+                        {
+                            del.FullBags = 0;
+                            del.HalfBags = 0;
+                            del.KidSnacks = 0;
+                            del.GiftCards = 0;
+                        }
+                        var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
+                        del.PoundsOfFood = fullWeight;
+                    }
                 }
+                Session["CallLogByDateDeliveredList"] = callLogView;
                 return View(callLogView);
+            }
+            public ActionResult CallLogByDateDeliveredToCSV()
+            {
+                if (Session["CallLogByDateDeliveredList"] != null)
+                {
+                    var view = Session["CallLogByDateDeliveredList"] as DeliveryViewModel;
+                    try
+                    {
+                        if (view != null)
+                        {
+                            var startDate = (Convert.ToDateTime(Session["CallLogStartDate"])).ToString("MM-dd-yy");
+                            var endDate = (Convert.ToDateTime(Session["CallLogEndDate"])).ToString("MM-dd-yy");
+
+                            view.ReportTitle = "CallLog " + startDate + " to " + endDate;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        if (view != null) view.ReportTitle = " CallLog" + DateTime.Today.ToString("MM-dd-yy");
+                    }
+
+                    AppRoutines.CallLogHistoryResultToCSV(view);
+                    Session["CallLogByDateDeliveredList"] = null;
+
+                }
+                return RedirectToAction("CallLogByDateDelivered",
+                    new { startDate = Session["CallLogStartDate"], endDate = Session["CallLogEndDate"] });
             }
             public ActionResult ReportsMenu()
             {
@@ -1068,12 +1174,12 @@ namespace BHelp.Controllers
                             {
                                 if (distinctList.Contains(del.ClientId))
                                     continue;
-                                distinctChildren += del.Children.Value;
-                                totalDistinctChildren += del.Children.Value;
-                                distinctAdults += del.Adults.Value;
-                                totalDistinctAdults += del.Adults.Value; 
-                                distinctSeniors += del.Seniors.Value;
-                                totalDistinctSeniors += del.Seniors.Value;
+                                distinctChildren += del.Children;
+                                totalDistinctChildren += del.Children;
+                                distinctAdults += del.Adults;
+                                totalDistinctAdults += del.Adults; 
+                                distinctSeniors += del.Seniors;
+                                totalDistinctSeniors += del.Seniors;
                                 distinctList.Add(del.ClientId);
                             }
                         }
@@ -1097,47 +1203,21 @@ namespace BHelp.Controllers
                                 totalFirstDeliveries++;
                                 totalCumulativeFirstDeliveries++;
                             }
-                            if (del.Children != null)
-                            {
-                                cumulativeChildren += del.Children.Value;
-                                totalCumulativeChildren += del.Children.Value;
-                            }
-
-                            if (del.Adults != null)
-                            {
-                                cumulativeAdults += del.Adults.Value;
-                                totalCumulativeAdults += del.Adults.Value;
-                            }
-
-                            if (del.Seniors != null)
-                            {
-                                cumulativeSeniors += del.Seniors.Value;
-                                totalCumulativeSeniors += del.Seniors.Value;
-                            }
-
-                            if (del.FullBags != null)
-                            {
-                                fullBags += del.FullBags.Value;
-                                totalFullBags += del.FullBags.Value;
-                            }
-
-                            if (del.HalfBags != null)
-                            {
-                                halfBags += del.HalfBags.Value;
-                                totalHalfBags += del.HalfBags.Value;
-                            }
-
-                            if (del.KidSnacks != null)
-                            {
-                                snacks += del.KidSnacks.Value;
-                                totalSnacks += del.KidSnacks.Value;
-                            }
-
-                            if (del.GiftCards != null)
-                            {
-                                cards += del.GiftCards.Value;
-                                totalCards += del.GiftCards.Value;
-                            }
+                          
+                            cumulativeChildren += del.Children;
+                            totalCumulativeChildren += del.Children;
+                            cumulativeAdults += del.Adults;
+                            totalCumulativeAdults += del.Adults;
+                            cumulativeSeniors += del.Seniors;
+                            totalCumulativeSeniors += del.Seniors;
+                            fullBags += del.FullBags;
+                            totalFullBags += del.FullBags;
+                            halfBags += del.HalfBags;
+                            totalHalfBags += del.HalfBags;
+                            snacks += del.KidSnacks;
+                            totalSnacks += del.KidSnacks;
+                            cards += del.GiftCards;
+                            totalCards += del.GiftCards;
                         }
 
                         var col = zip + 1; 
@@ -1361,11 +1441,8 @@ namespace BHelp.Controllers
                     .Select(g => g.GiftCards).ToList();
                 foreach(var i in dList)
                 {
-                    if (i != null)
-                    {
-                        var gc = (int) i;
-                        total += gc;
-                    }
+                    var gc = i;
+                    total += gc;
                 }
                 return total;
             }

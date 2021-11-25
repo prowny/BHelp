@@ -106,7 +106,7 @@ namespace BHelp
             foreach (var del in delList)
             {
                 var cards = Convert.ToInt32(del.GiftCards);
-                if (del.GiftCards != null) giftCardCount += cards;
+                giftCardCount += cards;
             }
             return giftCardCount;
         }
@@ -136,8 +136,8 @@ namespace BHelp
             {
                 if (del.DeliveryDate < dt)
                 {
-                    var cards = Convert.ToInt32(del.GiftCards);
-                    if (del.GiftCards != null) giftCardCount += cards;
+                    var cards = del.GiftCards;
+                    giftCardCount += cards;
                 }
             }
             return giftCardCount;
@@ -703,6 +703,15 @@ namespace BHelp
             sb.Append("#Gift Cards,#Pounds of Food");
             sb.AppendLine();
 
+            var totalHHCount = 0;
+            var totalChildren = 0;
+            var totalAdults = 0;
+            var totalSeniors = 0;
+            var totalFullBags = 0;
+            var totalHalfBags = 0;
+            var totalKidSnacks = 0;
+            var totalGiftCards = 0;
+            var totalPoundsOfFood = 0;
             foreach (var d in view.DeliveryList)
             {
                 if (d == null) continue;
@@ -724,9 +733,22 @@ namespace BHelp
                 sb.Append(d.HouseoldCount + "," + d.Children + "," + d.Adults + "," + d.Seniors + ",");
                 sb.Append(d.FullBags + "," + d.HalfBags + "," + d.KidSnacks + "," + d.GiftCards + ",");
                 sb.Append(d.PoundsOfFood);
+                totalHHCount += d.HouseoldCount;
+                totalChildren += d.Children;
+                totalAdults += d.Adults;
+                totalSeniors += d.Seniors;
+                totalFullBags += d.FullBags;
+                totalHalfBags += d.HalfBags;
+                totalKidSnacks += d.KidSnacks;
+                totalGiftCards += d.GiftCards;
                 sb.AppendLine();
             }
 
+            sb.Append("Totals,,,,,,");
+            sb.Append(totalHHCount + "," + totalChildren + "," + totalAdults + "," + totalSeniors + ",");
+            sb.Append(totalFullBags + "," + totalHalfBags + "," + totalKidSnacks + ",");
+            sb.Append(totalGiftCards + "," + totalPoundsOfFood);
+            
             var response = System.Web.HttpContext.Current.Response;
             response.BufferOutput = true;
             response.Clear();
