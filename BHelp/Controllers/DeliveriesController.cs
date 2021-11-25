@@ -806,17 +806,18 @@ namespace BHelp.Controllers
                     var view = Session["CallLogIndividualList"] as DeliveryViewModel;
                     try
                     {
-                        view.ReportTitle = view.DeliveryList[0].LastName
-                                           + view.DeliveryList[0].FirstName.Substring(0,1)
-                                           + " CallLog" + DateTime.Today.ToString("MM-dd-yy");
+                        if (view != null)
+                            view.ReportTitle = view.DeliveryList[0].LastName
+                            + view.DeliveryList[0].FirstName.Substring(0, 1)
+                            + " CallLog" + DateTime.Today.ToString("MM-dd-yy");
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        view.ReportTitle = " CallLog" + DateTime.Today.ToString("MM-dd-yy");
+                        if (view != null) view.ReportTitle = " CallLog" + DateTime.Today.ToString("MM-dd-yy");
                     }
 
-                    var result = AppRoutines.CallLogHistoryResultToCSV(view);
-
+                    AppRoutines.CallLogHistoryResultToCSV(view);
+                    Session["CallLogIndividualList"] = null;
                 } 
             }
 

@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
-using BHelp.Migrations;
 using BHelp.Models;
 using BHelp.ViewModels;
 using Castle.Core.Internal;
@@ -696,7 +695,6 @@ namespace BHelp
         public static FileStreamResult CallLogHistoryResultToCSV(DeliveryViewModel view)
         {
             var sb = new StringBuilder();
-
             sb.Append(view.ReportTitle + ',');
             sb.AppendLine();
 
@@ -705,35 +703,31 @@ namespace BHelp
             sb.Append("#Gift Cards,#Pounds of Food");
             sb.AppendLine();
 
-            for (var i = 0; i < view.DeliveryList.Count; i++)
+            foreach (var d in view.DeliveryList)
             {
-                if (view.DeliveryList[i] != null)
+                if (d == null) continue;
+                sb.Append(d.LogDate.ToShortDateString() + ",");
+                sb.Append("\"" + d.LastName + ", " + d.FirstName + "\"" + ",");
+                sb.Append("\"" + d.StreetNumber + " " + d.StreetName + "\"" + ","); 
+                sb.Append(d.DriverName + ",");
+                var dtDel = "";
+                if (d.DateDelivered != null) dtDel = d.DateDelivered.Value.ToString("MM/dd/yyyy");
+                sb.Append(dtDel + ",");
+                var status = "";
+                switch (d.Status)
                 {
-                    sb.Append(view.DeliveryList[i].LogDate.ToShortDateString() + ",");
-                    sb.Append(view.DeliveryList[i].LastName + ",");
+                    case 0: status = "Open"; break;
+                    case 1: status = "Delivered"; break;
+                    case 2: status = "Undelivered"; break;
                 }
+                sb.Append(status + ",");
+                sb.Append(d.HouseoldCount + "," + d.Children + "," + d.Adults + "," + d.Seniors + ",");
+                sb.Append(d.FullBags + "," + d.HalfBags + "," + d.KidSnacks + "," + d.GiftCards + ",");
+                sb.Append(d.PoundsOfFood);
+                sb.AppendLine();
             }
-                //                if (view.DeliveryList[i].Contains(","))
-                    //                {
-                    //                    sb.Append("\"" + view.DeliveryList[i] + "\"" + ",");
-                    //                }
-                    //                else
-                    //                {
-                    //                    sb.Append(view.DeliveryList[i] + ",");
-                    //                }
 
-                    //            }
-                    //        else
-                    //        {
-                    //            sb.Append(view.OpenDeliveries[i, col] + ",");
-                    //        }
-                    //    }
-
-                    //    sb.Append("\"" + view.OpenDeliveries[i, 18] + "\"");
-                    //    sb.AppendLine();
-                    //}
-
-                    var response = System.Web.HttpContext.Current.Response;
+            var response = System.Web.HttpContext.Current.Response;
             response.BufferOutput = true;
             response.Clear();
             response.ClearHeaders();
