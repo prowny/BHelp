@@ -164,6 +164,11 @@ namespace BHelp.Controllers
             var result = AppRoutines.OpenDeliveriesToCSV();
             return result;
         }
+
+        public ActionResult ExcelSelectedList()
+        {
+            return null;
+        }
         public ActionResult ExcelOpenDeliveries()
         {
             var result = AppRoutines.ExcelOpenDeliveries();

@@ -107,9 +107,7 @@ namespace BHelp.Controllers
             return View(delivery);
         }
 
-        // POST: Driver/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Driver/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,FullBags,HalfBags,KidSnacks,GiftCards," +
@@ -150,6 +148,11 @@ namespace BHelp.Controllers
         {
             var result = AppRoutines.ExcelOpenDeliveries();
             return result;
+        }
+
+        public ActionResult OpenFilters()
+        {
+            return RedirectToAction("OpenFilters", "Deliveries",new{btnAllCheckAll="True"});
         }
 
         public ActionResult ReturnToDashboard()

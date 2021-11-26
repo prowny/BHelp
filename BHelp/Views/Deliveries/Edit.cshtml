@@ -84,10 +84,10 @@
                         @*<td style="color: darkmagenta"> &#8592;Click to change</td>*@
                         <td style="color: darkmagenta"></td>
 
-                        <td> &nbsp;&nbsp;Desired Delivery Date:</td>
+                        <td> &nbsp;&nbsp;&nbsp;&nbsp;Delivery Date:</td>
                         <td>
-                            @Html.TextBoxFor(model => model.DeliveryDate, Model.DeliveryDate.ToString("MM/dd/yyyy"),
-                                new { id = "DesiredDeliveryDate", style = "width: 75px;" })
+                            @Html.TextBoxFor(model => model.DateDelivered, "{0:MM/dd/yyyy}",
+                            new { id = "DateDelivered", style = "width: 75px;" })
                         </td>
                         <td style="color: darkmagenta"> &#8592;Click to change</td>
                     </tr>
@@ -164,11 +164,7 @@
                 </table>
             </div>
             <div class="form-group">
-                @Html.Label("Date Delivered:")
-                @Html.TextBoxFor(model => model.DateDelivered, "{0:MM/dd/yyyy}",
-                    new { id = "DateDelivered", style = "width: 75px;" })
-                <span style="color: darkmagenta"> &#8592;Click to change&nbsp;&nbsp;&nbsp;</span>
-                @Html.Label("Status:")&nbsp;
+                &nbsp;@Html.Label("Status:")&nbsp;
                 @Html.Label("Open")
                 @Html.RadioButtonFor(m => m.SelectedStatus, "Open")&nbsp;&nbsp;
                 @Html.Label("Delivered")
@@ -178,13 +174,15 @@
             </div>
             <br />
 
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
-                    @Html.ActionLink("Delete", "Delete", new { id = Model.Id }, new { id = "DeleteButton" })
+            if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
+            {
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
+                        @Html.ActionLink("Delete", "Delete", new { id = Model.Id }, new { id = "DeleteButton" })
+                    </div>
                 </div>
-            </div>
-
+            }
             <br />
             <div>
                 @if (Model.ReturnURL.Contains("CallLogByLogDate"))
@@ -219,12 +217,6 @@
         window.$("#DateDelivered").datepicker();
     });
 </script> @*DateDelivered datepicker*@
-@*<script type="text/javascript">
-        $("#DesiredDeliveryDate").change(function () {
-            var dDDate = window.$("#DesiredDeliveryDate").val();
-            UpdateDesiredDeliveryDate(dDDate);
-        });
-    </script>*@
 <script>
     $(document).ready(function () {
         ".datepicker".datepicker({

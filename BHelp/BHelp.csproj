@@ -330,6 +330,10 @@
     <Compile Include="Migrations\202110251927382_AddStatusAndSecondODId.designer.cs">
       <DependentUpon>202110251927382_AddStatusAndSecondODId.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202111261412208_ChangeProductIntToNonNullable.cs" />
+    <Compile Include="Migrations\202111261412208_ChangeProductIntToNonNullable.Designer.cs">
+      <DependentUpon>202111261412208_ChangeProductIntToNonNullable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -798,6 +802,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202110251927382_AddStatusAndSecondODId.resx">
       <DependentUpon>202110251927382_AddStatusAndSecondODId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202111261412208_ChangeProductIntToNonNullable.resx">
+      <DependentUpon>202111261412208_ChangeProductIntToNonNullable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
