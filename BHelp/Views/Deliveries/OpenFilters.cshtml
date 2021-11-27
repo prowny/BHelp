@@ -126,37 +126,38 @@
                 <br/>
                 @if (Model.SelectedDeliveriesList.Count > 0)
                 {
-                    <div>
-                        <span><b>Update </b></span>
-                        <span style="text-decoration: underline"><b>all</b></span>
-                        <span><b>checked deliveries:</b></span>
-                        <br/>
-                        Repace Delivery Date with this date:
-                        @Html.TextBoxFor(m => m.ReplacementDeliveryDate, "{0:MM/dd/yyyy}",
-                            new { id = "ReplacementDeliveryDate", style = "width: 75px;" })
-                        <span style="color: darkmagenta"> &#8592;Click to change</span>
-                        <input name="btnReplacementDeliveryDate" type="submit" value="Go" class="btn btn-default" id="GoButton"/>
-                        <br/>
-                        Replace Driver with this Driver:
-                        @Html.DropDownListFor(m => Model.ReplacementDriverId, Model.DriversSelectList)
-                        <input name="btnReplacementDriverId" type="submit" value="Go" class="btn btn-default" id="GoButton"/>
-                        <br/>
-                        Replace Delivery Date OD with this OD:
-                        @Html.DropDownListFor(m => Model.ReplacementDeliveryDateODId, Model.ODSelectList)
-                        <input name="btnReplacementDeliveryDateODId" type="submit" value="Go" class="btn btn-default" id="GoButton"/>
-                        <br/>
-                        Set Delivery Status to Delivered
-                        <input name="btnSetStatusToDelivered" type="submit" value="Go" class="btn btn-default" id="GoButton"/>
-                    </div>
-                }
+                <div>
+                    <span><b>Update </b></span>
+                    <span style="text-decoration: underline"><b>all</b></span>
+                    <span><b>checked deliveries:</b></span>
+                    <br />
+                    Repace Delivery Date with this date:
+                    @Html.TextBoxFor(m => m.ReplacementDeliveryDate, "{0:MM/dd/yyyy}",
+                        new { id = "ReplacementDeliveryDate", style = "width: 75px;" })
+                    <span style="color: darkmagenta"> &#8592;Click to change</span>
+                    <input name="btnReplacementDeliveryDate" type="submit" value="Go" class="btn btn-default" id="GoButton" />
+                    <br />
+                    Replace Driver with this Driver:
+                    @Html.DropDownListFor(m => Model.ReplacementDriverId, Model.DriversSelectList)
+                    <input name="btnReplacementDriverId" type="submit" value="Go" class="btn btn-default" id="GoButton" />
+                    <br />
+                    Replace Delivery Date OD with this OD:
+                    @Html.DropDownListFor(m => Model.ReplacementDeliveryDateODId, Model.ODSelectList)
+                    <input name="btnReplacementDeliveryDateODId" type="submit" value="Go" class="btn btn-default" id="GoButton" />
+                    <br />
+                    Set Delivery Status to Delivered
+                    <input name="btnSetStatusToDelivered" type="submit" value="Go" class="btn btn-default" id="GoButton" />
+                    <br />
+                    Download Checked Deliveries to Excel
+                    <input name="btnExcelOpenSelected" type="submit" value="Go" class="btn btn-default" id="GoButton" />
+                </div>
+            }
             </div>
         }
-        <div>
-            <br/>
-            @Html.ActionLink("Download Checked Deliveries", "ExcelSelectedList")
-            <br/>
-            @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
-        </div> @*Return to Dashboard*@
+    <div>
+   <br />
+    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+</div> @*Return to Dashboard*@
 
     }
 </body>

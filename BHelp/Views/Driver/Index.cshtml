@@ -12,35 +12,42 @@
     <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
 </head>
 <body>
-<h4>All Open Deliveries</h4>
+<span><b>All Open Deliveries</b></span>
 @if (Model.DeliveryList != null && Model.DeliveryList.Any())
 {
-    foreach (var item in Model.DeliveryList)
     {
         <table>
             <tr>
-                <td><b>@Html.Label("Date: ")</b></td>
+                <td><b>DelivDate</b></td>
+                <td><b>Driver</b></td>
+                <td><b>Zip</b></td>
+                <td><b>Client</b></td>
+                <td><b>Phone</b></td>
+                <td><b>#HH</b></td>
+            </tr>
+
+            @foreach (var item in Model.DeliveryList)
+            {
+            <tr>
                 <td>@Html.DisplayFor(modelItem => item.DateDelivered)</td>
-                <td><b>@Html.Label("Driver:")</b></td>
                 <td>@Html.DisplayFor(modelItem => item.DriverName)</td>
-                <td><b>@Html.Label("Zip:")</b></td>
                 <td>@Html.DisplayFor(modelItem => item.Zip)</td>
-                <td><b>@Html.Label("Client:")</b></td>
                 <td>@Html.DisplayFor(modelItem => item.ClientNameAddress)</td>
                 <td>@Html.DisplayFor(modelItem => item.Phone)</td>
-                <td><b> @Html.Label("HH#:")</b></td>
-                <td>@Html.DisplayFor(modelItem => item.HouseoldCount)</td>
-                <td>@Html.ActionLink("Edit", "Edit", new {id = item.Id})</td>
+                <td style="text-align: center">@Html.DisplayFor(modelItem => item.HouseoldCount)</td>
+                <td>@Html.ActionLink("Edit", "Edit", new { id = item.Id })</td>
             </tr>
+            }
         </table>
     }
 }
 <br />
 <div>
     @Html.ActionLink("Filter Open Deliveries", "OpenFilters")
+    <span style="color: darkmagenta">&#8592;Filter by Date/Driver; Bulk Changes</span>
     <br />
     @Html.ActionLink("Download to Excel", "ExcelOpenDeliveries", new { })
-    <span style="color: darkmagenta">&#8592;Will include Client Notes, OD Notes, and Driver Notes</span>
+    @*<span style="color: darkmagenta">&#8592;Will include Client Notes, OD Notes, and Driver Notes</span>*@
 </div>
 <div id="ReturnToDashboard">
     @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })

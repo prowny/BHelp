@@ -165,8 +165,9 @@ namespace BHelp.Controllers
             return result;
         }
 
-        public ActionResult ExcelSelectedList()
+        public ActionResult ExcelOpenSelectedList(OpenDeliveryViewModel view)
         {
+            //Get Checked Items
             return null;
         }
         public ActionResult ExcelOpenDeliveries()
@@ -256,7 +257,8 @@ namespace BHelp.Controllers
                 string btnByDateCheckAll, string btnByDateClearAll,
                 string btnByDriverCheckAll, string btnByDriverClearAll,
                 string btnReplacementDeliveryDate, string btnReplacementDriverId,
-                string btnReplacementDeliveryDateODId, string btnSetStatusToDelivered)
+                string btnReplacementDeliveryDateODId, string btnSetStatusToDelivered,
+                string btnExcelOpenSelected)
             {
                 ModelState.Clear(); // if not cleared, checkboxfor IsChecked displays incorrectly
                 var view = GetOpenDeliveryViewModel(model);
@@ -264,7 +266,7 @@ namespace BHelp.Controllers
                 if (btnAllCheckAll != null || btnAllClearAll != null)
                 {
                     var selectedDeliveries = db.Deliveries
-                        .Where(d => d.Status == 0).ToList();
+                        .OrderBy(d => d.DateDelivered).Where(d => d.Status == 0).ToList();
                      view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnAllCheckAll);
                      view.ButtonGroupName = $"All";
                      return View(view);
@@ -284,8 +286,8 @@ namespace BHelp.Controllers
                     var selDistinctDriverId = model.SelectedDistinctDriverId;
                     if (selDistinctDriverId == "0") { selDistinctDriverId = null;}
                     var selectedDeliveries = db.Deliveries
-                                    .Where(d => d.Status == 0
-                                    && d.DriverId == selDistinctDriverId).ToList();
+                        .OrderBy(d =>d.DateDelivered)            
+                        .Where(d => d.Status == 0 && d.DriverId == selDistinctDriverId).ToList();
                     view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnByDriverCheckAll);
                     view.ButtonGroupName = $"ByDriver";
                     return View(view);
@@ -327,7 +329,6 @@ namespace BHelp.Controllers
                             selectedDeliveries[i].IsChecked = model.SelectedDeliveriesList[i].IsChecked;
                         }
                     }  // set IsChecked flags: 
-
                     foreach (var rec in from dlv in selectedDeliveries
                         where dlv.IsChecked
                         select db.Deliveries.Find(dlv.Id))
@@ -386,8 +387,51 @@ namespace BHelp.Controllers
                     return RedirectToAction("OpenFilters");
                 }
 
-                return null;
+                if (btnExcelOpenSelected != null)
+                {
+                    var selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
+                    if (selectedDeliveries == null) return null;
+                    var selectedOpens = new OpenDeliveryViewModel
+                    {
+                        SelectedDeliveriesList = new List<Delivery>(), 
+                        OpenDeliveries = new string[selectedDeliveries.Count, 13]
+            };
+                    for (var i = 0; i < selectedDeliveries.Count; i++)
+                    {   // selected deliveries count may have changed
+                        if (i < model.SelectedDeliveriesList.Count)
+                        {
+                            selectedDeliveries[i].IsChecked = model.SelectedDeliveriesList[i].IsChecked;
+                        }
+                    } // Set IsChecked flags
+
+                    var j = -1;
+                    foreach (var rec in selectedDeliveries)
+                    { 
+                        if (rec.IsChecked)
+                        {
+                            j++;
+                            if (rec.DateDelivered != null)
+                                selectedOpens.OpenDeliveries[j, 1] = rec.DateDelivered.Value.ToString("MM/dd/yyyy");
+                            selectedOpens.OpenDeliveries[j, 2] = rec.DriverName;
+                            selectedOpens.OpenDeliveries[j, 3] = rec.Zip;
+                            selectedOpens.OpenDeliveries[j, 4] = rec.Client.FullName;
+                            selectedOpens.OpenDeliveries[j, 5] = rec.Phone;
+                            selectedOpens.OpenDeliveries[j, 6] = rec.HouseoldCount.ToString();
+                            selectedOpens.OpenDeliveries[j, 7] = rec.FullBags.ToString();
+                            selectedOpens.OpenDeliveries[j, 8] = rec.HalfBags.ToString();
+                            selectedOpens.OpenDeliveries[j, 9] = rec.KidSnacks.ToString();
+                            selectedOpens.OpenDeliveries[j, 10] = rec.GiftCards.ToString();
+                            selectedOpens.OpenDeliveries[j, 11] = rec.Client.Notes;
+                            selectedOpens.OpenDeliveries[j, 12] = rec.ODNotes + " " + rec.DriverNotes;
+                        }
+                    }
+                    selectedOpens.ReportTitle = "BHELPDeliveries";
+                    var result = AppRoutines.ExcelOpenSelectedDeliveries(selectedOpens);
+                    return result;
+                    //return RedirectToAction("OpenFilters");
             }
+            return RedirectToAction("OpenFilters");
+        }
 
             private OpenDeliveryViewModel LoadSelectedDeliveriesIntoView(OpenDeliveryViewModel view,
                 List<Delivery> selectedDeliveries, string btnCheckAll)
@@ -803,7 +847,6 @@ namespace BHelp.Controllers
                 var intClientId = Convert.ToInt32(id);
                 return RedirectToAction("CallLogIndividual", new { clientId = intClientId });
             }
-
             public void CallLogByIndividualToCSV()
             {
                 if (Session["CallLogIndividualList"] != null)
@@ -825,7 +868,6 @@ namespace BHelp.Controllers
                     Session["CallLogIndividualList"] = null;
                 } 
             }
-
             public ActionResult CallLogByLogDate(DateTime? startDate, DateTime? endDate )
             {
                 Session["CallLogIndividualList"] = null;

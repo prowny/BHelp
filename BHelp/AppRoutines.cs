@@ -575,8 +575,121 @@ namespace BHelp
             workbook.SaveAs(ms);
             ms.Position = 0;
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-            { FileDownloadName = view.ReportTitle + ".xlsx" };
+            { FileDownloadName = "OpenDeliveries" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
         }
+
+        public static FileStreamResult ExcelOpenSelectedDeliveries(OpenDeliveryViewModel view)
+        {
+            var workbook = new XLWorkbook();
+            IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
+
+            ws.Columns("1").Width = 8;
+            ws.Cell(1, 1).SetValue("Selected Deliveries").Style.Font.SetBold(true);
+            ws.Cell(1, 1).Style.Alignment.WrapText = true;
+            ws.Cell(1, 1).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("2").Width = 12; // "Date" / "Driver"
+            ws.Cell(1, 2).SetValue(DateTime.Today.ToShortDateString()).Style.Font.SetBold(true);
+            ws.Cell(1, 2).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+            //var key = "K = Kids 0-17, A = Adults 18-59, S = Adults 60+, HH = Household, ";
+            //key += "F = Full Bags, H = Half Bags, KS = Kids Snacks for ages 2-17, GC = Gift Cards";
+            //ws.Cell(1, 8).SetValue(key);
+            //ws.Cell(1, 8).Style.Alignment.WrapText = true;
+            //ws.Cell(1, 8).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            //ws.Range(ws.Cell(1, 8), ws.Cell(1, 16)).Merge();
+
+            ws.Columns("1").Width = 10;
+            ws.Cell(2, 1).SetValue("Delivery Date").Style.Font.SetBold(true);
+            ws.Cell(2, 1).Style.Alignment.WrapText = true;
+            ws.Cell(2, 1).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("2").Width = 12;
+            ws.Cell(2, 2).SetValue("Driver").Style.Font.SetBold(true);
+            ws.Cell(2, 2).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("3").Width = 6;
+            ws.Cell(2, 3).SetValue("Zip Code").Style.Font.SetBold(true);
+            ws.Cell(2, 3).Style.Alignment.WrapText = true;
+            ws.Cell(2, 3).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("4").Width = 48;
+            ws.Cell(2, 4).SetValue("Client").Style.Font.SetBold(true);
+            ws.Cell(2, 4).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+                        //ws.Columns("5").Width = 16;
+                        //ws.Cell(2, 5).SetValue("Address").Style.Font.SetBold(true);
+                        //ws.Cell(2, 5).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+                        //ws.Columns("6").Width = 9;
+                        //ws.Cell(2, 6).SetValue("City").Style.Font.SetBold(true);
+                        //ws.Cell(2, 6).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("5").Width = 12;
+            ws.Cell(2, 5).SetValue("Phone").Style.Font.SetBold(true);
+            ws.Cell(2, 5).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+                        //ws.Columns("8").Width = 3;
+                        //ws.Cell(2, 8).SetValue("#K").Style.Font.SetBold(true);
+                        //ws.Cell(2, 8).Style.Alignment.WrapText = true;
+                        //ws.Cell(2, 8).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+                        //ws.Columns("9").Width = 3;
+                        //ws.Cell(2, 9).SetValue("#A").Style.Font.SetBold(true);
+                        //ws.Cell(2, 9).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+                        //ws.Columns("10").Width = 3;
+                        //ws.Cell(2, 10).SetValue("#S").Style.Font.SetBold(true);
+                        //ws.Cell(2, 10).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+            ws.Columns("6").Width = 4;
+            ws.Cell(2, 6).SetValue("#HH").Style.Font.SetBold(true);
+            ws.Cell(2, 6).Style.Alignment.WrapText = true;
+            ws.Cell(2, 6).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+                        //ws.Columns("12").Width = 15;
+                        //ws.Cell(2, 12).SetValue("All Household Members/Ages").Style.Font.SetBold(true);
+                        //ws.Cell(2, 12).Style.Alignment.WrapText = true;
+                        //ws.Cell(2, 12).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+            ws.Columns("7").Width = 3;
+            ws.Cell(2, 7).SetValue("#F").Style.Font.SetBold(true);
+            ws.Cell(2, 7).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+            ws.Columns("8").Width = 3;
+            ws.Cell(2, 8).SetValue("#H").Style.Font.SetBold(true);
+            ws.Cell(2, 8).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+            ws.Columns("9").Width = 4;
+            ws.Cell(2, 9).SetValue("#KS").Style.Font.SetBold(true);
+            ws.Cell(2, 9).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+            ws.Columns("10").Width = 4;
+            ws.Cell(2, 10).SetValue("#GC").Style.Font.SetBold(true);
+            ws.Cell(2, 10).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("11").Width = 15;
+            ws.Cell(2, 11).SetValue("Client Notes").Style.Font.SetBold(true);
+            ws.Cell(2, 11).Style.Alignment.WrapText = true;
+            ws.Cell(2, 11).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("12").Width = 15;
+            ws.Cell(2, 12).SetValue("OD & Driver Delivery Notes").Style.Font.SetBold(true);
+            ws.Cell(2, 12).Style.Alignment.WrapText = true;
+            ws.Cell(2, 12).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+            int activeRow = 2;
+            for (var i = 0; i < view.SelectedDeliveriesList.Count; i++)
+            {
+                activeRow++;
+                for (var col = 1; col < 13; col++)
+                {
+                    ws.Cell(activeRow, col).SetValue(view.OpenDeliveries[i, col]);
+                    ws.Cell(activeRow, col).Style.Alignment.WrapText = true;
+                    ws.Cell(activeRow, col).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+                    ws.Cell(activeRow, col).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                }
+                activeRow++;
+            }
+
+            var ms = new MemoryStream();
+            workbook.SaveAs(ms);
+            ms.Position = 0;
+            return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            { FileDownloadName = "BHELPDeliveries" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
+        }
+
         private static OpenDeliveryViewModel GetOpenDeliveriesViewModel()
         {
             var odv = new OpenDeliveryViewModel
@@ -635,7 +748,6 @@ namespace BHelp
                 return odv;
             }
         }
-        
         public static FileStreamResult OpenDeliveriesToCSV()
         {
             var view = GetOpenDeliveriesViewModel();
@@ -691,7 +803,6 @@ namespace BHelp
             response.End();
             return null;
         }
-
         public static FileStreamResult CallLogHistoryResultToCSV(DeliveryViewModel view)
         {
             var sb = new StringBuilder();
