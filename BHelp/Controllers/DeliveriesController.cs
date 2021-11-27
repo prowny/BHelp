@@ -164,12 +164,6 @@ namespace BHelp.Controllers
             var result = AppRoutines.OpenDeliveriesToCSV();
             return result;
         }
-
-        public ActionResult ExcelOpenSelectedList(OpenDeliveryViewModel view)
-        {
-            //Get Checked Items
-            return null;
-        }
         public ActionResult ExcelOpenDeliveries()
         {
             var result = AppRoutines.ExcelOpenDeliveries();
@@ -394,8 +388,8 @@ namespace BHelp.Controllers
                     var selectedOpens = new OpenDeliveryViewModel
                     {
                         SelectedDeliveriesList = new List<Delivery>(), 
-                        OpenDeliveries = new string[selectedDeliveries.Count, 13]
-            };
+                        OpenDeliveries = new string[selectedDeliveries.Count + 1, 13]   // Reserve OpenDeliveries [0,n] for OD Name and Phone
+                    };
                     for (var i = 0; i < selectedDeliveries.Count; i++)
                     {   // selected deliveries count may have changed
                         if (i < model.SelectedDeliveriesList.Count)
@@ -403,18 +397,19 @@ namespace BHelp.Controllers
                             selectedDeliveries[i].IsChecked = model.SelectedDeliveriesList[i].IsChecked;
                         }
                     } // Set IsChecked flags
-
-                    var j = -1;
+                   
+                    var j = 0;  
                     foreach (var rec in selectedDeliveries)
                     { 
                         if (rec.IsChecked)
                         {
                             j++;
                             if (rec.DateDelivered != null)
-                                selectedOpens.OpenDeliveries[j, 1] = rec.DateDelivered.Value.ToString("MM/dd/yyyy");
+                            selectedOpens.OpenDeliveries[j, 1] = rec.DateDelivered.Value.ToString("MM/dd/yyyy");
                             selectedOpens.OpenDeliveries[j, 2] = rec.DriverName;
                             selectedOpens.OpenDeliveries[j, 3] = rec.Zip;
-                            selectedOpens.OpenDeliveries[j, 4] = rec.Client.FullName;
+                            selectedOpens.OpenDeliveries[j, 4] = rec.Client.FullName + " "
+                                + rec.StreetNumber + " " + rec.StreetName;
                             selectedOpens.OpenDeliveries[j, 5] = rec.Phone;
                             selectedOpens.OpenDeliveries[j, 6] = rec.HouseoldCount.ToString();
                             selectedOpens.OpenDeliveries[j, 7] = rec.FullBags.ToString();
@@ -423,8 +418,19 @@ namespace BHelp.Controllers
                             selectedOpens.OpenDeliveries[j, 10] = rec.GiftCards.ToString();
                             selectedOpens.OpenDeliveries[j, 11] = rec.Client.Notes;
                             selectedOpens.OpenDeliveries[j, 12] = rec.ODNotes + " " + rec.DriverNotes;
+                            selectedOpens.OpenDeliveries[0, 0] = rec.DeliveryDateODId; // OD of last selected record
+                            selectedOpens.OpenDeliveries[0, 1] = selectedOpens.OpenDeliveries[j, 1]; // Last Date
                         }
                     }
+
+                    var odId = selectedOpens.OpenDeliveries[0, 0];
+                    if (odId != null)
+                    {
+                        var odRec = db.Users.Find(odId);
+                        selectedOpens.OpenDeliveries[0, 4] = "OD: " + odRec.FullName
+                                                                    + " " + odRec.PhoneNumber;
+                    }
+                    selectedOpens.OpenDeliveryCount = j + 1;
                     selectedOpens.ReportTitle = "BHELPDeliveries";
                     var result = AppRoutines.ExcelOpenSelectedDeliveries(selectedOpens);
                     return result;

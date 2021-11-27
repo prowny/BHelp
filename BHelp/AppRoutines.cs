@@ -577,7 +577,6 @@ namespace BHelp
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             { FileDownloadName = "OpenDeliveries" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
         }
-
         public static FileStreamResult ExcelOpenSelectedDeliveries(OpenDeliveryViewModel view)
         {
             var workbook = new XLWorkbook();
@@ -609,7 +608,7 @@ namespace BHelp
             ws.Cell(2, 3).SetValue("Zip Code").Style.Font.SetBold(true);
             ws.Cell(2, 3).Style.Alignment.WrapText = true;
             ws.Cell(2, 3).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("4").Width = 48;
+            ws.Columns("4").Width = 40;
             ws.Cell(2, 4).SetValue("Client").Style.Font.SetBold(true);
             ws.Cell(2, 4).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
                         //ws.Columns("5").Width = 16;
@@ -670,7 +669,7 @@ namespace BHelp
             ws.Cell(2, 12).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
             int activeRow = 2;
-            for (var i = 0; i < view.SelectedDeliveriesList.Count; i++)
+            for (var i = 1; i < view.OpenDeliveryCount; i++)
             {
                 activeRow++;
                 for (var col = 1; col < 13; col++)
@@ -680,8 +679,15 @@ namespace BHelp
                     ws.Cell(activeRow, col).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
                     ws.Cell(activeRow, col).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 }
-                activeRow++;
             }
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue(view.OpenDeliveries[0,1]); //last Date
+            ws.Cell(activeRow, 1).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Cell(activeRow, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            ws.Cell(activeRow, 4).SetValue(view.OpenDeliveries[0, 4]); //last OD Name & Phone
+            ws.Cell(activeRow, 4).Style.Alignment.WrapText = true;
+            ws.Cell(activeRow, 4).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Cell(activeRow, 4).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
             var ms = new MemoryStream();
             workbook.SaveAs(ms);
