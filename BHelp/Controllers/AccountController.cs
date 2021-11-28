@@ -126,7 +126,7 @@ namespace BHelp.Controllers
             DateTime localStandard = TimeZoneInfo.ConvertTime(dt1, TimeZoneInfo.Local, localZone);
             login.DateTime = localStandard;
             login.Status = status;
-            if (status == "Success") { user.LastDate = dt1; }   //Added 07/07/2021
+            //if (status == "Success") { user.LastDate = dt1; }   //Added 07/07/2021 REMOVED 11/28/2021
 
             db.Logins.Add(login);
             db.SaveChanges();
@@ -204,7 +204,7 @@ namespace BHelp.Controllers
                     PhoneNumberConfirmed = true,
                     EmailConfirmed = true,
                     BeginDate = DateTime.Today,
-                    LastDate = DateTime.Today,
+                    LastDate = new DateTime(1900,01,01),
                     Active = true
                 };
                

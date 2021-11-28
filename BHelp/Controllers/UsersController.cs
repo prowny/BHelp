@@ -32,6 +32,7 @@ namespace BHelp.Controllers
             {
                 return HttpNotFound();
             }
+            
             return View(user);
         }
 
@@ -143,7 +144,7 @@ namespace BHelp.Controllers
         {
             var report = new UsersInRolesReportViewModel { Report = new List<List<string[]>>() };
             List<string[]> headerLines = new List<string[]>
-            {new[] {DateTime.Today.ToShortDateString(), "", "", "", "", "Volunteer Start and End Dates"}};
+            {new[] {DateTime.Today.ToShortDateString(), "", "", "", "", "Volunteer Roles and Start / End Dates"}};
             report.Report.Add(headerLines);
 
             var rolesList = _db.Roles.OrderBy(r => r.Name).ToList();
@@ -168,8 +169,9 @@ namespace BHelp.Controllers
                         var str4 = usr.BeginDate.Year.ToString();
                         if (str4 == "1900") { str4 = ""; }
                         var str5 = usr.LastDate.Year.ToString();
-                        // Has to be one year of disuse or inactive to show Ending Year
-                        if (usr.Active && (usr.LastDate > DateTime.Today.AddYears(-1) || str5 == "1900")) { str5 = ""; }
+                        // Has to be one year of disuse or inactive to show Ending Year REMOVED 11/28/2021
+                        //if (usr.Active && (usr.LastDate > DateTime.Today.AddYears(-1) || str5 == "1900")) { str5 = ""; }
+                        if (usr.Active && str5 == "1900") { str5 = ""; }
                         lines.Add(new[] { usr.FirstName, usr.LastName, usr.Email, str4, str5, usr.Notes });
                     }
                     lines.Add(new[] { "", "", "", "", "", "" });   // Space between Roles

@@ -594,7 +594,6 @@ namespace BHelp.Controllers
                             if (del.Status == 1 && del.FullBags == 0 && del.HalfBags == 0
                                 && del.KidSnacks == 0 && del.GiftCards == 0)
                             {  // Cannot save delivery as completed with zero products: 
-                                var x = ""; //!!!
                                 return RedirectToAction("Edit", new { id = del.Id });
                             }
                             del.DeliveryDate = Convert.ToDateTime(desiredDeliveryDate);
