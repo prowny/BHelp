@@ -375,8 +375,14 @@ namespace BHelp.Controllers
                         where dlv.IsChecked
                         select db.Deliveries.Find(dlv.Id))
                     {
-                        if (rec != null) rec.Status = 1;
-                        db.SaveChanges();
+                        if (rec != null)
+                        { // Don't mark as delivered if no products:
+                            if (rec.FullBags > 0 || rec.HalfBags > 0 || rec.KidSnacks > 0 || rec.GiftCards > 0)
+                            {
+                                rec.Status = 1;
+                                db.SaveChanges();
+                            }
+                        }
                     }
                     return RedirectToAction("OpenFilters");
                 }
@@ -585,6 +591,12 @@ namespace BHelp.Controllers
                         var del = db.Deliveries.Find(id);
                         if (del != null)
                         {
+                            if (del.Status == 1 && del.FullBags == 0 && del.HalfBags == 0
+                                && del.KidSnacks == 0 && del.GiftCards == 0)
+                            {  // Cannot save delivery as completed with zero products: 
+                                var x = ""; //!!!
+                                return RedirectToAction("Edit", new { id = del.Id });
+                            }
                             del.DeliveryDate = Convert.ToDateTime(desiredDeliveryDate);
                             db.SaveChanges();
                         }
@@ -676,10 +688,14 @@ namespace BHelp.Controllers
                         viewModel.Notes = s;
                     }
                 }
-
                 viewModel.Zip = delivery.Zip;
-
                 return View(viewModel);
+            }
+
+            public ActionResult AdviseCannotSave(int _id)
+            {  // (because status = 1 and all zero products)
+                var view = new DeliveryViewModel { Id = _id };  
+                return View(view);
             }
 
             // POST: Deliveries/Edit/5
@@ -725,8 +741,13 @@ namespace BHelp.Controllers
                                 updateData.Status = 2;
                                 break;
                         }
-                    
-                        db.Entry(updateData).State = EntityState.Modified;
+
+                    if (updateData.Status == 1 && updateData.FullBags == 0 && updateData.HalfBags == 0
+                        && updateData.KidSnacks == 0 && updateData.GiftCards == 0)
+                    {  // Cannot save delivery as completed with zero products: 
+                        return RedirectToAction("AdviseCannotSave", new { _id = delivery.Id });
+                    }
+                    db.Entry(updateData).State = EntityState.Modified;
                         db.SaveChanges();
                     }
                     if(delivery.ReturnURL.Contains("CallLogIndividual"))

@@ -522,6 +522,7 @@
     <Content Include="Views\OD\ConfirmCreateDelivery.cshtml" />
     <Content Include="Views\Deliveries\OpenFilters.cshtml" />
     <Content Include="Views\OD\AdviseDeliveryCreated.cshtml" />
+    <Content Include="Views\Deliveries\AdviseCannotSave.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>

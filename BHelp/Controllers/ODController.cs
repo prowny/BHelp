@@ -347,7 +347,7 @@ namespace BHelp.Controllers
 
             var openCount= db.Deliveries.Count(d => d.ClientId == client.Id && d.Status == 0);
             if (openCount > 0)
-            { houseHold.OpenDeliveryExists = true;}
+            { houseHold.OpenDeliveryExists = true; }
             TempData["UpdateHouseholdDirty"] = "false";
             return View(houseHold); // Launches page UpdateHousehold.cshtml
         }

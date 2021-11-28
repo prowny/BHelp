@@ -1,0 +1,22 @@
+﻿@model BHelp.ViewModels.DeliveryViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AdviseCannotSave</title>
+</head>
+<body>
+@using (Html.BeginForm("Edit", "Deliveries", FormMethod.Post))
+{
+    <div>
+        <span style="color: red">
+            <b>Cannot save as Delivered with zero bags and cards!</b>
+        </span>
+        <br />
+        @Html.ActionLink(" Return to Edit", "Edit", new{ id = Model.Id})
+    </div>
+}
+</body>
+</html>
