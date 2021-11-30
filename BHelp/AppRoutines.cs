@@ -695,7 +695,6 @@ namespace BHelp
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             { FileDownloadName = "BHELPDeliveries" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
         }
-
         private static OpenDeliveryViewModel GetOpenDeliveriesViewModel()
         {
             var odv = new OpenDeliveryViewModel
@@ -706,7 +705,7 @@ namespace BHelp
             {
                 var deliveryList = new List<Delivery>(db.Deliveries)
                     .Where(d => d.Status == 0)
-                    .OrderBy(d => d.DeliveryDate)
+                    .OrderBy(d => d.DateDelivered)
                     .ThenBy(d => d.DriverId)
                     .ThenBy(z => z.Zip)
                     .ThenBy(n => n.LastName).ToList();
@@ -716,7 +715,8 @@ namespace BHelp
                 foreach (var del in deliveryList)
                 {
                     var client = db.Clients.Find(del.ClientId);
-                    odv.OpenDeliveries[i, 1] = del.DeliveryDate.ToShortDateString();
+                    if (del.DateDelivered != null)
+                        odv.OpenDeliveries[i, 1] = del.DateDelivered.Value.ToShortDateString();
 
                     var driver = db.Users.Find(del.DriverId);
                     if (driver != null)

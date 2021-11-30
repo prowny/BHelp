@@ -61,7 +61,9 @@ namespace BHelp.Controllers
                 List<Client> clientList;
                 if (searchString.Any(char.IsDigit))
                 {
-                    clientList = db.Clients.Where(c => c.Phone.Contains(searchString) || c.StreetNumber.Contains(searchString)  
+                    clientList = db.Clients.Where(c => c.Phone.Contains(searchString)
+                                                       || c.StreetNumber.Contains(searchString)  
+                                                       || c.Notes.Contains(searchString)
                                                        && c.Active).OrderBy(c =>c.LastName).ToList();
                 }
                 else

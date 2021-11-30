@@ -24,7 +24,7 @@
 <body>
 @if (User.IsInRole("OfficerOfTheDay"))
 {
-    <h4>Call Log - find and select household</h4>
+    <b>Call Log - find and select household</b>
 }
 <div id="Header">
 @if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("Administrator"))
@@ -51,9 +51,6 @@
             </td>
         </tr>
     </table>
-    @*<p>
-             @Html.ActionLink("Create New", "Create")
-        </p>*@
 </div>
 <div id="SearchResults">
     @if (searchResults != null)
