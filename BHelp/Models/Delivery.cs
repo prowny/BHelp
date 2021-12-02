@@ -102,6 +102,9 @@ namespace BHelp.Models
         public Boolean AllZeroProducts { get; set; }
 
         [NotMapped]
+        public Boolean EligiibilityRulesException { get; set; }
+
+        [NotMapped]
         public int PoundsOfFood { get; set; }
     }
 }

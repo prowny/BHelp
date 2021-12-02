@@ -459,21 +459,34 @@ namespace BHelp.Controllers
             {
                 foreach (var del in selectedDeliveries)
                 {
-                    if (btnCheckAll != null)
-                    { del.IsChecked = true; }
-                    else
-                    { del.IsChecked = false; }
+                    del.IsChecked = btnCheckAll != null;
 
                     del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
                     del.DeliveryDateODName = GetODName(del.DeliveryDateODId);
                     del.DriverName = GetDriverName(del.DriverId);
                     del.Client = GetClientData(del.ClientId);
-                    view.SelectedDeliveriesList.Add(del);
-                    if (del.FullBags == 0 && del.HalfBags == 0 && del.KidSnacks == 0 && del.GiftCards == 0)
+                    del.EligiibilityRulesException = false;
+
+                    // Check for EligiibilityRulesException:
+                    var nextDeliveryEligibleDate = AppRoutines.GetNextEligibleDeliveryDate
+                        (del.ClientId, DateTime.Today);
+                    if (del.DateDelivered < nextDeliveryEligibleDate)
+                        del.EligiibilityRulesException = true;
+                    if (del.GiftCards > 0)
+                    {
+                        var dateLastGiftCard = AppRoutines.GetDateLastGiftCard(del.ClientId);
+                        var nextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate
+                            (del.ClientId, dateLastGiftCard);
+                        if (del.DateDelivered < nextGiftCardEligibleDate)
+                            del.EligiibilityRulesException = true;
+                    }
+
+                if (del.FullBags == 0 && del.HalfBags == 0 && del.KidSnacks == 0 && del.GiftCards == 0)
                     {
                         del.AllZeroProducts = true;
                     }
-                }
+                    view.SelectedDeliveriesList.Add(del);
+            }
                 view.DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>;
                 TempData.Keep("DriversSelectList");
                 view.ODSelectList = TempData["ODSelectList"] as List<SelectListItem>;
@@ -560,7 +573,7 @@ namespace BHelp.Controllers
             }
             private string GetODName(string id)
             {
-                if (id != null)
+                if (id != null && id != "0")
                 {
                     var _od = db.Users.Find(id);
                     return _od.FullName;
