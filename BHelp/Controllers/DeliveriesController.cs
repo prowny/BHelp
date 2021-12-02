@@ -71,33 +71,42 @@ namespace BHelp.Controllers
                     deliveryView.HalfBags = delivery.HalfBags;
                     deliveryView.KidSnacks = delivery.KidSnacks;
                     deliveryView.GiftCards = delivery.GiftCards;
-                     deliveryView.GiftCardsEligible = delivery.GiftCardsEligible;
+                    deliveryView.GiftCardsEligible = delivery.GiftCardsEligible;
                     deliveryView.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
                     deliveryView.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
           
-                    //var since1 = new DateTime(delivery.DeliveryDate.Year, delivery.DeliveryDate.Month, 1);
                     var dateDelivered = DateTime.Today.AddDays(-1);
                     if (delivery.DateDelivered != null)
                     {
+                        deliveryView.DateDelivered = delivery.DateDelivered;
                          dateDelivered = delivery.DateDelivered.Value;
                     }
                     var since1 = new DateTime(dateDelivered.Year, dateDelivered.Month, 1);
-                    //DateTime thrudate = delivery.DeliveryDate.AddDays(-1);
                     DateTime thrudate = dateDelivered.AddDays(-1);
                     deliveryView.GiftCardsThisMonth = GetGiftCardsSince(client.Id, since1, thrudate );
 
                     if (delivery.DateDelivered != null)
-                    { deliveryView.DateDeliveredString = delivery.DateDelivered.Value.ToString("MM/dd/yyyy"); }
+                    {
+                        deliveryView.DateDeliveredString = delivery.DateDelivered.Value.ToString("MM/dd/yyyy");
+                    }
+
+                    // Check for EligiibilityRulesException:
+                    deliveryView.NextDeliveryEligibleDate = AppRoutines.GetNextEligibleDeliveryDate
+                            (delivery.ClientId, DateTime.Today);
+                    if (deliveryView.DateDelivered < deliveryView.NextDeliveryEligibleDate)
+                        deliveryView.EligiibilityRulesException = true;
+                    if (deliveryView.GiftCards > 0)
+                    {
+                        deliveryView.NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate
+                            (deliveryView.ClientId, deliveryView.DateLastGiftCard);
+                        if (deliveryView.DateDelivered < deliveryView.NextGiftCardEligibleDate)
+                            deliveryView.EligiibilityRulesException = true;
+                    }
 
                     if (delivery.DriverId != null)
                     {
                         var driver = db.Users.Find(delivery.DriverId);
-                        if (driver != null)
-                        { deliveryView.DriverName = driver.FullName;}
-                        else
-                        {
-                            deliveryView.DriverName = "(nobody yet)";
-                        }
+                        deliveryView.DriverName = driver != null ? driver.FullName : "(nobody yet)";
                     }
                     
                     var ODid = delivery.ODId; 
@@ -631,62 +640,92 @@ namespace BHelp.Controllers
                     HistoryStartDate = Convert.ToDateTime(Session["CallLogStartDate"]),
                     HistoryEndDate = Convert.ToDateTime(Session["CallLogEndDate"])
                 };
+
                 switch (delivery.Status)
-                {
-                    case 0:
-                        viewModel.SelectedStatus = "Open";
-                        break;
-                    case 1:
-                        viewModel.SelectedStatus = "Delivered";
-                        break;
-                    case 2:
-                        viewModel.SelectedStatus = "Undelivered";
-                        break;
-                }
-
-                if (Request.UrlReferrer != null)
-                { viewModel.ReturnURL = Request.UrlReferrer.ToString(); }
-         
-                foreach (var item in viewModel.DriversList)
-                { if (item.Value == viewModel.DriverId) { item.Selected = true; break; } }
-
-                foreach (var item in viewModel.ODList)
-                { if (item.Value == viewModel.ODId) { item.Selected = true; break; } }
-
-                foreach (var item in viewModel.ZipCodes)
-                { if (item.Value == viewModel.Zip) { item.Selected = true; break; } }
-
-                viewModel.DeliveryDateODList = viewModel.ODList;
-                foreach (var item in viewModel.DeliveryDateODList)
-                { if (item.Value == viewModel.DeliveryDateODId) { item.Selected = true; break; } }
-
-                viewModel.KidsCount = delivery.Children;
-                viewModel.AdultsCount = delivery.Adults;
-                viewModel.SeniorsCount = delivery.Seniors;
-                
-                viewModel.FullBags = delivery.FullBags;
-                viewModel.HalfBags = delivery.HalfBags;
-                viewModel.KidSnacks = delivery.KidSnacks;
-                viewModel.GiftCards = delivery.GiftCards;
-                viewModel.GiftCardsEligible = delivery.GiftCardsEligible;
-
-                var client = db.Clients.Find(delivery.ClientId);
-                if (client != null)
-                {
-                    viewModel.Client = client;
-                    viewModel.ClientNameAddress = client.LastName + ", " + client.FirstName
-                                                  + " " + client.StreetNumber + " " + client.StreetName + " " + client.Zip;
-                    viewModel.Notes = client.Notes;
-                    viewModel.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
-                    viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
-                    if (client.Notes != null)
                     {
-                        viewModel.NotesToolTip = client.Notes.Replace(" ", "\u00a0");
-                        var s = viewModel.Notes;
-                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
-                        viewModel.Notes = s;
+                        case 0:
+                            viewModel.SelectedStatus = "Open";
+                            break;
+                        case 1:
+                            viewModel.SelectedStatus = "Delivered";
+                            break;
+                        case 2:
+                            viewModel.SelectedStatus = "Undelivered";
+                            break;
                     }
-                }
+
+                    if (Request.UrlReferrer != null)
+                    {
+                        viewModel.ReturnURL = Request.UrlReferrer.ToString();
+                    }
+
+                    foreach (var item in viewModel.DriversList)
+                    {
+                        if (item.Value == viewModel.DriverId)
+                        {
+                            item.Selected = true;
+                            break;
+                        }
+                    }
+
+                    foreach (var item in viewModel.ODList)
+                    {
+                        if (item.Value == viewModel.ODId)
+                        {
+                            item.Selected = true;
+                            break;
+                        }
+                    }
+
+                    foreach (var item in viewModel.ZipCodes)
+                    {
+                        if (item.Value == viewModel.Zip)
+                        {
+                            item.Selected = true;
+                            break;
+                        }
+                    }
+
+                    viewModel.DeliveryDateODList = viewModel.ODList;
+                    foreach (var item in viewModel.DeliveryDateODList)
+                    {
+                        if (item.Value == viewModel.DeliveryDateODId)
+                        {
+                            item.Selected = true;
+                            break;
+                        }
+                    }
+
+                    viewModel.KidsCount = delivery.Children;
+                    viewModel.AdultsCount = delivery.Adults;
+                    viewModel.SeniorsCount = delivery.Seniors;
+
+                    viewModel.FullBags = delivery.FullBags;
+                    viewModel.HalfBags = delivery.HalfBags;
+                    viewModel.KidSnacks = delivery.KidSnacks;
+                    viewModel.GiftCards = delivery.GiftCards;
+                    viewModel.GiftCardsEligible = delivery.GiftCardsEligible;
+
+                    var client = db.Clients.Find(delivery.ClientId);
+                    if (client != null)
+                    {
+                        viewModel.Client = client;
+                        viewModel.ClientNameAddress = client.LastName + ", " + client.FirstName
+                                                      + " " + client.StreetNumber + " " + client.StreetName + " " +
+                                                      client.Zip;
+                        viewModel.Notes = client.Notes;
+                        viewModel.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
+                        viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
+                        if (client.Notes != null)
+                        {
+                            viewModel.NotesToolTip = client.Notes.Replace(" ", "\u00a0");
+                            var s = viewModel.Notes;
+                            s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                            viewModel.Notes = s;
+                        }
+                    }
+                
+
                 viewModel.Zip = delivery.Zip;
                 return View(viewModel);
             }

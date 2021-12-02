@@ -6,6 +6,7 @@
 <html>
 <head><meta name="viewport" content="width=device-width" /><title>Index</title>
     <style>
+        .col12{ width: 12px;text-align: center}
         .col25 {width: 25px;text-align: center}
         .col40 {width: 40px;text-align: left}
         .col50 {width: 50px;text-align: left}
@@ -15,12 +16,12 @@
 </head>
 
 <body>
-<p><b>Open Deliveries</b></p>
-@*<p>@Html.ActionLink("Create New Delivery", "Create")</p>*@
+<span><b>Open Deliveries</b></span>
 <table class="table">
     <tr>
         <th></th>   @*for "Edit"*@
         <th>@Html.Label("Delv Date")</th>
+        <th><div class="col12">@Html.Label("EX*")</div></th>
         <th><div class="col50">@Html.Label("Last Name")</div></th>
         <th><div class="col50">@Html.Label("First Name")</div></th>
         <th><div class="col50">@Html.Label("Street No")</div></th>
@@ -46,10 +47,13 @@
     {
         <tr>
             <td>
-                @*@Html.ActionLink("Edit", "Edit", new { id = item.Id, desiredDeliveryDate = item.DeliveryDate })*@
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id, desiredDeliveryDate = item.DateDelivered})
             </td>
             <td>@Html.DisplayFor(modelItem => item.DateDeliveredString)</td>
+            @if (item.EligiibilityRulesException)
+            {<td style="color: red"><b>EX!</b></td>}
+            else
+            {<td></td>}
             <td>@Html.DisplayFor(modelItem => item.LastName)</td>
             <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
             <td>@Html.DisplayFor(modelItem => item.StreetNumber)</td>
@@ -90,6 +94,8 @@
     @Html.ActionLink("Download to CSV File", "OpenDeliveriesToCSV")
     <br/>
     @Html.ActionLink("Return to Dashboard", "ReturnToDashboard")
+    <br/>
+    <span style="color:crimson "><small>* EX = Eligibility Rules Exception found</small></span>
 </div>
 </body>
 </html>

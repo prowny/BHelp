@@ -105,5 +105,8 @@ namespace BHelp.ViewModels
         public HouseholdViewModel Household { get; set; }
         public string DateDeliveredString { get; set; }
         public string ReportTitle { get; set; }
+        public DateTime NextDeliveryEligibleDate { get; set; }
+        public DateTime NextGiftCardEligibleDate { get; set; }
+        public Boolean EligiibilityRulesException { get; set; }
     }
 }

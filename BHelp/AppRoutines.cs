@@ -34,7 +34,7 @@ namespace BHelp
             using (var db = new BHelpContext())
             {
                 var delivery = db.Deliveries.Where(i => i.ClientId == clientId
-                                         && i.Status == 1 && i.DateDelivered < callLogDate)
+                                         && i.Status == 1 && i.DateDelivered <= callLogDate)
                     .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
                 if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
             }

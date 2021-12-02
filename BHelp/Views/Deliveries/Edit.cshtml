@@ -59,7 +59,10 @@
                 <b>Prior Delivery:</b>
                 @if (Model.DatePriorDelivery != DateTime.MinValue)
                 {
-                    @Html.Label(Model.DatePriorDelivery.ToShortDateString())
+                    if (Model.DateLastDelivery != null)
+                    {
+                        @Html.Label(Model.DatePriorDelivery.ToShortDateString())
+                    }
                 }
                 else
                 {
