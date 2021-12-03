@@ -815,7 +815,7 @@ namespace BHelp
             sb.Append(view.ReportTitle + ',');
             sb.AppendLine();
 
-            sb.Append("Log Date,Name,Address,Driver,Delivery Date,Status,# in HH,#Children,");
+            sb.Append("Log Date,Name,Address,Driver,Delivery Date,ZipCode,Status,# in HH,#Children,");
             sb.Append("#Adults 18-59,# Seniors >=60,#Full Bags,#HalfBags,#Kid Snacks,");
             sb.Append("#Gift Cards,#Pounds of Food");
             sb.AppendLine();
@@ -839,6 +839,7 @@ namespace BHelp
                 var dtDel = "";
                 if (d.DateDelivered != null) dtDel = d.DateDelivered.Value.ToString("MM/dd/yyyy");
                 sb.Append(dtDel + ",");
+                sb.Append(d.Zip + ",");
                 var status = "";
                 switch (d.Status)
                 {

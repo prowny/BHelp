@@ -482,11 +482,11 @@ namespace BHelp.Controllers
                     }
 
                 if (del.FullBags == 0 && del.HalfBags == 0 && del.KidSnacks == 0 && del.GiftCards == 0)
-                    {
-                        del.AllZeroProducts = true;
-                    }
-                    view.SelectedDeliveriesList.Add(del);
-            }
+                {
+                    del.AllZeroProducts = true;
+                }
+                view.SelectedDeliveriesList.Add(del);
+                }
                 view.DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>;
                 TempData.Keep("DriversSelectList");
                 view.ODSelectList = TempData["ODSelectList"] as List<SelectListItem>;
@@ -655,88 +655,88 @@ namespace BHelp.Controllers
                 };
 
                 switch (delivery.Status)
+                {
+                    case 0:
+                        viewModel.SelectedStatus = "Open";
+                        break;
+                    case 1:
+                        viewModel.SelectedStatus = "Delivered";
+                        break;
+                    case 2:
+                        viewModel.SelectedStatus = "Undelivered";
+                        break;
+                }
+
+                if (Request.UrlReferrer != null)
+                {
+                    viewModel.ReturnURL = Request.UrlReferrer.ToString();
+                }
+
+                foreach (var item in viewModel.DriversList)
+                {
+                    if (item.Value == viewModel.DriverId)
                     {
-                        case 0:
-                            viewModel.SelectedStatus = "Open";
-                            break;
-                        case 1:
-                            viewModel.SelectedStatus = "Delivered";
-                            break;
-                        case 2:
-                            viewModel.SelectedStatus = "Undelivered";
-                            break;
+                        item.Selected = true;
+                        break;
                     }
+                }
 
-                    if (Request.UrlReferrer != null)
+                foreach (var item in viewModel.ODList)
+                {
+                    if (item.Value == viewModel.ODId)
                     {
-                        viewModel.ReturnURL = Request.UrlReferrer.ToString();
+                        item.Selected = true;
+                        break;
                     }
+                }
 
-                    foreach (var item in viewModel.DriversList)
+                foreach (var item in viewModel.ZipCodes)
+                {
+                    if (item.Value == viewModel.Zip)
                     {
-                        if (item.Value == viewModel.DriverId)
-                        {
-                            item.Selected = true;
-                            break;
-                        }
+                        item.Selected = true;
+                        break;
                     }
+                }
 
-                    foreach (var item in viewModel.ODList)
+                viewModel.DeliveryDateODList = viewModel.ODList;
+                foreach (var item in viewModel.DeliveryDateODList)
+                {
+                    if (item.Value == viewModel.DeliveryDateODId)
                     {
-                        if (item.Value == viewModel.ODId)
-                        {
-                            item.Selected = true;
-                            break;
-                        }
+                        item.Selected = true;
+                        break;
                     }
+                }
 
-                    foreach (var item in viewModel.ZipCodes)
+                viewModel.KidsCount = delivery.Children;
+                viewModel.AdultsCount = delivery.Adults;
+                viewModel.SeniorsCount = delivery.Seniors;
+
+                viewModel.FullBags = delivery.FullBags;
+                viewModel.HalfBags = delivery.HalfBags;
+                viewModel.KidSnacks = delivery.KidSnacks;
+                viewModel.GiftCards = delivery.GiftCards;
+                viewModel.GiftCardsEligible = delivery.GiftCardsEligible;
+
+                var client = db.Clients.Find(delivery.ClientId);
+                if (client != null)
+                {
+                    viewModel.Client = client;
+                    viewModel.ClientNameAddress = client.LastName + ", " + client.FirstName
+                                                  + " " + client.StreetNumber + " " + client.StreetName + " " +
+                                                  client.Zip;
+                    viewModel.Notes = client.Notes;
+                    viewModel.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
+                    viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
+                    if (client.Notes != null)
                     {
-                        if (item.Value == viewModel.Zip)
-                        {
-                            item.Selected = true;
-                            break;
-                        }
+                        viewModel.NotesToolTip = client.Notes.Replace(" ", "\u00a0");
+                        var s = viewModel.Notes;
+                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                        viewModel.Notes = s;
                     }
-
-                    viewModel.DeliveryDateODList = viewModel.ODList;
-                    foreach (var item in viewModel.DeliveryDateODList)
-                    {
-                        if (item.Value == viewModel.DeliveryDateODId)
-                        {
-                            item.Selected = true;
-                            break;
-                        }
-                    }
-
-                    viewModel.KidsCount = delivery.Children;
-                    viewModel.AdultsCount = delivery.Adults;
-                    viewModel.SeniorsCount = delivery.Seniors;
-
-                    viewModel.FullBags = delivery.FullBags;
-                    viewModel.HalfBags = delivery.HalfBags;
-                    viewModel.KidSnacks = delivery.KidSnacks;
-                    viewModel.GiftCards = delivery.GiftCards;
-                    viewModel.GiftCardsEligible = delivery.GiftCardsEligible;
-
-                    var client = db.Clients.Find(delivery.ClientId);
-                    if (client != null)
-                    {
-                        viewModel.Client = client;
-                        viewModel.ClientNameAddress = client.LastName + ", " + client.FirstName
-                                                      + " " + client.StreetNumber + " " + client.StreetName + " " +
-                                                      client.Zip;
-                        viewModel.Notes = client.Notes;
-                        viewModel.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
-                        viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
-                        if (client.Notes != null)
-                        {
-                            viewModel.NotesToolTip = client.Notes.Replace(" ", "\u00a0");
-                            var s = viewModel.Notes;
-                            s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
-                            viewModel.Notes = s;
-                        }
-                    }
+                }
                 
 
                 viewModel.Zip = delivery.Zip;
@@ -793,12 +793,12 @@ namespace BHelp.Controllers
                                 break;
                         }
 
-                    if (updateData.Status == 1 && updateData.FullBags == 0 && updateData.HalfBags == 0
-                        && updateData.KidSnacks == 0 && updateData.GiftCards == 0)
-                    {  // Cannot save delivery as completed with zero products: 
-                        return RedirectToAction("AdviseCannotSave", new { _id = delivery.Id });
-                    }
-                    db.Entry(updateData).State = EntityState.Modified;
+                        if (updateData.Status == 1 && updateData.FullBags == 0 && updateData.HalfBags == 0
+                            && updateData.KidSnacks == 0 && updateData.GiftCards == 0)
+                        {  // Cannot save delivery as completed with zero products: 
+                            return RedirectToAction("AdviseCannotSave", new { _id = delivery.Id });
+                        }
+                        db.Entry(updateData).State = EntityState.Modified;
                         db.SaveChanges();
                     }
                     if(delivery.ReturnURL.Contains("CallLogIndividual"))
@@ -934,8 +934,8 @@ namespace BHelp.Controllers
                     {
                         if (view != null)
                             view.ReportTitle = "CallLog " + view.DeliveryList[0].LastName
-                            + view.DeliveryList[0].FirstName.Substring(0, 1)
-                            + " " + DateTime.Today.ToString("MM-dd-yy");
+                                                          + view.DeliveryList[0].FirstName.Substring(0, 1)
+                                                          + " " + DateTime.Today.ToString("MM-dd-yy");
                     }
                     catch (Exception)
                     {

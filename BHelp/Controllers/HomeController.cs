@@ -17,6 +17,13 @@ namespace BHelp.Controllers
             return RedirectToAction("Index", "Users");
         }
 
+        public ActionResult Manual()
+        {
+            // Should open in the browser:
+            string filePath = "~/App_Data/Bhelp Administrator Manual.pdf";
+            return File(filePath, "application/pdf");
+        }
+
         public ActionResult UpdateMyProfile()
         {
             return RedirectToAction("Edit", "UpdateMyProfile");
