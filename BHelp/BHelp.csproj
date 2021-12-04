@@ -361,6 +361,7 @@
     <Compile Include="ViewModels\AddEditUserRolesViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="ViewModels\DocumentsViewModel.cs" />
     <Compile Include="ViewModels\MySqlViewModel.cs" />
     <Compile Include="ViewModels\OpenDeliveryViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -450,6 +451,7 @@
     <Content Include="Images\BHelp.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Images\PDF10.png" />
     <Content Include="Images\save-button.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -461,6 +463,18 @@
     </Content>
     <Content Include="..\.editorconfig">
       <Link>.editorconfig</Link>
+    </Content>
+    <Content Include="Documents\Bhelp Administrator Manual.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Documents\BH-number-of-bags-eligible.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Documents\BH-email.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Documents\BH-voice-msg.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="od-calllogProfile.pubxml" />
     <None Include="Properties\PublishProfiles\BhelpHostGator.pubxml" />
@@ -523,6 +537,9 @@
     <Content Include="Views\Deliveries\OpenFilters.cshtml" />
     <Content Include="Views\OD\AdviseDeliveryCreated.cshtml" />
     <Content Include="Views\Deliveries\AdviseCannotSave.cshtml" />
+    <Content Include="Views\OD\ViewODDocuments.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>

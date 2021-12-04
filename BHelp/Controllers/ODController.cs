@@ -365,6 +365,23 @@ namespace BHelp.Controllers
             return null;
         }
 
+        public ActionResult ViewODDocuments()
+        {
+            var upperBound = 3;
+            var view = new DocumentsViewModel
+            {
+                DocNames = new string[upperBound,2], // Display Name, File Name
+                DocNamesUpperBound = upperBound
+            };
+            view.DocNames[0, 0] = "Voice Messages";
+            view.DocNames[0, 1] = "/Documents/BH-voice-msg.pdf";
+            view.DocNames[1, 0] = "Email Messages";
+            view.DocNames[1, 1] = "/Documents/BH-email.pdf";
+            view.DocNames[2, 0] = "Food Eligibility";
+            view.DocNames[2, 1] = "/Documents/BH-number-of-bags-eligible.pdf";
+            return View(view);
+        }
+
         public ActionResult ReturnToDashboard()
         {
             return RedirectToAction("Index", "Home");
