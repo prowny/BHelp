@@ -117,6 +117,7 @@ namespace BHelp.Controllers
             {
                 household = (HouseholdViewModel)Session["ConfirmHousehold"];
             }
+
             if (btnSave != null) // Button Save and Exit was pressed
             {
                 SaveHouseholdData(household);
@@ -378,7 +379,7 @@ namespace BHelp.Controllers
             view.DocNames[1, 0] = "Email Messages";
             view.DocNames[1, 1] = "/Documents/BH-email.pdf";
             view.DocNames[2, 0] = "Food Eligibility";
-            view.DocNames[2, 1] = "/Documents/BH-number-of-bags-eligible.pdf";
+            view.DocNames[2, 1] = "/Documents/BH-food-eligibility.pdf";
             return View(view);
         }
 
