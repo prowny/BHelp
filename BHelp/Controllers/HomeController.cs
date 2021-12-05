@@ -30,7 +30,7 @@ namespace BHelp.Controllers
 
         public ActionResult ViewAdminDocuments()
         {
-            var upperBound = 2;
+            var upperBound = 3;
             var view = new DocumentsViewModel
             {
                 DocNames = new string[upperBound, 2], // Display Name, File Name
@@ -38,8 +38,10 @@ namespace BHelp.Controllers
             };
             view.DocNames[0, 0] = "Administrator Manual";
             view.DocNames[0, 1] = "/Documents/BH-administrator-manual.pdf";
-            view.DocNames[1, 0] = "Retrieve Database Tables";
-            view.DocNames[1, 1] = "/Documents/BH-retrieve-tables.pdf";
+            view.DocNames[1, 0] = "Program Description";
+            view.DocNames[1, 1] = "/Documents/BH-program-description.pdf";
+            view.DocNames[2, 0] = "Retrieve Database Tables";
+            view.DocNames[2, 1] = "/Documents/BH-retrieve-tables.pdf";
             return View(view);
         }
 
