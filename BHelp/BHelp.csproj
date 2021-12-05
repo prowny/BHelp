@@ -464,7 +464,7 @@
     <Content Include="..\.editorconfig">
       <Link>.editorconfig</Link>
     </Content>
-    <Content Include="Documents\Bhelp Administrator Manual.pdf">
+    <Content Include="Documents\BH-administrator-manual.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Documents\BH-email.pdf">
@@ -476,6 +476,7 @@
     <Content Include="Documents\BH-food-eligibility.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Documents\BH-retrieve-tables.pdf" />
     <None Include="od-calllogProfile.pubxml" />
     <None Include="Properties\PublishProfiles\BhelpHostGator.pubxml" />
     <None Include="Properties\PublishProfiles\od-calllogProfile.pubxml">
@@ -533,11 +534,18 @@
     <Content Include="Views\Deliveries\CallLogByDateDelivered.cshtml" />
     <Content Include="Views\Deliveries\HelperReport.cshtml" />
     <Content Include="Views\Household\ConfirmChangesSaved.cshtml" />
-    <Content Include="Views\OD\ConfirmCreateDelivery.cshtml" />
+    <Content Include="Views\OD\ConfirmCreateDelivery.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Views\Deliveries\OpenFilters.cshtml" />
-    <Content Include="Views\OD\AdviseDeliveryCreated.cshtml" />
+    <Content Include="Views\OD\AdviseDeliveryCreated.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Views\Deliveries\AdviseCannotSave.cshtml" />
     <Content Include="Views\OD\ViewODDocuments.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Home\ViewAdminDocuments.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Web.config">

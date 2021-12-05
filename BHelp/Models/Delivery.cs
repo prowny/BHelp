@@ -16,7 +16,7 @@ namespace BHelp.Models
         [DisplayName("Desired Delivery Date")]
         [Column(TypeName = "Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateTime DeliveryDate { get; set; }
+        public DateTime DeliveryDate { get; set; }  // UNUSED. Deprecated 11/21; use only DateDelivered 
 
         [DisplayName("Call Log Date")]
         [Column(TypeName = "Date")]

@@ -1,5 +1,6 @@
 ﻿using System.Web;
 using System.Web.Mvc;
+using BHelp.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 
@@ -25,6 +26,21 @@ namespace BHelp.Controllers
         public ActionResult ChangeMyPassword()
         {
             return RedirectToAction("ResetPassword", "Account");
+        }
+
+        public ActionResult ViewAdminDocuments()
+        {
+            var upperBound = 2;
+            var view = new DocumentsViewModel
+            {
+                DocNames = new string[upperBound, 2], // Display Name, File Name
+                DocNamesUpperBound = upperBound
+            };
+            view.DocNames[0, 0] = "Administrator Manual";
+            view.DocNames[0, 1] = "/Documents/BH-administrator-manual.pdf";
+            view.DocNames[1, 0] = "Retrieve Database Tables";
+            view.DocNames[1, 1] = "/Documents/BH-retrieve-tables.pdf";
+            return View(view);
         }
 
         public ActionResult MaintainUserRoles()
@@ -54,14 +70,15 @@ namespace BHelp.Controllers
             get { return HttpContext.GetOwinContext().Authentication; }
         }
 
-        public ActionResult UploadClients()
-        {
-            Utilities.UploadClients();
-            return RedirectToAction("Index", "Home");
-        }
         public ActionResult GetZipCodes()
         {
             AppRoutines.GetZipCodesSelectList();
+            return RedirectToAction("Index", "Home");
+        }
+
+        public ActionResult UploadClients()
+        {
+            Utilities.UploadClients();
             return RedirectToAction("Index", "Home");
         }
         public ActionResult UploadDeliveries()
