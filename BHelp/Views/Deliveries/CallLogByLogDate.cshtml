@@ -61,27 +61,37 @@
             </tr>
             @foreach (var delivery in Model.DeliveryList)
             {
-                <tr>
+            <tr>
+                @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
+                {
                     <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id })</td>
-                    <td>@delivery.LogDateString</td>
-                    @{ var name = delivery.LastName + ", " + delivery.FirstName; }
-                    @{ var addr = delivery.StreetNumber + " " + delivery.StreetName; }
-                    <td>@name</td>
-                    <td>@addr</td>
-                    <td>@delivery.DriverName</td>
-                    <td>@delivery.DateDeliveredString</td>
-                    <td>@delivery.SelectedStatus</td>
-                    <td style="text-align: center">@delivery.HouseoldCount</td>
-                    <td style="text-align: center">@delivery.Children</td>
-                    <td style="text-align: center">@delivery.Adults</td>
-                    <td style="text-align: center">@delivery.Seniors</td>
-                    <td style="text-align: center">@delivery.FullBags</td>
-                    <td style="text-align: center">@delivery.HalfBags</td>
-                    <td style="text-align: center">@delivery.KidSnacks</td>
-                    <td style="text-align: center">@delivery.GiftCards</td>
-                    <td style="text-align: center">@delivery.PoundsOfFood</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+                <td>@delivery.LogDateString</td>
+                @{ var name = delivery.LastName + ", " + delivery.FirstName; }
+                @{ var addr = delivery.StreetNumber + " " + delivery.StreetName; }
+                <td>@name</td>
+                <td>@addr</td>
+                <td>@delivery.DriverName</td>
+                <td>@delivery.DateDeliveredString</td>
+                <td>@delivery.SelectedStatus</td>
+                <td style="text-align: center">@delivery.HouseoldCount</td>
+                <td style="text-align: center">@delivery.Children</td>
+                <td style="text-align: center">@delivery.Adults</td>
+                <td style="text-align: center">@delivery.Seniors</td>
+                <td style="text-align: center">@delivery.FullBags</td>
+                <td style="text-align: center">@delivery.HalfBags</td>
+                <td style="text-align: center">@delivery.KidSnacks</td>
+                <td style="text-align: center">@delivery.GiftCards</td>
+                <td style="text-align: center">@delivery.PoundsOfFood</td>
+                @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
+                {
                     <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id })</td>
-                </tr>
+                }
+            </tr>
             }
         </table>
     }

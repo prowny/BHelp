@@ -1,6 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 using BHelp.ViewModels;
+using DocumentFormat.OpenXml.Office.CoverPageProps;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 
@@ -58,6 +59,10 @@ namespace BHelp.Controllers
         public ActionResult GoToBHelpSite()
         {
             return Redirect("https://www.bethesdahelp.org");
+        }
+        public ActionResult GoToHostGatorSite()
+        {
+            return Redirect("https://www.bethesdahelpfd.org");
         }
         public ActionResult LogOut()
         {

@@ -19,22 +19,28 @@
 <body>
     <div class="row">
         <div class="col-md-8">
+            <section id="switchToHostGator ">  @*unRem this section and rem out section 'loginForm'*@
+                @*<div>
+                    <b>This Website Has Moved!</b><br/>
+                    <a href="@Url.Action("GoToHostGatorSite", "Home")">Go To BethesdaHelpFD.org</a><br />
+                </div>*@
+            </section> 
             <section id="loginForm">
                 @using (Html.BeginForm("Login", "Account", FormMethod.Post))
                 {
                     @Html.AntiForgeryToken()
-                    <hr />
+                    <hr/>
                     <label class="field-validation-error">@Html.ValidationSummary(true, "", new { @class = "text-danger" })</label>
 
                     <table>
                         <tr>
-                            <td style="text-decoration:underline"><strong>Bethesda Help Food Delivery Program</strong></td> 
+                            <td style="text-decoration: underline"><strong>Bethesda Help Food Delivery Program</strong></td>
                         </tr>
                     </table>
 
                     <br/>
-                    @*<p>@Html.ActionLink("Register", "Register")</p>        Disabled 08/04/2020*@
-                    
+                    @*<p>@Html.ActionLink("Register", "Register")</p>*@
+
                     <div class="form-group focus">
                         @Html.LabelFor(m => m.UserName, new { @class = "col-md-2" })
                         <div class="form-group">
@@ -49,28 +55,15 @@
                             @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
                         </div>
                     </div>
-                    @*<div class="form-group">
-                            <div class="col-md-offset-2 col-md-10">
-                                <div class="checkbox">
-                                    @Html.CheckBoxFor(m => m.RememberMe)
-                                    @Html.LabelFor(m => m.RememberMe)
-                                </div>
-                            </div>
-                        </div>*@
                     <div>
                         <label class="field-validation-error">@Model.ErrorMessage</label>
                     </div>
                     <div class="form-group">
                         <br>
                         <div class="col-md-10">
-                            <input type="submit" value="Log in" class="btn" />
+                            <input type="submit" value="Log in" class="btn"/>
                         </div>
                     </div>
-
-                    @* Enable this once you have account confirmation enabled for password reset functionality
-                        <p>
-                            @Html.ActionLink("Forgot your password?", "ForgotPassword")
-                        </p>*@
                 }
             </section>
         </div>
@@ -87,8 +80,8 @@
 </html>
 <script type="text/javascript">
     $(document).ready(function () {
-        $(function () {
-            $('#UserName').focus();
+        window.$(function () {
+            window.$('#UserName').focus();
         });
     });
 

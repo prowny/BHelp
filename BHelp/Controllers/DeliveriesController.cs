@@ -20,7 +20,7 @@ namespace BHelp.Controllers
 
         // GET: Deliveries
         public ActionResult Index()
-        {
+        {  // Get only Open Deliveries:
             var listDeliveries = new List<Delivery>(db.Deliveries).Where(d =>  d.Status == 0)
                 .OrderBy(z => z.Zip).ToList();
             var listDeliveryViewModels = new List<DeliveryViewModel>();

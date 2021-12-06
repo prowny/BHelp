@@ -60,7 +60,14 @@
             @foreach (var delivery in Model.DeliveryList)
             {
                 <tr>
+                    @if(User.IsInRole("Administrator") || User.IsInRole("Staff"))
+                    {
                     <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id, delivery.DateDeliveredString })</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
                     <td>@delivery.DateDeliveredString</td>
                     @{ var name = delivery.LastName + ", " + delivery.FirstName; }
                     @{ var addr = delivery.StreetNumber + " " + delivery.StreetName; }
@@ -77,7 +84,10 @@
                     <td style="text-align: center">@delivery.KidSnacks</td>
                     <td style="text-align: center">@delivery.GiftCards</td>
                     <td style="text-align: center">@delivery.PoundsOfFood</td>
-                    <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id, delivery.DateDeliveredString })</td>
+                    @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
+                    {
+                        <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id, delivery.DateDeliveredString })</td>
+                    }
                 </tr>
             }
         </table>

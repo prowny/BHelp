@@ -47,7 +47,7 @@
     {
         <tr>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id, desiredDeliveryDate = item.DateDelivered})
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id, desiredDeliveryDate = item.DateDelivered })
             </td>
             <td>@Html.DisplayFor(modelItem => item.DateDeliveredString)</td>
             @if (item.EligiibilityRulesException)
