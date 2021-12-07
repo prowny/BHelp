@@ -757,7 +757,11 @@ namespace BHelp.Controllers
                                 "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId,Completed," +
                                 "DeliveryDate,ODId,DeliveryDateODId,ReturnURL,SelectedStatus,Zip")] DeliveryViewModel delivery)
             {
-                if (ModelState.IsValid)
+            // DriverId and DeliveryDateODId are used in Edit dropdowns and return a
+            // text value of '0' when 'nobody yet' is selected:
+            if (delivery.DriverId == "0") delivery.DriverId = null;
+            if (delivery.DeliveryDateODId == "0") delivery.DeliveryDateODId = null;
+            if (ModelState.IsValid)
                 {
                     var updateData  = db.Deliveries.Find(delivery.Id);
 
