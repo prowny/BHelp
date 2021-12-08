@@ -960,7 +960,7 @@ namespace BHelp.Controllers
                 }  
          
                 List<Delivery> deliveries = db.Deliveries
-                    .Where(d => d.DateDelivered >= startDate && d.DateDelivered <= endDate)
+                    .Where(d => d.LogDate >= startDate && d.LogDate <= endDate)
                     .OrderByDescending(d => d.DateDelivered).ToList();
                 var callLogView = new DeliveryViewModel
                 {
