@@ -113,10 +113,9 @@ namespace BHelp.Controllers
         private void WriteToLoginTable(string userName, string status)
         {
             var login = new Login { UserName = userName };
-            var user=new ApplicationUser();
             if (db.Users.Any(u => u.UserName == userName))
             {
-                user = (from u in db.Users where u.UserName == userName select u).Single();
+                var user = (from u in db.Users where u.UserName == userName select u).Single();
                 login.FirstName = user.FirstName;
                 login.LastName = user.LastName;
             }
