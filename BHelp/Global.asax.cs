@@ -21,7 +21,8 @@ namespace BHelp
             HttpContext.Current.Session.Add("CurrentUserFullName", "");  // (initialize variable)
             DateTime cdt =DateTime.Today.AddDays(1); // (initialize variable to tomorrow's date)
             var callLogDate = cdt.ToString("MM/dd/yyyy");
-            HttpContext.Current.Session.Add("CallLogDate", callLogDate); 
+            HttpContext.Current.Session.Add("CallLogDate", callLogDate);
+            Session.Timeout = 120;
         }
 
         protected void Application_BeginRequest()

@@ -133,6 +133,7 @@ namespace BHelp.Controllers
 
             //  ===== Button Create Delivery OR btnDeliveryConfirmed was pressed =====
 
+            SaveHouseholdData(household);
             var clientId = household.ClientId;
             var userid = System.Web.HttpContext.Current.User.Identity.GetUserId();
             var client = db.Clients.Find(clientId);
@@ -209,8 +210,8 @@ namespace BHelp.Controllers
             }
             return RedirectToAction("Index");
         }
-
-        private void SaveHouseholdData(HouseholdViewModel household) //, List<FamilyMember> famList)
+        
+        private void SaveHouseholdData(HouseholdViewModel household) 
         {
             var cli = db.Clients.Find(household.ClientId);
             if (cli != null) // update client
