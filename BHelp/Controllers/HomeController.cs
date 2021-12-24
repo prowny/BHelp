@@ -1,7 +1,6 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 using BHelp.ViewModels;
-using DocumentFormat.OpenXml.Office.CoverPageProps;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 
@@ -53,7 +52,7 @@ namespace BHelp.Controllers
 
         public ActionResult ReturnToDashboard()
         {
-            return RedirectToAction("Index", "Home");
+            return User.Identity.Name == null ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
 
         public ActionResult GoToBHelpSite()
@@ -80,18 +79,18 @@ namespace BHelp.Controllers
         public ActionResult GetZipCodes()
         {
             AppRoutines.GetZipCodesSelectList();
-            return RedirectToAction("Index", "Home");
+            return User.Identity.Name == null ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
 
         public ActionResult UploadClients()
         {
             Utilities.UploadClients();
-            return RedirectToAction("Index", "Home");
+            return User.Identity.Name == null ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
         public ActionResult UploadDeliveries()
         {
             Utilities.UploadDeliveries();
-            return RedirectToAction("Index", "Home");
+            return User.Identity.Name == null ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
         public ActionResult CopyClientZipToDelivery()
         {

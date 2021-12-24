@@ -1721,7 +1721,7 @@ namespace BHelp.Controllers
             }
             public ActionResult ReturnToDashboard()
             {
-                return RedirectToAction("Index", "Home");
+                return User.Identity.Name == null ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
             }
             public ActionResult ReturnToReportsMenu()
             {

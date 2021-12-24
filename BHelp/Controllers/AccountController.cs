@@ -228,24 +228,24 @@ namespace BHelp.Controllers
                     //    {
                     //        var plainTextContent = "New Registration: " + user.FullName + " " + user.Email;
 
-                            //using (MailMessage msg = new MailMessage())
-                            //{
-                            //    msg.From = new MailAddress("Admin@SenecaHeights.org", "Administrator, SHEP");
-                            //    msg.To.Add(new MailAddress(dbUser.Email, user.FirstName));
-                            //    msg.Subject = "SHEP / HFED Seneca Heights Programs";
-                            //    msg.Body = plainTextContent;
-                            //    msg.IsBodyHtml = false;
-                            //    msg.Priority = MailPriority.Normal;
-                            //    using (SmtpClient mailClient = new SmtpClient("SenecaHeights.org", 587))
-                            //    {
-                            //        mailClient.Credentials = new NetworkCredential("Admin@SenecaHeights.org", "@fEfY8-9vFFDwD!YTo!A");
-                            //        await mailClient.SendMailAsync(msg);
-                            //    }
-                            //}
+                    //using (MailMessage msg = new MailMessage())
+                    //{
+                    //    msg.From = new MailAddress("Admin@SenecaHeights.org", "Administrator, SHEP");
+                    //    msg.To.Add(new MailAddress(dbUser.Email, user.FirstName));
+                    //    msg.Subject = "SHEP / HFED Seneca Heights Programs";
+                    //    msg.Body = plainTextContent;
+                    //    msg.IsBodyHtml = false;
+                    //    msg.Priority = MailPriority.Normal;
+                    //    using (SmtpClient mailClient = new SmtpClient("SenecaHeights.org", 587))
+                    //    {
+                    //        mailClient.Credentials = new NetworkCredential("Admin@SenecaHeights.org", "@fEfY8-9vFFDwD!YTo!A");
+                    //        await mailClient.SendMailAsync(msg);
+                    //    }
+                    //}
                     //    }
                     //}
                     //return RedirectToAction("Login", "Account");
-                    return RedirectToAction("Index", "Home");
+                    return User.Identity.Name == null ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
             }
@@ -425,7 +425,7 @@ namespace BHelp.Controllers
                 }
             }
 
-            return RedirectToAction("Index", "Home");
+            return User.Identity.Name == null ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
         public async Task<ActionResult> EmailSheduleChange(ApplicationUser tutor, string msgText)
         {
@@ -611,7 +611,7 @@ namespace BHelp.Controllers
         }
         public ActionResult ReturnToDashboard()
         {
-            return RedirectToAction("Index", "Home");
+            return User.Identity.Name == null ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
 
 
@@ -642,7 +642,7 @@ namespace BHelp.Controllers
             {
                 return Redirect(returnUrl);
             }
-            return RedirectToAction("Index", "Home");
+            return User.Identity.Name == null ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
 
         internal class ChallengeResult : HttpUnauthorizedResult
