@@ -1,6 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 using BHelp.ViewModels;
+using Castle.Core.Internal;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 
@@ -52,7 +53,7 @@ namespace BHelp.Controllers
 
         public ActionResult ReturnToDashboard()
         {
-            return User.Identity.Name == null ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
+            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
 
         public ActionResult GoToBHelpSite()
@@ -79,18 +80,18 @@ namespace BHelp.Controllers
         public ActionResult GetZipCodes()
         {
             AppRoutines.GetZipCodesSelectList();
-            return User.Identity.Name == null ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
+            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
 
         public ActionResult UploadClients()
         {
             Utilities.UploadClients();
-            return User.Identity.Name == null ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
+            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
         public ActionResult UploadDeliveries()
         {
             Utilities.UploadDeliveries();
-            return User.Identity.Name == null ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
+            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
         public ActionResult CopyClientZipToDelivery()
         {

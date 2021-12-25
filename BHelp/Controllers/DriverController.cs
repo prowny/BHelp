@@ -157,7 +157,7 @@ namespace BHelp.Controllers
 
         public ActionResult ReturnToDashboard()
         {
-            return RedirectToAction("Index", "Home");
+            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
         protected override void Dispose(bool disposing)
         {
