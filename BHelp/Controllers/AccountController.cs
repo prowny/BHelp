@@ -13,7 +13,6 @@ using System;
 using System.Net.Mail;
 using BHelp.ViewModels;
 using System.Net;
-using Castle.Core.Internal;
 
 namespace BHelp.Controllers
 {
@@ -245,8 +244,8 @@ namespace BHelp.Controllers
                     //}
                     //    }
                     //}
-                    //return RedirectToAction("Login", "Account");
-                    return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
+                    return RedirectToAction("Login", "Account");
+                    //return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
             }
@@ -426,7 +425,7 @@ namespace BHelp.Controllers
                 }
             }
 
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home");
         }
         public async Task<ActionResult> EmailSheduleChange(ApplicationUser tutor, string msgText)
         {
@@ -612,7 +611,7 @@ namespace BHelp.Controllers
         }
         public ActionResult ReturnToDashboard()
         {
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home");
         }
         
         #region Helpers
@@ -641,7 +640,7 @@ namespace BHelp.Controllers
             {
                 return Redirect(returnUrl);
             }
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home");
         }
 
         internal class ChallengeResult : HttpUnauthorizedResult
