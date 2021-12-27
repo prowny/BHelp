@@ -219,6 +219,8 @@
     <Compile Include="Controllers\FamilyMembersController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Controllers\GroupMembersController.cs" />
+    <Compile Include="Controllers\GroupNamesController.cs" />
     <Compile Include="Controllers\HomeController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -245,6 +247,7 @@
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Migrations\202105031920299_RetryInitial.cs" />
     <Compile Include="Migrations\202105031920299_RetryInitial.designer.cs">
@@ -350,6 +353,8 @@
     <Compile Include="Models\FamilyMember.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Models\GroupMember.cs" />
+    <Compile Include="Models\GroupName.cs" />
     <Compile Include="Models\Login.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -551,6 +556,14 @@
     <Content Include="Views\Home\ViewAdminDocuments.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Views\GroupNames\Create.cshtml" />
+    <Content Include="Views\GroupNames\Index.cshtml" />
+    <Content Include="Views\GroupNames\Edit.cshtml" />
+    <Content Include="Views\GroupNames\Delete.cshtml" />
+    <Content Include="Views\GroupMembers\Index.cshtml" />
+    <Content Include="Views\GroupMembers\Create.cshtml" />
+    <Content Include="Views\GroupMembers\Edit.cshtml" />
+    <Content Include="Views\GroupMembers\Delete.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
