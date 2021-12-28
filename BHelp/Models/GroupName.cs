@@ -13,5 +13,8 @@ namespace BHelp.Models
 
         [NotMapped]
         public IEnumerable<GroupName> GroupNameList { get; set; }
+
+        [NotMapped]
+        public List<GroupMember> GroupMembersList { get; set; } 
     }
 }

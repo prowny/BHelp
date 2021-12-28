@@ -152,3 +152,18 @@ function UpdateDesiredDeliveryDate(ddDate) {
         }
     });
 }
+
+function GetGroupMembers()
+{
+    var _groupId = window.$(this).val();
+    window.$.ajax({
+        url: "/GroupMembers/GetGroupMembers",
+        data: { groupId: _groupId },
+        type: "GET",
+        dataType: "JSON",
+        success: function (data) {
+            window.$("#MembersDiv").show();
+            var dummy = "";
+        }
+    });   // $.ajax({
+}

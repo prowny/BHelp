@@ -1,47 +1,45 @@
-﻿@model IEnumerable<BHelp.Models.GroupMember>
-
-@{
-    Layout = null;
-}
-
+﻿@model BHelp.Models.GroupMember
+@{ Layout = null; }
 <!DOCTYPE html>
 
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    @*Put page javascript in a separate .js file where breaks can be set during debugging:*@
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
 </head>
 <body>
-    <p>
-        @Html.ActionLink("Create New", "Create")
-    </p>
+<div>
+    <table>
+        <tr>
+            <td><b>Group Members</b></td>
+        </tr>
+    </table>
+</div>
+<div id ="SelectGroup">
     <table class="table">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NameId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ClientId)
-            </th>
-            <th></th>
-        </tr>
-    
-    @foreach (var item in Model) {
-        <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.NameId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ClientId)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+                @Html.DropDownList("select_group",Model.GroupNameSelectList, "-Select Group-")
             </td>
         </tr>
-    }
-    
     </table>
+</div>
+<div id="MembersDiv" style="display: none">
+    <table>
+        <tr>
+            <td>@Html.Label("Hello")</td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $("#select_group").change(GetGroupMembers);
+</script>
 </body>
 </html>
