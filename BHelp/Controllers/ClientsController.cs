@@ -84,7 +84,7 @@ namespace BHelp.Controllers
         public ActionResult Create()
         {
             var viewModel = new ClientViewModel {FamilyMembers = new List<FamilyMember>()};
-            // Empty family members:  
+            // Add Empty family members:  
             for (int i = 0; i < 10; i++)
             {
                 var newMember = new FamilyMember

@@ -1,15 +1,14 @@
 ﻿@model BHelp.Models.GroupName
-
-@{
-    Layout = null;
-}
-
+@{ Layout = null; }
 <!DOCTYPE html>
 
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Create</title>
+    <style>
+        #btnCreate {background-color: blue;color: white}
+    </style>
 </head>
 <body>
     @using (Html.BeginForm()) 
@@ -17,7 +16,7 @@
         @Html.AntiForgeryToken()
         
         <div class="form-horizontal">
-            <h4>GroupName</h4>
+            <h4>New Group Name</h4>
             <hr />
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             <div class="form-group">
@@ -27,17 +26,18 @@
                     @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
                 </div>
             </div>
-    
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Create" class="btn btn-default" />
+                    <input type="submit" value="Create" class="btn btn-default" id="btnCreate" />
                 </div>
             </div>
         </div>
     }
-    
+    <br/>
     <div>
         @Html.ActionLink("Back to List", "Index")
+        <br/>
+        @Html.ActionLink("Return to Dashboard", "ReturnToDashboard")
     </div>
 </body>
 </html>

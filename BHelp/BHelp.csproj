@@ -249,93 +249,9 @@
       <DependentUpon>Global.asax</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Migrations\202105031920299_RetryInitial.cs" />
-    <Compile Include="Migrations\202105031920299_RetryInitial.designer.cs">
-      <DependentUpon>202105031920299_RetryInitial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202105032031435_AddFamilyMembers.cs" />
-    <Compile Include="Migrations\202105032031435_AddFamilyMembers.designer.cs">
-      <DependentUpon>202105032031435_AddFamilyMembers.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202105040105068_AddFamilyForeignKey.cs" />
-    <Compile Include="Migrations\202105040105068_AddFamilyForeignKey.designer.cs">
-      <DependentUpon>202105040105068_AddFamilyForeignKey.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202105201945047_RedoDeliveriesMigration.cs" />
-    <Compile Include="Migrations\202105201945047_RedoDeliveriesMigration.designer.cs">
-      <DependentUpon>202105201945047_RedoDeliveriesMigration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202105202151257_AddODIdToTable.cs" />
-    <Compile Include="Migrations\202105202151257_AddODIdToTable.designer.cs">
-      <DependentUpon>202105202151257_AddODIdToTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202105202216114_RemoveODId.cs" />
-    <Compile Include="Migrations\202105202216114_RemoveODId.designer.cs">
-      <DependentUpon>202105202216114_RemoveODId.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202105202223500_RdoODIdAsString.cs" />
-    <Compile Include="Migrations\202105202223500_RdoODIdAsString.designer.cs">
-      <DependentUpon>202105202223500_RdoODIdAsString.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202105210012090_AddDateDelivered.cs" />
-    <Compile Include="Migrations\202105210012090_AddDateDelivered.designer.cs">
-      <DependentUpon>202105210012090_AddDateDelivered.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202105291413141_AddODnotes.cs" />
-    <Compile Include="Migrations\202105291413141_AddODnotes.designer.cs">
-      <DependentUpon>202105291413141_AddODnotes.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202105301541287_AddDriverNotes.cs" />
-    <Compile Include="Migrations\202105301541287_AddDriverNotes.designer.cs">
-      <DependentUpon>202105301541287_AddDriverNotes.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202105301953540_AddGiftCardsEligibleTpDelivery.cs" />
-    <Compile Include="Migrations\202105301953540_AddGiftCardsEligibleTpDelivery.designer.cs">
-      <DependentUpon>202105301953540_AddGiftCardsEligibleTpDelivery.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202105310048262_SetDeliveryDateNullable.cs" />
-    <Compile Include="Migrations\202105310048262_SetDeliveryDateNullable.designer.cs">
-      <DependentUpon>202105310048262_SetDeliveryDateNullable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202105310115064_AddDriverIdToDelivery.cs" />
-    <Compile Include="Migrations\202105310115064_AddDriverIdToDelivery.designer.cs">
-      <DependentUpon>202105310115064_AddDriverIdToDelivery.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202106101808523_UserRolesUpgrade.cs" />
-    <Compile Include="Migrations\202106101808523_UserRolesUpgrade.designer.cs">
-      <DependentUpon>202106101808523_UserRolesUpgrade.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202106220106204_AddAgeCategoryCountsToDelivery.cs" />
-    <Compile Include="Migrations\202106220106204_AddAgeCategoryCountsToDelivery.designer.cs">
-      <DependentUpon>202106220106204_AddAgeCategoryCountsToDelivery.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202106281501327_AddZipToDelivery.cs" />
-    <Compile Include="Migrations\202106281501327_AddZipToDelivery.designer.cs">
-      <DependentUpon>202106281501327_AddZipToDelivery.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202107042319004_AddSnapshotToDelivery.cs" />
-    <Compile Include="Migrations\202107042319004_AddSnapshotToDelivery.designer.cs">
-      <DependentUpon>202107042319004_AddSnapshotToDelivery.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202107062204233_AddStartEndNotesToUser.cs" />
-    <Compile Include="Migrations\202107062204233_AddStartEndNotesToUser.designer.cs">
-      <DependentUpon>202107062204233_AddStartEndNotesToUser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202108172001493_ChangeDeliveryDateType.cs" />
-    <Compile Include="Migrations\202108172001493_ChangeDeliveryDateType.designer.cs">
-      <DependentUpon>202108172001493_ChangeDeliveryDateType.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202110251601420_AddFirstDelivery.cs" />
-    <Compile Include="Migrations\202110251601420_AddFirstDelivery.designer.cs">
-      <DependentUpon>202110251601420_AddFirstDelivery.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202110251927382_AddStatusAndSecondODId.cs" />
-    <Compile Include="Migrations\202110251927382_AddStatusAndSecondODId.designer.cs">
-      <DependentUpon>202110251927382_AddStatusAndSecondODId.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202111261412208_ChangeProductIntToNonNullable.cs" />
-    <Compile Include="Migrations\202111261412208_ChangeProductIntToNonNullable.Designer.cs">
-      <DependentUpon>202111261412208_ChangeProductIntToNonNullable.cs</DependentUpon>
+    <Compile Include="Migrations\202112281608060_AddGroups.cs" />
+    <Compile Include="Migrations\202112281608060_AddGroups.Designer.cs">
+      <DependentUpon>202112281608060_AddGroups.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs">
@@ -750,7 +666,12 @@
     <Content Include="Views\Deliveries\CallLogByLogDate.cshtml" />
     <Content Include="Views\Deliveries\Index.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202112281608060_AddGroups.resx">
+      <DependentUpon>202112281608060_AddGroups.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -780,74 +701,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202105031920299_RetryInitial.resx">
-      <DependentUpon>202105031920299_RetryInitial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202105032031435_AddFamilyMembers.resx">
-      <DependentUpon>202105032031435_AddFamilyMembers.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202105040105068_AddFamilyForeignKey.resx">
-      <DependentUpon>202105040105068_AddFamilyForeignKey.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202105201945047_RedoDeliveriesMigration.resx">
-      <DependentUpon>202105201945047_RedoDeliveriesMigration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202105202151257_AddODIdToTable.resx">
-      <DependentUpon>202105202151257_AddODIdToTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202105202216114_RemoveODId.resx">
-      <DependentUpon>202105202216114_RemoveODId.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202105202223500_RdoODIdAsString.resx">
-      <DependentUpon>202105202223500_RdoODIdAsString.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202105210012090_AddDateDelivered.resx">
-      <DependentUpon>202105210012090_AddDateDelivered.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202105291413141_AddODnotes.resx">
-      <DependentUpon>202105291413141_AddODnotes.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202105301541287_AddDriverNotes.resx">
-      <DependentUpon>202105301541287_AddDriverNotes.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202105301953540_AddGiftCardsEligibleTpDelivery.resx">
-      <DependentUpon>202105301953540_AddGiftCardsEligibleTpDelivery.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202105310048262_SetDeliveryDateNullable.resx">
-      <DependentUpon>202105310048262_SetDeliveryDateNullable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202105310115064_AddDriverIdToDelivery.resx">
-      <DependentUpon>202105310115064_AddDriverIdToDelivery.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202106101808523_UserRolesUpgrade.resx">
-      <DependentUpon>202106101808523_UserRolesUpgrade.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202106220106204_AddAgeCategoryCountsToDelivery.resx">
-      <DependentUpon>202106220106204_AddAgeCategoryCountsToDelivery.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202106281501327_AddZipToDelivery.resx">
-      <DependentUpon>202106281501327_AddZipToDelivery.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202107042319004_AddSnapshotToDelivery.resx">
-      <DependentUpon>202107042319004_AddSnapshotToDelivery.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202107062204233_AddStartEndNotesToUser.resx">
-      <DependentUpon>202107062204233_AddStartEndNotesToUser.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202108172001493_ChangeDeliveryDateType.resx">
-      <DependentUpon>202108172001493_ChangeDeliveryDateType.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202110251601420_AddFirstDelivery.resx">
-      <DependentUpon>202110251601420_AddFirstDelivery.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202110251927382_AddStatusAndSecondODId.resx">
-      <DependentUpon>202110251927382_AddStatusAndSecondODId.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202111261412208_ChangeProductIntToNonNullable.resx">
-      <DependentUpon>202111261412208_ChangeProductIntToNonNullable.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

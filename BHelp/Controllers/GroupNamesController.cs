@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
+using Castle.Core.Internal;
 
 namespace BHelp.Controllers
 {
@@ -13,7 +14,10 @@ namespace BHelp.Controllers
         public ActionResult Index()
         {
             var groupNamesList = db.GroupNames.OrderBy(n => n.Name).ToList();
-            var groupNamesView = new List<GroupName>();
+            var groupNamesView = new GroupName
+            {
+                GroupNameList = groupNamesList
+            };
             return View(groupNamesView);
         }
 
@@ -31,40 +35,36 @@ namespace BHelp.Controllers
 
         // POST: Group/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create([Bind(Include = "Id,Name")] GroupName groupName)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add insert logic here
-
+                db.GroupNames.Add(groupName);
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(groupName);
         }
 
         // GET: Group/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            GroupName groupName = db.GroupNames.Find(id);
+            if (groupName == null) return HttpNotFound();
+            
+            return View(groupName);
         }
 
         // POST: Group/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(int id, GroupName groupName)
         {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            if (!ModelState.IsValid) return View(groupName);
+            if (groupName.Name == null) { groupName.Name = ""; }
+            db.Entry(groupName).State = EntityState.Modified;
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         // GET: Group/Delete/5
@@ -87,6 +87,10 @@ namespace BHelp.Controllers
             {
                 return View();
             }
+        }
+        public ActionResult ReturnToDashboard()
+        {
+            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
     }
 }
