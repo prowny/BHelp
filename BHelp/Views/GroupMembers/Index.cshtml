@@ -1,4 +1,5 @@
-﻿@model BHelp.Models.GroupMember
+﻿@using System.Web.Mvc.Html
+@model BHelp.ViewModels.GroupMemberViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -10,8 +11,7 @@
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
-    @*Put page javascript in a separate .js file where breaks can be set during debugging:*@
-    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
+   <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
 </head>
 <body>
 <div>
@@ -25,7 +25,7 @@
     <table class="table">
         <tr>
             <td>
-                @Html.DropDownList("select_group",Model.GroupNameSelectList, "-Select Group-")
+                @Html.DropDownList("selectGroupDDL",Model.GroupNameSelectList, "-Select Group-")
             </td>
         </tr>
     </table>
@@ -33,13 +33,31 @@
 <div id="MembersDiv" style="display: none">
     <table>
         <tr>
-            <td>@Html.Label("Hello")</td>
+            <td>
+                @Html.DropDownList("groupMembersDDL", Model.ClientGroupMembers)
+            </td>
+            <td>
+                &nbsp;&nbsp;@Html.Label("Add Member: ")
+                @Html.DropDownList("selectClientDDL", Model.AllClients)
+            </td>
         </tr>
     </table>
 </div>
-
+<br/>
+<div>
+    <table>
+        <tr>
+            <td>
+                @Html.ActionLink("Return To Dashboard", "ReturnToDashboard")
+            </td>
+        </tr>
+    </table>
+</div>
 <script type="text/javascript">
-    $("#select_group").change(GetGroupMembers);
+    $("#selectGroupDDL").change(GetGroupMembers);
+</script>
+<script type="text/javascript">
+    $("#selectClientDDL").change(AddGroupMember);
 </script>
 </body>
 </html>

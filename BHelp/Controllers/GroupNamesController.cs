@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
+using BHelp.ViewModels;
 using Castle.Core.Internal;
 
 namespace BHelp.Controllers
@@ -14,7 +15,7 @@ namespace BHelp.Controllers
         public ActionResult Index()
         {
             var groupNamesList = db.GroupNames.OrderBy(n => n.Name).ToList();
-            var groupNamesView = new GroupName
+            var groupNamesView = new GroupNameViewModel
             {
                 GroupNameList = groupNamesList
             };
@@ -35,11 +36,12 @@ namespace BHelp.Controllers
 
         // POST: Group/Create
         [HttpPost]
-        public ActionResult Create([Bind(Include = "Id,Name")] GroupName groupName)
+        public ActionResult Create([Bind(Include = "Id,Name")] GroupNameViewModel groupName)
         {
             if (ModelState.IsValid)
             {
-                db.GroupNames.Add(groupName);
+                GroupName gpNm = new GroupName { Name = groupName.Name };
+                db.GroupNames.Add(gpNm);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -53,12 +55,13 @@ namespace BHelp.Controllers
             GroupName groupName = db.GroupNames.Find(id);
             if (groupName == null) return HttpNotFound();
             
-            return View(groupName);
+            var groupNameView = new GroupNameViewModel { Name = groupName.Name };
+            return View(groupNameView);
         }
 
         // POST: Group/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, GroupName groupName)
+        public ActionResult Edit([Bind(Include = "Id, Name")] GroupNameViewModel groupName)
         {
             if (!ModelState.IsValid) return View(groupName);
             if (groupName.Name == null) { groupName.Name = ""; }

@@ -1,5 +1,7 @@
-﻿function UpdateCallLogDate(callLogDate) {
-    $.ajax({
+﻿var _groupId;  // for parameter passing
+
+function UpdateCallLogDate(callLogDate) {
+    window.$.ajax({
         url: '/OD/Index',
         data: { callLogDate: callLogDate },
         type: "POST",
@@ -14,7 +16,7 @@
 }
 
 function UpdateDriverLogDate(callLogDate) {
-    $.ajax({
+    window.$.ajax({
         url: '/Driver/Index',
         data: { logDate: callLogDate },
         type: "POST",
@@ -45,7 +47,7 @@ function SearchClients()
 }
 
 function SearchHouseholds(text) {
-    $.ajax({
+    window.$.ajax({
         url: "/OD/Index",
         data:
         { searchString: text },
@@ -92,12 +94,12 @@ function CountyReport() {
 }
 
 function HelperReport() {
-    $.ajax({
+    window.$.ajax({
         url: "/Deliveries/HelperReport",
-        data: { yy: $("#Year").val(), mm: $("#Month").val() },
+        data: { yy: window.$("#Year").val(), mm: window.$("#Month").val() },
         type: "POST",
         success: function (data) {
-            $("body").html(data); // to refresh the page
+            window.$("body").html(data); // to refresh the page
             //var dummy =xx;
         },
         error: function (jqxhr, status, exception) {
@@ -108,12 +110,12 @@ function HelperReport() {
 
 function EditCallLog()
 {
-    $.ajax({
+    window.$.ajax({
         url: "/Deliveries/CallLogIndividual",
-        data: { id: $("#clientList").val() },
+        data: { id: window.$("#clientList").val() },
         type: "POST",
         success: function (data) {
-            $("body").html(data); // to refresh the page
+            window.$("body").html(data); // to refresh the page
             //var dummy =xx;
         },
         error: function (jqxhr, status, exception) {
@@ -124,9 +126,9 @@ function EditCallLog()
 }
 
 function flagChanges() {
-    $.ajax({
+    window.$.ajax({
         url: "/OD/FlagChanges",
-        data: { Id: $("#client_Id").val() },
+        data: { Id: window.$("#client_Id").val() },
         type: "POST",
         success: function() {
             //var dummy = "";
@@ -155,7 +157,7 @@ function UpdateDesiredDeliveryDate(ddDate) {
 
 function GetGroupMembers()
 {
-    var _groupId = window.$(this).val();
+    _groupId = window.$(this).val();
     window.$.ajax({
         url: "/GroupMembers/GetGroupMembers",
         data: { groupId: _groupId },
@@ -163,7 +165,21 @@ function GetGroupMembers()
         dataType: "JSON",
         success: function (data) {
             window.$("#MembersDiv").show();
-            var dummy = "";
+            //var dummy = "";
         }
     });   // $.ajax({
+}
+
+function AddGroupMember() {
+    var _clientId = window.$(this).val();
+    window.$.ajax({
+        url: "/GroupMembers/AddGroupMember",
+        data: { groupId: _groupId, clientId:_clientId },
+        type: "GET",
+        dataType: "JSON",
+        success: function() {
+            window.$("#MembersDiv").show();
+            //var dummy = "";
+        }
+    }); // $.ajax({
 }

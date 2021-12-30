@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BHelp.Models
 {
@@ -10,11 +8,5 @@ namespace BHelp.Models
 
         [DisplayName ("Group Name")]
         public string Name { get; set; }
-
-        [NotMapped]
-        public IEnumerable<GroupName> GroupNameList { get; set; }
-
-        [NotMapped]
-        public List<GroupMember> GroupMembersList { get; set; } 
     }
 }
