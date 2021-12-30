@@ -158,12 +158,20 @@ function UpdateDesiredDeliveryDate(ddDate) {
 function GetGroupMembers()
 {
     _groupId = window.$(this).val();
+   
     window.$.ajax({
         url: "/GroupMembers/GetGroupMembers",
         data: { groupId: _groupId },
         type: "GET",
         dataType: "JSON",
         success: function (data) {
+            window.$("#groupMembersDDL").empty();
+            var s = "";
+            for (var i = 0; i < data.length; i++) {
+                s += '<option value="' + data[i].Value + '">' + data[i].Text + '</option>';
+            }
+            window.$("#groupMembersDDL").html(s) ;
+        
             window.$("#MembersDiv").show();
             //var dummy = "";
         }

@@ -120,12 +120,9 @@ namespace BHelp.Controllers
             };
             var groupMembers = db.GroupMembers
                 .Where(gp => gp.NameId == groupId).ToList();
-            groupMembersView.ClientGroupMembers.Add(new SelectListItem()
-                { Text = @"-Add Member-", Value = "0", Selected = false });
-            for (var index = 0; index < groupMembers.Count; index++)
+            foreach (var member in groupMembers)
             {
-                var clientId = groupMembers[index].ClientId;
-                var client = db.Clients.Find(clientId);
+                var client = db.Clients.Find(member.ClientId);
                 if (client != null)
                 {
                     groupMembersView.ClientGroupMembers.Add(new SelectListItem()
@@ -135,7 +132,8 @@ namespace BHelp.Controllers
 
             try
             {
-                var json = JsonConvert.SerializeObject(groupMembersView, Formatting.Indented);
+                var json = JsonConvert.SerializeObject(groupMembersView.ClientGroupMembers
+                    , Formatting.Indented);
                 return Content(json, "application/json");
             }
             catch (Exception)
