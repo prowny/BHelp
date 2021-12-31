@@ -5,27 +5,29 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width"/>
     <title>Index</title>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
-   <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
 </head>
 <body>
 <div>
     <table>
         <tr>
             <td><b>Group Members</b></td>
+            @if(Model.SelectedGroupId != null)
+            {@Html.Raw("GetGroupMembers")}
         </tr>
     </table>
 </div>
-<div id ="SelectGroup">
+<div id="SelectGroup">
     <table class="table">
         <tr>
             <td>
-                @Html.DropDownList("selectGroupDDL",Model.GroupNameSelectList, "-Select Group-")
+                @Html.DropDownList("selectGroupDDL", Model.GroupNameSelectList, "-Select Group-")
             </td>
         </tr>
     </table>
@@ -34,7 +36,8 @@
     <table>
         <tr>
             <td>
-                @Html.DropDownList("groupMembersDDL", Model.ClientGroupMembers)
+                @Html.ListBox("groupMembersDDL", Model.ClientGroupMembers
+                    , new { size = 10})
             </td>
             <td>
                 &nbsp;&nbsp;@Html.Label("Add Member: ")

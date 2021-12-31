@@ -187,7 +187,7 @@ function AddGroupMember() {
         dataType: "JSON",
         success: function() {
             window.$("#MembersDiv").show();
-            //var dummy = "";
         }
+        //var dummy = "";
     }); // $.ajax({
 }

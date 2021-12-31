@@ -14,22 +14,37 @@ namespace BHelp.Controllers
     {
         private readonly BHelpContext db = new BHelpContext();
         // GET: GroupMembers
-        public ActionResult Index()
+        public ActionResult Index(int? gpId)
         {
             var groupMembersView = new GroupMemberViewModel()
             {
                 GroupNameSelectList = new List<SelectListItem>(),
                 ClientGroupMembers = new List<SelectListItem>(),
-                AllClients = new List<SelectListItem>()
+                AllClients = new List<SelectListItem>(),
+                SelectedGroupId = null
             };
-            var groupNamesList = db.GroupNames.OrderBy(n => n.Name).ToList(); 
+            var groupNamesList = db.GroupNames.OrderBy(n => n.Name).ToList();
             foreach (var gName in groupNamesList)
             {
                 groupMembersView.GroupNameSelectList.Add(new SelectListItem()
                     {Text=gName.Name, Value = gName.Id.ToString(), Selected = false});
             }
 
+            if (gpId != null)
+            {
+                groupMembersView.SelectedGroupId = (int)gpId;
+                var clientGroupMembers = db.GroupMembers.Where(g => g.NameId == gpId).ToList();
+                foreach(var member in clientGroupMembers)
+                {
+                    var client = db.Clients.Find(member.ClientId);
+                    if (client != null)
+                        groupMembersView.ClientGroupMembers.Add(new SelectListItem()
+                            { Text = client.FullName, Value = client.Id.ToString() });
+                }
+            }
+
             var clientList = db.Clients.OrderBy(n => n.LastName).ThenBy(n => n.FirstName).ToList();
+            groupMembersView.AllClients.Add(new SelectListItem { Text = @"-Select Client to Add To Group-", Value = "0" });
             foreach (var client in clientList)
             {
                 var text = client.LastName + ", " + client.FirstName + " ";
@@ -151,7 +166,8 @@ namespace BHelp.Controllers
             };
             db.GroupMembers.Add(newMember);
             db.SaveChanges();
-            return RedirectToAction("Index");
+          
+            return RedirectToAction("Index", new{gpId = groupId});
         }
         public ActionResult ReturnToDashboard()
         {
