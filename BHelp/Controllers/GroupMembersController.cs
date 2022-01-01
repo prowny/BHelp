@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using BHelp.DataAccessLayer;
@@ -31,6 +32,7 @@ namespace BHelp.Controllers
 
             if (gpId != null)
             {
+                Session["GroupId"] = gpId.ToString();
                 groupMembersView.SelectedGroupId = (int)gpId;
                 var clientGroupMembers = db.GroupMembers.Where(g => g.NameId == gpId).ToList();
                 foreach(var member in clientGroupMembers)
@@ -53,6 +55,29 @@ namespace BHelp.Controllers
             }
             
             return View(groupMembersView);
+        }
+
+        [HttpPost]
+        public ActionResult Index(GroupMemberViewModel model)
+        {
+            var gpId = Convert.ToInt32(Session["GroupId"]);
+            var mbrId = Convert.ToInt32(model.SelectedMemberId);
+            List<GroupMember> memberList = db.GroupMembers.Where(g => g.NameId == gpId).ToList();
+            foreach (var mbr in memberList)
+            {
+                if (mbr.ClientId == mbrId)
+                {
+                    GroupMember member = db.GroupMembers.First(m => m.NameId == gpId
+                                                                    && m.ClientId == mbrId);
+                    if (member != null)
+                    {
+                        db.GroupMembers.Remove(member);
+                        db.SaveChanges();
+                    }
+                }
+            }
+            
+            return RedirectToAction("Index", new {gpid=gpId} );
         }
 
         // GET: GroupMembers/Details/5
