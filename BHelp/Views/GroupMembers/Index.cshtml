@@ -5,7 +5,7 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width"/>
+    <meta name="viewport" content="width=device-width" />
     <title>Index</title>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
@@ -14,38 +14,35 @@
     <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
 </head>
 <body>
-<div>
-    <table>
-        <tr>
-            <td><b>Group Members</b></td>
-            @if(Model.SelectedGroupId != null)
-            {@Html.Raw("GetGroupMembers")}
-        </tr>
-    </table>
-</div>
+<span><b>Maintain Group Members</b></span>
 <div id="SelectGroup">
     <table class="table">
         <tr>
             <td>
-                @Html.DropDownList("selectGroupDDL", Model.GroupNameSelectList, "-Select Group-")
+                @Html.DropDownList("selectGroupDDL", Model.GroupNameSelectList
+                    , "-Select Group-", new { @onchange = "groupNameChange(this.value)" })
             </td>
         </tr>
     </table>
 </div>
-<div id="MembersDiv" style="display: none">
-    <table>
-        <tr>
-            <td>
-                @Html.ListBox("groupMembersDDL", Model.ClientGroupMembers
-                    , new { size = 10})
-            </td>
-            <td>
-                &nbsp;&nbsp;@Html.Label("Add Member: ")
-                @Html.DropDownList("selectClientDDL", Model.AllClients)
-            </td>
-        </tr>
-    </table>
-</div>
+
+@if (Model.SelectedGroupId != null)
+{
+    <div id="MembersDiv">
+        <table>
+            <tr>
+                <td>
+                    @Html.DropDownList("groupMembersDDL", Model.ClientGroupMembers
+                        , new { size = 10 })
+                </td>
+                <td><b>
+                    &nbsp;&nbsp;@Html.Label("Add Member: ") </b>
+                    @Html.DropDownList("selectClientDDL", Model.AllClients)
+                </td>
+            </tr>
+        </table>
+    </div>
+}
 <br/>
 <div>
     <table>
@@ -56,11 +53,17 @@
         </tr>
     </table>
 </div>
+
+</body>
+</html>
+<script>
+    function groupNameChange(val) {
+        window.location.href = "/GroupMembers/Index?gpId=" + val;
+    }
+</script>
 <script type="text/javascript">
-    $("#selectGroupDDL").change(GetGroupMembers);
+    $("#selectGroupDDL").change(GroupNameChange);
 </script>
 <script type="text/javascript">
     $("#selectClientDDL").change(AddGroupMember);
 </script>
-</body>
-</html>

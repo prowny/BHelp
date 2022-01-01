@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using BHelp.DataAccessLayer;
-using System;
 using BHelp.Models;
 using BHelp.ViewModels;
 using Castle.Core.Internal;
-using Newtonsoft.Json;
 
 namespace BHelp.Controllers
 {
@@ -26,8 +24,9 @@ namespace BHelp.Controllers
             var groupNamesList = db.GroupNames.OrderBy(n => n.Name).ToList();
             foreach (var gName in groupNamesList)
             {
+                bool _selected = gName.Id == gpId;
                 groupMembersView.GroupNameSelectList.Add(new SelectListItem()
-                    {Text=gName.Name, Value = gName.Id.ToString(), Selected = false});
+                    {Text=gName.Name, Value = gName.Id.ToString(), Selected = _selected });
             }
 
             if (gpId != null)
@@ -39,18 +38,18 @@ namespace BHelp.Controllers
                     var client = db.Clients.Find(member.ClientId);
                     if (client != null)
                         groupMembersView.ClientGroupMembers.Add(new SelectListItem()
-                            { Text = client.FullName, Value = client.Id.ToString() });
+                            { Text = client.LastName + @", " + client.FirstName, Value = client.Id.ToString(), Selected = false});
                 }
             }
 
-            var clientList = db.Clients.OrderBy(n => n.LastName).ThenBy(n => n.FirstName).ToList();
+            var allClientList = db.Clients.OrderBy(n => n.LastName).ThenBy(n => n.FirstName).ToList();
             groupMembersView.AllClients.Add(new SelectListItem { Text = @"-Select Client to Add To Group-", Value = "0" });
-            foreach (var client in clientList)
+            foreach (var client in allClientList)
             {
                 var text = client.LastName + ", " + client.FirstName + " ";
                 text += client.StreetNumber + " " + client.StreetName;
                 groupMembersView.AllClients.Add(new SelectListItem()
-                    {Text = text, Value = client.Id.ToString()});
+                    {Text = text, Value = client.Id.ToString(),Selected = false});
             }
             
             return View(groupMembersView);
@@ -129,32 +128,34 @@ namespace BHelp.Controllers
         }
         public ActionResult GetGroupMembers(int groupId)
         {
-            var groupMembersView = new GroupMemberViewModel()
-            {
-                ClientGroupMembers = new List<SelectListItem>()
-            };
-            var groupMembers = db.GroupMembers
-                .Where(gp => gp.NameId == groupId).ToList();
-            foreach (var member in groupMembers)
-            {
-                var client = db.Clients.Find(member.ClientId);
-                if (client != null)
-                {
-                    groupMembersView.ClientGroupMembers.Add(new SelectListItem()
-                        { Text = client.FullName, Value = client.Id.ToString(), Selected = false });
-                }
-            }
+            return RedirectToAction("Index", new { gpId = groupId });
+            //var groupMembersView = new GroupMemberViewModel()
+            //{
+            //    ClientGroupMembers = new List<SelectListItem>()
+            //};
+            //var groupMembers = db.GroupMembers
+            //    .Where(gp => gp.NameId == groupId).ToList();
+            //foreach (var member in groupMembers)
+            //{
+            //    var client = db.Clients.Find(member.ClientId);
+            //    if (client != null)
+            //    {
+            //        groupMembersView.ClientGroupMembers.Add(new SelectListItem()
+            //            { Text = client.FullName, Value = client.Id.ToString(), Selected = false });
+            //    }
+            //}
 
-            try
-            {
-                var json = JsonConvert.SerializeObject(groupMembersView.ClientGroupMembers
-                    , Formatting.Indented);
-                return Content(json, "application/json");
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            //try
+            //{
+            //    var json = JsonConvert.SerializeObject(groupMembersView.ClientGroupMembers
+            //        , Formatting.Indented);
+            //    return Content(json, "application/json");
+            //}
+            //catch (Exception ex)
+            //{
+            //    var x = ex;
+            //    return null;
+            //}
         }
 
         public ActionResult AddGroupMember(int groupId, int clientId)
