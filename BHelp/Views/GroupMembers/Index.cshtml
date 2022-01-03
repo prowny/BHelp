@@ -1,4 +1,4 @@
-﻿@using System.Web.Mvc.Html
+﻿@using FormMethod = System.Web.Mvc.FormMethod
 @model BHelp.ViewModels.GroupMemberViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
@@ -14,68 +14,57 @@
     <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
 </head>
 <body>
-<span><b>Maintain Group Members</b></span>
-<div id="SelectGroup">
-    <table class="table">
-        <tr>
-            <td>
-                @Html.DropDownList("selectGroupDDL", Model.GroupNameSelectList
-                    , "-Select Group-", new { @onchange = "groupNameChange(this.value)" })
-                @*@Html.HiddenFor(g => g.SelectedGroupId)*@
-            </td>
-        </tr>
-    </table>
-</div>
-
-@if (Model.SelectedGroupId != null)
-{
-    <div id="MembersDiv">
+    <span><b>Maintain Group Members</b></span>
+    <br/>
+    <div id="GroupNameDiv">
         @using (Html.BeginForm("Index", "GroupMembers", FormMethod.Post))
         {
-            <table>
+            <table class="table">
                 <tr>
                     <td>
-                        @Html.DropDownListFor(m => m.SelectedMemberId
-                            , Model.ClientGroupMembers
-                            , new { size = 10 })
-
-                    </td>
-                    <td>
-                        <b>
-                            &nbsp;&nbsp;@Html.Label("Add Member: ") </b>
-                        @Html.DropDownList("selectClientDDL", Model.AllClients)
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="submit" value="Remove">
+                        @Html.DropDownList("selectGroupDDL", Model.GroupNameSelectList
+                            , "-Select Group-")
                     </td>
                 </tr>
             </table>
         }
     </div>
-}
-<br/>
-<div>
-    <table>
-        <tr>
-            <td>
-                @Html.ActionLink("Return To Dashboard", "ReturnToDashboard")
-            </td>
-        </tr>
-    </table>
-</div>
 
+    <div id="GroupMembersDiv" style ="display:none">
+        <table>
+            <tr>
+                <td>
+                    @Html.DropDownList("selectMembersDDL", new SelectList(string.Empty,
+                        "Value", "Text"), new { size = 10 })
+                </td>
+                <td>
+                    <b>&nbsp;&nbsp;@Html.Label("Add Member: ") </b>
+                    @Html.DropDownList("selectClientDDL", Model.AllClients)
+                </td>
+
+            </tr>
+        </table>
+    </div>
+    <br/>
+    <div>
+        @Html.ActionLink("Return To Dashboard", "ReturnToDashboard")
+    </div>
 </body>
 </html>
-<script>
-    function groupNameChange(val) {
-        window.location.href = "/GroupMembers/Index?gpId=" + val;
-    }
-</script>
+
 <script type="text/javascript">
-    $("#selectGroupDDL").change(GroupNameChange);
+    $(function () {
+        $('#selectGroupDDL').change(function () {
+            var _gpId = $(this).val();
+            window.location.href = '@Url.Action("MaintainGroupMembers",
+                                        "GroupMembers")' + '?groupId=' + _gpId;
+        });
+    });
 </script>
+@*<script type="text/javascript">
+    $("#selectGroupDDL").change(GroupNameChange);
+</script>*@
 <script type="text/javascript">
     $("#selectClientDDL").change(AddGroupMember);
 </script>
+

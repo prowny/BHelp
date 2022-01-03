@@ -1,6 +1,4 @@
-﻿var _groupId;  // for parameter passing
-
-function UpdateCallLogDate(callLogDate) {
+﻿function UpdateCallLogDate(callLogDate) {
     window.$.ajax({
         url: '/OD/Index',
         data: { callLogDate: callLogDate },
@@ -182,22 +180,24 @@ function AddGroupMember() {
     var _clientId = window.$(this).val();
     window.$.ajax({
         url: "/GroupMembers/AddGroupMember",
-        data: { groupId: _groupId, clientId:_clientId },
         type: "GET",
-        dataType: "JSON",
-        success: function() {
-            window.$("#MembersDiv").show();
-        }
-        //var dummy = "";
-    }); // $.ajax({
+        data: { clientId:_clientId }
+    });
 }
 
 function GroupNameChange() {
     var _groupId = window.$(this).val();
-    window.$.ajax({
-        url: "/GroupMembers/Index",
-        data: { gpid: _groupId },
-        success: function() {
-        }
-    }); // $.ajax({
+    window.$("#selectClientDDL").empty();
+     window.$.ajax({
+         url: "/GroupMembers/GetGroupMembers",
+         data: { gpid: _groupId },
+         type: "GET",
+         dataType: "JSON",
+         success: function(data) {
+             window.$("#GroupMembersDiv").show();
+         },
+         error: function() {
+             window.$("#GroupMembersDiv").hide();
+         }
+     });
 }
