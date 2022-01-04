@@ -6,7 +6,6 @@ using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
 using Castle.Core.Internal;
-using Newtonsoft.Json;
 
 namespace BHelp.Controllers
 {
@@ -94,22 +93,6 @@ namespace BHelp.Controllers
             return View();
         }
 
-        // POST: GroupMembers/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
         // GET: GroupMembers/Edit/5
         public ActionResult Edit(int id)
         {
@@ -164,68 +147,79 @@ namespace BHelp.Controllers
             };
             if (groupId != null)
             {
+                TempData["GroupId"] = groupId.ToString();
                 var group = db.GroupNames.Find(groupId);
                 if (group != null)
                 {
                     memberViewModel.SelectedGroupName = group.Name;
+                    memberViewModel.GroupMemberSelectList = GetGroupMembers(group.Id);
+                    memberViewModel.AllClients = GetAllClients();
                 }
                 
-                var clientGroupMembers = db.GroupMembers
-                    .Where(g => g.NameId == groupId).ToList();
-                foreach (var member in clientGroupMembers)
-                {
-                    var client = db.Clients.Find(member.ClientId);
-                    if (client != null)
-                        memberViewModel.GroupMemberSelectList.Add(new SelectListItem()
-                        {
-                            Text = client.LastName + @", " + client.FirstName, Value = client.Id.ToString(),
-                            Selected = false
-                        });
-                }
+                //var clientGroupMembers = db.GroupMembers
+                //    .Where(g => g.NameId == groupId).ToList();
+                //foreach (var member in clientGroupMembers)
+                //{
+                //    var client = db.Clients.Find(member.ClientId);
+                //    if (client != null)
+                //        memberViewModel.GroupMemberSelectList.Add(new SelectListItem()
+                //        {
+                //            Text = client.LastName + @", " + client.FirstName, Value = client.Id.ToString(),
+                //            Selected = false
+                //        });
+                //}
             }
 
-            var allClientList = db.Clients.OrderBy(n => n.LastName).ThenBy(n => n.FirstName).ToList();
-            memberViewModel.AllClients.Add(new SelectListItem { Text = @"-Select Client to Add To Group-", Value = "0" });
-            foreach (var client in allClientList)
-            {
-                var text = client.LastName + ", " + client.FirstName + " ";
-                text += client.StreetNumber + " " + client.StreetName;
-                memberViewModel.AllClients.Add(new SelectListItem()
-                    { Text = text, Value = client.Id.ToString(), Selected = false });
-            }
-
+            //var allClientList = db.Clients.OrderBy(n => n.LastName).ThenBy(n => n.FirstName).ToList();
+            //memberViewModel.AllClients.Add(new SelectListItem { Text = @"-Select Client to Add To Group-", Value = "0" });
+            //foreach (var client in allClientList)
+            //{
+            //    var text = client.LastName + ", " + client.FirstName + " ";
+            //    text += client.StreetNumber + " " + client.StreetName;
+            //    memberViewModel.AllClients.Add(new SelectListItem()
+            //        { Text = text, Value = client.Id.ToString(), Selected = false });
+            //}
+            
             return View(memberViewModel);
         }
-        public ActionResult GetGroupMembers(int groupId)
+        public List<SelectListItem> GetGroupMembers(int groupId)
         {
-            var groupMember = new GroupMemberViewModel
-            {
-                GroupMemberSelectList = new List<SelectListItem>()
-            };
-
+            var groupMemberSelectList = new List<SelectListItem>();
             var clientGroupMembers = db.GroupMembers
                 .Where(g => g.NameId == groupId).ToList();
             foreach (var member in clientGroupMembers)
             {
                 var client = db.Clients.Find(member.ClientId);
                 if (client != null)
-                    groupMember.GroupMemberSelectList.Add(new SelectListItem()
+                    groupMemberSelectList.Add(new SelectListItem()
                         { Text = client.LastName + @", " + client.FirstName, Value = client.Id.ToString(), Selected = false });
             }
 
-            try
-            {
-                String json = JsonConvert.SerializeObject(groupMember, Formatting.Indented);
-                return Content(json, "application/json");
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return groupMemberSelectList;
         }
 
-        public ActionResult AddGroupMember(int gpId, int clientId)
+        public List<SelectListItem> GetAllClients()
         {
+            var allClientsSelectList = new List<SelectListItem>();
+            var clientList = db.Clients.OrderBy(n => n.LastName).ThenBy(n => n.FirstName).ToList();
+            allClientsSelectList.Add(new SelectListItem { Text = @"-Select Client to Add To Group-", Value = "0" });
+            foreach (var client in clientList)
+            {
+                var text = client.LastName + ", " + client.FirstName + " ";
+                text += client.StreetNumber + " " + client.StreetName;
+                allClientsSelectList.Add(new SelectListItem()
+                    { Text = text, Value = client.Id.ToString(), Selected = false });
+            }
+
+            return allClientsSelectList;
+        }
+
+
+
+        [HttpPost]
+        public JsonResult AddGroupMember(int clientId)
+        {
+            var gpId = Convert.ToInt32(TempData["GroupId"]);
             var newMember = new GroupMember()
             {
                 NameId = gpId,
@@ -233,8 +227,10 @@ namespace BHelp.Controllers
             };
             db.GroupMembers.Add(newMember);
             db.SaveChanges();
-          
-            return RedirectToAction("MaintainGroupMembers", new{ groupId = gpId });
+
+           var memberList = GetGroupMembers(gpId);
+            return Json(new SelectList(memberList, "Value", "Text"));
+           // return RedirectToAction("MaintainGroupMembers", new{ groupId = newMember.NameId });
         }
         public ActionResult ReturnToDashboard()
         {

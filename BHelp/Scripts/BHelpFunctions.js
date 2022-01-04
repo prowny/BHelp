@@ -180,24 +180,37 @@ function AddGroupMember() {
     var _clientId = window.$(this).val();
     window.$.ajax({
         url: "/GroupMembers/AddGroupMember",
-        type: "GET",
-        data: { clientId:_clientId }
+        type: "POST",
+        cache: false,
+        dataType: "json",
+        data: { clientId: _clientId },
+        success: function(result) {
+            window.$("#selectMembersDDL").empty();
+            window.$.each(result,
+                function(i, item) {
+                    window.$("#selectMembersDDL").append('<option value="' +
+                        item.Value + '">' + item.Text + '</option>');
+                });
+        },
+        error: function() {
+            window.$("#selectClientDDL").show();
+        }
     });
-}
+};
 
-function GroupNameChange() {
-    var _groupId = window.$(this).val();
-    window.$("#selectClientDDL").empty();
-     window.$.ajax({
-         url: "/GroupMembers/GetGroupMembers",
-         data: { gpid: _groupId },
-         type: "GET",
-         dataType: "JSON",
-         success: function(data) {
-             window.$("#GroupMembersDiv").show();
-         },
-         error: function() {
-             window.$("#GroupMembersDiv").hide();
-         }
-     });
-}
+//function GroupNameChange() {
+    //    var _groupId = window.$(this).val();
+    //    window.$("#selectClientDDL").empty();
+    //    window.$.ajax({
+    //        url: "/GroupMembers/GetGroupMembers",
+    //        data: { gpid: _groupId },
+    //        type: "GET",
+    //        dataType: "JSON",
+    //        success: function() {
+    //            window.$("#GroupMembersDiv").show();
+    //        },
+    //        error: function() {
+    //            window.$("#GroupMembersDiv").hide();
+    //        }
+    //    });
+    //}

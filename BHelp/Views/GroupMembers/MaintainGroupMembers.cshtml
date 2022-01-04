@@ -1,20 +1,29 @@
 ﻿@model BHelp.ViewModels.GroupMemberViewModel
-@{ Layout = null; }
+@{
+    Layout = null;
+    var _size=Model.GroupMemberSelectList.Count;
+}
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Maintain Group Members</title>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
 </head>
 <body>
-<b>@Html.Label("Maintain Group Members for " + Model.SelectedGroupName)</b>
+    <b>@Html.Label("Maintain Group Members for " + Model.SelectedGroupName)</b>
 <div id="GroupMembersDiv">
+@using (Html.BeginForm("MaintainGroupMembers", "GroupMembers", FormMethod.Post))
+{
     <table>
         <tr>
             <td>
                 @Html.DropDownList("selectMembersDDL", Model.GroupMemberSelectList,
-                    new { size = 10 })
+                    new { size = _size })
             </td>
             <td>
                 <b>&nbsp;&nbsp;@Html.Label("Add Member: ") </b>
@@ -22,18 +31,47 @@
             </td>
         </tr>
     </table>
+}
 </div>
-<br/>
-<div>
-    @Html.ActionLink("Back To Group List", "Index")
     <br />
-    @Html.ActionLink("Return To Dashboard", "ReturnToDashboard")
-</div>
+    <div>
+        @Html.ActionLink("Back To Group List", "Index")
+        <br />
+        @Html.ActionLink("Return To Dashboard", "ReturnToDashboard")
+    </div>
 </body>
 </html>
 
 <script type="text/javascript">
-   
     $("#selectClientDDL").change(AddGroupMember);
 </script>
 
+@*<script type="text/javascript">
+        $(document).ready(function() {
+            window.$("#selectClientDDL").change(function() {
+                var _clientId = window.$('#selectClientDDL').val();
+                window.location.href =
+                    '@Url.Action("AddGroupMember", "GroupMembers")'
+                    + '?groupId=' + _clientId;
+            });
+        });
+    </script>*@
+
+@*<script type="text/javascript">
+        $(function () {
+            window.$('#selectClientDDL').change(function () {
+                var _clientId = window.$(this).val();
+                window.location.href = '@Url.Action("AddGroupMember",
+                                            "GroupMembers")' + '?clientId=' + _clientId;
+            });
+        });
+    </script>*@
+<!--<script type="text/javascript">-->
+@*$("#selectClientDDL").change(function ()
+    {
+        var mbrId = window.$(this).val();
+        var gpId = @Model.SelectedGroupId;
+        window.Location.href = '@Url.Action("AddGroupMember", "GroupMembers")''
+            + 'gpId=' + @Model.SelectedGroupId + ' ?clientId =' + mbrId;
+    });*@
+<!--</script>-->
