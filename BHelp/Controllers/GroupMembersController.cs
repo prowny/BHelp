@@ -14,7 +14,7 @@ namespace BHelp.Controllers
     {
         private readonly BHelpContext db = new BHelpContext();
         // GET: GroupMembers
-        public ActionResult Index(int? gpId)
+        public ActionResult Index()
         {
             var groupMembersView = new GroupMemberViewModel()
             {
@@ -26,36 +26,35 @@ namespace BHelp.Controllers
             var groupNamesList = db.GroupNames.OrderBy(n => n.Name).ToList();
             foreach (var gName in groupNamesList)
             {
-                bool _selected = gName.Id == gpId;
                 groupMembersView.GroupNameSelectList.Add(new SelectListItem()
-                    {Text=gName.Name, Value = gName.Id.ToString(), Selected = _selected });
+                    {Text=gName.Name, Value = gName.Id.ToString(), Selected = false });
             }
 
-            if (gpId != null)
-            {
-                Session["GroupId"] = gpId.ToString();
-                gpId = Convert.ToInt32(Session["GroupId"]);
-                groupMembersView.SelectedGroupId = (int)gpId;
-                var clientGroupMembers = db.GroupMembers
-                    .Where(g => g.NameId == gpId).ToList();
-                foreach(var member in clientGroupMembers)
-                {
-                    var client = db.Clients.Find(member.ClientId);
-                    if (client != null)
-                        groupMembersView.GroupMemberSelectList.Add(new SelectListItem()
-                            { Text = client.LastName + @", " + client.FirstName, Value = client.Id.ToString(), Selected = false});
-                }
-            }
+            //if (gpId != null)
+            //{
+            //    Session["GroupId"] = gpId.ToString();
+            //    gpId = Convert.ToInt32(Session["GroupId"]);
+            //    groupMembersView.SelectedGroupId = (int)gpId;
+            //    var clientGroupMembers = db.GroupMembers
+            //        .Where(g => g.NameId == gpId).ToList();
+            //    foreach(var member in clientGroupMembers)
+            //    {
+            //        var client = db.Clients.Find(member.ClientId);
+            //        if (client != null)
+            //            groupMembersView.GroupMemberSelectList.Add(new SelectListItem()
+            //                { Text = client.LastName + @", " + client.FirstName, Value = client.Id.ToString(), Selected = false});
+            //    }
+            //}
 
-            var allClientList = db.Clients.OrderBy(n => n.LastName).ThenBy(n => n.FirstName).ToList();
-            groupMembersView.AllClients.Add(new SelectListItem { Text = @"-Select Client to Add To Group-", Value = "0" });
-            foreach (var client in allClientList)
-            {
-                var text = client.LastName + ", " + client.FirstName + " ";
-                text += client.StreetNumber + " " + client.StreetName;
-                groupMembersView.AllClients.Add(new SelectListItem()
-                    {Text = text, Value = client.Id.ToString(),Selected = false});
-            }
+            //var allClientList = db.Clients.OrderBy(n => n.LastName).ThenBy(n => n.FirstName).ToList();
+            //groupMembersView.AllClients.Add(new SelectListItem { Text = @"-Select Client to Add To Group-", Value = "0" });
+            //foreach (var client in allClientList)
+            //{
+            //    var text = client.LastName + ", " + client.FirstName + " ";
+            //    text += client.StreetNumber + " " + client.StreetName;
+            //    groupMembersView.AllClients.Add(new SelectListItem()
+            //        {Text = text, Value = client.Id.ToString(),Selected = false});
+            //}
             
             return View(groupMembersView);
         }
@@ -163,6 +162,37 @@ namespace BHelp.Controllers
                 AllClients = new List<SelectListItem>(),
                 GroupMemberSelectList = new List<SelectListItem>()
             };
+            if (groupId != null)
+            {
+                var group = db.GroupNames.Find(groupId);
+                if (group != null)
+                {
+                    memberViewModel.SelectedGroupName = group.Name;
+                }
+                
+                var clientGroupMembers = db.GroupMembers
+                    .Where(g => g.NameId == groupId).ToList();
+                foreach (var member in clientGroupMembers)
+                {
+                    var client = db.Clients.Find(member.ClientId);
+                    if (client != null)
+                        memberViewModel.GroupMemberSelectList.Add(new SelectListItem()
+                        {
+                            Text = client.LastName + @", " + client.FirstName, Value = client.Id.ToString(),
+                            Selected = false
+                        });
+                }
+            }
+
+            var allClientList = db.Clients.OrderBy(n => n.LastName).ThenBy(n => n.FirstName).ToList();
+            memberViewModel.AllClients.Add(new SelectListItem { Text = @"-Select Client to Add To Group-", Value = "0" });
+            foreach (var client in allClientList)
+            {
+                var text = client.LastName + ", " + client.FirstName + " ";
+                text += client.StreetNumber + " " + client.StreetName;
+                memberViewModel.AllClients.Add(new SelectListItem()
+                    { Text = text, Value = client.Id.ToString(), Selected = false });
+            }
 
             return View(memberViewModel);
         }
@@ -194,18 +224,17 @@ namespace BHelp.Controllers
             }
         }
 
-        public ActionResult AddGroupMember(int clientId)
+        public ActionResult AddGroupMember(int gpId, int clientId)
         {
-            var _gpId = Convert.ToInt32(Session["GroupId"]);
             var newMember = new GroupMember()
             {
-                NameId = _gpId,
+                NameId = gpId,
                 ClientId = clientId
             };
             db.GroupMembers.Add(newMember);
             db.SaveChanges();
           
-            return RedirectToAction("Index", new{ gpId = _gpId });
+            return RedirectToAction("MaintainGroupMembers", new{ groupId = gpId });
         }
         public ActionResult ReturnToDashboard()
         {

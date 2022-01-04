@@ -8,13 +8,32 @@
     <title>Maintain Group Members</title>
 </head>
 <body>
-    <b>@Html.Label("Maintain Group Members")</b>
-<div>
-
+<b>@Html.Label("Maintain Group Members for " + Model.SelectedGroupName)</b>
+<div id="GroupMembersDiv">
+    <table>
+        <tr>
+            <td>
+                @Html.DropDownList("selectMembersDDL", Model.GroupMemberSelectList,
+                    new { size = 10 })
+            </td>
+            <td>
+                <b>&nbsp;&nbsp;@Html.Label("Add Member: ") </b>
+                @Html.DropDownList("selectClientDDL", Model.AllClients)
+            </td>
+        </tr>
+    </table>
 </div>
 <br/>
 <div>
+    @Html.ActionLink("Back To Group List", "Index")
+    <br />
     @Html.ActionLink("Return To Dashboard", "ReturnToDashboard")
 </div>
 </body>
 </html>
+
+<script type="text/javascript">
+   
+    $("#selectClientDDL").change(AddGroupMember);
+</script>
+

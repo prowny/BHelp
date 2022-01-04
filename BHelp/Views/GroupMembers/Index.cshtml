@@ -54,8 +54,8 @@
 
 <script type="text/javascript">
     $(function () {
-        $('#selectGroupDDL').change(function () {
-            var _gpId = $(this).val();
+        window.$('#selectGroupDDL').change(function () {
+            var _gpId = window.$(this).val();
             window.location.href = '@Url.Action("MaintainGroupMembers",
                                         "GroupMembers")' + '?groupId=' + _gpId;
         });
@@ -64,7 +64,5 @@
 @*<script type="text/javascript">
     $("#selectGroupDDL").change(GroupNameChange);
 </script>*@
-<script type="text/javascript">
-    $("#selectClientDDL").change(AddGroupMember);
-</script>
+
 
