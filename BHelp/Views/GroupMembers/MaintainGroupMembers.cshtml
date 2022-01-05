@@ -1,7 +1,6 @@
 ﻿@model BHelp.ViewModels.GroupMemberViewModel
 @{
     Layout = null;
-    var _size=Model.GroupMemberSelectList.Count;
 }
 <!DOCTYPE html>
 <html>
@@ -17,10 +16,17 @@
 <body>
     <b>@Html.Label("Maintain Group Members for " + Model.SelectedGroupName)</b>
 <div id="GroupMembersDiv">
-@using (Html.BeginForm("Index", "GroupMembers", FormMethod.Post))
-{
-    <table>
+@*@using (Html.BeginForm("Index", "GroupMembers", FormMethod.Post))
+{*@
+<table>
+    @foreach (var member in Model.GroupMemberSelectList)
+    {
         <tr>
+            <td>@member.Text</td>
+        </tr>
+    }
+
+    @*<tr>
             <td>
                 @Html.DropDownListFor(m => m.SelectedMemberId,
                     new SelectList(Model.GroupMemberSelectList, "Value", "Text"),
@@ -30,21 +36,26 @@
                 <b>&nbsp;&nbsp;@Html.Label("Add Member: ") </b>
                 @Html.DropDownList("selectClientDDL", Model.AllClients)
             </td>
-        </tr>
+        </tr>*@
     </table>
-    <table>
+    <!--<table>
         <tr>
-            <td ><input name="btnRemove" type="submit" value="Remove Selected Client" class="btn btn-default" /></td>
-        </tr>
-    </table>
-}
+            <td>
+                <input type="button" value="Remove Selected Client" onclick="location.href='@Url.Action("Remove","GroupMembers", new {model = Model}) '" />
+            </td>-->
+            @*<td ><input name="btnRemove" type="submit" value="Remove Selected Client" class="btn btn-default" /></td>*@
+        <!--</tr>
+    </table>-->
+
 </div>
     <br />
-    <div>
-        @Html.ActionLink("Back To Group List", "Index")
-        <br />
-        @Html.ActionLink("Return To Dashboard", "ReturnToDashboard")
-    </div>
+<div>
+    @Html.ActionLink("Add New Group Member", "AddGroupMember")
+    <br />
+    @Html.ActionLink("Back To Group List", "Index")
+    <br/>
+    @Html.ActionLink("Return To Dashboard", "ReturnToDashboard")
+</div>
 </body>
 </html>
 

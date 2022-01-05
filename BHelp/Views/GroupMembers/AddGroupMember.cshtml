@@ -1,0 +1,30 @@
+﻿@model BHelp.ViewModels.GroupMemberViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AddGroupMember</title>
+</head>
+<body>
+@using (Html.BeginForm("AddGroupMember","GroupMembers",
+    FormMethod.Post, new { id = "ThisForm" }))
+{
+    <div>
+        @Html.DropDownList("AllClients",Model.AllClients,
+            "-Select Client to Add to Group-",
+            new{onchange = "document.getElementById('ThisForm').submit();"})
+    </div>
+}
+</body>
+</html>
+@*<script type="text/javascript">
+        $(function () {
+            window.$('#selectClientDDL').change(function () {
+                var _clientId = window.$(this).val();
+                window.location.href = '@Url.Action("AddGroupMember",
+                                            "GroupMembers")' + '?clientId=' + _clientId;
+            });
+        });
+    </script>*@

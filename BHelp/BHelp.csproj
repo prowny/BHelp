@@ -487,6 +487,7 @@
     <Content Include="Views\GroupMembers\Delete.cshtml" />
     <Content Include="Views\GroupMembers\Index.cshtml" />
     <Content Include="Views\GroupMembers\MaintainGroupMembers.cshtml" />
+    <Content Include="Views\GroupMembers\AddGroupMember.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>

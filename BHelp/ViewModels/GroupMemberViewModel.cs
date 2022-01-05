@@ -12,8 +12,9 @@ namespace BHelp.ViewModels
         public List<SelectListItem> GroupNameSelectList { get; set; }
         public int? SelectedGroupId { get; set; }
         public string SelectedGroupName { get; set; }
+        public List<SelectListItem> GroupMemberSelectList { get; set; }
         public string SelectedMemberId { get; set; }
         public List<SelectListItem> AllClients { get; set; }
-        public List<SelectListItem> GroupMemberSelectList { get; set; }
+        public string SelectedClientId { get; set; }
     }
 }

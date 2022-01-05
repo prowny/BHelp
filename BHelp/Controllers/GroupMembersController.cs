@@ -57,20 +57,18 @@ namespace BHelp.Controllers
             
             return View(groupMembersView);
         }
-
-        [HttpPost]
-        public ActionResult Index ([Bind(Include= "SelectedMemberId")] GroupMemberViewModel model)
+        
+        public ActionResult Remove (int? clientId)
         {
-            //Create([Bind(Include = "Id,ClientId,Active,FirstName,LastName,DateOfBirth")] FamilyMember familyMember)
             var _gpId = Convert.ToInt32(Session["GroupId"]);
-            var _mbrId = Convert.ToInt32(model.SelectedMemberId);
+            //var _mbrId = Convert.ToInt32(clientId);
             var memberList = db.GroupMembers.Where(g => g.NameId == _gpId).ToList();
             foreach (var mbr in memberList)
             {
-                if (mbr.ClientId == _mbrId)
+                if (mbr.ClientId == clientId)
                 {
                     GroupMember member = db.GroupMembers.First(m => m.NameId == _gpId
-                                                                    && m.ClientId == _mbrId);
+                                                                    && m.ClientId == clientId);
                     if (member != null)
                     {
                         db.GroupMembers.Remove(member);
@@ -214,9 +212,20 @@ namespace BHelp.Controllers
 
             return allClientsSelectList;
         }
-        
-        public ActionResult AddGroupMember(int clientId)
+
+        public ActionResult AddGroupMember()
         {
+            var view = new GroupMemberViewModel()
+            {
+                AllClients = GetAllClients()
+            };
+            return View(view);
+        }
+
+        [HttpPost]
+        public ActionResult AddGroupMember([Bind(Include= "AllClients")] GroupMemberViewModel model)
+        {
+            var clientId = model.ClientId;
             var gpId = Convert.ToInt32(Session["GroupId"]);
             var newMember = new GroupMember()
             {
@@ -226,7 +235,7 @@ namespace BHelp.Controllers
             db.GroupMembers.Add(newMember);
             db.SaveChanges();
 
-            var model = new GroupMemberViewModel()
+            model = new GroupMemberViewModel()
             {
                 GroupMemberSelectList = GetGroupMembers(gpId),
                 AllClients = GetAllClients()
