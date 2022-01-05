@@ -180,20 +180,24 @@ function AddGroupMember() {
     var _clientId = window.$(this).val();
     window.$.ajax({
         url: "/GroupMembers/AddGroupMember",
-        type: "POST",
+        type: "GET",
         cache: false,
         dataType: "json",
         data: { clientId: _clientId },
         success: function(result) {
             window.$("#selectMembersDDL").empty();
-            window.$.each(result,
-                function(i, item) {
-                    window.$("#selectMembersDDL").append('<option value="' +
-                        item.Value + '">' + item.Text + '</option>');
-                });
-        },
-        error: function() {
-            window.$("#selectClientDDL").show();
+            window.$("#selectClientDDL").empty();
+
+            window.$.each(result.GroupMemberSelectList, function (key, value) {
+                window.$("#selectMembersDDL").append(window.$("<option></option>")
+                    .val(value.Value).html(value.Text));
+            });
+
+            window.$("#selectClientDDL").append("<option value='0'>-Select Client to Add-</option>");
+            window.$.each(result.AllClients, function (key, value) {
+                window.$("#selectClientDDL").append(window.$("<option></option>")
+                    .val(value.Value).html(value.Text));
+            });
         }
     });
 };

@@ -17,18 +17,24 @@
 <body>
     <b>@Html.Label("Maintain Group Members for " + Model.SelectedGroupName)</b>
 <div id="GroupMembersDiv">
-@using (Html.BeginForm("MaintainGroupMembers", "GroupMembers", FormMethod.Post))
+@using (Html.BeginForm("Index", "GroupMembers", FormMethod.Post))
 {
     <table>
         <tr>
             <td>
-                @Html.DropDownList("selectMembersDDL", Model.GroupMemberSelectList,
+                @Html.DropDownListFor(m => m.SelectedMemberId,
+                    new SelectList(Model.GroupMemberSelectList, "Value", "Text"),
                     new { size = _size })
             </td>
             <td>
                 <b>&nbsp;&nbsp;@Html.Label("Add Member: ") </b>
                 @Html.DropDownList("selectClientDDL", Model.AllClients)
             </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td ><input name="btnRemove" type="submit" value="Remove Selected Client" class="btn btn-default" /></td>
         </tr>
     </table>
 }

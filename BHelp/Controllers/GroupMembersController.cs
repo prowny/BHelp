@@ -59,17 +59,18 @@ namespace BHelp.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(GroupMemberViewModel model)
+        public ActionResult Index ([Bind(Include= "SelectedMemberId")] GroupMemberViewModel model)
         {
-            var gpId = Convert.ToInt32(Session["GroupId"]);
-            var mbrId = Convert.ToInt32(model.SelectedMemberId);
-            List<GroupMember> memberList = db.GroupMembers.Where(g => g.NameId == gpId).ToList();
+            //Create([Bind(Include = "Id,ClientId,Active,FirstName,LastName,DateOfBirth")] FamilyMember familyMember)
+            var _gpId = Convert.ToInt32(Session["GroupId"]);
+            var _mbrId = Convert.ToInt32(model.SelectedMemberId);
+            var memberList = db.GroupMembers.Where(g => g.NameId == _gpId).ToList();
             foreach (var mbr in memberList)
             {
-                if (mbr.ClientId == mbrId)
+                if (mbr.ClientId == _mbrId)
                 {
-                    GroupMember member = db.GroupMembers.First(m => m.NameId == gpId
-                                                                    && m.ClientId == mbrId);
+                    GroupMember member = db.GroupMembers.First(m => m.NameId == _gpId
+                                                                    && m.ClientId == _mbrId);
                     if (member != null)
                     {
                         db.GroupMembers.Remove(member);
@@ -78,7 +79,7 @@ namespace BHelp.Controllers
                 }
             }
             
-            return RedirectToAction("Index", new {gpid=gpId} );
+            return RedirectToAction("MaintainGroupMembers", new { groupId = _gpId });
         }
 
         // GET: GroupMembers/Details/5
@@ -147,7 +148,7 @@ namespace BHelp.Controllers
             };
             if (groupId != null)
             {
-                TempData["GroupId"] = groupId.ToString();
+                Session["GroupId"] = groupId.ToString();
                 var group = db.GroupNames.Find(groupId);
                 if (group != null)
                 {
@@ -213,13 +214,10 @@ namespace BHelp.Controllers
 
             return allClientsSelectList;
         }
-
-
-
-        [HttpPost]
-        public JsonResult AddGroupMember(int clientId)
+        
+        public ActionResult AddGroupMember(int clientId)
         {
-            var gpId = Convert.ToInt32(TempData["GroupId"]);
+            var gpId = Convert.ToInt32(Session["GroupId"]);
             var newMember = new GroupMember()
             {
                 NameId = gpId,
@@ -228,10 +226,15 @@ namespace BHelp.Controllers
             db.GroupMembers.Add(newMember);
             db.SaveChanges();
 
-           var memberList = GetGroupMembers(gpId);
-            return Json(new SelectList(memberList, "Value", "Text"));
-           // return RedirectToAction("MaintainGroupMembers", new{ groupId = newMember.NameId });
+            var model = new GroupMemberViewModel()
+            {
+                GroupMemberSelectList = GetGroupMembers(gpId),
+                AllClients = GetAllClients()
+            };
+            return Json(model, JsonRequestBehavior.AllowGet);
+            // return RedirectToAction("MaintainGroupMembers", new{ groupId = newMember.NameId });
         }
+
         public ActionResult ReturnToDashboard()
         {
             return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
