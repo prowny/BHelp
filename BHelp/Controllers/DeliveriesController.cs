@@ -1205,24 +1205,40 @@ namespace BHelp.Controllers
                 activeRow++;
                 ws.Cell(activeRow, 1).SetValue("Time Period");
                 for (int i = 0; i < view.ZipCodes.Count; i++)
-                { ws.Cell(activeRow, i + 2).SetValue(view.ZipCodes[i]); }
-                ws.Cell(activeRow, view.ZipCodes.Count + 2).SetValue("Total Zip Codes");
+                { ws.Cell(activeRow, i + 2).SetValue(view.ZipCodes[i]).Style.Font.SetBold(true); }
+                ws.Cell(activeRow, view.ZipCodes.Count + 2).SetValue("Total Zip Codes")
+                    .Style.Font.SetBold(true);
                 activeRow++;
-                ws.Cell(activeRow, 1).SetValue(view.MonthYear[0]);
+                ws.Cell(activeRow, 1).SetValue(view.MonthYear[0]).Style.Font.SetBold(true);
                 activeRow++;
-                ws.Cell(activeRow, 1).SetValue(view.MonthYear[1]);
+                ws.Cell(activeRow, 1).SetValue(view.MonthYear[1]).Style.Font.SetBold(true);
+                
                 activeRow++;
-
-                for (var row = activeRow; row < activeRow + 19; row++)
+                for (var row = activeRow; row < activeRow + 10; row++) // First 10 data rows
                 {
                     ws.Cell(row, 1).SetValue(view.HelperTitles[row - 4]);
                     for (var col = 1; col < view.ZipCodes.Count + 2; col++)
                     {
-                        ws.Cell(row, col + 1).SetValue(view.ZipCounts[ row - 4, col]);
+                        ws.Cell(row, col + 1).SetValue(view.ZipCounts[row - 4, col]);
                     }
                 }
-           
-                ws.Columns().AdjustToContents();
+
+                activeRow += 11;
+                const string dhText = "Distinct Households and Residents Served (NOT reported in the Helper)";
+                ws.Cell(activeRow, 1).SetValue(dhText).Style.Font.SetBold();
+                ws.Range(ws.Cell(activeRow, 1), ws.Cell(activeRow, 3)).Merge();
+
+                activeRow++;
+                for (var row = activeRow; row < activeRow + 9; row++) // Last 9 data rows
+                {
+                    ws.Cell(row, 1).SetValue(view.HelperTitles[row - 6]);
+                    for (var col = 1; col < view.ZipCodes.Count + 2; col++)
+                    {
+                        ws.Cell(row, col + 1).SetValue(view.ZipCounts[row - 6, col]);
+                    }
+                }
+
+            ws.Columns().AdjustToContents();
                 MemoryStream ms = new MemoryStream();
                 workbook.SaveAs(ms);
                 ms.Position = 0;
@@ -1248,24 +1264,24 @@ namespace BHelp.Controllers
                 view.MonthYear[1] =thruDate.ToShortDateString();
                 view.HelperTitles = new string[20];
                 view.HelperTitles[1] = "# Total Food Lbs";
-                view.HelperTitles[2] = "# Households Distinct Served";
-                view.HelperTitles[3] = "# Distinct Residents Served";
-                view.HelperTitles[4] = "# Distinct Residents <18";
-                view.HelperTitles[5] = "# Distinct Adults 18-59";
-                view.HelperTitles[6] = "# Distinct Residents 60+";
-                view.HelperTitles[7] = "# Deliveries";
-                view.HelperTitles[8] = "# Repeat Deliveries";
-                view.HelperTitles[9] = "# First-Time Deliveries";
-                view.HelperTitles[10] = "# Cumulative Residents Served Daily";
-                view.HelperTitles[11] = "# Cumulative Residents Children <18";
-                view.HelperTitles[12] = "# Cumulative Residents Adults 18-59";
-                view.HelperTitles[13] = "# Cumulative Residents Seniors 60+";
-                view.HelperTitles[14] = "# Full Bags (10 lbs per bag)";
-                view.HelperTitles[15] = "# Half Bags (9 lbs per bag)";
-                view.HelperTitles[16] = "# Snacks";
-                view.HelperTitles[17] = "# Total Lbs of Full Bags";
-                view.HelperTitles[18] = "# Total Lbs of Half Bags";
-                view.HelperTitles[19] = "# Giant Gift Cards Disbursed";
+                view.HelperTitles[2] = "# Deliveries";
+                view.HelperTitles[3] = "# Cumulative Residents Served Daily";
+                view.HelperTitles[4] = "# Cumulative Residents Children <18";
+                view.HelperTitles[5] = "# Cumulative Residents Adults 18-59";
+                view.HelperTitles[6] = "# Cumulative Residents Seniors 60+";
+                view.HelperTitles[7] = "# Full Bags (10 lbs per bag)";
+                view.HelperTitles[8] = "# Half Bags (9 lbs per bag)";
+                view.HelperTitles[9] = "# Snacks";
+                view.HelperTitles[10] = "# Giant Gift Cards Disbursed";
+                view.HelperTitles[11] = "# Households Distinct Served";
+                view.HelperTitles[12] = "# Distinct Residents Served";
+                view.HelperTitles[13] = "# Distinct Residents <18";
+                view.HelperTitles[14] = "# Distinct Adults 18-59";
+                view.HelperTitles[15] = "# Distinct Residents 60+";
+                view.HelperTitles[16] = "# Repeat Deliveries";
+                view.HelperTitles[17] = "# First-Time Deliveries";
+                view.HelperTitles[18] = "# Total Lbs of Full Bags";
+                view.HelperTitles[19] = "# Total Lbs of Half Bags";
 
                 view.ZipCodes = AppRoutines.GetZipCodesList();
                 view.ZipCounts = new int[20, view.ZipCodes.Count + 2]; // ZipCodes, Counts
@@ -1351,49 +1367,51 @@ namespace BHelp.Controllers
 
                         var col = zip + 1; 
                         view.ZipCounts[1, col] = fullBags * 10 + halfBags *9;  // Total Food Lbs
-                        view.ZipCounts[2, col] = distinctList.Count;
-                        view.ZipCounts[3, col] = distinctChildren + distinctAdults + distinctSeniors; // Distinct Residents
-                        view.ZipCounts[4, col] = distinctChildren;
-                        view.ZipCounts[5, col] = distinctAdults;
-                        view.ZipCounts[6, col] = distinctSeniors;
-                        view.ZipCounts[7, col] = deliveryData.Count;    // Total Deliveries
-                        view.ZipCounts[8, col] = totalRepeatDeliveries; // Repeat Deliveries
-                        view.ZipCounts[9, col] = totalFirstDeliveries; // First-Time Deliveries
-                        view.ZipCounts[10, col] = cumulativeChildren + cumulativeAdults + cumulativeSeniors;
-                        view.ZipCounts[11, col] = cumulativeChildren;
-                        view.ZipCounts[12, col] = cumulativeAdults;
-                        view.ZipCounts[13, col] = cumulativeSeniors;
-                        view.ZipCounts[14, col] = fullBags;
-                        view.ZipCounts[15, col] = halfBags;
-                        view.ZipCounts[16, col] = snacks;
-                        view.ZipCounts[17, col] = fullBags * 10;
-                        view.ZipCounts[18, col] = halfBags * 9;
-                        view.ZipCounts[19, col] = cards;
+                        view.ZipCounts[2, col] = deliveryData.Count;    // Total Deliveries
+                        view.ZipCounts[3, col] = cumulativeChildren + cumulativeAdults + cumulativeSeniors;
+                        view.ZipCounts[4, col] = cumulativeChildren;
+                        view.ZipCounts[5, col] = cumulativeAdults;
+                        view.ZipCounts[6, col] = cumulativeSeniors;
+                        view.ZipCounts[7, col] = fullBags;
+                        view.ZipCounts[8, col] = halfBags;
+                        view.ZipCounts[9, col] = snacks;
+                        view.ZipCounts[10, col] = cards;
+
+                        view.ZipCounts[11, col] = distinctList.Count;
+                        view.ZipCounts[12, col] = distinctChildren + distinctAdults + distinctSeniors; // Distinct Residents
+                        view.ZipCounts[13, col] = distinctChildren;
+                        view.ZipCounts[14, col] = distinctAdults;
+                        view.ZipCounts[15, col] = distinctSeniors;
+                        view.ZipCounts[16, col] = totalRepeatDeliveries; // Repeat Deliveries
+                        view.ZipCounts[17, col] = totalFirstDeliveries; // First-Time Deliveries
+                        view.ZipCounts[18, col] = fullBags * 10;
+                        view.ZipCounts[19, col] = halfBags * 9;
                     }
-                }
+            }
+                
+            var totCol = view.ZipCodes.Count + 1;
+            view.ZipCounts[1, totCol] = totalFullBags * 10 + totalHalfBags *9;  // Total Food Lbs
+            view.ZipCounts[2, totCol] = totalDeliveries;    // Total Deliveries
+            view.ZipCounts[3, totCol] = totalCumulativeChildren + totalCumulativeAdults + totalCumulativeSeniors;
+            view.ZipCounts[4, totCol] = totalCumulativeChildren;
+            view.ZipCounts[5, totCol] = totalCumulativeAdults;
+            view.ZipCounts[6, totCol] = totalCumulativeSeniors;
+            view.ZipCounts[7, totCol] = totalFullBags;
+            view.ZipCounts[8, totCol] = totalHalfBags;
+            view.ZipCounts[9, totCol] = totalSnacks;
+            view.ZipCounts[10, totCol] = totalCards;
 
-                var totCol = view.ZipCodes.Count + 1;
-                view.ZipCounts[1, totCol] = totalFullBags * 10 + totalHalfBags *9;  // Total Food Lbs
-                view.ZipCounts[2, totCol] = totalDistinctHouseholds; // Distinct Households
-                view.ZipCounts[3, totCol] = totalDistinctChildren + totalDistinctAdults + totalDistinctSeniors; // Distinct Residents
-                view.ZipCounts[4, totCol] = totalDistinctChildren;
-                view.ZipCounts[5, totCol] = totalDistinctAdults;
-                view.ZipCounts[6, totCol] = totalDistinctSeniors;
-                view.ZipCounts[7, totCol] = totalDeliveries;    // Total Deliveries
-                view.ZipCounts[8, totCol] = totalCumulativeRepeatDeliveries; // Repeat Deliveries
-                view.ZipCounts[9, totCol] = totalCumulativeFirstDeliveries; // First-Time Deliveries
-                view.ZipCounts[10, totCol] = totalCumulativeChildren + totalCumulativeAdults + totalCumulativeSeniors;
-                view.ZipCounts[11, totCol] = totalCumulativeChildren;
-                view.ZipCounts[12, totCol] = totalCumulativeAdults;
-                view.ZipCounts[13, totCol] = totalCumulativeSeniors;
-                view.ZipCounts[14, totCol] = totalFullBags;
-                view.ZipCounts[15, totCol] = totalHalfBags;
-                view.ZipCounts[16, totCol] = totalSnacks;
-                view.ZipCounts[17, totCol] = totalFullBags * 10;
-                view.ZipCounts[18, totCol] = totalHalfBags * 9;
-                view.ZipCounts[19, totCol] = totalCards;
+            view.ZipCounts[11, totCol] = totalDistinctHouseholds; // Distinct Households
+            view.ZipCounts[12, totCol] = totalDistinctChildren + totalDistinctAdults + totalDistinctSeniors; // Distinct Residents
+            view.ZipCounts[13, totCol] = totalDistinctChildren;
+            view.ZipCounts[14, totCol] = totalDistinctAdults;
+            view.ZipCounts[15, totCol] = totalDistinctSeniors;
+            view.ZipCounts[16, totCol] = totalCumulativeRepeatDeliveries; // Repeat Deliveries
+            view.ZipCounts[17, totCol] = totalCumulativeFirstDeliveries; // First-Time Deliveries
+            view.ZipCounts[18, totCol] = totalFullBags * 10;
+            view.ZipCounts[19, totCol] = totalHalfBags * 9;
 
-                return view;
+            return view;
             }
             private List<SelectListItem> GetSnapshotFamily(string listHH)
             {

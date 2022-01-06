@@ -706,7 +706,7 @@ namespace BHelp
                 var deliveryList = new List<Delivery>(db.Deliveries)
                     .Where(d => d.Status == 0)
                     .OrderBy(d => d.DateDelivered)
-                    .ThenBy(d => d.DriverId)
+                    //.ThenBy(d => d.DriverId)  // change 01/05/2022
                     .ThenBy(z => z.Zip)
                     .ThenBy(n => n.LastName).ToList();
                 odv.OpenDeliveryCount = deliveryList.Count;
