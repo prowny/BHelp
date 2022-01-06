@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
+using Castle.Core.Internal;
 
 namespace BHelp.Controllers
 {
@@ -177,7 +178,7 @@ namespace BHelp.Controllers
         }
         public ActionResult ReturnToDashboard()
         {
-            return RedirectToAction("Index", "Home");
+            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
         public ActionResult ConfirmChangesSaved(int clientId)
         {

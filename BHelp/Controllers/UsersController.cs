@@ -7,6 +7,7 @@ using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
 using System.IO;
+using Castle.Core.Internal;
 using ClosedXML.Excel;
 
 namespace BHelp.Controllers
@@ -209,12 +210,12 @@ namespace BHelp.Controllers
         }
         public ActionResult ReturnToReportsMenu()
         {
-            return RedirectToAction("ReportsMenu","Deliveries");
+            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
         public ActionResult ReturnToDashboard()
         {
-            return RedirectToAction("Index", "Home");
-        } 
+            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

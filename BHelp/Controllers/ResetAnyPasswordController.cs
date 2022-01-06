@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
+using Castle.Core.Internal;
 using Newtonsoft.Json;
 
 namespace BHelp.Controllers
@@ -40,7 +41,7 @@ namespace BHelp.Controllers
         }
         public ActionResult ReturnToDashboard()
         {
-            return RedirectToAction("Index", "Home");
+            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
         protected override void Dispose(bool disposing)
         {

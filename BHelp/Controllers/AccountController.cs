@@ -13,6 +13,7 @@ using System;
 using System.Net.Mail;
 using BHelp.ViewModels;
 using System.Net;
+using Castle.Core.Internal;
 
 namespace BHelp.Controllers
 {
@@ -611,9 +612,9 @@ namespace BHelp.Controllers
         }
         public ActionResult ReturnToDashboard()
         {
-            return RedirectToAction("Index", "Home");
+            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
-        
+
         #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";

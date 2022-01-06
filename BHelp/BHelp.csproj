@@ -289,7 +289,6 @@
     <Compile Include="ViewModels\GroupNameViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="ViewModels\MySqlViewModel.cs" />
     <Compile Include="ViewModels\OpenDeliveryViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -317,6 +316,7 @@
     <Compile Include="ViewModels\UsersInRolesReportViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="ViewModels\VolunteerHoursViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\BHelpZipCodes.txt">
