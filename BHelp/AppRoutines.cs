@@ -568,7 +568,6 @@ namespace BHelp
                     ws.Cell(activeRow, col).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
                     ws.Cell(activeRow, col).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 }
-                //activeRow++;
             }
 
             var ms = new MemoryStream();
