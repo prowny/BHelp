@@ -48,7 +48,7 @@ namespace BHelp.Controllers
 
         public ActionResult MaintainUserRoles()
         {
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "UserRoles");
         }
 
         public ActionResult ReturnToDashboard()

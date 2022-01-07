@@ -14,7 +14,7 @@
     <div>
         @Html.DropDownList("AllClients",Model.AllClients,
             "-Select Client to Add to Group-",
-            new{onchange = "document.getElementById('ThisForm').submit();"})
+            new{onchange = "document.getElementById('ThisForm').submit();", size=10})
     </div>
 }
 </body>

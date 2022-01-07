@@ -52,12 +52,12 @@ namespace BHelp.Controllers
             //    var text = client.LastName + ", " + client.FirstName + " ";
             //    text += client.StreetNumber + " " + client.StreetName;
             //    groupMembersView.AllClients.Add(new SelectListItem()
-            //        {Text = text, Value = client.Id.ToString(),Selected = false});
+            //    { Text = text, Value = client.Id.ToString(), Selected = false });
             //}
-            
+
             return View(groupMembersView);
         }
-        
+
         public ActionResult Remove (int? clientId)
         {
             var _gpId = Convert.ToInt32(Session["GroupId"]);

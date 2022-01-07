@@ -30,17 +30,18 @@
         }
     </div>
 
-    <div id="GroupMembersDiv" style ="display:none">
+@*<div id="GroupMembersDiv" style ="display:none">*@
+    <div>
         <table>
             <tr>
-                <td>
+                @*<td>
                     @Html.DropDownList("selectMembersDDL", new SelectList(string.Empty,
                         "Value", "Text"), new { size = 10 })
-                </td>
-                <td>
+                </td>*@
+                @*<td>
                     <b>&nbsp;&nbsp;@Html.Label("Add Member: ") </b>
                     @Html.DropDownList("selectClientDDL", Model.AllClients)
-                </td>
+                </td>*@
 
             </tr>
         </table>

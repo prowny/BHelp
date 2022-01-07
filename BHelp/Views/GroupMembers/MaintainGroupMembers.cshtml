@@ -12,6 +12,7 @@
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
     <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
+    @*var _size =@Model.GroupMemberSelectList.Count*@
 </head>
 <body>
     <b>@Html.Label("Maintain Group Members for " + Model.SelectedGroupName)</b>
@@ -19,25 +20,26 @@
 @*@using (Html.BeginForm("Index", "GroupMembers", FormMethod.Post))
 {*@
 <table>
-    @foreach (var member in Model.GroupMemberSelectList)
+
+    @*@foreach (var member in Model.GroupMemberSelectList)
     {
         <tr>
             <td>@member.Text</td>
         </tr>
-    }
+    }*@
 
-    @*<tr>
-            <td>
-                @Html.DropDownListFor(m => m.SelectedMemberId,
-                    new SelectList(Model.GroupMemberSelectList, "Value", "Text"),
-                    new { size = _size })
-            </td>
-            <td>
-                <b>&nbsp;&nbsp;@Html.Label("Add Member: ") </b>
-                @Html.DropDownList("selectClientDDL", Model.AllClients)
-            </td>
-        </tr>*@
-    </table>
+    <tr>
+        <td>
+            @Html.DropDownListFor(m => m.SelectedMemberId,
+                new SelectList(Model.GroupMemberSelectList, "Value", 
+                    "Text", new{size = 10}))
+        </td>
+        <td>
+            <b>&nbsp;&nbsp;@Html.Label("Add Member: ") </b>
+            @Html.DropDownList("selectClientDDL", Model.AllClients)
+        </td>
+    </tr>
+</table>
     <!--<table>
         <tr>
             <td>
