@@ -19,13 +19,20 @@
 <div>
     <b>Call Log History by Individual Client</b>
     <br />
+    <div>
+        @if (Model.ClientId > 0)
+        {
+            @Html.ActionLink("Download to CSV File", "CallLogByIndividualToCSV")
+        }
+        &nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "ReturnToDashboard")
+    </div>
     <table>
         <tr>
             <td>Select Client:</td>
             <td>
                 @Html.DropDownListFor(model => model.ClientId,
-                     new SelectList(Model.ClientSelectList, "Value", "Text"),
-                     "--Select--",new { @id="clientList", @class = "form-control" })
+                    new SelectList(Model.ClientSelectList, "Value", "Text"),
+                    "--Select--",new { @id="clientList", @class = "form-control" })
             </td>
         </tr>
     </table>
@@ -56,7 +63,7 @@
             @foreach (var delivery in Model.DeliveryList)
             {
                 <tr>
-                    @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
+                    @if (Model.OkToEdit)
                     {
                         <td>
                             @Html.ActionLink("Edit", "Edit", new { id = delivery.Id })
@@ -83,7 +90,7 @@
                     <td style="text-align: center">@delivery.KidSnacks</td>
                     <td style="text-align: center">@delivery.GiftCards</td>
                     <td style="text-align: center">@delivery.PoundsOfFood</td>
-                    @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
+                    @if (Model.OkToEdit)
                     {
                         <td>
                             @Html.ActionLink("Edit", "Edit", new { id = delivery.Id })
@@ -92,14 +99,17 @@
                 </tr>
             }
         </table>
+        if(Model.DeliveryList.Count > 0)
+        {
+            @Html.ActionLink("Back to Select List", "CallLogIndividual", new { }) 
+            <br/>
+            @Html.ActionLink("Download to CSV File", "CallLogByIndividualToCSV", new { })
+            <br/>
+        }
     }
 </div>
-    <br />
 <div>
-    @Html.ActionLink("Back to Delivery List", "CallLogIndividual", new { })
-    <br/>
-    @Html.ActionLink("Download to CSV File", "CallLogByIndividualToCSV", new { })
-    <br/>
+    &nbsp;
     @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
 </div>
 <script type="text/javascript">

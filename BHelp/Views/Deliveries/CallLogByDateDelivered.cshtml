@@ -19,6 +19,14 @@
 <body>
     <div>
         <b>Call Log History by Date Delivered Range</b>
+        <br />
+        <div>
+            @if (Model.DeliveryList.Count > 0)
+            {
+                @Html.ActionLink("Download to CSV File", "CallLogByDateDeliveredToCSV")
+            }
+            &nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "ReturnToDashboard")
+        </div>
         <table>
             <tr>
                 <td>Starting Date:</td>
@@ -39,58 +47,63 @@
     <div id="callLogsDiv">
         @if (Model.DeliveryList != null)
         {
-        <table>
-        <tr>
-            <td></td>  @*// for Edit button*@
-            <td><b>DelivDate</b></td>
-            <td><b>Client Name</b></td>
-            <td><b>Address</b></td>
-            <td><b>Driver</b></td>
-            <td><b>Status</b></td>
-            <td style="text-align: center"><b>#HH</b></td>
-            <td style="text-align: center"><b>#C</b></td>
-            <td style="text-align: center"><b>#A</b></td>
-            <td style="text-align: center"><b>#S</b></td>
-            <td style="text-align: center"><b>#F</b></td>
-            <td style="text-align: center"><b>#H</b></td>
-            <td style="text-align: center"><b>#KS</b></td>
-            <td style="text-align: center"><b>#GC</b></td>
-            <td style="text-align: center"><b>Lbs.</b></td>
-        </tr>
-            @foreach (var delivery in Model.DeliveryList)
-            {
+            <table>
                 <tr>
-                    @if(User.IsInRole("Administrator") || User.IsInRole("Staff"))
-                    {
-                    <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id, delivery.DateDeliveredString })</td>
-                    }
-                    else
-                    {
-                        <td></td>
-                    }
-                    <td>@delivery.DateDeliveredString</td>
-                    @{ var name = delivery.LastName + ", " + delivery.FirstName; }
-                    @{ var addr = delivery.StreetNumber + " " + delivery.StreetName; }
-                    <td>@name</td>
-                    <td>@addr</td>
-                    <td>@delivery.DriverName</td>
-                    <td>@delivery.SelectedStatus</td>
-                    <td style="text-align: center">@delivery.HouseoldCount</td>
-                    <td style="text-align: center">@delivery.Children</td>
-                    <td style="text-align: center">@delivery.Adults</td>
-                    <td style="text-align: center">@delivery.Seniors</td>
-                    <td style="text-align: center">@delivery.FullBags</td>
-                    <td style="text-align: center">@delivery.HalfBags</td>
-                    <td style="text-align: center">@delivery.KidSnacks</td>
-                    <td style="text-align: center">@delivery.GiftCards</td>
-                    <td style="text-align: center">@delivery.PoundsOfFood</td>
-                    @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
-                    {
-                        <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id, delivery.DateDeliveredString })</td>
-                    }
+                    <td></td>  @*// for Edit button*@
+                    <td><b>DelivDate</b></td>
+                    <td><b>Client Name</b></td>
+                    <td><b>Address</b></td>
+                    <td><b>Driver</b></td>
+                    <td><b>Status</b></td>
+                    <td style="text-align: center"><b>#HH</b></td>
+                    <td style="text-align: center"><b>#C</b></td>
+                    <td style="text-align: center"><b>#A</b></td>
+                    <td style="text-align: center"><b>#S</b></td>
+                    <td style="text-align: center"><b>#F</b></td>
+                    <td style="text-align: center"><b>#H</b></td>
+                    <td style="text-align: center"><b>#KS</b></td>
+                    <td style="text-align: center"><b>#GC</b></td>
+                    <td style="text-align: center"><b>Lbs.</b></td>
                 </tr>
+                @foreach (var delivery in Model.DeliveryList)
+                {
+                    <tr>
+                        @if(User.IsInRole("Administrator") || User.IsInRole("Staff"))
+                        {
+                            <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id, delivery.DateDeliveredString })</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                        <td>@delivery.DateDeliveredString</td>
+                        @{ var name = delivery.LastName + ", " + delivery.FirstName; }
+                        @{ var addr = delivery.StreetNumber + " " + delivery.StreetName; }
+                        <td>@name</td>
+                        <td>@addr</td>
+                        <td>@delivery.DriverName</td>
+                        <td>@delivery.SelectedStatus</td>
+                        <td style="text-align: center">@delivery.HouseoldCount</td>
+                        <td style="text-align: center">@delivery.Children</td>
+                        <td style="text-align: center">@delivery.Adults</td>
+                        <td style="text-align: center">@delivery.Seniors</td>
+                        <td style="text-align: center">@delivery.FullBags</td>
+                        <td style="text-align: center">@delivery.HalfBags</td>
+                        <td style="text-align: center">@delivery.KidSnacks</td>
+                        <td style="text-align: center">@delivery.GiftCards</td>
+                        <td style="text-align: center">@delivery.PoundsOfFood</td>
+                        @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
+                        {
+                            <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id, delivery.DateDeliveredString })</td>
+                        }
+                    </tr>
+                }
+            </table>
+            if (Model.DeliveryList.Count > 0)
+            {
+                @Html.ActionLink("Download to CSV File", "CallLogByDateDeliveredToCSV", new { })
+                <br/>
             }
-        </table>
         }
     </div>
     <br />

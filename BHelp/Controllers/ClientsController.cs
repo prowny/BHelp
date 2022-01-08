@@ -92,13 +92,21 @@ namespace BHelp.Controllers
                 viewModel.FamilyMembers.Add(newMember);
             }
             viewModel.ZipCodes = AppRoutines.GetZipCodesSelectList();
+
+            if (Request.UrlReferrer != null)
+            {
+                viewModel.ReturnURL = Request.UrlReferrer.ToString();
+            }
+
             return View(viewModel);
         }
 
         // POST: Clients/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Age,StreetNumber,StreetName,City,Zip,Phone,Notes,FamilyMembers")] ClientViewModel client)
+        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Age,StreetNumber,"
+                              + "StreetName,City,Zip,Phone,Notes,FamilyMembers,"
+                              + "ReturnURL" )] ClientViewModel client)
         {
             if (ModelState.IsValid)
             {
@@ -134,6 +142,11 @@ namespace BHelp.Controllers
                         db.FamilyMembers.Add(newMember);
                         db.SaveChanges();
                     }
+                }
+
+                if (client.ReturnURL.Contains("OD"))
+                {
+                    return RedirectToAction("Index", "OD");
                 }
 
                 return RedirectToAction("Index");

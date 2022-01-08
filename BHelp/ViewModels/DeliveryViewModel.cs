@@ -100,7 +100,7 @@ namespace BHelp.ViewModels
         public IEnumerable<SelectListItem> ClientSelectList { get; set; }
         public DateTime HistoryStartDate { get; set; }
         public DateTime HistoryEndDate { get; set; }
-        public  string ReturnURL { get; set; }
+        public string ReturnURL { get; set; }
         public IEnumerable<SelectListItem> SnapshotFamily { get; set; }
         public HouseholdViewModel Household { get; set; }
         public string DateDeliveredString { get; set; }
@@ -108,5 +108,6 @@ namespace BHelp.ViewModels
         public DateTime NextDeliveryEligibleDate { get; set; }
         public DateTime NextGiftCardEligibleDate { get; set; }
         public Boolean EligiibilityRulesException { get; set; }
+        public Boolean OkToEdit { get; set; }
     }
 }

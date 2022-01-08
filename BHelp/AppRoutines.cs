@@ -576,7 +576,7 @@ namespace BHelp
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             { FileDownloadName = "OpenDeliveries" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
         }
-        public static FileStreamResult ExcelOpenSelectedDeliveries(OpenDeliveryViewModel view)
+        public static FileStreamResult ExcelOpenSelectedDeliveries(OpenDeliveryViewModel view) // From OpenFilters
         {
             var workbook = new XLWorkbook();
             IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
@@ -694,6 +694,122 @@ namespace BHelp
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             { FileDownloadName = "BHELPDeliveries" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
         }
+        
+        public static FileStreamResult CSVOpenSelectedDeliveries(OpenDeliveryViewModel view) // From Open Filters
+        {
+            //var view = GetOpenDeliveriesViewModel();
+                var sb = new StringBuilder();
+
+                sb.Append(view.ReportTitle + ',');
+                sb.Append(DateTime.Today.ToShortDateString() + ',');
+                sb.Append(",,,,,");
+                var key = "K = Kids 0-17, A = Adults 18-59, S = Adults 60+, HH = Household, ";
+                key += "F = Full Bags, H = Half Bags, KS = Kids Snacks for ages 2-17, GC = Gift Cards";
+                sb.Append("\"" + key + "\"");
+                sb.AppendLine();
+
+                sb.Append("Delivery Date,Driver,ZipCode,Client,Address,City,Phone,#K,#A,#S,# in HH,");
+                sb.Append("All Household Members/Ages,#F,#H,#KS,#GC,");
+                sb.Append("Client Permanent Notes,OD & Driver Delivery Notes");
+                sb.AppendLine();
+
+                for (var i = 0; i < view.OpenDeliveryCount; i++)
+                {
+                    for (var col = 1; col < 18; col++)
+                    {
+                        if (view.OpenDeliveries[i, col] != null)
+                        {
+                            if (view.OpenDeliveries[i, col].Contains(","))
+                            {
+                                sb.Append("\"" + view.OpenDeliveries[i, col] + "\"" + ",");
+                            }
+                            else
+                            {
+                                sb.Append(view.OpenDeliveries[i, col] + ",");
+                            }
+
+                        }
+                        else
+                        {
+                            sb.Append(view.OpenDeliveries[i, col] + ",");
+                        }
+                    }
+
+                    sb.Append("\"" + view.OpenDeliveries[i, 18] + "\"");
+                    sb.AppendLine();
+                }
+
+                var response = System.Web.HttpContext.Current.Response;
+                response.BufferOutput = true;
+                response.Clear();
+                response.ClearHeaders();
+                response.ContentEncoding = Encoding.Unicode;
+                response.AddHeader("content-disposition", "attachment;filename=" + view.ReportTitle + ".csv");
+                response.ContentType = "text/plain";
+                response.Write(sb.ToString());
+                response.End();
+                return null;
+            }
+
+        //private static OpenDeliveryViewModel GetSelectedOpens(OpenDeliveryViewModel model)
+        //{
+        //    //var selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
+        //    var selectedDeliveries = (List<Delivery>)System.Web.HttpContext.Current.Session["SelectedDeliveriesList"];
+        //    if (selectedDeliveries == null) return null;
+        //    var selectedOpens = new OpenDeliveryViewModel
+        //    {
+        //        SelectedDeliveriesList = new List<Delivery>(),
+        //        OpenDeliveries = new string[selectedDeliveries.Count + 1, 13]   // Reserve OpenDeliveries [0,n] for OD Name and Phone
+        //    };
+        //    for (var i = 0; i < selectedDeliveries.Count; i++)
+        //    {   // selected deliveries count may have changed
+        //        if (i < model.SelectedDeliveriesList.Count)
+        //        {
+        //            selectedDeliveries[i].IsChecked = model.SelectedDeliveriesList[i].IsChecked;
+        //        }
+        //    } // Set IsChecked flags
+
+        //    var j = 0;
+        //    foreach (var rec in selectedDeliveries)
+        //    {
+        //        if (rec.IsChecked)
+        //        {
+        //            j++;
+        //            if (rec.DateDelivered != null)
+        //                selectedOpens.OpenDeliveries[j, 1] = rec.DateDelivered.Value.ToString("MM/dd/yyyy");
+        //            selectedOpens.OpenDeliveries[j, 2] = rec.DriverName;
+        //            selectedOpens.OpenDeliveries[j, 3] = rec.Zip;
+        //            selectedOpens.OpenDeliveries[j, 4] = rec.Client.FullName + " "
+        //                + rec.StreetNumber + " " + rec.StreetName;
+        //            selectedOpens.OpenDeliveries[j, 5] = rec.Phone;
+        //            selectedOpens.OpenDeliveries[j, 6] = rec.HouseoldCount.ToString();
+        //            selectedOpens.OpenDeliveries[j, 7] = rec.FullBags.ToString();
+        //            selectedOpens.OpenDeliveries[j, 8] = rec.HalfBags.ToString();
+        //            selectedOpens.OpenDeliveries[j, 9] = rec.KidSnacks.ToString();
+        //            selectedOpens.OpenDeliveries[j, 10] = rec.GiftCards.ToString();
+        //            selectedOpens.OpenDeliveries[j, 11] = rec.Client.Notes;
+        //            selectedOpens.OpenDeliveries[j, 12] = rec.ODNotes + " " + rec.DriverNotes;
+        //            selectedOpens.OpenDeliveries[0, 0] = rec.DeliveryDateODId; // OD of last selected record
+        //            selectedOpens.OpenDeliveries[0, 1] = selectedOpens.OpenDeliveries[j, 1]; // Last Date
+        //        }
+        //    }
+
+
+        //    var odId = selectedOpens.OpenDeliveries[0, 0];
+        //    if (odId != null)
+        //    {
+        //        using (var db = new BHelpContext())
+        //        {
+        //            var odRec = db.Users.Find(odId);
+        //            selectedOpens.OpenDeliveries[0, 4] = "OD: " + odRec.FullName
+        //                                                        + " " + odRec.PhoneNumber;
+        //        }
+        //    }
+        //    selectedOpens.OpenDeliveryCount = j + 1;
+        //    selectedOpens.ReportTitle = "BHELPDeliveries";
+
+        //    return selectedOpens;
+        //}
         private static OpenDeliveryViewModel GetOpenDeliveriesViewModel()
         {
             var odv = new OpenDeliveryViewModel

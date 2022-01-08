@@ -84,6 +84,7 @@
                         <td><b>@Html.Label("Delv Date")</b></td>
                         <td><b>@Html.Label("EX*")</b></td>
                         <td style="text-align: center"><b>@Html.Label("Driver")</b></td>
+                        <td style="text-align: center"><b>@Html.Label("Zip")</b></td>
                         <td style="text-align: center"><b>@Html.Label("DelvDateOD")</b></td>
                         <td style="text-align: center"><b>@Html.Label("Client")</b></td>
                         <td><b>F</b></td>
@@ -105,6 +106,7 @@
                         <td></td>
                     }
                     <td>@Model.SelectedDeliveriesList[i].DriverName</td>
+                    <td>@Model.SelectedDeliveriesList[i].Zip</td>
                     <td>@Model.SelectedDeliveriesList[i].DeliveryDateODName</td>
                     <td title=@Model.SelectedDeliveriesList[i].Client.NameAddressToolTip>@Model.SelectedDeliveriesList[i].Client.ClientNameAddress</td>
                     @if (Model.SelectedDeliveriesList[i].AllZeroProducts)
@@ -157,14 +159,17 @@
             <br />
             Download Checked Deliveries to Excel
             <input name="btnExcelOpenSelected" type="submit" value="Go" class="btn btn-default" id="GoButton" />
-        </div>
+            <br />
+            Download Checked Deliveries to CSV File
+            <input name="btnCSVOpenSelected" type="submit" value="Go" class="btn btn-default" id="GoButton" />
+            
+          </div>
                 <br/>
                 <span style="color:crimson "><small>* EX = Eligibility Rules Exception found</small></span>
 
         }
         </div>
-        
-    <div>
+   <div>
    <br />
     @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
 </div> @*Return to Dashboard*@

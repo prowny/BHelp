@@ -47,17 +47,15 @@ namespace BHelp.ViewModels
 
         public IEnumerable<SelectListItem> ZipCodes { get; set; }
 
-        public string FullName
-        {
-            get { return string.Format("{0} {1}", FirstName, LastName); }
-        }
+        //public string FullName
+        //{
+        //    get { return string.Format("{0} {1}", FirstName, LastName); }
+        //}
         public List<FamilyMember> FamilyMembers { get; set; }
         
         public IEnumerable<SelectListItem> HouseholdMembers { get; set; }
         
         public string SearchString { get; set; }
-        
-        //public string CurrentUserFullName { get; set; }
         public string StreetToolTip { get; set; }
         public string CityToolTip { get; set; }
         public string PhoneToolTip { get; set; }
@@ -65,5 +63,6 @@ namespace BHelp.ViewModels
         public string ReportTitle { get; set; }
         public string[,] ClientStrings { get; set; }
         public int ClientCount { get; set; }
+        public string ReturnURL { get; set; }
     }
 }

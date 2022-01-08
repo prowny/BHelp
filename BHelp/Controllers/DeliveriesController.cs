@@ -11,6 +11,7 @@ using BHelp.Models;
 using BHelp.ViewModels;
 using Castle.Core.Internal;
 using ClosedXML.Excel;
+using Microsoft.Win32;
 
 namespace BHelp.Controllers
 {
@@ -261,7 +262,7 @@ namespace BHelp.Controllers
                 string btnByDriverCheckAll, string btnByDriverClearAll,
                 string btnReplacementDeliveryDate, string btnReplacementDriverId,
                 string btnReplacementDeliveryDateODId, string btnSetStatusToDelivered,
-                string btnExcelOpenSelected)
+                string btnExcelOpenSelected, string btnCSVOpenSelected)
             {
                 ModelState.Clear(); // if not cleared, checkboxfor IsChecked displays incorrectly
                 var view = GetOpenDeliveryViewModel(model);
@@ -398,61 +399,84 @@ namespace BHelp.Controllers
 
                 if (btnExcelOpenSelected != null)
                 {
-                    var selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
+                    // Change TempData to Session
+                    Session["SelectedDeliveriesList"] = TempData["SelectedDeliveriesList"];
+                    var selectedDeliveries = (List<Delivery>)Session["SelectedDeliveriesList"];
                     if (selectedDeliveries == null) return null;
-                    var selectedOpens = new OpenDeliveryViewModel
-                    {
-                        SelectedDeliveriesList = new List<Delivery>(), 
-                        OpenDeliveries = new string[selectedDeliveries.Count + 1, 13]   // Reserve OpenDeliveries [0,n] for OD Name and Phone
-                    };
-                    for (var i = 0; i < selectedDeliveries.Count; i++)
-                    {   // selected deliveries count may have changed
-                        if (i < model.SelectedDeliveriesList.Count)
-                        {
-                            selectedDeliveries[i].IsChecked = model.SelectedDeliveriesList[i].IsChecked;
-                        }
-                    } // Set IsChecked flags
-                   
-                    var j = 0;  
-                    foreach (var rec in selectedDeliveries)
-                    { 
-                        if (rec.IsChecked)
-                        {
-                            j++;
-                            if (rec.DateDelivered != null)
-                            selectedOpens.OpenDeliveries[j, 1] = rec.DateDelivered.Value.ToString("MM/dd/yyyy");
-                            selectedOpens.OpenDeliveries[j, 2] = rec.DriverName;
-                            selectedOpens.OpenDeliveries[j, 3] = rec.Zip;
-                            selectedOpens.OpenDeliveries[j, 4] = rec.Client.FullName + " "
-                                + rec.StreetNumber + " " + rec.StreetName;
-                            selectedOpens.OpenDeliveries[j, 5] = rec.Phone;
-                            selectedOpens.OpenDeliveries[j, 6] = rec.HouseoldCount.ToString();
-                            selectedOpens.OpenDeliveries[j, 7] = rec.FullBags.ToString();
-                            selectedOpens.OpenDeliveries[j, 8] = rec.HalfBags.ToString();
-                            selectedOpens.OpenDeliveries[j, 9] = rec.KidSnacks.ToString();
-                            selectedOpens.OpenDeliveries[j, 10] = rec.GiftCards.ToString();
-                            selectedOpens.OpenDeliveries[j, 11] = rec.Client.Notes;
-                            selectedOpens.OpenDeliveries[j, 12] = rec.ODNotes + " " + rec.DriverNotes;
-                            selectedOpens.OpenDeliveries[0, 0] = rec.DeliveryDateODId; // OD of last selected record
-                            selectedOpens.OpenDeliveries[0, 1] = selectedOpens.OpenDeliveries[j, 1]; // Last Date
-                        }
-                    }
 
-                    var odId = selectedOpens.OpenDeliveries[0, 0];
-                    if (odId != null)
-                    {
-                        var odRec = db.Users.Find(odId);
-                        selectedOpens.OpenDeliveries[0, 4] = "OD: " + odRec.FullName
-                                                                    + " " + odRec.PhoneNumber;
-                    }
-                    selectedOpens.OpenDeliveryCount = j + 1;
-                    selectedOpens.ReportTitle = "BHELPDeliveries";
+                    OpenDeliveryViewModel selectedOpens = GetSelectedOpens(model);
                     var result = AppRoutines.ExcelOpenSelectedDeliveries(selectedOpens);
                     return result;
-                    //return RedirectToAction("OpenFilters");
-            }
+                }
+
+                if (btnCSVOpenSelected != null)
+                {
+                    Session["SelectedDeliveriesList"] = TempData["SelectedDeliveriesList"];
+                    var selectedDeliveries = (List<Delivery>)Session["SelectedDeliveriesList"];
+                    if (selectedDeliveries == null) return null;
+
+                    OpenDeliveryViewModel selectedOpens = GetSelectedOpens(model);
+                    var result = AppRoutines.CSVOpenSelectedDeliveries(selectedOpens);
+                    return result;
+                }
+
             return RedirectToAction("OpenFilters");
-        }
+            }
+
+            private OpenDeliveryViewModel GetSelectedOpens(OpenDeliveryViewModel model)
+            {
+                var selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
+                if (selectedDeliveries == null) return null;
+                var selectedOpens = new OpenDeliveryViewModel
+                {
+                    SelectedDeliveriesList = new List<Delivery>(),
+                    OpenDeliveries = new string[selectedDeliveries.Count + 1, 13]   // Reserve OpenDeliveries [0,n] for OD Name and Phone
+                };
+            for (var i = 0; i < selectedDeliveries.Count; i++)
+            {   // selected deliveries count may have changed
+                if (i < model.SelectedDeliveriesList.Count)
+                {
+                    selectedDeliveries[i].IsChecked = model.SelectedDeliveriesList[i].IsChecked;
+                }
+            } // Set IsChecked flags
+
+            var j = 0;
+            foreach (var rec in selectedDeliveries)
+            {
+                if (rec.IsChecked)
+                {
+                    j++;
+                    if (rec.DateDelivered != null)
+                        selectedOpens.OpenDeliveries[j, 1] = rec.DateDelivered.Value.ToString("MM/dd/yyyy");
+                    selectedOpens.OpenDeliveries[j, 2] = rec.DriverName;
+                    selectedOpens.OpenDeliveries[j, 3] = rec.Zip;
+                    selectedOpens.OpenDeliveries[j, 4] = rec.Client.FullName + " "
+                        + rec.StreetNumber + " " + rec.StreetName;
+                    selectedOpens.OpenDeliveries[j, 5] = rec.Phone;
+                    selectedOpens.OpenDeliveries[j, 6] = rec.HouseoldCount.ToString();
+                    selectedOpens.OpenDeliveries[j, 7] = rec.FullBags.ToString();
+                    selectedOpens.OpenDeliveries[j, 8] = rec.HalfBags.ToString();
+                    selectedOpens.OpenDeliveries[j, 9] = rec.KidSnacks.ToString();
+                    selectedOpens.OpenDeliveries[j, 10] = rec.GiftCards.ToString();
+                    selectedOpens.OpenDeliveries[j, 11] = rec.Client.Notes;
+                    selectedOpens.OpenDeliveries[j, 12] = rec.ODNotes + " " + rec.DriverNotes;
+                    selectedOpens.OpenDeliveries[0, 0] = rec.DeliveryDateODId; // OD of last selected record
+                    selectedOpens.OpenDeliveries[0, 1] = selectedOpens.OpenDeliveries[j, 1]; // Last Date
+                }
+            }
+
+            var odId = selectedOpens.OpenDeliveries[0, 0];
+            if (odId != null)
+            {
+                var odRec = db.Users.Find(odId);
+                selectedOpens.OpenDeliveries[0, 4] = "OD: " + odRec.FullName
+                                                            + " " + odRec.PhoneNumber;
+            }
+            selectedOpens.OpenDeliveryCount = j + 1;
+            selectedOpens.ReportTitle = "BHELPDeliveries";
+
+            return selectedOpens;
+            }
 
             private OpenDeliveryViewModel LoadSelectedDeliveriesIntoView(OpenDeliveryViewModel view,
                 List<Delivery> selectedDeliveries, string btnCheckAll)
@@ -875,6 +899,8 @@ namespace BHelp.Controllers
                 var deliveryList = db.Deliveries.Where(d => d.ClientId == clientId)
                     .OrderByDescending(d => d.DateDelivered).ToList();
                 callLogView.DeliveryList = deliveryList;
+                callLogView.ClientId = (int)clientId;
+                
                 foreach (var del in callLogView.DeliveryList)
                 {
                     del.DriverName = GetDriverName(del.DriverId);
@@ -919,6 +945,12 @@ namespace BHelp.Controllers
                     var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
                     del.PoundsOfFood = fullWeight;
                 }
+
+                if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
+                {
+                    callLogView.OkToEdit = true;
+                }
+
                 Session["CallLogIndividualList"] = callLogView;
                 return View(callLogView);
             }
@@ -926,6 +958,7 @@ namespace BHelp.Controllers
             [HttpPost]
             public ActionResult CallLogIndividual(string id)
             {
+                if (id == "") id ="0";
                 var intClientId = Convert.ToInt32(id);
                 return RedirectToAction("CallLogIndividual", new { clientId = intClientId });
             }
