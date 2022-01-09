@@ -11,7 +11,6 @@ using BHelp.Models;
 using BHelp.ViewModels;
 using Castle.Core.Internal;
 using ClosedXML.Excel;
-using Microsoft.Win32;
 
 namespace BHelp.Controllers
 {
@@ -625,7 +624,7 @@ namespace BHelp.Controllers
             }
 
             // GET: Deliveries/Edit/5
-            public ActionResult Edit(int? id, string desiredDeliveryDate)
+            public ActionResult Edit(int? id, string desiredDeliveryDate, string returnURL)
             {
                 switch (id)
                 {
@@ -675,7 +674,8 @@ namespace BHelp.Controllers
                     DateDelivered = delivery.DateDelivered,
                     Status = delivery.Status,
                     HistoryStartDate = Convert.ToDateTime(Session["CallLogStartDate"]),
-                    HistoryEndDate = Convert.ToDateTime(Session["CallLogEndDate"])
+                    HistoryEndDate = Convert.ToDateTime(Session["CallLogEndDate"]),
+                    ReturnURL = returnURL
                 };
 
                 switch (delivery.Status)
@@ -762,7 +762,6 @@ namespace BHelp.Controllers
                     }
                 }
                 
-
                 viewModel.Zip = delivery.Zip;
                 return View(viewModel);
             }
@@ -842,13 +841,16 @@ namespace BHelp.Controllers
                     if (delivery.ReturnURL.Contains("CallLogByDateDelivered"))
                     { return RedirectToAction("CallLogByDateDelivered"); }
 
+                    if (delivery.ReturnURL.Contains("UpdateHousehold"))
+                    { return RedirectToAction("Index", "OD"); }
+
                     return RedirectToAction("Index");
                 }
                 return View(delivery);
             }
         
             // GET: Deliveries/Delete/5
-            public ActionResult Delete(int? id)
+            public ActionResult Delete(int? id, string returnURL)
             {
                 if (id == null)
                 { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
@@ -859,17 +861,23 @@ namespace BHelp.Controllers
                     return HttpNotFound();
                 }
 
+                delivery.ReturnURL = returnURL;
                 return View(delivery);
             }
 
             // POST: Deliveries/Delete/5
             [HttpPost, ActionName("Delete")]
             [ValidateAntiForgeryToken]
-            public ActionResult DeleteConfirmed(int id)
+            public ActionResult DeleteConfirmed(int id, string returnURL)
             {
                 Delivery delivery = db.Deliveries.Find(id);
                 if (delivery != null) db.Deliveries.Remove(delivery);
                 db.SaveChanges();
+                if (returnURL == null) return RedirectToAction("Index");
+                if (returnURL.Contains("UpdateHousehold"))
+                {
+                    return RedirectToAction("Index", "OD");
+                }
                 return RedirectToAction("Index");
             }
             public ActionResult CallLogMenu()

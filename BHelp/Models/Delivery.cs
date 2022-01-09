@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
+using DocumentFormat.OpenXml.Drawing;
 
 namespace BHelp.Models
 {
@@ -106,5 +107,8 @@ namespace BHelp.Models
 
         [NotMapped]
         public int PoundsOfFood { get; set; }
+
+        [NotMapped]
+       public string ReturnURL { get; set; }
     }
 }

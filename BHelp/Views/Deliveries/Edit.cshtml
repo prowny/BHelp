@@ -180,7 +180,7 @@
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
-                    @Html.ActionLink("Delete", "Delete", new { id = Model.Id }, new { id = "DeleteButton" })
+                    @Html.ActionLink("Delete", "Delete", new { id = Model.Id, returnURL = Model.ReturnURL }, new { id = "DeleteButton" })
                 </div>
             </div>
             <br />
@@ -193,6 +193,11 @@
                 @if (Model.ReturnURL.Contains("CallLogIndividual"))
                 {
                     @Html.ActionLink("Back to Delivery List", "CallLogIndividual", new { clientId = Model.ClientId })
+                }
+                
+                @if (Model.ReturnURL.Contains("UpdateHousehold"))
+                {
+                    @Html.ActionLink("Back to OD Section", "Index", "OD")
                 }
             </div>
             <div>

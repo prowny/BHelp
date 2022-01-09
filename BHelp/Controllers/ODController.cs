@@ -200,13 +200,16 @@ namespace BHelp.Controllers
                 if (numberInHousehold >= 9) { delivery.HalfBags = 3; }
                 // Kid Snacks:
                 delivery.KidSnacks = AppRoutines.GetNumberOfKids2_17(clientId);
-                
+
                 delivery.FirstDelivery = db.Deliveries.Count(d => d.ClientId == clientId) == 0;
-                
+                if (Request.UrlReferrer != null)
+                {
+                    delivery.ReturnURL = Request.UrlReferrer.ToString();
+                }
                 db.Deliveries.Add(delivery);
                 db.SaveChanges();
                 db.Entry(delivery).GetDatabaseValues();
-                return RedirectToAction("AdviseDeliveryCreated", new { newId = delivery.Id });
+                return RedirectToAction("Edit", "Deliveries", new { id = delivery.Id });
             }
             return RedirectToAction("Index");
         }
