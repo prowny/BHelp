@@ -146,7 +146,7 @@ namespace BHelp.Controllers
 
         public ActionResult ExcelOpenDeliveries()
         {
-            var result = AppRoutines.ExcelOpenDeliveries();
+            var result = AppRoutines.ExcelOpenDeliveries(null);
             return result;
         }
 

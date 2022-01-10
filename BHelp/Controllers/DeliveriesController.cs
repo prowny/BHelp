@@ -175,7 +175,7 @@ namespace BHelp.Controllers
         }
         public ActionResult ExcelOpenDeliveries()
         {
-            var result = AppRoutines.ExcelOpenDeliveries();
+            var result = AppRoutines.ExcelOpenDeliveries(null);
             return result;
         }
        
@@ -404,7 +404,9 @@ namespace BHelp.Controllers
                     if (selectedDeliveries == null) return null;
 
                     OpenDeliveryViewModel selectedOpens = GetSelectedOpens(model);
-                    var result = AppRoutines.ExcelOpenSelectedDeliveries(selectedOpens);
+                    //var result = AppRoutines.ExcelOpenSelectedDeliveries(selectedOpens);
+                    var result = AppRoutines.ExcelOpenDeliveries(selectedOpens);
+
                     return result;
                 }
 
@@ -429,7 +431,7 @@ namespace BHelp.Controllers
                 var selectedOpens = new OpenDeliveryViewModel
                 {
                     SelectedDeliveriesList = new List<Delivery>(),
-                    OpenDeliveries = new string[selectedDeliveries.Count + 1, 13]   // Reserve OpenDeliveries [0,n] for OD Name and Phone
+                    OpenDeliveries = new string[selectedDeliveries.Count + 1, 20]   // Reserve OpenDeliveries [0,n] for OD Name and Phone
                 };
             for (var i = 0; i < selectedDeliveries.Count; i++)
             {   // selected deliveries count may have changed
@@ -449,16 +451,25 @@ namespace BHelp.Controllers
                         selectedOpens.OpenDeliveries[j, 1] = rec.DateDelivered.Value.ToString("MM/dd/yyyy");
                     selectedOpens.OpenDeliveries[j, 2] = rec.DriverName;
                     selectedOpens.OpenDeliveries[j, 3] = rec.Zip;
-                    selectedOpens.OpenDeliveries[j, 4] = rec.Client.FullName + " "
-                        + rec.StreetNumber + " " + rec.StreetName;
-                    selectedOpens.OpenDeliveries[j, 5] = rec.Phone;
-                    selectedOpens.OpenDeliveries[j, 6] = rec.HouseoldCount.ToString();
-                    selectedOpens.OpenDeliveries[j, 7] = rec.FullBags.ToString();
-                    selectedOpens.OpenDeliveries[j, 8] = rec.HalfBags.ToString();
-                    selectedOpens.OpenDeliveries[j, 9] = rec.KidSnacks.ToString();
-                    selectedOpens.OpenDeliveries[j, 10] = rec.GiftCards.ToString();
-                    selectedOpens.OpenDeliveries[j, 11] = rec.Client.Notes;
-                    selectedOpens.OpenDeliveries[j, 12] = rec.ODNotes + " " + rec.DriverNotes;
+                    selectedOpens.OpenDeliveries[j, 4] = rec.Client.FullName;
+                    selectedOpens.OpenDeliveries[j, 5] = rec.StreetNumber + " "  + rec.StreetName;
+                    selectedOpens.OpenDeliveries[j, 6] = rec.City;
+                    selectedOpens.OpenDeliveries[j, 7] = rec.Phone;
+
+                    var familyMembers = db.FamilyMembers
+                        .Where(c => c.ClientId == rec.Client.Id).ToList();
+                    var kidCount = AppRoutines.GetNumberOfChildren(rec.Client.Id);
+                    selectedOpens.OpenDeliveries[j, 8] = kidCount.ToString();
+                    selectedOpens.OpenDeliveries[j, 9] = AppRoutines.GetNumberOfAdults(rec.Client.Id).ToString();
+                    selectedOpens.OpenDeliveries[j, 10] = AppRoutines.GetNumberOfSeniors(rec.Client.Id).ToString();
+                    selectedOpens.OpenDeliveries[j, 11] = (familyMembers.Count + 1).ToString();
+                    selectedOpens.OpenDeliveries[j, 12] = AppRoutines.GetNamesAgesOfAllInHousehold(rec.Client.Id);
+                    selectedOpens.OpenDeliveries[j, 13] = rec.FullBags.ToString();
+                    selectedOpens.OpenDeliveries[j, 14] = rec.HalfBags.ToString();
+                    selectedOpens.OpenDeliveries[j, 15] = rec.KidSnacks.ToString();
+                    selectedOpens.OpenDeliveries[j, 16] = rec.GiftCards.ToString();
+                    selectedOpens.OpenDeliveries[j, 17] = rec.Client.Notes;
+                    selectedOpens.OpenDeliveries[j, 18] = rec.ODNotes + " " + rec.DriverNotes;
                     selectedOpens.OpenDeliveries[0, 0] = rec.DeliveryDateODId; // OD of last selected record
                     selectedOpens.OpenDeliveries[0, 1] = selectedOpens.OpenDeliveries[j, 1]; // Last Date
                 }
