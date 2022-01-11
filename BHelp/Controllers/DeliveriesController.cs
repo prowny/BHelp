@@ -324,7 +324,7 @@ namespace BHelp.Controllers
                         if (rec != null) rec.DateDelivered = view.ReplacementDeliveryDate;
                         db.SaveChanges();
                     }
-                    return RedirectToAction("OpenFilters");
+                return RedirectToAction("OpenFilters", new { btnCheckAll = "True" });
             }
                 
             if (btnReplacementDriverId != null)
@@ -346,7 +346,7 @@ namespace BHelp.Controllers
                         db.SaveChanges();
                     }
 
-                    return RedirectToAction("OpenFilters");
+                return RedirectToAction("OpenFilters", new { btnCheckAll = "True" });
             }
 
             if (btnReplacementDeliveryDateODId !=null)
@@ -371,7 +371,7 @@ namespace BHelp.Controllers
                         db.SaveChanges();
                     }
                 }
-                return RedirectToAction("OpenFilters");
+                return RedirectToAction("OpenFilters", new { btnCheckAll = "True" });
             }
 
             if (btnSetStatusToDelivered != null)
@@ -399,7 +399,7 @@ namespace BHelp.Controllers
                         }
                     }
                 }
-                return RedirectToAction("OpenFilters");
+                return RedirectToAction("OpenFilters", new { btnCheckAll = "True" });
             }
 
             if (btnExcelOpenSelected != null)
@@ -410,9 +410,8 @@ namespace BHelp.Controllers
                 if (selectedDeliveries == null) return null;
 
                 OpenDeliveryViewModel selectedOpens = GetSelectedOpens(model);
-                //var result = AppRoutines.ExcelOpenSelectedDeliveries(selectedOpens);
                 var result = AppRoutines.ExcelOpenDeliveries(selectedOpens);
-
+                
                 return result;
             }
 
@@ -423,9 +422,8 @@ namespace BHelp.Controllers
                 if (selectedDeliveries == null) return null;
 
                 OpenDeliveryViewModel selectedOpens = GetSelectedOpens(model);
-                //var result = AppRoutines.CSVOpenSelectedDeliveries(selectedOpens);
                 var result = AppRoutines.OpenDeliveriesToCSV(selectedOpens);
-
+                
                 return result;
             }
 
