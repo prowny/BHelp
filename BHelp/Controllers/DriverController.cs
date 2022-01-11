@@ -111,7 +111,7 @@ namespace BHelp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,FullBags,HalfBags,KidSnacks,GiftCards," +
-                    "DateDelivered,Completed,DriverNotes,DriverId,SelectedStatus")] Delivery delivery)
+                    "DateDelivered,DriverNotes,DriverId,SelectedStatus")] Delivery delivery)
         {
             if (ModelState.IsValid)
             {

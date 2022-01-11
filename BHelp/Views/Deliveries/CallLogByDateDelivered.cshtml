@@ -21,24 +21,35 @@
         <b>Call Log History by Date Delivered Range</b>
         <br />
         <div>
-            @if (Model.DeliveryList.Count > 0)
-            {
-                @Html.ActionLink("Download to CSV File", "CallLogByDateDeliveredToCSV")
-            }
-            &nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "ReturnToDashboard")
+            <table>
+                @if (Model.DeliveryList != null)
+                {
+                    <tr>
+                        <td>
+                            @Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByIndividualToCSV", new { allData = false })&nbsp;&nbsp;
+                            &nbsp; &nbsp;@Html.ActionLink("Download to CSV File (ALL data)", "CallLogByIndividualToCSV", new { allData = true })
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td>
+                       @Html.ActionLink("Return to Dashboard", "ReturnToDashboard")
+                    </td>
+                </tr>
+            </table>
         </div>
         <table>
             <tr>
                 <td>Starting Date:</td>
                 <td>
                     @Html.TextBox("Starting Date", @Model.HistoryStartDate, "{0:MM/dd/yyyy}",
-                        new {id = "StartDate", style = "width: 65px;"})
+                        new {id = "StartDate", style = "width: 75px;"})
                     <span style="color: darkmagenta">&#8592;Click to change</span>
                 </td> @*Html left-arrow*@
                 <td>&nbsp;&nbsp; Ending Date:</td>
                 <td>
                     @Html.TextBox("Ending Date:", @Model.HistoryEndDate, "{0:MM/dd/yyyy}",
-                        new {id = "EndDate", style = "width: 65px;"})
+                        new {id = "EndDate", style = "width: 75px;"})
                     <span style="color: darkmagenta">&#8592;Click to change</span>
                 </td> @*Html left-arrow*@
             </tr>
@@ -99,17 +110,17 @@
                     </tr>
                 }
             </table>
+            <br/>
             if (Model.DeliveryList.Count > 0)
             {
-                @Html.ActionLink("Download to CSV File", "CallLogByDateDeliveredToCSV", new { })
+                @Html.ActionLink("Download to CSV File (Helper data only", "CallLogByIndividualToCSV", new { })
+                <br />
+                @Html.ActionLink("Download to CSV File (ALL data)", "CallLogByIndividualToCSV", new { allData = true })
                 <br/>
             }
         }
     </div>
-    <br />
 <div>
-    @Html.ActionLink("Download to CSV File", "CallLogByDateDeliveredToCSV", new { })
-    <br/>
     @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
 </div>
 </body>

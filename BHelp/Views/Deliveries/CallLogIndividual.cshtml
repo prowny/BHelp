@@ -20,12 +20,23 @@
     <b>Call Log History by Individual Client</b>
     <br />
     <div>
+        <table>
         @if (Model.ClientId > 0)
-        {
-            @Html.ActionLink("Download to CSV File", "CallLogByIndividualToCSV")
-        }
-        &nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "ReturnToDashboard")
-    </div>
+            {
+                <tr>
+                    <td>
+                        @Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByIndividualToCSV", new { allData = false })&nbsp;&nbsp;
+                        &nbsp; &nbsp;@Html.ActionLink("Download to CSV File (ALL data)", "CallLogByIndividualToCSV", new { allData = true })
+                    </td>
+                </tr>
+             }
+                <tr>
+                    <td>
+                        &nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "ReturnToDashboard")
+                    </td>
+                </tr>
+          </table>
+     </div>
     <table>
         <tr>
             <td>Select Client:</td>
@@ -43,7 +54,7 @@
     {
         <table>
             <tr>
-                <td></td>  
+                <td></td>
                 <td>Log Date</td>
                 <td>Name</td>
                 <td>Address</td>
@@ -99,17 +110,18 @@
                 </tr>
             }
         </table>
-        if(Model.DeliveryList.Count > 0)
+        if (Model.DeliveryList.Count > 0)
         {
-            @Html.ActionLink("Back to Select List", "CallLogIndividual", new { }) 
-            <br/>
-            @Html.ActionLink("Download to CSV File", "CallLogByIndividualToCSV", new { })
+            @Html.ActionLink("Back to Select List", "CallLogIndividual", new { })
+            <br />
+            @Html.ActionLink("Download to CSV File (Helper data only", "CallLogByIndividualToCSV", new { })
+            <br />
+            @Html.ActionLink("Download to CSV File (ALL data)", "CallLogByIndividualToCSV", new { allData = true })
             <br/>
         }
     }
 </div>
 <div>
-    &nbsp;
     @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
 </div>
 <script type="text/javascript">

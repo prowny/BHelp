@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
-using DocumentFormat.OpenXml.Drawing;
 
 namespace BHelp.Models
 {
@@ -55,7 +54,7 @@ namespace BHelp.Models
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime? DateDelivered { get; set; }
 
-        public Boolean Completed { get; set; }
+        public Boolean Completed { get; set; }  // NOT USED 01/01/2002
         public string ODNotes { get; set; }
 
         [DataType(DataType.MultilineText)]
@@ -63,8 +62,17 @@ namespace BHelp.Models
         public Boolean FirstDelivery { get; set; }
         public int Status { get; set; }  // 0 = Open, 1 = Completed, 2 = Undelivered
 
+        [NotMapped]
+        public string ODName { get; set; }
+
         [StringLength(128)]
         public string DeliveryDateODId { get; set; }
+
+        [NotMapped]
+        public string DriverName { get; set; }
+
+        [NotMapped]
+        public string DeliveryDateODName { get; set; }
 
         [NotMapped]
         public IEnumerable<SelectListItem> DriversList { get; set; }
@@ -81,11 +89,9 @@ namespace BHelp.Models
         [NotMapped]
         public int NumberOfKids2_17 { get; set; }
 
-        [NotMapped]
-        public string DriverName { get; set; }
+        
 
-        [NotMapped]
-        public string DeliveryDateODName { get; set; }
+        
 
         [NotMapped]
         public string SelectedStatus { get; set; }

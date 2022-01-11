@@ -175,8 +175,7 @@ namespace BHelp
                         {
                             delivery.GiftCards = 0;
                         }
-
-                        delivery.Completed = true;
+                        
                         if (client != null)
                         {
                             delivery.LastName = client.LastName;
@@ -226,7 +225,6 @@ namespace BHelp
                     delivery.City = client.City;
                     delivery.Phone = client.Phone;
                     delivery.NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id);
-                    delivery.Completed = true;
                 }
             }
             //db.SaveChanges();
@@ -357,25 +355,6 @@ namespace BHelp
         }
         public static void SetStatusFlags()
         {
-            //var db = new BHelpContext();
-            //var listNullDelDates = db.Deliveries.Where(d => d.DateDelivered == null).ToList();
-            //foreach (var del in listNullDelDates)
-            //{ // null & completed = undelivered;  null & not completed = open
-            //    var delivery = db.Deliveries.Find(del.Id);
-            //    if (delivery.Completed)
-            //    {
-            //        delivery.Status = 2; // Undelivered
-            //        //db.SaveChanges();
-            //    }
-            //}
-
-            //var listDelDates = db.Deliveries.Where(d => d.DateDelivered != null).ToList();
-            //foreach (var del in listDelDates)
-            //{
-            //    var delivery = db.Deliveries.Find(del.Id);
-            //    delivery.Status = 1;    // Delivered
-            //    db.SaveChanges();
-            //}
         }
     }
 }

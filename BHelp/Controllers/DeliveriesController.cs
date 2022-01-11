@@ -170,7 +170,7 @@ namespace BHelp.Controllers
         }
         public ActionResult OpenDeliveriesToCSV()
         {
-            var result = AppRoutines.OpenDeliveriesToCSV();
+            var result = AppRoutines.OpenDeliveriesToCSV(null);
             return result;
         }
         public ActionResult ExcelOpenDeliveries()
@@ -417,8 +417,10 @@ namespace BHelp.Controllers
                     if (selectedDeliveries == null) return null;
 
                     OpenDeliveryViewModel selectedOpens = GetSelectedOpens(model);
-                    var result = AppRoutines.CSVOpenSelectedDeliveries(selectedOpens);
-                    return result;
+                //var result = AppRoutines.CSVOpenSelectedDeliveries(selectedOpens);
+                var result = AppRoutines.OpenDeliveriesToCSV(selectedOpens);
+
+                return result;
                 }
 
             return RedirectToAction("OpenFilters");
@@ -497,7 +499,7 @@ namespace BHelp.Controllers
 
                     del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
                     del.DeliveryDateODName = GetODName(del.DeliveryDateODId);
-                    del.DriverName = GetDriverName(del.DriverId);
+                    del.DriverName = GetUserName(del.DriverId);
                     del.Client = GetClientData(del.ClientId);
                     del.EligiibilityRulesException = false;
 
@@ -635,7 +637,7 @@ namespace BHelp.Controllers
             }
 
             // GET: Deliveries/Edit/5
-            public ActionResult Edit(int? id, string desiredDeliveryDate, string returnURL)
+            public ActionResult Edit(int? id, string returnURL)
             {
                 switch (id)
                 {
@@ -652,7 +654,6 @@ namespace BHelp.Controllers
                             {  // Cannot save delivery as completed with zero products: 
                                 return RedirectToAction("Edit", new { id = del.Id });
                             }
-                            del.DeliveryDate = Convert.ToDateTime(desiredDeliveryDate);
                             db.SaveChanges();
                         }
                         break;
@@ -673,7 +674,7 @@ namespace BHelp.Controllers
                     ZipCodes = AppRoutines.GetZipCodesSelectList(),
                     ODNotes = delivery.ODNotes,
                     DriverId = delivery.DriverId,
-                    DriverName = GetDriverName(delivery.DriverId),
+                    DriverName = GetUserName(delivery.DriverId),
                     DriverNotes = delivery.DriverNotes,
                     DriversList = AppRoutines.GetDriversSelectList(),
                     NamesAgesInHH = delivery.NamesAgesInHH,
@@ -681,7 +682,6 @@ namespace BHelp.Controllers
                     FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId),
                     DatePriorDelivery = AppRoutines.GetPriorDeliveryDate(delivery.ClientId,delivery.LogDate),
                     DateLastDelivery = GetLastGetDeliveryDate(delivery.Id),
-                    DeliveryDate = delivery.DeliveryDate, 
                     DateDelivered = delivery.DateDelivered,
                     Status = delivery.Status,
                     HistoryStartDate = Convert.ToDateTime(Session["CallLogStartDate"]),
@@ -788,7 +788,7 @@ namespace BHelp.Controllers
             [ValidateAntiForgeryToken]
             public ActionResult Edit(
                 [Bind(Include = "Id,ClientId,LogDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards," +
-                                "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId,Completed," +
+                                "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId," +
                                 "DeliveryDate,ODId,DeliveryDateODId,ReturnURL,SelectedStatus,Zip")] DeliveryViewModel delivery)
             {
             // DriverId and DeliveryDateODId are used in Edit dropdowns and return a
@@ -815,7 +815,6 @@ namespace BHelp.Controllers
                         updateData.ODId = delivery.ODId;
                         updateData.DeliveryDateODId = delivery.DeliveryDateODId;
                         updateData.DriverNotes = delivery.DriverNotes;
-                        updateData.DeliveryDate = delivery.DeliveryDate;
                         updateData.DateDelivered = delivery.DateDelivered;
                         updateData.Zip = delivery.Zip;
                         switch (delivery.SelectedStatus)
@@ -922,7 +921,9 @@ namespace BHelp.Controllers
                 
                 foreach (var del in callLogView.DeliveryList)
                 {
-                    del.DriverName = GetDriverName(del.DriverId);
+                    del.ODName = GetUserName(del.ODId);
+                    del.DeliveryDateODName = GetUserName(del.DeliveryDateODId);
+                    del.DriverName = GetUserName(del.DriverId);
                     if (del.Status == 1) // Show delivery date
                     {
                         if (del.DateDelivered.HasValue)
@@ -981,7 +982,7 @@ namespace BHelp.Controllers
                 var intClientId = Convert.ToInt32(id);
                 return RedirectToAction("CallLogIndividual", new { clientId = intClientId });
             }
-            public void CallLogByIndividualToCSV()
+            public void CallLogByIndividualToCSV(bool allData)
             {
                 if (Session["CallLogIndividualList"] != null)
                 {
@@ -998,7 +999,7 @@ namespace BHelp.Controllers
                         if (view != null) view.ReportTitle = " CallLog" + DateTime.Today.ToString("MM-dd-yy");
                     }
 
-                    AppRoutines.CallLogHistoryResultToCSV(view);
+                    AppRoutines.CallLogHistoryResultToCSV(view, allData);
                     Session["CallLogIndividualList"] = null;
                 } 
             }
@@ -1026,7 +1027,7 @@ namespace BHelp.Controllers
 
                 foreach (var del in callLogView.DeliveryList)
                 {
-                    del.DriverName = GetDriverName(del.DriverId);
+                    del.DriverName = GetUserName(del.DriverId);
                     if (del.DateDelivered.HasValue)
                     {
                         del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
@@ -1094,7 +1095,7 @@ namespace BHelp.Controllers
                         if (view != null) view.ReportTitle = " CallLog" + DateTime.Today.ToString("MM-dd-yy");
                     }
 
-                    AppRoutines.CallLogHistoryResultToCSV(view);
+                    AppRoutines.CallLogHistoryResultToCSV(view, false);
                     Session["CallLogByLogDateList"] = null;
                     
                 }
@@ -1124,7 +1125,7 @@ namespace BHelp.Controllers
 
                 foreach (var del in callLogView.DeliveryList)
                 {
-                    del.DriverName = GetDriverName(del.DriverId);
+                    del.DriverName = GetUserName(del.DriverId);
                     if (del.DateDelivered.HasValue)
                     {
                         del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
@@ -1190,9 +1191,8 @@ namespace BHelp.Controllers
                         if (view != null) view.ReportTitle = " CallLog" + DateTime.Today.ToString("MM-dd-yy");
                     }
 
-                    AppRoutines.CallLogHistoryResultToCSV(view);
+                    AppRoutines.CallLogHistoryResultToCSV(view, false);
                     Session["CallLogByDateDeliveredList"] = null;
-
                 }
                 return RedirectToAction("CallLogByDateDelivered",
                     new { startDate = Session["CallLogStartDate"], endDate = Session["CallLogEndDate"] });
@@ -1619,7 +1619,7 @@ namespace BHelp.Controllers
             {
                 DateTime? dt = db.Deliveries.Where(d => d.DateDelivered != null
                                                         && d.Id == id)
-                    .OrderByDescending(x => x.DeliveryDate).Select(d => d.DateDelivered)
+                    .OrderByDescending(x => x.DateDelivered).Select(d => d.DateDelivered)
                     .FirstOrDefault();
 
                 // ReSharper disable once UseNullPropagation
@@ -1645,7 +1645,7 @@ namespace BHelp.Controllers
                 }
                 return total;
             }
-            private string GetDriverName(string id)
+            private string GetUserName(string id)
             {
                 if (id != null)
                 {

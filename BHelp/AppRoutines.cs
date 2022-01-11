@@ -391,7 +391,6 @@ namespace BHelp
             }
             return 0;
         }
-
         public static int GetNumberOfChildren(int clientId)
         {
             // Assume Head of Household is not a Child
@@ -410,7 +409,6 @@ namespace BHelp
                 return kidCount;
             }
         }
-
         public static int GetNumberOfAdults(int clientId)
         {
             using (var db = new BHelpContext())
@@ -439,7 +437,6 @@ namespace BHelp
             }
             return 0;
         }
-
         public static int GetNumberOfSeniors(int clientId)
         {
             using (var db = new BHelpContext())
@@ -607,13 +604,6 @@ namespace BHelp
             ws.Cell(1, 2).SetValue(DateTime.Today.ToShortDateString()).Style.Font.SetBold(true);
             ws.Cell(1, 2).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
-            //var key = "K = Kids 0-17, A = Adults 18-59, S = Adults 60+, HH = Household, ";
-            //key += "F = Full Bags, H = Half Bags, KS = Kids Snacks for ages 2-17, GC = Gift Cards";
-            //ws.Cell(1, 8).SetValue(key);
-            //ws.Cell(1, 8).Style.Alignment.WrapText = true;
-            //ws.Cell(1, 8).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            //ws.Range(ws.Cell(1, 8), ws.Cell(1, 16)).Merge();
-
             ws.Columns("1").Width = 10;
             ws.Cell(2, 1).SetValue("Delivery Date").Style.Font.SetBold(true);
             ws.Cell(2, 1).Style.Alignment.WrapText = true;
@@ -689,7 +679,6 @@ namespace BHelp
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             { FileDownloadName = "BHELPDeliveries" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
         }
-        
         public static FileStreamResult CSVOpenSelectedDeliveries(OpenDeliveryViewModel view) // From Open Filters
         {
             //var view = GetOpenDeliveriesViewModel();
@@ -745,7 +734,6 @@ namespace BHelp
                 response.End();
                 return null;
             }
-        
         private static OpenDeliveryViewModel GetOpenDeliveriesViewModel()
         {
             var odv = new OpenDeliveryViewModel
@@ -805,9 +793,11 @@ namespace BHelp
                 return odv;
             }
         }
-        public static FileStreamResult OpenDeliveriesToCSV()
+        public static FileStreamResult OpenDeliveriesToCSV(OpenDeliveryViewModel view)
         {
-            var view = GetOpenDeliveriesViewModel();
+            // view Parameter contains data only from Filtered Opens
+            if (view == null) view = GetOpenDeliveriesViewModel();
+            //var view = GetOpenDeliveriesViewModel();
             var sb = new StringBuilder();
 
             sb.Append(view.ReportTitle + ',');
@@ -860,7 +850,7 @@ namespace BHelp
             response.End();
             return null;
         }
-        public static FileStreamResult CallLogHistoryResultToCSV(DeliveryViewModel view)
+        public static FileStreamResult CallLogHistoryResultToCSV(DeliveryViewModel view, Boolean allData)
         {
             var sb = new StringBuilder();
             sb.Append(view.ReportTitle + ',');
@@ -869,6 +859,11 @@ namespace BHelp
             sb.Append("Log Date,Name,Address,Driver,Delivery Date,ZipCode,Status,# in HH,#Children,");
             sb.Append("#Adults 18-59,# Seniors >=60,#Full Bags,#HalfBags,#Kid Snacks,");
             sb.Append("#Gift Cards,#Pounds of Food");
+            if (allData)
+            {
+                sb.Append(",City,Phone,Household Names-Ages,Originating OD, Delivery Date OD,");
+                sb.Append("OD Notes,Driver Notes,First Delivery");
+            }
             sb.AppendLine();
 
             var totalHHCount = 0;
@@ -910,6 +905,21 @@ namespace BHelp
                 totalHalfBags += d.HalfBags;
                 totalKidSnacks += d.KidSnacks;
                 totalGiftCards += d.GiftCards;
+                
+                if (allData)
+                {
+                    var _namesAges = "";
+                    if (d.NamesAgesInHH != null)  _namesAges = d.NamesAgesInHH.Replace(",", " ");
+                    sb.Append("," + d.City + "," +d.Phone + "," + _namesAges + ",");
+                    sb.Append(d.ODName + "," + d.DeliveryDateODName + ",");
+                    var _firstDelivery = "false";
+                    if (d.FirstDelivery) _firstDelivery = "true";
+                    var _ODNotes = "";
+                    if (d.ODNotes !=null) _ODNotes = String.IsInterned(d.ODNotes.Replace(",", ";"));
+                    var _driverNotes = "";
+                    if(d.DriverNotes != null) _driverNotes = d.DriverNotes.Replace(",", ";");
+                    sb.Append(_ODNotes + "," + _driverNotes + "," + _firstDelivery);
+                }
                 sb.AppendLine();
             }
 
@@ -917,7 +927,7 @@ namespace BHelp
             sb.Append(totalHHCount + "," + totalChildren + "," + totalAdults + "," + totalSeniors + ",");
             sb.Append(totalFullBags + "," + totalHalfBags + "," + totalKidSnacks + ",");
             sb.Append(totalGiftCards + "," + totalPoundsOfFood);
-            
+           
             var response = System.Web.HttpContext.Current.Response;
             response.BufferOutput = true;
             response.Clear();

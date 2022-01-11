@@ -85,6 +85,7 @@
                         <td><b>@Html.Label("EX*")</b></td>
                         <td style="text-align: center"><b>@Html.Label("Driver")</b></td>
                         <td style="text-align: center"><b>@Html.Label("Zip")</b></td>
+                        <td style="text-align: center"><b>@Html.Label("City")</b></td>
                         <td style="text-align: center"><b>@Html.Label("DelvDateOD")</b></td>
                         <td style="text-align: center"><b>@Html.Label("Client")</b></td>
                         <td><b>F</b></td>
@@ -107,6 +108,7 @@
                     }
                     <td>@Model.SelectedDeliveriesList[i].DriverName</td>
                     <td>@Model.SelectedDeliveriesList[i].Zip</td>
+                    <td>@Model.SelectedDeliveriesList[i].City</td>
                     <td>@Model.SelectedDeliveriesList[i].DeliveryDateODName</td>
                     <td title=@Model.SelectedDeliveriesList[i].Client.NameAddressToolTip>@Model.SelectedDeliveriesList[i].Client.ClientNameAddress</td>
                     @if (Model.SelectedDeliveriesList[i].AllZeroProducts)
