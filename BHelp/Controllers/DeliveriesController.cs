@@ -253,39 +253,45 @@ namespace BHelp.Controllers
         }
 
         // POST: 
-            [HttpPost]
-            [ValidateAntiForgeryToken]
-            public ActionResult OpenFilters(OpenDeliveryViewModel model,
-                string btnAllCheckAll, string btnAllClearAll,
-                string btnByDateCheckAll, string btnByDateClearAll,
-                string btnByDriverCheckAll, string btnByDriverClearAll,
-                string btnReplacementDeliveryDate, string btnReplacementDriverId,
-                string btnReplacementDeliveryDateODId, string btnSetStatusToDelivered,
-                string btnExcelOpenSelected, string btnCSVOpenSelected)
-            {
-                ModelState.Clear(); // if not cleared, checkboxfor IsChecked displays incorrectly
-                var view = GetOpenDeliveryViewModel(model);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult OpenFilters(OpenDeliveryViewModel model,
+            string btnAllCheckAll, string btnAllClearAll,
+            string btnByDateCheckAll, string btnByDateClearAll,
+            string btnByDriverCheckAll, string btnByDriverClearAll,
+            string btnReplacementDeliveryDate, string btnReplacementDriverId,
+            string btnReplacementDeliveryDateODId, string btnSetStatusToDelivered,
+            string btnExcelOpenSelected, string btnCSVOpenSelected)
+        {
+            ModelState.Clear(); // if not cleared, checkboxfor IsChecked displays incorrectly
+            var view = GetOpenDeliveryViewModel(model);
+            view.BtnAllCheckAll = btnAllCheckAll;
+            view.BtnAllClearAll = btnAllClearAll;
+            view.BtnByDateCheckAll = btnByDateCheckAll;
+            view.BtnByDateClearAll = btnByDateClearAll;
+            view.BtnByDriverCheckAll = btnByDriverCheckAll;
+            view.BtnByDriverClearAll = btnByDriverClearAll;
 
-                if (btnAllCheckAll != null || btnAllClearAll != null)
-                {
+            if (btnAllCheckAll != null || btnAllClearAll != null)
+            {
                     var selectedDeliveries = db.Deliveries
                         .OrderBy(d => d.DateDelivered).Where(d => d.Status == 0).ToList();
                      view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnAllCheckAll);
                      view.ButtonGroupName = $"All";
                      return View(view);
-                }
+            }
 
-                if (btnByDateCheckAll != null || btnByDateClearAll != null)
-                {
+            if (btnByDateCheckAll != null || btnByDateClearAll != null)
+            {
                     var selectedDeliveries = db.Deliveries.Where(d => d.Status == 0
                                      && d.DateDelivered == model.SelectedDistinctDeliveryDate).ToList();
                     view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnByDateCheckAll);
                     view.ButtonGroupName = $"ByDate";
                     return View(view);
-                }
+            }
 
-                if (btnByDriverCheckAll != null || btnByDriverClearAll != null)
-                {
+            if (btnByDriverCheckAll != null || btnByDriverClearAll != null)
+            {
                     var selDistinctDriverId = model.SelectedDistinctDriverId;
                     if (selDistinctDriverId == "0") { selDistinctDriverId = null;}
                     var selectedDeliveries = db.Deliveries
@@ -294,10 +300,10 @@ namespace BHelp.Controllers
                     view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnByDriverCheckAll);
                     view.ButtonGroupName = $"ByDriver";
                     return View(view);
-                }
+            }
 
-                if (btnReplacementDeliveryDate != null)
-                {
+            if (btnReplacementDeliveryDate != null)
+            {
                     var selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
                     if (selectedDeliveries != null)
                     {
@@ -319,10 +325,10 @@ namespace BHelp.Controllers
                         db.SaveChanges();
                     }
                     return RedirectToAction("OpenFilters");
-                }
+            }
                 
-                if (btnReplacementDriverId != null)
-                {
+            if (btnReplacementDriverId != null)
+            {
                     var selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
                     for (var i = 0; i < selectedDeliveries.Count; i++)
                     {
@@ -340,88 +346,88 @@ namespace BHelp.Controllers
                         db.SaveChanges();
                     }
 
-                return RedirectToAction("OpenFilters");
-                }
+                    return RedirectToAction("OpenFilters");
+            }
 
-                if (btnReplacementDeliveryDateODId !=null)
+            if (btnReplacementDeliveryDateODId !=null)
+            {
+                var selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
+                for (var i = 0; i < selectedDeliveries.Count; i++)
                 {
-                    var selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
-                    for (var i = 0; i < selectedDeliveries.Count; i++)
+                    // selected deliveries count may have changed
+                    if (i < model.SelectedDeliveriesList.Count)
                     {
-                        // selected deliveries count may have changed
-                        if (i < model.SelectedDeliveriesList.Count)
-                        {
-                            selectedDeliveries[i].IsChecked = model.SelectedDeliveriesList[i].IsChecked;
-                        }
-                    }  // set IsChecked flags: 
+                        selectedDeliveries[i].IsChecked = model.SelectedDeliveriesList[i].IsChecked;
+                    }
+                }  // set IsChecked flags: 
 
-                    foreach (var rec in from dlv in selectedDeliveries
-                        where dlv.IsChecked
-                        select db.Deliveries.Find(dlv.Id))
+                foreach (var rec in from dlv in selectedDeliveries
+                    where dlv.IsChecked
+                    select db.Deliveries.Find(dlv.Id))
+                {
+                    if (rec != null)
                     {
-                        if (rec != null)
+                        rec.DeliveryDateODId = model.ReplacementDeliveryDateODId;
+                        db.SaveChanges();
+                    }
+                }
+                return RedirectToAction("OpenFilters");
+            }
+
+            if (btnSetStatusToDelivered != null)
+            {
+                List<Delivery> selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
+                for (var i = 0; i < selectedDeliveries.Count; i++)
+                {
+                    // selected deliveries count may have changed
+                    if (i < model.SelectedDeliveriesList.Count)
+                    {
+                        selectedDeliveries[i].IsChecked = model.SelectedDeliveriesList[i].IsChecked;
+                    }
+                } // Set IsChecked flags
+
+                foreach (var rec in from dlv in selectedDeliveries
+                    where dlv.IsChecked
+                    select db.Deliveries.Find(dlv.Id))
+                {
+                    if (rec != null)
+                    { // Don't mark as delivered if no products:
+                        if (rec.FullBags > 0 || rec.HalfBags > 0 || rec.KidSnacks > 0 || rec.GiftCards > 0)
                         {
-                            rec.DeliveryDateODId = model.ReplacementDeliveryDateODId;
+                            rec.Status = 1;
                             db.SaveChanges();
                         }
                     }
+                }
                 return RedirectToAction("OpenFilters");
-                }
+            }
 
-                if (btnSetStatusToDelivered != null)
-                {
-                    List<Delivery> selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
-                    for (var i = 0; i < selectedDeliveries.Count; i++)
-                    {
-                        // selected deliveries count may have changed
-                        if (i < model.SelectedDeliveriesList.Count)
-                        {
-                            selectedDeliveries[i].IsChecked = model.SelectedDeliveriesList[i].IsChecked;
-                        }
-                    } // Set IsChecked flags
+            if (btnExcelOpenSelected != null)
+            {
+                // Change TempData to Session
+                Session["SelectedDeliveriesList"] = TempData["SelectedDeliveriesList"];
+                var selectedDeliveries = (List<Delivery>)Session["SelectedDeliveriesList"];
+                if (selectedDeliveries == null) return null;
 
-                    foreach (var rec in from dlv in selectedDeliveries
-                        where dlv.IsChecked
-                        select db.Deliveries.Find(dlv.Id))
-                    {
-                        if (rec != null)
-                        { // Don't mark as delivered if no products:
-                            if (rec.FullBags > 0 || rec.HalfBags > 0 || rec.KidSnacks > 0 || rec.GiftCards > 0)
-                            {
-                                rec.Status = 1;
-                                db.SaveChanges();
-                            }
-                        }
-                    }
-                    return RedirectToAction("OpenFilters");
-                }
+                OpenDeliveryViewModel selectedOpens = GetSelectedOpens(model);
+                //var result = AppRoutines.ExcelOpenSelectedDeliveries(selectedOpens);
+                var result = AppRoutines.ExcelOpenDeliveries(selectedOpens);
 
-                if (btnExcelOpenSelected != null)
-                {
-                    // Change TempData to Session
-                    Session["SelectedDeliveriesList"] = TempData["SelectedDeliveriesList"];
-                    var selectedDeliveries = (List<Delivery>)Session["SelectedDeliveriesList"];
-                    if (selectedDeliveries == null) return null;
+                return result;
+            }
 
-                    OpenDeliveryViewModel selectedOpens = GetSelectedOpens(model);
-                    //var result = AppRoutines.ExcelOpenSelectedDeliveries(selectedOpens);
-                    var result = AppRoutines.ExcelOpenDeliveries(selectedOpens);
+            if (btnCSVOpenSelected != null)
+            {
+                Session["SelectedDeliveriesList"] = TempData["SelectedDeliveriesList"];
+                var selectedDeliveries = (List<Delivery>)Session["SelectedDeliveriesList"];
+                if (selectedDeliveries == null) return null;
 
-                    return result;
-                }
-
-                if (btnCSVOpenSelected != null)
-                {
-                    Session["SelectedDeliveriesList"] = TempData["SelectedDeliveriesList"];
-                    var selectedDeliveries = (List<Delivery>)Session["SelectedDeliveriesList"];
-                    if (selectedDeliveries == null) return null;
-
-                    OpenDeliveryViewModel selectedOpens = GetSelectedOpens(model);
+                OpenDeliveryViewModel selectedOpens = GetSelectedOpens(model);
                 //var result = AppRoutines.CSVOpenSelectedDeliveries(selectedOpens);
                 var result = AppRoutines.OpenDeliveriesToCSV(selectedOpens);
 
                 return result;
-                }
+            }
 
             return RedirectToAction("OpenFilters");
             }

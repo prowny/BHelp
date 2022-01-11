@@ -33,5 +33,11 @@ namespace BHelp.ViewModels
         public string ReplacementDeliveryDateODId { get; set; }
 
         public string ButtonGroupName { get; set; }
+        public string BtnAllCheckAll { get; set; }
+        public string BtnAllClearAll { get; set; }
+        public string BtnByDateCheckAll { get; set; }
+        public string BtnByDateClearAll { get; set; }
+        public string BtnByDriverCheckAll { get; set; }
+        public string BtnByDriverClearAll { get; set; }
     }
 }

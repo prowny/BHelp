@@ -38,14 +38,22 @@
         <div id="FilterOptions">
             <table>
                 <tr>
+                    <td></td>
+                    <td style="text-align: center">
+                        <b>@Html.Label("Choose Your View:")</b>
+                    </td>
+                </tr>
+                <tr>
                     <td style="text-align: right">
                         @Html.Label("Show ALL Open Deliveries")&nbsp;
                     </td>
                     <td>
-                        <input name="btnAllCheckAll" type="submit" value="Select - Check All" class="btn btn-default" id="CheckAllButton" />
-                        <input name="btnAllClearAll" type="submit" value="Select - Uncheck All" class="btn btn-default" id="ClearAllButton" />
-                        @if(Model.ButtonGroupName == "All")
-                        {@Html.Label(((char)0x221A).ToString(), new {style="color: red; font-weight: bold"})}
+                        <input name="btnAllCheckAll" type="submit" value="Select - Check All" class="btn btn-default" id="CheckAllButton"/>
+                        @if (Model.ButtonGroupName == "All" && Model.BtnAllCheckAll != null)
+                        {@Html.Label(((char)0x221A).ToString(), new { style = "color: red; font-weight: bold" })}
+                        <input name="btnAllClearAll" type="submit" value="Select - Uncheck All" class="btn btn-default" id="ClearAllButton"/>
+                        @if (Model.ButtonGroupName == "All" && Model.BtnAllClearAll != null)
+                        {@Html.Label(((char)0x221A).ToString(), new { style = "color: red; font-weight: bold" })}
                     </td>
                 </tr>
                 <tr>
@@ -54,10 +62,12 @@
                         @Html.DropDownListFor(m => Model.SelectedDistinctDeliveryDate, Model.DistinctDeliveryDatesSelectList)
                     </td>
                     <td>
-                        <input name="btnByDateCheckAll" type="submit" value="Select - Check All" class="btn btn-default" id="CheckAllButton" />
-                        <input name="btnByDateClearAll" type="submit" value="Select - Uncheck All" class="btn btn-default" id="ClearAllButton" />
-                        @if(Model.ButtonGroupName == "ByDate")
-                        {@Html.Label(((char)0x221A).ToString(), new {style="color: red; font-weight: bold"})}
+                        <input name="btnByDateCheckAll" type="submit" value="Select - Check All" class="btn btn-default" id="CheckAllButton"/>
+                        @if (Model.ButtonGroupName == "ByDate" && Model.BtnByDateCheckAll != null)
+                        {@Html.Label(((char)0x221A).ToString(), new { style = "color: red; font-weight: bold" })}
+                        <input name="btnByDateClearAll" type="submit" value="Select - Uncheck All" class="btn btn-default" id="ClearAllButton"/>
+                        @if (Model.ButtonGroupName == "ByDate" && Model.BtnByDateClearAll != null)
+                        {@Html.Label(((char)0x221A).ToString(), new { style = "color: red; font-weight: bold" })}
                     </td>
                 </tr>
                 <tr>
@@ -67,8 +77,10 @@
                     </td>
                     <td>
                         <input name="btnByDriverCheckAll" type="submit" value="Select - Check All" class="btn btn-default" id="CheckAllButton" />
+                        @if (Model.ButtonGroupName == "ByDriver" && Model.BtnByDriverCheckAll != null)
+                        {@Html.Label(((char)0x221A).ToString(), new { style = "color: red; font-weight: bold" })}
                         <input name="btnByDriverClearAll" type="submit" value="Select - Uncheck All" class="btn btn-default" id="ClearAllButton" />
-                        @if (Model.ButtonGroupName == "ByDriver")
+                        @if (Model.ButtonGroupName == "ByDriver" & Model.BtnByDriverClearAll != null)
                         {@Html.Label(((char)0x221A).ToString(), new { style = "color: red; font-weight: bold" })}
                     </td>
                 </tr>
@@ -137,7 +149,7 @@
             @if (Model.SelectedDeliveriesList.Count > 0)
             {
         <div>
-            <span><b>Update </b></span>
+            <span><b>Choose one option below to update </b></span>
             <span style="text-decoration: underline"><b>all</b></span>
             <span><b>checked deliveries:</b></span>
             <br />
@@ -159,6 +171,8 @@
             <span style="color: darkmagenta"> &nbsp;(Except when zero bags and cards)</span>
             <input name="btnSetStatusToDelivered" type="submit" value="Go" class="btn btn-default" id="GoButton" />
             <br />
+            <span><b>Or:</b></span>
+            <br/>
             Download Checked Deliveries to Excel
             <input name="btnExcelOpenSelected" type="submit" value="Go" class="btn btn-default" id="GoButton" />
             <br />
