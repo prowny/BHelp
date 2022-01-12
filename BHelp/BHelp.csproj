@@ -253,6 +253,10 @@
     <Compile Include="Migrations\202112281608060_AddGroups.Designer.cs">
       <DependentUpon>202112281608060_AddGroups.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202201121840490_RemoveUnusedDeliveryColumns.cs" />
+    <Compile Include="Migrations\202201121840490_RemoveUnusedDeliveryColumns.Designer.cs">
+      <DependentUpon>202201121840490_RemoveUnusedDeliveryColumns.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -666,6 +670,9 @@
     <EmbeddedResource Include="Migrations\202112281608060_AddGroups.resx">
       <DependentUpon>202112281608060_AddGroups.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202201121840490_RemoveUnusedDeliveryColumns.resx">
+      <DependentUpon>202201121840490_RemoveUnusedDeliveryColumns.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

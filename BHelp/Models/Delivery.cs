@@ -11,12 +11,11 @@ namespace BHelp.Models
     {
         public int Id { get; set; }
         public int ClientId { get; set; }
-      
 
-        [DisplayName("Desired Delivery Date")]
-        [Column(TypeName = "Date")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateTime DeliveryDate { get; set; }  // UNUSED. Deprecated 11/21; use only DateDelivered 
+        //[DisplayName("Desired Delivery Date")]
+        //[Column(TypeName = "Date")]
+        //[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
+        //public DateTime DeliveryDate { get; set; }  // UNUSED. Deprecated 11/21; use only DateDelivered 
 
         [DisplayName("Call Log Date")]
         [Column(TypeName = "Date")]
@@ -54,7 +53,7 @@ namespace BHelp.Models
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime? DateDelivered { get; set; }
 
-        public Boolean Completed { get; set; }  // NOT USED 01/01/2002
+        //public Boolean Completed { get; set; }  // NOT USED 01/01/2002
         public string ODNotes { get; set; }
 
         [DataType(DataType.MultilineText)]

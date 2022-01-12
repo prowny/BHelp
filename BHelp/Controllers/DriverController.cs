@@ -39,7 +39,7 @@ namespace BHelp.Controllers
            
             if (userId.IsNullOrEmpty()) { System.Web.HttpContext.Current.User.Identity.GetUserId(); }
             var deliveryList = new List<Delivery>(db.Deliveries).Where(d => d.Status == 0)
-                .OrderBy(d => d.DeliveryDate).ThenBy(z => z.Zip)
+                .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
                 .ThenBy(n => n.LastName).ToList();
             foreach (var delivery in deliveryList)
             {

@@ -134,7 +134,7 @@ namespace BHelp
             var delList = GetAllDeliveriesThisMonth(clientId, dt);
             foreach (var del in delList)
             {
-                if (del.DeliveryDate < dt)
+                if (del.DateDelivered < dt)
                 {
                     var cards = del.GiftCards;
                     giftCardCount += cards;
