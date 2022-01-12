@@ -114,7 +114,7 @@
         {
             @Html.ActionLink("Back to Select List", "CallLogIndividual", new { })
             <br />
-            @Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByIndividualToCSV", new { })
+            @Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByIndividualToCSV", new { allData = false })
             <br />
             @Html.ActionLink("Download to CSV File (ALL data)", "CallLogByIndividualToCSV", new { allData = true })
             <br/>

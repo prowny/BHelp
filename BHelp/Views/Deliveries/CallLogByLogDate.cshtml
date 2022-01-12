@@ -26,8 +26,8 @@
                 {
                     <tr>
                         <td>
-                            @Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByIndividualToCSV", new { allData = false })&nbsp;&nbsp;
-                            &nbsp; &nbsp;@Html.ActionLink("Download to CSV File (ALL data)", "CallLogByIndividualToCSV", new { allData = true })
+                            @Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByLogDateToCSV", new { allData = false })&nbsp;&nbsp;
+                            &nbsp; &nbsp;@Html.ActionLink("Download to CSV File (ALL data)", "CallLogByLogDateToCSV", new { allData = true })
                         </td>
                     </tr>
                 }
@@ -117,9 +117,9 @@
             <br/>
             if (Model.DeliveryList.Count > 0)
             {
-                @Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByIndividualToCSV", new { })
+                @Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByLogDateToCSV", new { allData = false })
                 <br />
-                @Html.ActionLink("Download to CSV File (ALL data)", "CallLogByIndividualToCSV", new { allData = true })
+                @Html.ActionLink("Download to CSV File (ALL data)", "CallLogByLogDateToCSV", new { allData = true })
                 <br/>
             }
         }

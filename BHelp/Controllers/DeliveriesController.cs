@@ -1005,7 +1005,7 @@ namespace BHelp.Controllers
 
                     AppRoutines.CallLogHistoryResultToCSV(view, allData);
                     Session["CallLogIndividualList"] = null;
-                } 
+                }
             }
             public ActionResult CallLogByLogDate(DateTime? startDate, DateTime? endDate )
             {
@@ -1079,7 +1079,7 @@ namespace BHelp.Controllers
                 Session["CallLogByLogDateList"] = callLogView;
                 return View(callLogView);
             }
-            public ActionResult CallLogByLogDateToCSV()
+            public void CallLogByLogDateToCSV( bool allData)
             {
                 if (Session["CallLogByLogDateList"] != null)
                 {
@@ -1101,11 +1101,8 @@ namespace BHelp.Controllers
 
                     AppRoutines.CallLogHistoryResultToCSV(view, false);
                     Session["CallLogByLogDateList"] = null;
-                    
                 }
-                return RedirectToAction("CallLogByLogDate",
-                    new { startDate = Session["CallLogStartDate"], endDate = Session["CallLogEndDate"] });
-            }
+        }
             public ActionResult CallLogByDateDelivered(DateTime? startDate, DateTime? endDate)
             {
                 if (!startDate.HasValue || !endDate.HasValue)  // default to today and 1 week ago
@@ -1175,7 +1172,7 @@ namespace BHelp.Controllers
                 Session["CallLogByDateDeliveredList"] = callLogView;
                 return View(callLogView);
             }
-            public ActionResult CallLogByDateDeliveredToCSV()
+            public void CallLogByDateDeliveredToCSV()
             {
                 if (Session["CallLogByDateDeliveredList"] != null)
                 {
@@ -1198,8 +1195,6 @@ namespace BHelp.Controllers
                     AppRoutines.CallLogHistoryResultToCSV(view, false);
                     Session["CallLogByDateDeliveredList"] = null;
                 }
-                return RedirectToAction("CallLogByDateDelivered",
-                    new { startDate = Session["CallLogStartDate"], endDate = Session["CallLogEndDate"] });
             }
             public ActionResult ReportsMenu()
             {
@@ -1294,7 +1289,7 @@ namespace BHelp.Controllers
                     }
                 }
 
-            ws.Columns().AdjustToContents();
+                ws.Columns().AdjustToContents();
                 MemoryStream ms = new MemoryStream();
                 workbook.SaveAs(ms);
                 ms.Position = 0;
@@ -1443,31 +1438,31 @@ namespace BHelp.Controllers
                         view.ZipCounts[18, col] = fullBags * 10;
                         view.ZipCounts[19, col] = halfBags * 9;
                     }
-            }
+                }
                 
-            var totCol = view.ZipCodes.Count + 1;
-            view.ZipCounts[1, totCol] = totalFullBags * 10 + totalHalfBags *9;  // Total Food Lbs
-            view.ZipCounts[2, totCol] = totalDeliveries;    // Total Deliveries
-            view.ZipCounts[3, totCol] = totalCumulativeChildren + totalCumulativeAdults + totalCumulativeSeniors;
-            view.ZipCounts[4, totCol] = totalCumulativeChildren;
-            view.ZipCounts[5, totCol] = totalCumulativeAdults;
-            view.ZipCounts[6, totCol] = totalCumulativeSeniors;
-            view.ZipCounts[7, totCol] = totalFullBags;
-            view.ZipCounts[8, totCol] = totalHalfBags;
-            view.ZipCounts[9, totCol] = totalSnacks;
-            view.ZipCounts[10, totCol] = totalCards;
+                var totCol = view.ZipCodes.Count + 1;
+                view.ZipCounts[1, totCol] = totalFullBags * 10 + totalHalfBags *9;  // Total Food Lbs
+                view.ZipCounts[2, totCol] = totalDeliveries;    // Total Deliveries
+                view.ZipCounts[3, totCol] = totalCumulativeChildren + totalCumulativeAdults + totalCumulativeSeniors;
+                view.ZipCounts[4, totCol] = totalCumulativeChildren;
+                view.ZipCounts[5, totCol] = totalCumulativeAdults;
+                view.ZipCounts[6, totCol] = totalCumulativeSeniors;
+                view.ZipCounts[7, totCol] = totalFullBags;
+                view.ZipCounts[8, totCol] = totalHalfBags;
+                view.ZipCounts[9, totCol] = totalSnacks;
+                view.ZipCounts[10, totCol] = totalCards;
 
-            view.ZipCounts[11, totCol] = totalDistinctHouseholds; // Distinct Households
-            view.ZipCounts[12, totCol] = totalDistinctChildren + totalDistinctAdults + totalDistinctSeniors; // Distinct Residents
-            view.ZipCounts[13, totCol] = totalDistinctChildren;
-            view.ZipCounts[14, totCol] = totalDistinctAdults;
-            view.ZipCounts[15, totCol] = totalDistinctSeniors;
-            view.ZipCounts[16, totCol] = totalCumulativeRepeatDeliveries; // Repeat Deliveries
-            view.ZipCounts[17, totCol] = totalCumulativeFirstDeliveries; // First-Time Deliveries
-            view.ZipCounts[18, totCol] = totalFullBags * 10;
-            view.ZipCounts[19, totCol] = totalHalfBags * 9;
+                view.ZipCounts[11, totCol] = totalDistinctHouseholds; // Distinct Households
+                view.ZipCounts[12, totCol] = totalDistinctChildren + totalDistinctAdults + totalDistinctSeniors; // Distinct Residents
+                view.ZipCounts[13, totCol] = totalDistinctChildren;
+                view.ZipCounts[14, totCol] = totalDistinctAdults;
+                view.ZipCounts[15, totCol] = totalDistinctSeniors;
+                view.ZipCounts[16, totCol] = totalCumulativeRepeatDeliveries; // Repeat Deliveries
+                view.ZipCounts[17, totCol] = totalCumulativeFirstDeliveries; // First-Time Deliveries
+                view.ZipCounts[18, totCol] = totalFullBags * 10;
+                view.ZipCounts[19, totCol] = totalHalfBags * 9;
 
-            return view;
+                return view;
             }
             private List<SelectListItem> GetSnapshotFamily(string listHH)
             {
