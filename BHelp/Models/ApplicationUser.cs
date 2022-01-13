@@ -6,7 +6,9 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace BHelp.Models
 {
@@ -26,6 +28,12 @@ namespace BHelp.Models
 
         [JsonProperty, DisplayName("Notes")]
         public String Notes { get; set; }    // Added PER 07/06/2021
+
+        [JsonProperty, StringLength(1), DisplayName("Volunteer Hours Category")]
+        public string VolunteerCategory { get; set; }    // Added PER 01/13/2022
+
+        [JsonProperty, DisplayName("Volunteer Hours Subcategory")]
+        public string VolunteerSubcategory { get; set; }     // Added PER 01/13/2022
 
         [JsonProperty, DisplayName("First Name")]
         public string FirstName { get; set; }
@@ -98,5 +106,11 @@ namespace BHelp.Models
             get { return string.Format("{0} {1}", FirstName, LastName); }
             set => throw new NotImplementedException();
         }
+
+        [NotMapped]
+        public List<SelectListItem> VolunteerCategories { get; set; }
+
+        [NotMapped]
+        public List<SelectListItem> VolunteerSubcategories { get; set; }
     }
 }

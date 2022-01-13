@@ -1,0 +1,82 @@
+﻿@model BHelp.Models.VolunteerHours
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+</head>
+<body>
+    <div>
+        <h4>VolunteerHours</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.UserId)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.UserId)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.OriginatorUserId)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.OriginatorUserId)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Category)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Category)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Subcategory)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Subcategory)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.WeekEndingDate)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.WeekEndingDate)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Hours)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Hours)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Minutes)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Minutes)
+            </dd>
+    
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</body>
+</html>

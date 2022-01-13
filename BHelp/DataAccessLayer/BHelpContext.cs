@@ -28,5 +28,7 @@ namespace BHelp.DataAccessLayer
         public System.Data.Entity.DbSet<BHelp.Models.GroupName> GroupNames { get; set; }
 
         public System.Data.Entity.DbSet<BHelp.Models.GroupMember> GroupMembers { get; set; }
+
+        public System.Data.Entity.DbSet<BHelp.Models.VolunteerHours> VolunteerHours { get; set; }
     }
 }

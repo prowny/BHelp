@@ -2,10 +2,10 @@
 @{ Layout = null; }
 <!DOCTYPE html>
 
-<html>
 <style>
     #SaveButton {background-color: blue;color: white}
 </style>
+<html>
 <head>
     <meta name="viewport" content="width=device-width"/>
     <title>Edit</title>
@@ -80,6 +80,25 @@
             <div class="col-md-10">
                 @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        
+        <div class="form-group">
+            @Html.LabelFor(m => m.VolunteerCategory)
+            <span style="color: darkmagenta"> &nbsp;A = Administration, M = Management, F = Food Service</span>
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => m.VolunteerCategory,
+                    new SelectList(Model.VolunteerCategories, "Value", "Text"))
+                @Html.ValidationMessageFor(model => model.VolunteerCategory, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        
+        <div class="form-group">
+            @Html.LabelFor(m => m.VolunteerSubcategory)
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => m.VolunteerSubcategory,
+                    new SelectList(Model.VolunteerSubcategories, "Value", "Text"))
+                @Html.ValidationMessageFor(model => model.VolunteerSubcategory, "", new { @class = "text-danger" })
             </div>
         </div>
 

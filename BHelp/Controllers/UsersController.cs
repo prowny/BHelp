@@ -33,14 +33,28 @@ namespace BHelp.Controllers
             {
                 return HttpNotFound();
             }
-            
+
+            user.VolunteerCategories = HoursRoutines.GetHoursCategories();
+            foreach (var cat in user.VolunteerCategories)
+            {
+                if (user.VolunteerCategory == cat.Value) cat.Selected = true;
+            }
+
+            user.VolunteerSubcategories = HoursRoutines.GetHoursSubcategories();
+            foreach (var subCat in user.VolunteerSubcategories)
+            {
+                if (user.VolunteerSubcategory == subCat .Value) subCat.Selected = true;
+            }
+
             return View(user);
         }
 
         // POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,UserName,Active,FirstName,LastName,Title,PhoneNumber,Email,BeginDate,LastDate,Notes")] ApplicationUser user)
+        public ActionResult Edit([Bind(Include = "Id,UserName,Active,FirstName,LastName," +
+                                                 "Title,PhoneNumber,Email,BeginDate,LastDate,Notes," +
+                                                 "VolunteerCategory,VolunteerSubcategory")] ApplicationUser user)
         {
             if (ModelState.IsValid)
             {
@@ -55,7 +69,8 @@ namespace BHelp.Controllers
                 saveUser.BeginDate = user.BeginDate;
                 saveUser.LastDate = user.LastDate;
                 saveUser.Notes = user.Notes;
-
+                saveUser.VolunteerCategory = user.VolunteerCategory;
+                saveUser.VolunteerSubcategory = user.VolunteerSubcategory;
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }

@@ -242,6 +242,7 @@
     <Compile Include="Controllers\UsersController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Controllers\VolunteerHoursController.cs" />
     <Compile Include="DataAccessLayer\BHelpContext.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -249,6 +250,7 @@
       <DependentUpon>Global.asax</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="HoursRoutines.cs" />
     <Compile Include="Migrations\202112281608060_AddGroups.cs" />
     <Compile Include="Migrations\202112281608060_AddGroups.Designer.cs">
       <DependentUpon>202112281608060_AddGroups.cs</DependentUpon>
@@ -256,6 +258,14 @@
     <Compile Include="Migrations\202201121840490_RemoveUnusedDeliveryColumns.cs" />
     <Compile Include="Migrations\202201121840490_RemoveUnusedDeliveryColumns.Designer.cs">
       <DependentUpon>202201121840490_RemoveUnusedDeliveryColumns.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202201131651041_AddVolunteerHours.cs" />
+    <Compile Include="Migrations\202201131651041_AddVolunteerHours.Designer.cs">
+      <DependentUpon>202201131651041_AddVolunteerHours.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202201131701484_AddVolunteerHoursTable.cs" />
+    <Compile Include="Migrations\202201131701484_AddVolunteerHoursTable.Designer.cs">
+      <DependentUpon>202201131701484_AddVolunteerHoursTable.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs">
@@ -278,6 +288,7 @@
     <Compile Include="Models\Login.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Models\VolunteerHours.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs">
@@ -492,6 +503,11 @@
     <Content Include="Views\GroupMembers\Index.cshtml" />
     <Content Include="Views\GroupMembers\MaintainGroupMembers.cshtml" />
     <Content Include="Views\GroupMembers\AddGroupMember.cshtml" />
+    <Content Include="Views\VolunteerHours\Create.cshtml" />
+    <Content Include="Views\VolunteerHours\Delete.cshtml" />
+    <Content Include="Views\VolunteerHours\Details.cshtml" />
+    <Content Include="Views\VolunteerHours\Edit.cshtml" />
+    <Content Include="Views\VolunteerHours\Index.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
@@ -673,6 +689,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202201121840490_RemoveUnusedDeliveryColumns.resx">
       <DependentUpon>202201121840490_RemoveUnusedDeliveryColumns.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202201131651041_AddVolunteerHours.resx">
+      <DependentUpon>202201131651041_AddVolunteerHours.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202201131701484_AddVolunteerHoursTable.resx">
+      <DependentUpon>202201131701484_AddVolunteerHoursTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
