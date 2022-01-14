@@ -13,6 +13,7 @@ namespace BHelp.ViewModels
         public int OpenDeliveryCount { get; set; }
         public List<string> DistinctDeliveryDatesList { get; set; }
         public List<SelectListItem> DistinctDeliveryDatesSelectList { get; set; }
+        public List<SelectListItem> DistinctDeliveryDatesODList { get; set; }
         public DateTime SelectedDistinctDeliveryDate { get; set; }
         public List<string> DistinctDriverList { get; set; }
         public List<SelectListItem> DistinctDriversSelectList { get; set; }

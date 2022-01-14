@@ -182,7 +182,9 @@ namespace BHelp.Controllers
         // GET: Open Delivery Filters
         public ActionResult OpenFilters(string btnAllCheckAll)
         {
-            var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0).ToList(); // get all open deliveries
+            var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0)
+                .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
+                .ThenBy(n => n.LastName).ToList(); // get all open deliveries
             var view = new OpenDeliveryViewModel()
             {
                 OpenDeliveryCount = listAllOpenDeliveries.Count,
@@ -191,26 +193,45 @@ namespace BHelp.Controllers
                 SelectedDeliveriesList = new List<Delivery>(),
                 DistinctDriverList = new List<string>(),
                 DistinctDriversSelectList = new List<SelectListItem>(),
+                DistinctDeliveryDatesODList = new List<SelectListItem>(),
                 ReplacementDeliveryDate = DateTime.Today,
                 DriversSelectList = new List<SelectListItem>(),
                 ODSelectList = new List<SelectListItem>()
             };
 
-            var distinctDatesList = listAllOpenDeliveries.Select(d => d.DateDelivered).Distinct().ToList();
-            foreach (var dt in distinctDatesList)
+            foreach (var openD in listAllOpenDeliveries)
             {
-                int delCountThisDate = listAllOpenDeliveries.Count(d => d.DateDelivered == dt);
-                view.DistinctDeliveryDatesList.Add(dt == null
-                    ? "-none-  (" + delCountThisDate + ")"
-                    : dt.Value.ToString("MM/dd/yyyy") + " (" + delCountThisDate + ")");
-
-                if (dt != null)
-                    view.DistinctDeliveryDatesSelectList.Add(new SelectListItem()
-                        { Value = dt.Value.ToString("MM/dd/yyyy"), Text = dt.Value.ToString("MM/dd/yyyy") });
+                var del = db.Deliveries.Find(openD.Id);
+                if (del != null)
+                {
+                    openD.DeliveryDateODName = del.FirstName + " " + del.LastName;
+                }
             }
 
-            TempData["DistinctDeliveryDatesList"] = view.DistinctDeliveryDatesList;
-            TempData["DistinctDeliveryDatesSelectList"] = view.DistinctDeliveryDatesSelectList;
+            var distinctDatesList = listAllOpenDeliveries.Select(d => d.DateDelivered ).Distinct().ToList();
+            foreach (var dt in distinctDatesList)
+            {
+                int delThisDateCount = listAllOpenDeliveries.Count(d => d.DateDelivered == dt);
+                view.DistinctDeliveryDatesList.Add(dt == null
+                    ? "-none-  (" + delThisDateCount + ")"
+                    : dt.Value.ToString("MM/dd/yyyy") + " (" + delThisDateCount + ")");
+
+                if (dt != null)
+                {
+                    // Get delDate ODIDs for each distinct del date
+                    foreach (var del in listAllOpenDeliveries)
+                    {
+                        if (del.DateDelivered == dt && del.DeliveryDateODName != null)
+                            view.DistinctDeliveryDatesODList.Add(new SelectListItem()
+                            { Value = dt.Value.ToString("MM/dd/yyyy"), Text = del.DeliveryDateODName });
+                    }
+                    view.DistinctDeliveryDatesSelectList.Add(new SelectListItem()
+                        { Value = dt.Value.ToString("MM/dd/yyyy"), Text = dt.Value.ToString("MM/dd/yyyy") });
+                }
+            }
+
+            Session["DistinctDeliveryDatesList"] = view.DistinctDeliveryDatesList;
+            Session["DistinctDeliveryDatesSelectList"] = view.DistinctDeliveryDatesSelectList;
 
             var distinctDriverIdList = listAllOpenDeliveries.Select(d => d.DriverId).Distinct().ToList();
             foreach (var drId in distinctDriverIdList)
@@ -245,7 +266,8 @@ namespace BHelp.Controllers
             if (btnAllCheckAll != "True") return View(view);
             {
                 var selectedDeliveries = db.Deliveries
-                    .Where(d => d.Status == 0).ToList();
+                    .Where(d => d.Status == 0).OrderBy(d => d.DateDelivered)
+                    .ThenBy(z =>z.Zip).ThenBy(n => n.LastName).ToList();
                 view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnAllCheckAll);
                 view.ButtonGroupName = "All";
             }
@@ -274,9 +296,10 @@ namespace BHelp.Controllers
 
             if (btnAllCheckAll != null || btnAllClearAll != null)
             {
-                    var selectedDeliveries = db.Deliveries
-                        .OrderBy(d => d.DateDelivered).Where(d => d.Status == 0).ToList();
-                     view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnAllCheckAll);
+                var selectedDeliveries = db.Deliveries
+                    .Where(d => d.Status == 0).OrderBy(d => d.DateDelivered)
+                    .ThenBy(z => z.Zip).ThenBy(n => n.LastName).ToList();
+                view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnAllCheckAll);
                      view.ButtonGroupName = $"All";
                      return View(view);
             }
@@ -284,8 +307,9 @@ namespace BHelp.Controllers
             if (btnByDateCheckAll != null || btnByDateClearAll != null)
             {
                     var selectedDeliveries = db.Deliveries.Where(d => d.Status == 0
-                                     && d.DateDelivered == model.SelectedDistinctDeliveryDate).ToList();
-                    view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnByDateCheckAll);
+                                 && d.DateDelivered == model.SelectedDistinctDeliveryDate)
+                                .OrderBy(z => z.Zip).ThenBy(n => n.LastName).ToList();
+                view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnByDateCheckAll);
                     view.ButtonGroupName = $"ByDate";
                     return View(view);
             }
@@ -295,7 +319,8 @@ namespace BHelp.Controllers
                     var selDistinctDriverId = model.SelectedDistinctDriverId;
                     if (selDistinctDriverId == "0") { selDistinctDriverId = null;}
                     var selectedDeliveries = db.Deliveries
-                        .OrderBy(d =>d.DateDelivered)            
+                        .OrderBy(d =>d.DateDelivered).ThenBy(z => z.Zip)
+                        .ThenBy(n => n.LastName)
                         .Where(d => d.Status == 0 && d.DriverId == selDistinctDriverId).ToList();
                     view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnByDriverCheckAll);
                     view.ButtonGroupName = $"ByDriver";
@@ -409,8 +434,8 @@ namespace BHelp.Controllers
                 var selectedDeliveries = (List<Delivery>)Session["SelectedDeliveriesList"];
                 if (selectedDeliveries == null) return null;
 
-                OpenDeliveryViewModel selectedOpens = GetSelectedOpens(model);
-                var result = AppRoutines.ExcelOpenDeliveries(selectedOpens);
+               // var selectedOpens = GetSelectedOpens(model);
+                var result = AppRoutines.ExcelOpenDeliveries(null);
                 
                 return result;
             }
@@ -489,7 +514,7 @@ namespace BHelp.Controllers
                                                             + " " + odRec.PhoneNumber;
             }
             selectedOpens.OpenDeliveryCount = j + 1;
-            selectedOpens.ReportTitle = "BHELPDeliveries";
+            selectedOpens.ReportTitle = "BHELP Deliveries";
 
             return selectedOpens;
             }
@@ -521,11 +546,12 @@ namespace BHelp.Controllers
                             del.EligiibilityRulesException = true;
                     }
 
-                if (del.FullBags == 0 && del.HalfBags == 0 && del.KidSnacks == 0 && del.GiftCards == 0)
-                {
-                    del.AllZeroProducts = true;
-                }
-                view.SelectedDeliveriesList.Add(del);
+                    if (del.FullBags == 0 && del.HalfBags == 0 && del.KidSnacks == 0 && del.GiftCards == 0)
+                    {
+                        del.AllZeroProducts = true;
+                    }
+
+                    view.SelectedDeliveriesList.Add(del);
                 }
                 view.DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>;
                 TempData.Keep("DriversSelectList");
@@ -537,13 +563,15 @@ namespace BHelp.Controllers
             }
             private OpenDeliveryViewModel GetOpenDeliveryViewModel(OpenDeliveryViewModel view)
             {
-                var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0).ToList();   // get all open deliveries
+                var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0)
+                    .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
+                    .ThenBy(n => n.LastName).ToList();   // get all open deliveries
                 var newView = new OpenDeliveryViewModel
                 {
                     OpenDeliveryCount = listAllOpenDeliveries.Count,
-                    DistinctDeliveryDatesList = TempData["DistinctDeliveryDatesList"] as List<string>,
+                    DistinctDeliveryDatesList = Session["DistinctDeliveryDatesList"] as List<string>,
                     SelectedDeliveriesList = new List<Delivery>(),
-                    DistinctDeliveryDatesSelectList = TempData["DistinctDeliveryDatesSelectList"] as List<SelectListItem>,
+                    DistinctDeliveryDatesSelectList = Session["DistinctDeliveryDatesSelectList"] as List<SelectListItem>,
                     DistinctDriverList = TempData["DistinctDriverList"] as List<string>,
                     DistinctDriversSelectList = TempData["DistinctDriversSelectList"] as List<SelectListItem>,
                     ReplacementDeliveryDate = view.ReplacementDeliveryDate,
@@ -592,8 +620,8 @@ namespace BHelp.Controllers
                     newView.DistinctDeliveryDatesSelectList = newSortedList;
                 }
             
-                TempData["DistinctDeliveryDatesSelectList"] = newView.DistinctDeliveryDatesSelectList;
-                TempData.Keep("DistinctDeliveryDatesSelectList");
+                Session["DistinctDeliveryDatesSelectList"] = newView.DistinctDeliveryDatesSelectList;
+                // TempData.Keep("DistinctDeliveryDatesSelectList");
 
                 if (newView.DistinctDriversSelectList != null)
                 {

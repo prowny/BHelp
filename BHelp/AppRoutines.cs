@@ -467,7 +467,7 @@ namespace BHelp
         }
         public static FileStreamResult ExcelOpenDeliveries(OpenDeliveryViewModel view)
         {
-            // view Parameter contains data only from Filtered Opens
+            // view Parameter contains data only from Filtered Opens (with extra row 0)
             if (view == null) view = GetOpenDeliveriesViewModel();
             
             var workbook = new XLWorkbook();
@@ -559,7 +559,20 @@ namespace BHelp
             ws.Cell(2, 18).Style.Alignment.WrapText = true;
             ws.Cell(2, 18).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
-            int activeRow = 2;
+            //int activeRow = 2;
+            var activeRow = 3; // get distinct daily ODs
+            var deliveryDateODs = "";
+            foreach (var delDtOD in view.DistinctDeliveryDatesODList)
+            { deliveryDateODs += " OD on " + delDtOD.Value + ": " + delDtOD.Text + ";"; }
+
+            if (deliveryDateODs.Substring(deliveryDateODs.Length - 1, 1) == ";")
+            { deliveryDateODs= deliveryDateODs.Substring(0,deliveryDateODs.Length - 1); }
+;
+            ws.Cell(3,1).SetValue(deliveryDateODs);
+            ws.Cell(3, 1).Style.Alignment.WrapText = true;
+            ws.Cell(3,1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            ws.Range(ws.Cell(3, 1), ws.Cell(3, 18)).Merge();
+
             for (var i = 0; i < view.OpenDeliveryCount; i++)
             {
                 activeRow++;
@@ -749,46 +762,53 @@ namespace BHelp
                     .ThenBy(z => z.Zip)
                     .ThenBy(n => n.LastName).ToList();
                 odv.OpenDeliveryCount = deliveryList.Count;
+
                 odv.OpenDeliveries = new string[deliveryList.Count, 20];
                 var i = 0;
                 foreach (var del in deliveryList)
                 {
                     var client = db.Clients.Find(del.ClientId);
-                    if (del.DateDelivered != null)
-                        odv.OpenDeliveries[i, 1] = del.DateDelivered.Value.ToShortDateString();
+                    if (del.DateDelivered != null) odv.OpenDeliveries[i, 1] = del.DateDelivered.Value.ToShortDateString();
+                    
+                    if (del.DeliveryDateODId != null)
+                    {
+                        var usr = db.Users.Find(del.DeliveryDateODId);
+                        del.DeliveryDateODName = usr.FullName + " " + usr.PhoneNumber;
+                    };
 
                     var driver = db.Users.Find(del.DriverId);
-                    if (driver != null)
-                    { odv.OpenDeliveries[i, 2] = driver.FullName; }
+                        if (driver != null)
+                        { odv.OpenDeliveries[i, 2] = driver.FullName; }
 
-                    odv.OpenDeliveries[i, 3] = del.Zip;
-                    odv.OpenDeliveries[i, 4] = del.LastName + ", " + del.FirstName; // Client
-                    odv.OpenDeliveries[i, 5] = del.StreetNumber + " " + del.StreetName;
-                    odv.OpenDeliveries[i, 6] = del.City;
-                    odv.OpenDeliveries[i, 7] = del.Phone;
+                        odv.OpenDeliveries[i, 3] = del.Zip;
+                        odv.OpenDeliveries[i, 4] = del.LastName + ", " + del.FirstName; // Client
+                        odv.OpenDeliveries[i, 5] = del.StreetNumber + " " + del.StreetName;
+                        odv.OpenDeliveries[i, 6] = del.City;
+                        odv.OpenDeliveries[i, 7] = del.Phone;
 
-                    if (client != null)
-                    {
-                        var familyMembers= db.FamilyMembers.Where(c => c.ClientId == client.Id).ToList();
-                        //var kids2_17 = GetNumberOfKids2_17(client.Id);
-                        var kidCount = AppRoutines.GetNumberOfChildren(client.Id);
-                        odv.OpenDeliveries[i, 8] = kidCount.ToString();
-                        odv.OpenDeliveries[i, 9] = AppRoutines.GetNumberOfAdults(client.Id).ToString();
-                        odv.OpenDeliveries[i, 10] = AppRoutines.GetNumberOfSeniors(client.Id).ToString();
-                        odv.OpenDeliveries[i, 11] = (familyMembers.Count + 1).ToString();
-                        odv.OpenDeliveries[i, 12] = GetNamesAgesOfAllInHousehold(client.Id);
+                        if (client != null)
+                        {
+                            var familyMembers= db.FamilyMembers.Where(c => c.ClientId == client.Id).ToList();
+                            //var kids2_17 = GetNumberOfKids2_17(client.Id);
+                            var kidCount = AppRoutines.GetNumberOfChildren(client.Id);
+                            odv.OpenDeliveries[i, 8] = kidCount.ToString();
+                            odv.OpenDeliveries[i, 9] = AppRoutines.GetNumberOfAdults(client.Id).ToString();
+                            odv.OpenDeliveries[i, 10] = AppRoutines.GetNumberOfSeniors(client.Id).ToString();
+                            odv.OpenDeliveries[i, 11] = (familyMembers.Count + 1).ToString();
+                            odv.OpenDeliveries[i, 12] = GetNamesAgesOfAllInHousehold(client.Id);
 
-                        odv.OpenDeliveries[i, 17] = client.Notes;
-                    }
+                            odv.OpenDeliveries[i, 17] = client.Notes;
+                        }
                     
-                    odv.OpenDeliveries[i, 13] =  del.FullBags.ToString();
-                    odv.OpenDeliveries[i, 14] =  del.HalfBags.ToString();
-                    odv.OpenDeliveries[i, 15] =  del.KidSnacks.ToString();
-                    odv.OpenDeliveries[i, 16] =  del.GiftCards.ToString();
+                        odv.OpenDeliveries[i, 13] =  del.FullBags.ToString();
+                        odv.OpenDeliveries[i, 14] =  del.HalfBags.ToString();
+                        odv.OpenDeliveries[i, 15] =  del.KidSnacks.ToString();
+                        odv.OpenDeliveries[i, 16] =  del.GiftCards.ToString();
 
-                    odv.OpenDeliveries[i,18] = del.ODNotes + " " + del.DriverNotes;
-                    i++;
+                        odv.OpenDeliveries[i,18] = del.ODNotes + " " + del.DriverNotes;
+                        i++;
                 }
+                odv.DistinctDeliveryDatesODList = GetDistinctDeliveryDatesOdList(deliveryList);
 
                 return odv;
             }
@@ -938,6 +958,38 @@ namespace BHelp
             response.Write(sb.ToString());
             response.End();
             return null;
+        }
+
+        private static List<SelectListItem> GetDistinctDeliveryDatesOdList(List<Delivery> deliveryList)
+        {
+            var distinctDeliveryDatesOdList = new List<SelectListItem>();
+            var distinctDatesList = deliveryList.Select(d => d.DateDelivered).Distinct().ToList();
+            var distinctDates = "";
+            foreach (var dt in distinctDatesList)
+            {
+                if (dt != null)
+                {
+                    // Get delDate ODIDs for each distinct del date
+                    for (var i = 0; i<deliveryList.Count; i++)
+                    {
+                        var del = deliveryList[i];
+                        if (del.DateDelivered == dt && del.DeliveryDateODName != null)
+                        {
+                            if (!distinctDates.Contains(dt.Value.ToString("MM/dd/yyyy")))
+                            {
+                                distinctDeliveryDatesOdList.Add(new SelectListItem()
+                                {
+                                    Value = dt.Value.ToString("MM/dd/yyyy"),
+                                    Text = del.DeliveryDateODName
+                                });
+                                distinctDates += dt.Value.ToString("MM/dd/yyyy") + ",";
+                            }
+                        }
+                    }
+                }
+            }
+
+            return distinctDeliveryDatesOdList;
         }
     }
 }
