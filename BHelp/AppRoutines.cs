@@ -467,7 +467,7 @@ namespace BHelp
         }
         public static FileStreamResult ExcelOpenDeliveries(OpenDeliveryViewModel view)
         {
-            // view Parameter contains data only from Filtered Opens (with extra row 0)
+            // view Parameter contains data only from Filtered Opens 
             if (view == null) view = GetOpenDeliveriesViewModel();
             
             var workbook = new XLWorkbook();
@@ -488,92 +488,90 @@ namespace BHelp
             ws.Cell(1, 8).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
             ws.Range(ws.Cell(1,8), ws.Cell(1,16)).Merge();
 
-            ws.Columns("1").Width = 10;
-            ws.Cell(2, 1).SetValue("Delivery Date").Style.Font.SetBold(true);
-            ws.Cell(2, 1).Style.Alignment.WrapText = true;
-            ws.Cell(2, 1).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("2").Width = 12;
-            ws.Cell(2, 2).SetValue("Driver").Style.Font.SetBold(true);
-            ws.Cell(2, 2).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("3").Width = 6;
-            ws.Cell(2, 3).SetValue("Zip Code").Style.Font.SetBold(true);
-            ws.Cell(2, 3).Style.Alignment.WrapText = true;
-            ws.Cell(2, 3).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("4").Width = 12;
-            ws.Cell(2, 4).SetValue("Client").Style.Font.SetBold(true);
-            ws.Cell(2, 4).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("5").Width = 16;
-            ws.Cell(2, 5).SetValue("Address").Style.Font.SetBold(true);
-            ws.Cell(2, 5).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("6").Width = 9;
-            ws.Cell(2, 6).SetValue("City").Style.Font.SetBold(true);
-            ws.Cell(2, 6).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("7").Width = 12;
-            ws.Cell(2, 7).SetValue("Phone").Style.Font.SetBold(true);
-            ws.Cell(2, 7).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-
-            ws.Columns("8").Width = 3;
-            ws.Cell(2, 8).SetValue("#K").Style.Font.SetBold(true);
-            ws.Cell(2, 8).Style.Alignment.WrapText = true;
-            ws.Cell(2, 8).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-
-            ws.Columns("9").Width = 3;
-            ws.Cell(2, 9).SetValue("#A").Style.Font.SetBold(true);
-            ws.Cell(2, 9).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-
-            ws.Columns("10").Width = 3;
-            ws.Cell(2, 10).SetValue("#S").Style.Font.SetBold(true);
-            ws.Cell(2, 10).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-
-            ws.Columns("11").Width = 4;
-            ws.Cell(2, 11).SetValue("# in HH").Style.Font.SetBold(true);
-            ws.Cell(2, 11).Style.Alignment.WrapText = true;
-            ws.Cell(2, 11).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-
-            ws.Columns("12").Width = 15;
-            ws.Cell(2, 12).SetValue("All Household Members/Ages").Style.Font.SetBold(true);
-            ws.Cell(2, 12).Style.Alignment.WrapText = true;
-            ws.Cell(2, 12).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-
-            ws.Columns("13").Width = 3;
-            ws.Cell(2, 13).SetValue("#F").Style.Font.SetBold(true);
-            ws.Cell(2, 13).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-
-            ws.Columns("14").Width = 3;
-            ws.Cell(2, 14).SetValue("#H").Style.Font.SetBold(true);
-            ws.Cell(2, 14).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-
-            ws.Columns("15").Width = 4;
-            ws.Cell(2, 15).SetValue("#KS").Style.Font.SetBold(true);
-            ws.Cell(2, 15).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-
-            ws.Columns("16").Width = 4;
-            ws.Cell(2, 16).SetValue("#GC").Style.Font.SetBold(true);
-            ws.Cell(2, 16).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("17").Width = 15;
-            ws.Cell(2, 17).SetValue("Client Permanent Notes").Style.Font.SetBold(true);
-            ws.Cell(2, 17).Style.Alignment.WrapText = true;
-            ws.Cell(2, 17).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("18").Width = 15;
-            ws.Cell(2, 18).SetValue("OD & Driver Delivery Notes").Style.Font.SetBold(true);
-            ws.Cell(2, 18).Style.Alignment.WrapText = true;
-            ws.Cell(2, 18).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-
-            //int activeRow = 2;
-            var activeRow = 3; // get distinct daily ODs
             var deliveryDateODs = "";
             foreach (var delDtOD in view.DistinctDeliveryDatesODList)
             { deliveryDateODs += " OD on " + delDtOD.Value + ": " + delDtOD.Text + ";"; }
 
             if (deliveryDateODs.Substring(deliveryDateODs.Length - 1, 1) == ";")
-            { deliveryDateODs= deliveryDateODs.Substring(0,deliveryDateODs.Length - 1); }
-;
-            ws.Cell(3,1).SetValue(deliveryDateODs);
-            ws.Cell(3, 1).Style.Alignment.WrapText = true;
-            ws.Cell(3,1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-            ws.Range(ws.Cell(3, 1), ws.Cell(3, 18)).Merge();
+            { deliveryDateODs = deliveryDateODs.Remove(deliveryDateODs.Length - 1); }
+            ws.Cell(2, 1).SetValue(deliveryDateODs);
+            ws.Cell(2, 1).Style.Alignment.WrapText = true;
+            ws.Cell(2, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            ws.Range(ws.Cell(2, 1), ws.Cell(2, 18)).Merge();
 
-            for (var i = 0; i < view.OpenDeliveryCount; i++)
+            ws.Columns("1").Width = 10;
+            ws.Cell(3, 1).SetValue("Delivery Date").Style.Font.SetBold(true);
+            ws.Cell(3, 1).Style.Alignment.WrapText = true;
+            ws.Cell(3, 1).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("2").Width = 12;
+            ws.Cell(3, 2).SetValue("Driver").Style.Font.SetBold(true);
+            ws.Cell(3, 2).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("3").Width = 6;
+            ws.Cell(3, 3).SetValue("Zip Code").Style.Font.SetBold(true);
+            ws.Cell(3, 3).Style.Alignment.WrapText = true;
+            ws.Cell(3, 3).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("4").Width = 12;
+            ws.Cell(3, 4).SetValue("Client").Style.Font.SetBold(true);
+            ws.Cell(3, 4).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("5").Width = 16;
+            ws.Cell(3, 5).SetValue("Address").Style.Font.SetBold(true);
+            ws.Cell(3, 5).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("6").Width = 9;
+            ws.Cell(3, 6).SetValue("City").Style.Font.SetBold(true);
+            ws.Cell(3, 6).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("7").Width = 12;
+            ws.Cell(3, 7).SetValue("Phone").Style.Font.SetBold(true);
+            ws.Cell(3, 7).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+            ws.Columns("8").Width = 3;
+            ws.Cell(3, 8).SetValue("#K").Style.Font.SetBold(true);
+            ws.Cell(3, 8).Style.Alignment.WrapText = true;
+            ws.Cell(3, 8).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+            ws.Columns("9").Width = 3;
+            ws.Cell(3, 9).SetValue("#A").Style.Font.SetBold(true);
+            ws.Cell(3, 9).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+            ws.Columns("10").Width = 3;
+            ws.Cell(3, 10).SetValue("#S").Style.Font.SetBold(true);
+            ws.Cell(3, 10).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+            ws.Columns("11").Width = 4;
+            ws.Cell(3, 11).SetValue("# in HH").Style.Font.SetBold(true);
+            ws.Cell(3, 11).Style.Alignment.WrapText = true;
+            ws.Cell(3, 11).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+            ws.Columns("12").Width = 15;
+            ws.Cell(3, 12).SetValue("All Household Members/Ages").Style.Font.SetBold(true);
+            ws.Cell(3, 12).Style.Alignment.WrapText = true;
+            ws.Cell(3, 12).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+            ws.Columns("13").Width = 3;
+            ws.Cell(3, 13).SetValue("#F").Style.Font.SetBold(true);
+            ws.Cell(3, 13).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+            ws.Columns("14").Width = 3;
+            ws.Cell(3, 14).SetValue("#H").Style.Font.SetBold(true);
+            ws.Cell(3, 14).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+            ws.Columns("15").Width = 4;
+            ws.Cell(3, 15).SetValue("#KS").Style.Font.SetBold(true);
+            ws.Cell(3, 15).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+            ws.Columns("16").Width = 4;
+            ws.Cell(3, 16).SetValue("#GC").Style.Font.SetBold(true);
+            ws.Cell(3, 16).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("17").Width = 15;
+            ws.Cell(3, 17).SetValue("Client Permanent Notes").Style.Font.SetBold(true);
+            ws.Cell(3, 17).Style.Alignment.WrapText = true;
+            ws.Cell(3, 17).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("18").Width = 15;
+            ws.Cell(3, 18).SetValue("OD & Driver Delivery Notes").Style.Font.SetBold(true);
+            ws.Cell(3, 18).Style.Alignment.WrapText = true;
+            ws.Cell(3, 18).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+           var activeRow = 3;
+           for (var i = 0; i < view.OpenDeliveryCount; i++)
             {
                 activeRow++;
                 for (var col = 1; col < 19; col++)
@@ -582,19 +580,6 @@ namespace BHelp
                     ws.Cell(activeRow, col).Style.Alignment.WrapText = true;
                     ws.Cell(activeRow, col).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
                     ws.Cell(activeRow, col).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                }
-
-                var odId = view.OpenDeliveries[0, 0];
-                if (odId != null)
-                {
-                    using (var db = new BHelpContext())
-                    {
-                        var odRec = db.Users.Find(odId);
-                        view.OpenDeliveries[0, 4] = "OD: " + odRec.FullName
-                                                           + " " + odRec.PhoneNumber;
-                    }
-                    activeRow++;
-                    ws.Cell(activeRow, 4).SetValue(view.OpenDeliveries[0, 4]);
                 }
             }
 
@@ -677,14 +662,14 @@ namespace BHelp
                     ws.Cell(activeRow, col).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 }
             }
-            activeRow++;
-            ws.Cell(activeRow, 1).SetValue(view.OpenDeliveries[0,1]); //last Date
-            ws.Cell(activeRow, 1).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Cell(activeRow, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-            ws.Cell(activeRow, 4).SetValue(view.OpenDeliveries[0, 4]); //last OD Name & Phone
-            ws.Cell(activeRow, 4).Style.Alignment.WrapText = true;
-            ws.Cell(activeRow, 4).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Cell(activeRow, 4).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            //activeRow++;
+            //ws.Cell(activeRow, 1).SetValue(view.OpenDeliveries[0,1]); //last Date
+            //ws.Cell(activeRow, 1).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            //ws.Cell(activeRow, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            //ws.Cell(activeRow, 4).SetValue(view.OpenDeliveries[0, 4]); //last OD Name & Phone
+            //ws.Cell(activeRow, 4).Style.Alignment.WrapText = true;
+            //ws.Cell(activeRow, 4).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            //ws.Cell(activeRow, 4).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
             var ms = new MemoryStream();
             workbook.SaveAs(ms);
@@ -960,7 +945,7 @@ namespace BHelp
             return null;
         }
 
-        private static List<SelectListItem> GetDistinctDeliveryDatesOdList(List<Delivery> deliveryList)
+        public static List<SelectListItem> GetDistinctDeliveryDatesOdList(List<Delivery> deliveryList)
         {
             var distinctDeliveryDatesOdList = new List<SelectListItem>();
             var distinctDatesList = deliveryList.Select(d => d.DateDelivered).Distinct().ToList();

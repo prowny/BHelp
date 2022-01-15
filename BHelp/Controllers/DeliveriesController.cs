@@ -175,7 +175,8 @@ namespace BHelp.Controllers
         }
         public ActionResult ExcelOpenDeliveries()
         {
-            var result = AppRoutines.ExcelOpenDeliveries(null);
+            OpenDeliveryViewModel view = GetOpenDeliveryViewModel(null);
+            var result = AppRoutines.ExcelOpenDeliveries(view);
             return result;
         }
        
@@ -349,7 +350,7 @@ namespace BHelp.Controllers
                         if (rec != null) rec.DateDelivered = view.ReplacementDeliveryDate;
                         db.SaveChanges();
                     }
-                return RedirectToAction("OpenFilters", new { btnCheckAll = "True" });
+                    return RedirectToAction("OpenFilters", new { btnCheckAll = "True" });
             }
                 
             if (btnReplacementDriverId != null)
@@ -367,6 +368,7 @@ namespace BHelp.Controllers
                         where dlv.IsChecked
                         select db.Deliveries.Find(dlv.Id))
                     {
+                        if (view.ReplacementDriverId == "0") view.ReplacementDriverId = null;
                         if (rec != null) rec.DriverId = view.ReplacementDriverId;
                         db.SaveChanges();
                     }
@@ -434,8 +436,8 @@ namespace BHelp.Controllers
                 var selectedDeliveries = (List<Delivery>)Session["SelectedDeliveriesList"];
                 if (selectedDeliveries == null) return null;
 
-               // var selectedOpens = GetSelectedOpens(model);
-                var result = AppRoutines.ExcelOpenDeliveries(null);
+                var selectedOpens = GetSelectedOpens(model);
+                var result = AppRoutines.ExcelOpenDeliveries(selectedOpens);
                 
                 return result;
             }
@@ -446,9 +448,8 @@ namespace BHelp.Controllers
                 var selectedDeliveries = (List<Delivery>)Session["SelectedDeliveriesList"];
                 if (selectedDeliveries == null) return null;
 
-                OpenDeliveryViewModel selectedOpens = GetSelectedOpens(model);
+                var selectedOpens = GetSelectedOpens(model); 
                 var result = AppRoutines.OpenDeliveriesToCSV(selectedOpens);
-                
                 return result;
             }
 
@@ -459,10 +460,12 @@ namespace BHelp.Controllers
             {
                 var selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
                 if (selectedDeliveries == null) return null;
-                var selectedOpens = new OpenDeliveryViewModel
+                var odv = new OpenDeliveryViewModel
                 {
                     SelectedDeliveriesList = new List<Delivery>(),
-                    OpenDeliveries = new string[selectedDeliveries.Count + 1, 20]   // Reserve OpenDeliveries [0,n] for OD Name and Phone
+                    OpenDeliveries = new string[selectedDeliveries.Count, 20],
+                    ReportTitle = "Bethesda Help Open Deliveries",
+                    OpenDeliveryCount = selectedDeliveries.Count
                 };
             for (var i = 0; i < selectedDeliveries.Count; i++)
             {   // selected deliveries count may have changed
@@ -472,51 +475,56 @@ namespace BHelp.Controllers
                 }
             } // Set IsChecked flags
 
-            var j = 0;
+            var checkedSelectedDeliveries = new List<Delivery>();
+            var j = -1;
             foreach (var rec in selectedDeliveries)
             {
                 if (rec.IsChecked)
                 {
                     j++;
                     if (rec.DateDelivered != null)
-                        selectedOpens.OpenDeliveries[j, 1] = rec.DateDelivered.Value.ToString("MM/dd/yyyy");
-                    selectedOpens.OpenDeliveries[j, 2] = rec.DriverName;
-                    selectedOpens.OpenDeliveries[j, 3] = rec.Zip;
-                    selectedOpens.OpenDeliveries[j, 4] = rec.Client.FullName;
-                    selectedOpens.OpenDeliveries[j, 5] = rec.StreetNumber + " "  + rec.StreetName;
-                    selectedOpens.OpenDeliveries[j, 6] = rec.City;
-                    selectedOpens.OpenDeliveries[j, 7] = rec.Phone;
+                    {
+                        odv.OpenDeliveries[j, 1] = rec.DateDelivered.Value.ToString("MM/dd/yyyy");
+                    }
+                    odv.OpenDeliveries[j, 2] = rec.DriverName;
+                    odv.OpenDeliveries[j, 3] = rec.Zip;
+                    odv.OpenDeliveries[j, 4] = rec.Client.FullName;
+                    odv.OpenDeliveries[j, 5] = rec.StreetNumber + " "  + rec.StreetName;
+                    odv.OpenDeliveries[j, 6] = rec.City;
+                    odv.OpenDeliveries[j, 7] = rec.Phone;
 
                     var familyMembers = db.FamilyMembers
                         .Where(c => c.ClientId == rec.Client.Id).ToList();
                     var kidCount = AppRoutines.GetNumberOfChildren(rec.Client.Id);
-                    selectedOpens.OpenDeliveries[j, 8] = kidCount.ToString();
-                    selectedOpens.OpenDeliveries[j, 9] = AppRoutines.GetNumberOfAdults(rec.Client.Id).ToString();
-                    selectedOpens.OpenDeliveries[j, 10] = AppRoutines.GetNumberOfSeniors(rec.Client.Id).ToString();
-                    selectedOpens.OpenDeliveries[j, 11] = (familyMembers.Count + 1).ToString();
-                    selectedOpens.OpenDeliveries[j, 12] = AppRoutines.GetNamesAgesOfAllInHousehold(rec.Client.Id);
-                    selectedOpens.OpenDeliveries[j, 13] = rec.FullBags.ToString();
-                    selectedOpens.OpenDeliveries[j, 14] = rec.HalfBags.ToString();
-                    selectedOpens.OpenDeliveries[j, 15] = rec.KidSnacks.ToString();
-                    selectedOpens.OpenDeliveries[j, 16] = rec.GiftCards.ToString();
-                    selectedOpens.OpenDeliveries[j, 17] = rec.Client.Notes;
-                    selectedOpens.OpenDeliveries[j, 18] = rec.ODNotes + " " + rec.DriverNotes;
-                    selectedOpens.OpenDeliveries[0, 0] = rec.DeliveryDateODId; // OD of last selected record
-                    selectedOpens.OpenDeliveries[0, 1] = selectedOpens.OpenDeliveries[j, 1]; // Last Date
+                    odv.OpenDeliveries[j, 8] = kidCount.ToString();
+                    odv.OpenDeliveries[j, 9] = AppRoutines.GetNumberOfAdults(rec.Client.Id).ToString();
+                    odv.OpenDeliveries[j, 10] = AppRoutines.GetNumberOfSeniors(rec.Client.Id).ToString();
+                    odv.OpenDeliveries[j, 11] = (familyMembers.Count + 1).ToString();
+                    odv.OpenDeliveries[j, 12] = AppRoutines.GetNamesAgesOfAllInHousehold(rec.Client.Id);
+                    odv.OpenDeliveries[j, 13] = rec.FullBags.ToString();
+                    odv.OpenDeliveries[j, 14] = rec.HalfBags.ToString();
+                    odv.OpenDeliveries[j, 15] = rec.KidSnacks.ToString();
+                    odv.OpenDeliveries[j, 16] = rec.GiftCards.ToString();
+                    odv.OpenDeliveries[j, 17] = rec.Client.Notes;
+                    odv.OpenDeliveries[j, 18] = rec.ODNotes + " " + rec.DriverNotes;
+
+                    checkedSelectedDeliveries.Add(rec);  // for get distinct OD list
                 }
             }
 
-            var odId = selectedOpens.OpenDeliveries[0, 0];
-            if (odId != null)
-            {
-                var odRec = db.Users.Find(odId);
-                selectedOpens.OpenDeliveries[0, 4] = "OD: " + odRec.FullName
-                                                            + " " + odRec.PhoneNumber;
-            }
-            selectedOpens.OpenDeliveryCount = j + 1;
-            selectedOpens.ReportTitle = "BHELP Deliveries";
+            //var odId = odv.OpenDeliveries[0, 0];
+            //if (odId != null)
+            //{
+            //    var odRec = db.Users.Find(odId);
+            //    odv.OpenDeliveries[0, 4] = "OD: " + odRec.FullName
+            //                                                + " " + odRec.PhoneNumber;
+            //}
 
-            return selectedOpens;
+            odv.DistinctDeliveryDatesODList = AppRoutines.GetDistinctDeliveryDatesOdList(checkedSelectedDeliveries);
+            odv.OpenDeliveryCount = j + 1;
+            odv.ReportTitle = "BHELP Deliveries";
+
+            return odv;
             }
 
             private OpenDeliveryViewModel LoadSelectedDeliveriesIntoView(OpenDeliveryViewModel view,
@@ -566,6 +574,7 @@ namespace BHelp.Controllers
                 var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0)
                     .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
                     .ThenBy(n => n.LastName).ToList();   // get all open deliveries
+                if (view.ReplacementDriverId == "0") view.ReplacementDriverId = null;
                 var newView = new OpenDeliveryViewModel
                 {
                     OpenDeliveryCount = listAllOpenDeliveries.Count,
