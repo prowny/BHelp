@@ -18,11 +18,11 @@ namespace BHelp.Controllers
     {
         private readonly BHelpContext db = new BHelpContext();
 
-        // GET: Deliveries
+        // GET:  Open Deliveries
         public ActionResult Index()
-        {  // Get only Open Deliveries:
+        {  
             var listDeliveries = new List<Delivery>(db.Deliveries).Where(d =>  d.Status == 0)
-                .OrderBy(z => z.Zip).ToList();
+                .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip).ToList();
             var listDeliveryViewModels = new List<DeliveryViewModel>();
             foreach (var delivery in listDeliveries)
             {
@@ -166,6 +166,13 @@ namespace BHelp.Controllers
                     listDeliveryViewModels.Add(deliveryView);
                 }
             }
+
+            //var model = new OpenDeliveryViewModel()
+            //{
+ 
+                
+
+            //};
             return View(listDeliveryViewModels);
         }
         public ActionResult OpenDeliveriesToCSV()
@@ -175,8 +182,7 @@ namespace BHelp.Controllers
         }
         public ActionResult ExcelOpenDeliveries()
         {
-            OpenDeliveryViewModel view = GetOpenDeliveryViewModel(null);
-            var result = AppRoutines.ExcelOpenDeliveries(view);
+            var result = AppRoutines.ExcelOpenDeliveries(null);
             return result;
         }
        
@@ -512,14 +518,6 @@ namespace BHelp.Controllers
                 }
             }
 
-            //var odId = odv.OpenDeliveries[0, 0];
-            //if (odId != null)
-            //{
-            //    var odRec = db.Users.Find(odId);
-            //    odv.OpenDeliveries[0, 4] = "OD: " + odRec.FullName
-            //                                                + " " + odRec.PhoneNumber;
-            //}
-
             odv.DistinctDeliveryDatesODList = AppRoutines.GetDistinctDeliveryDatesOdList(checkedSelectedDeliveries);
             odv.OpenDeliveryCount = j + 1;
             odv.ReportTitle = "BHELP Deliveries";
@@ -630,8 +628,7 @@ namespace BHelp.Controllers
                 }
             
                 Session["DistinctDeliveryDatesSelectList"] = newView.DistinctDeliveryDatesSelectList;
-                // TempData.Keep("DistinctDeliveryDatesSelectList");
-
+               
                 if (newView.DistinctDriversSelectList != null)
                 {
                     foreach (var dr in newView.DistinctDriversSelectList)
