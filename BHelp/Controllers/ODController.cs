@@ -139,6 +139,10 @@ namespace BHelp.Controllers
             var client = db.Clients.Find(clientId);
             if (client != null)
             {
+                var delDate = DateTime.Today.AddDays(1);
+                if (DateTime.Today.DayOfWeek == DayOfWeek.Friday)
+                { delDate = DateTime.Today.AddDays(3);}
+
                 Delivery delivery = new Delivery
                 {
                     ODId = userid,
@@ -156,7 +160,7 @@ namespace BHelp.Controllers
                     Children = 0,
                     Adults = 0,
                     Seniors = 0,
-                    DateDelivered = DateTime.Today.AddDays(1)
+                    DateDelivered = delDate
                 };
 
                 var familyList = AppRoutines.GetFamilyMembers(clientId);

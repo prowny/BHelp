@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using Castle.Core.Internal;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
+using BHelp.Models;
 using BHelp.ViewModels;
 using Microsoft.AspNet.Identity;
 
@@ -61,13 +63,46 @@ namespace BHelp.Controllers
         public ActionResult Create([Bind(Include = "UserId,Category,Subcategory,"
                            + "WeekEndingDate,Hours,Minutes")] VolunteerHoursViewModel model)
         {
+            if (!ModelState.IsValid) return RedirectToAction("ReturnToDashboard");
+
             if (model.Hours == 0 && model.Minutes == 0)
             {
                 TempData["SubmitError"] = "No time was submitted!";
                 return RedirectToAction("Create");
             }
+
+            var oldRec = db.VolunteerHours
+                .FirstOrDefault(r => r.UserId == model.UserId
+                                                               && r.WeekEndingDate == model.WeekEndingDate
+                                                               && r.Category == model.Category
+                                                               && r.Subcategory == model.Subcategory);
+
+            if (oldRec != null)
+            {
+                TempData["SubmitError"] = "A record for this date was already submitted!";
+                return RedirectToAction("Create");
+            }
+
+            var newRec = new VolunteerHours()
+            {
+                UserId = model.UserId,
+                OriginatorUserId =System.Web.HttpContext.Current.User.Identity.GetUserId(),
+                Category =model.Category,
+                Subcategory = model.Subcategory,
+                WeekEndingDate = model.WeekEndingDate,
+                Hours=model.Hours,
+                Minutes = model.Minutes
+            };
+
+            db.VolunteerHours.Add(newRec);
+            db.SaveChanges();
             return RedirectToAction("ReturnToDashboard");
         }
+
+        //private ActionResult CreateSuccess()
+        //{
+        //    return RedirectToAction("ReturnToDashboard");
+        //}
         public ActionResult PreviousFriday(DateTime _friday)
         {
             return RedirectToAction("Create",new{friday = _friday.AddDays(-7)});
@@ -82,5 +117,6 @@ namespace BHelp.Controllers
         {
             return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
+
     }
 }

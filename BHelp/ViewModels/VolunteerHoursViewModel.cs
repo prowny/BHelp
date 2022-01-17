@@ -17,8 +17,6 @@ namespace BHelp.ViewModels
         [StringLength(128)]
         public string VolunteerId { get; set; }
         public string VolunteerName { get; set; }
-
-        [Column(TypeName = "Date")]
         public DateTime WeekEndingDate { get; set; }
         public string WeekEndingDateString { get; set; }
 

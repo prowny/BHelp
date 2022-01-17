@@ -540,6 +540,7 @@
     <Content Include="Views\VolunteerHours\Details.cshtml" />
     <Content Include="Views\VolunteerHours\Edit.cshtml" />
     <Content Include="Views\VolunteerHours\Index.cshtml" />
+    <Content Include="Views\VolunteerHours\CreateSuccess.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
