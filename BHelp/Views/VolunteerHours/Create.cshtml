@@ -1,4 +1,4 @@
-﻿@model BHelp.Models.VolunteerHours
+﻿@model BHelp.ViewModels.VolunteerHoursViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -6,82 +6,131 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Create</title>
+    <style>
+        #Hours {width: 30px;}
+        #Minutes {width: 30px;}
+    </style>
 </head>
 <body>
-    @using (Html.BeginForm()) 
+    @using (Html.BeginForm())
     {
+        @Html.HiddenFor(m => m.UserId);
+        @Html.HiddenFor(m => m.Category);
+        @Html.HiddenFor(m => m.Subcategory);
         @Html.AntiForgeryToken()
-        
-        <div class="form-horizontal">
-            <h4>VolunteerHours</h4>
-            <hr />
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div>
+            <table>
+                <tr>
+                    <td><b>Enter Volunteer Hours</b></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td>Volunteer</td>
+                    <td>Category</td>
+                    <td>Subcategory</td>
+                </tr>
+                <tr>
+                    <td>@Html.TextBoxFor(model => model.VolunteerName, new { @readonly = true }) </td>
+                    <td>
+                        @Html.TextBoxFor(model => model.CategoryName,
+                        new { @readonly = true, style = "width: 85px" })
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(model => model.SubcategoryName,
+                        new { @readonly = true, style = "width: 130px" })
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td><b>Week Ending:</b></td>
+                    <td>
+                        @Html.TextBoxFor(model => model.WeekEndingDateString,
+                            new { @readonly = true, style = "width: 70px" })
+                    </td>
+                    <td style="width: 105px">
+                        @Html.ActionLink("Previous Friday", "PreviousFriday", new { _friday = Model.WeekEndingDate })
+                    </td>
+                    <td style="width: 105px">
+                        @Html.ActionLink("Next Friday", "NextFriday",
+                            new { _friday = Model.WeekEndingDate })
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td style="text-align: right"><b>Hours:</b></td>
+                    <td>
+                        @Html.EditorFor(m => m.Hours, new { htmlAttributes = new { min = "0", max = "80" }, id = "Hours" })
+                        @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })
+                    </td>
+                    <td style="text-align: right"><b>Minutes:</b></td>
+                    <td>
+                        @Html.EditorFor(m => m.Minutes, new { htmlAttributes = new { min = "0", max = "59" }, id = "Minutes" })
+                        @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <br />
+
+        @*@Html.ValidationSummary(true, "", new { @class = "text-danger" })
             <div class="form-group">
                 @Html.LabelFor(model => model.UserId, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.EditorFor(model => model.UserId, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.UserId, "", new { @class = "text-danger" })
                 </div>
-            </div>
-    
-            <div class="form-group">
+            </div>*@
+
+        @*<div class="form-group">
                 @Html.LabelFor(model => model.OriginatorUserId, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.EditorFor(model => model.OriginatorUserId, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.OriginatorUserId, "", new { @class = "text-danger" })
                 </div>
-            </div>
-    
-            <div class="form-group">
+            </div>*@
+
+        @*<div class="form-group">
                 @Html.LabelFor(model => model.Category, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.EditorFor(model => model.Category, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.Category, "", new { @class = "text-danger" })
                 </div>
-            </div>
-    
-            <div class="form-group">
+            </div>*@
+
+        @*<div class="form-group">
                 @Html.LabelFor(model => model.Subcategory, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.EditorFor(model => model.Subcategory, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.Subcategory, "", new { @class = "text-danger" })
                 </div>
-            </div>
-    
-            <div class="form-group">
+            </div>*@
+
+        @*<div class="form-group">
                 @Html.LabelFor(model => model.WeekEndingDate, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.EditorFor(model => model.WeekEndingDate, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.WeekEndingDate, "", new { @class = "text-danger" })
                 </div>
-            </div>
-    
-            <div class="form-group">
-                @Html.LabelFor(model => model.Hours, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.Hours, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })
-                </div>
-            </div>
-    
-            <div class="form-group">
-                @Html.LabelFor(model => model.Minutes, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.Minutes, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
-                </div>
-            </div>
-    
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Create" class="btn btn-default" />
-                </div>
+            </div>*@
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Submit" class="btn btn-default" />
+                @if (!string.IsNullOrEmpty(Model.SubmitError))
+                {<span style="color: red"><b>@Model.SubmitError</b></span>}
             </div>
         </div>
     }
-    
+
     <div>
-        @Html.ActionLink("Back to List", "Index")
+        @Html.ActionLink("Back to Hours Menu", "Index")
+    </div>
+
+    <div>
+        @Html.ActionLink("Return to Dashboard", "ReturnToDashboard")
     </div>
 </body>
 </html>

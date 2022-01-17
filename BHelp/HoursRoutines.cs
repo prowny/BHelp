@@ -36,12 +36,23 @@ namespace BHelp
             subCatList.Add(selListItem);
             return subCatList;
         }
-        public static DateTime GetPreviousFriday()
+        public static DateTime GetPreviousFriday(DateTime curDt)
         {
-            DateTime lastFriday = DateTime.Now.AddDays(-1);
+            DateTime lastFriday = curDt.AddDays(-1);
             while (lastFriday.DayOfWeek != DayOfWeek.Friday )
                 lastFriday = lastFriday.AddDays(-1);
             return lastFriday;
+        }
+
+        public static string GetCategoryName(string cat)
+        {
+            switch (cat)
+            {
+                case "A": return "Administration";
+                case "M": return "Management";
+                case "F": return "Food Service";
+                default: return "Food Service";
+            }
         }
     }
 }
