@@ -171,14 +171,14 @@ namespace BHelp.Controllers
         }
 
         // GET: /Account/Register
-        [AllowAnonymous]
+        [Authorize(Roles = "Administrator")]
         public ActionResult Register()
         {
             // Add block to non-Administrators 08/13/2021:
-            if (!User.IsInRole("Administrator"))
-            {
-                return RedirectToAction("Login", "Account");
-            }
+            //if (!User.IsInRole("Administrator"))
+            //{
+            //    return RedirectToAction("Login", "Account");
+            //}
 
             return View();
         }

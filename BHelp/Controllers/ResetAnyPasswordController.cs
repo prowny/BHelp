@@ -15,6 +15,8 @@ namespace BHelp.Controllers
     public class ResetAnyPasswordController : Controller
     {
         private readonly BHelpContext _db = new BHelpContext();
+
+        [Authorize(Roles = "Administrator,Developer")]
         public async Task<ActionResult> Reset(string userId, string newPassword)
         {
             UserStore<ApplicationUser> store = new UserStore<ApplicationUser>(_db);
@@ -40,6 +42,8 @@ namespace BHelp.Controllers
                 return null;
             }
         }
+
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult ReturnToDashboard()
         {
             return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");

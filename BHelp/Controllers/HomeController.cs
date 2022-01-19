@@ -10,6 +10,7 @@ namespace BHelp.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        [Authorize(Roles = "Administrator,Staff,Developer,OD,Driver")]
         public ActionResult Index()
         {
             return View();
@@ -21,11 +22,13 @@ namespace BHelp.Controllers
             return RedirectToAction("Index", "Users");
         }
 
+        [Authorize(Roles = "Administrator,Staff,Developer,OD,Driver")]
         public ActionResult UpdateMyProfile()
         {
             return RedirectToAction("Edit", "UpdateMyProfile");
         }
 
+        [Authorize(Roles = "Administrator,Staff,Developer,OD,Driver")]
         public ActionResult ChangeMyPassword()
         {
             return RedirectToAction("ResetPassword", "Account");
@@ -55,6 +58,7 @@ namespace BHelp.Controllers
             return RedirectToAction("Index", "UserRoles");
         }
 
+        [Authorize(Roles = "Administrator,Staff,Developer,OD,Driver")]
         public ActionResult ReturnToDashboard()
         {
             return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
@@ -68,6 +72,8 @@ namespace BHelp.Controllers
         {
             return Redirect("https://www.bethesdahelpfd.org");
         }
+
+        [AllowAnonymous]
         public ActionResult LogOut()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);

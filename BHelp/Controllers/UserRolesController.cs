@@ -18,6 +18,7 @@ namespace BHelp.Controllers
         private readonly BHelpContext _db = new BHelpContext();
 
         // GET: Roles
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult Index()
         {
             var model = new AddEditUserRolesViewModel
@@ -45,6 +46,7 @@ namespace BHelp.Controllers
         }
 
         // GET: Roles/Create
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult Create()
         {
             AddEditUserRolesViewModel viewModel = new AddEditUserRolesViewModel();
@@ -70,7 +72,7 @@ namespace BHelp.Controllers
         }
 
         // POST: Roles/Create
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Administrator,Developer")]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public ActionResult Create(AddEditUserRolesViewModel model, object msgbox)
@@ -97,6 +99,7 @@ namespace BHelp.Controllers
         }
 
         // GET: Roles/Edit/5
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult Edit(string id)
         {
             if (id == null)
@@ -122,6 +125,7 @@ namespace BHelp.Controllers
         }
 
         // GET: Users/Delete/5
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult Delete(string id)   // contains userId | roleId
         {
             if (id == null)
@@ -147,7 +151,7 @@ namespace BHelp.Controllers
         }
 
         // POST: UserRoles/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("Delete"), Authorize(Roles = "Administrator,Developer")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(AddEditUserRolesViewModel model)
         {
@@ -162,6 +166,8 @@ namespace BHelp.Controllers
             await userManager.RemoveFromRolesAsync(userId, roles).ConfigureAwait(false);
             return RedirectToAction("Index");
         }
+
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult ReturnToDashboard()
         {
             return RedirectToAction("Index", "Home");

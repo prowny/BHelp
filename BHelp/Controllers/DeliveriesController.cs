@@ -20,6 +20,7 @@ namespace BHelp.Controllers
         private readonly BHelpContext db = new BHelpContext();
 
         // GET:  Open Deliveries
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
         public ActionResult Index()
         {  
             var listDeliveries = new List<Delivery>(db.Deliveries).Where(d =>  d.Status == 0)
@@ -176,11 +177,15 @@ namespace BHelp.Controllers
             //};
             return View(listDeliveryViewModels);
         }
+
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
         public ActionResult OpenDeliveriesToCSV()
         {
             var result = AppRoutines.OpenDeliveriesToCSV(null);
             return result;
         }
+
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
         public ActionResult ExcelOpenDeliveries()
         {
             var result = AppRoutines.ExcelOpenDeliveries(null);
@@ -188,6 +193,7 @@ namespace BHelp.Controllers
         }
        
         // GET: Open Delivery Filters
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
         public ActionResult OpenFilters(string btnAllCheckAll)
         {
             var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0)
@@ -283,7 +289,7 @@ namespace BHelp.Controllers
         }
 
         // POST: 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
         [ValidateAntiForgeryToken]
         public ActionResult OpenFilters(OpenDeliveryViewModel model,
             string btnAllCheckAll, string btnAllClearAll,
@@ -676,6 +682,7 @@ namespace BHelp.Controllers
             }
 
             // GET: Deliveries/Edit/5
+            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
             public ActionResult Edit(int? id, string returnURL)
             {
                 switch (id)
@@ -815,7 +822,7 @@ namespace BHelp.Controllers
                 viewModel.Zip = delivery.Zip;
                 return View(viewModel);
             }
-
+        
             public ActionResult AdviseCannotSave(int _id)
             {  // (because status = 1 and all zero products)
                 var view = new DeliveryViewModel { Id = _id };  
@@ -823,7 +830,7 @@ namespace BHelp.Controllers
             }
 
             // POST: Deliveries/Edit/5
-            [HttpPost]
+            [HttpPost,Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
             [ValidateAntiForgeryToken]
             public ActionResult Edit(
                 [Bind(Include = "Id,ClientId,LogDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards," +
@@ -899,6 +906,7 @@ namespace BHelp.Controllers
             }
         
             // GET: Deliveries/Delete/5
+            [Authorize(Roles = "Administrator,Staff,Developer")]
             public ActionResult Delete(int? id, string returnURL)
             {
                 if (id == null)
@@ -915,7 +923,7 @@ namespace BHelp.Controllers
             }
 
             // POST: Deliveries/Delete/5
-            [HttpPost, ActionName("Delete")]
+            [HttpPost, Authorize(Roles = "Administrator,Staff,Developer"), ActionName("Delete")]
             [ValidateAntiForgeryToken]
             public ActionResult DeleteConfirmed(int id, string returnURL)
             {
@@ -929,10 +937,14 @@ namespace BHelp.Controllers
                 }
                 return RedirectToAction("Index");
             }
+
+            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
             public ActionResult CallLogMenu()
             {
                 return View();
             }
+
+            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
             public ActionResult CallLogIndividual(int? clientId)
             {
                 var clientSelectList = new List<SelectListItem>();
@@ -1014,7 +1026,7 @@ namespace BHelp.Controllers
                 return View(callLogView);
             }
 
-            [HttpPost]
+            [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
             public ActionResult CallLogIndividual(string id)
             {
                 if (id == "") id ="0";
@@ -1042,6 +1054,8 @@ namespace BHelp.Controllers
                     Session["CallLogIndividualList"] = null;
                 }
             }
+
+            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
             public ActionResult CallLogByLogDate(DateTime? startDate, DateTime? endDate )
             {
                 Session["CallLogIndividualList"] = null;
@@ -1207,6 +1221,7 @@ namespace BHelp.Controllers
                 Session["CallLogByDateDeliveredList"] = callLogView;
                 return View(callLogView);
             }
+
             public void CallLogByDateDeliveredToCSV()
             {
                 if (Session["CallLogByDateDeliveredList"] != null)
@@ -1231,10 +1246,14 @@ namespace BHelp.Controllers
                     Session["CallLogByDateDeliveredList"] = null;
                 }
             }
+
+            [Authorize(Roles = "Administrator,Staff,Developer")]
             public ActionResult ReportsMenu()
             {
                 return View();
             }
+
+            [Authorize(Roles = "Administrator,Staff,Developer")]
             public ActionResult CountyReport(string yy = "", string qtr = "")
             {
                 int reportYear;
@@ -1257,6 +1276,8 @@ namespace BHelp.Controllers
                 var view = GetCountyReportView(reportYear, reportQuarter);
                 return View(view);
             }
+
+            [Authorize(Roles = "Administrator,Staff,Developer")]
             public ActionResult HelperReport(string yy = "", string mm = "")
             {
                 int reportYear;
@@ -1578,6 +1599,8 @@ namespace BHelp.Controllers
                 }
                 return view;
             }
+
+            [Authorize(Roles = "Administrator,Staff,Developer")]
             public ActionResult CountyReportToExcel(int yy, int qtr)
             {
                 var view = GetCountyReportView(yy, qtr);
@@ -1684,6 +1707,8 @@ namespace BHelp.Controllers
 
                 return "(nobody yet)";
             }
+
+            [Authorize(Roles = "Administrator,Staff,Developer")]
             public ActionResult QuorkReport(string endingDate = "")
             {
                 DateTime endDate;
@@ -1752,6 +1777,8 @@ namespace BHelp.Controllers
                 }
                 return view;
             }
+
+            [Authorize(Roles = "Administrator,Staff,Developer")]
             public ActionResult QuorkReportToExcel(string endingDate)
             {
                 var endDate = Convert.ToDateTime(endingDate);
@@ -1818,10 +1845,14 @@ namespace BHelp.Controllers
                 saturday = saturday.AddDays(-7);
                 return RedirectToAction("QuorkReport", new{endingDate = saturday.ToShortDateString()});
             }
+
+            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
             public ActionResult ReturnToDashboard()
             {
                 return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
             }
+
+            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
             public ActionResult ReturnToReportsMenu()
             {
                 return RedirectToAction("ReportsMenu");

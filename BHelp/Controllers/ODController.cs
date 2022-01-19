@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Security;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using Castle.Core.Internal;
@@ -16,6 +17,7 @@ namespace BHelp.Controllers
         private readonly BHelpContext db = new BHelpContext();
 
         // GET: Household
+        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
         public ActionResult Index(string callLogDate, string searchString, int? selectedId)
         {
             if (callLogDate.IsNullOrEmpty())
@@ -40,7 +42,8 @@ namespace BHelp.Controllers
             return View(houseHoldView);
         }
         
-            public ActionResult SearchResults()
+        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
+        public ActionResult SearchResults()
         {
             var householdView = new List<HouseholdViewModel>();
             if (TempData["SearchResults"] is IEnumerable<HouseholdViewModel> searchList)
@@ -111,6 +114,7 @@ namespace BHelp.Controllers
             return (householdView);
         }
 
+        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
         public ActionResult HouseholdAndDeliveryActions(HouseholdViewModel household,
             string btnAddMember, string btnDeleteMember, string btnAdd, string btnSave, string btnDeliveryConfirmed )
         {
@@ -294,6 +298,7 @@ namespace BHelp.Controllers
             return null;
         }
 
+        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
         public ActionResult AdviseDeliveryCreated(int? newId)
         {
             var delivery = db.Deliveries.Find(newId);
@@ -310,6 +315,7 @@ namespace BHelp.Controllers
             return null;
         }
 
+        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
         public ActionResult UpdateHousehold(int Id) //Launches 2nd page of OD call log
         {
             var client = db.Clients.Find( Id);
@@ -365,17 +371,20 @@ namespace BHelp.Controllers
             return View(houseHold); // Launches page UpdateHousehold.cshtml
         }
 
+        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
         public ActionResult CreateNewHousehold()
         {
             return RedirectToAction("Create", "Clients");
         }
 
+        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
         public ActionResult FlagChanges()
         {
             TempData["UpdateHouseholdDirty"] = "true";
             return null;
         }
 
+        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
         public ActionResult ViewODDocuments()
         {
             var upperBound = 10;
@@ -408,6 +417,7 @@ namespace BHelp.Controllers
             return View(view);
         }
 
+        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
         public ActionResult ReturnToDashboard()
         {
             return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");

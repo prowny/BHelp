@@ -18,11 +18,13 @@ namespace BHelp.Controllers
         readonly BHelpContext _db = new BHelpContext();
 
         // GET: Users
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult Index()
         {
             return View(_db.Users.OrderBy(u => u.LastName));
         }
         // GET: Users/Edit/5
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult Edit(string userName)
         {
             if (userName == null)
@@ -51,7 +53,7 @@ namespace BHelp.Controllers
         }
 
         // POST: Users/Edit/5
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Administrator,Developer")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,UserName,Active,FirstName,LastName," +
                                                  "Title,PhoneNumber,Email,BeginDate,LastDate,Notes," +
@@ -94,13 +96,14 @@ namespace BHelp.Controllers
         }
 
         // POST: Users/Create
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult Create()
         {
             return RedirectToAction("Register", "Account");
         }
 
         // POST: Users/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("Delete"), Authorize(Roles = "Administrator,Developer")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string userName)
         {
@@ -110,12 +113,14 @@ namespace BHelp.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult VolunteerDatesReport()
         {
             UsersInRolesReportViewModel report = GetUsersInRolesReport();
             return View(report);
         }
 
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult VolunteerDatesReportToExcel()
         {
             UsersInRolesReportViewModel report = GetUsersInRolesReport();
@@ -224,10 +229,14 @@ namespace BHelp.Controllers
             }
             return report;
         }
+
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult ReturnToReportsMenu()
         {
             return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
+
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult ReturnToDashboard()
         {
             return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");

@@ -14,6 +14,7 @@ namespace BHelp.Controllers
     {
         private readonly BHelpContext db = new BHelpContext();
         // GET: GroupMembers
+        [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Index()
         {
             var groupMembersView = new GroupMemberViewModel()
@@ -59,6 +60,7 @@ namespace BHelp.Controllers
             return View(groupMembersView);
         }
 
+        [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Remove (int? clientId)
         {
             var _gpId = Convert.ToInt32(Session["GroupId"]);
@@ -88,19 +90,21 @@ namespace BHelp.Controllers
         }
 
         // GET: GroupMembers/Create
+        [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Create()
         {
             return View();
         }
 
         // GET: GroupMembers/Edit/5
+        [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Edit(int id)
         {
             return View();
         }
 
         // POST: GroupMembers/Edit/5
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Edit(int id, FormCollection collection)
         {
             try
@@ -116,13 +120,14 @@ namespace BHelp.Controllers
         }
 
         // GET: GroupMembers/Delete/5
+        [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Delete(int id)
         {
             return View();
         }
 
         // POST: GroupMembers/Delete/5
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Delete(int id, FormCollection collection)
         {
             try
@@ -137,6 +142,7 @@ namespace BHelp.Controllers
             }
         }
 
+        [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult MaintainGroupMembers(int? groupId)
         {
             var memberViewModel = new GroupMemberViewModel()
@@ -214,6 +220,7 @@ namespace BHelp.Controllers
             return allClientsSelectList;
         }
 
+        [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult AddGroupMember()
         {
             var view = new GroupMemberViewModel()
@@ -223,7 +230,7 @@ namespace BHelp.Controllers
             return View(view);
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult AddGroupMember([Bind(Include= "AllClients")] GroupMemberViewModel model)
         {
             var clientId = model.ClientId;
@@ -245,6 +252,7 @@ namespace BHelp.Controllers
             // return RedirectToAction("MaintainGroupMembers", new{ groupId = newMember.NameId });
         }
 
+        [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult ReturnToDashboard()
         {
             return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");

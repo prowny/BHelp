@@ -13,6 +13,7 @@ namespace BHelp.Controllers
     {
         private readonly BHelpContext db = new BHelpContext();
         // GET: Group
+        [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Index()
         {
             var groupNamesList = db.GroupNames.OrderBy(n => n.Name).ToList();
@@ -30,13 +31,14 @@ namespace BHelp.Controllers
         }
 
         // GET: Group/Create
+        [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Create()
         {
             return View();
         }
 
         // POST: Group/Create
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Create([Bind(Include = "Id,Name")] GroupNameViewModel groupName)
         {
             if (ModelState.IsValid)
@@ -51,6 +53,7 @@ namespace BHelp.Controllers
         }
 
         // GET: Group/Edit/5
+        [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Edit(int id)
         {
             GroupName groupName = db.GroupNames.Find(id);
@@ -61,7 +64,7 @@ namespace BHelp.Controllers
         }
 
         // POST: Group/Edit/5
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Edit([Bind(Include = "Id, Name")] GroupNameViewModel groupName)
         {
             if (!ModelState.IsValid) return View(groupName);
@@ -72,13 +75,14 @@ namespace BHelp.Controllers
         }
 
         // GET: Group/Delete/5
+        [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Delete(int id)
         {
             return View();
         }
 
         // POST: Group/Delete/5
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Delete(int id, FormCollection collection)
         {
             try
@@ -92,6 +96,8 @@ namespace BHelp.Controllers
                 return View();
             }
         }
+
+        [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult ReturnToDashboard()
         {
             return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
