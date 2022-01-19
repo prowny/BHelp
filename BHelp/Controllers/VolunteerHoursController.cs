@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
 {
+    [Authorize]
     public class VolunteerHoursController : Controller
     {
         private readonly BHelpContext db = new BHelpContext();
@@ -71,6 +72,7 @@ namespace BHelp.Controllers
                 return RedirectToAction("Create");
             }
 
+            // Look for duplicate record:
             var oldRec = db.VolunteerHours
                 .FirstOrDefault(r => r.UserId == model.UserId
                                                                && r.WeekEndingDate == model.WeekEndingDate

@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
 {
+    [Authorize]
     public class UpdateMyProfileController : Controller
     {
         private readonly BHelpContext _db = new BHelpContext();

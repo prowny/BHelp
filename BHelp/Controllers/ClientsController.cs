@@ -15,6 +15,7 @@ using ClosedXML.Excel;
 
 namespace BHelp.Controllers
 {
+    [Authorize]
     public class ClientsController : Controller
     {
         private readonly BHelpContext db = new BHelpContext();

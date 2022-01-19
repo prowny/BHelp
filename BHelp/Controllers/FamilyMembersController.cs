@@ -11,6 +11,7 @@ using Castle.Core.Internal;
 
 namespace BHelp.Controllers
 {
+    [Authorize]
     public class FamilyMembersController : Controller
     {
         private BHelpContext db = new BHelpContext();

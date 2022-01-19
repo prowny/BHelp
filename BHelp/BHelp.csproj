@@ -451,7 +451,9 @@
     <Content Include="Documents\Handout-Montgomery-County-Residents-Help.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Documents\BH-administrator-manual.pdf" />
+    <Content Include="Documents\BH-administrator-manual.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Properties\PublishProfiles\BhelpHostGator.pubxml" />
     <None Include="Properties\PublishProfiles\Test.BhelpHostGator.pubxml" />
     <None Include="Properties\PublishProfiles\od-calllogProfile.pubxml">

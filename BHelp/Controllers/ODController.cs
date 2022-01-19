@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
 {
+    [Authorize]
     public class ODController : Controller
     {
         private readonly BHelpContext db = new BHelpContext();

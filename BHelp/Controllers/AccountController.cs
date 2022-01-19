@@ -36,26 +36,14 @@ namespace BHelp.Controllers
 
         public ApplicationSignInManager SignInManager
         {
-            get
-            {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set
-            {
-                _signInManager = value;
-            }
+            get { return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>(); }
+            private set { _signInManager = value; }
         }
 
         public ApplicationUserManager UserManager
         {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
+            get { return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>(); }
+            private set { _userManager = value; }
         }
 
         // GET: /Account/Login
@@ -68,6 +56,7 @@ namespace BHelp.Controllers
             {
                 model.ErrorMessage = errorMessage;
             }
+
             return View(model);
         }
 
@@ -84,7 +73,8 @@ namespace BHelp.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe,
+                shouldLockout: false);
             WriteToLoginTable(model.UserName, result.ToString());
             switch (result)
             {
@@ -92,8 +82,12 @@ namespace BHelp.Controllers
                     var usr = db.Users.FirstOrDefault(n => n.UserName == model.UserName);
                     if (usr != null) // Block inactive user account.
                     {
-                        if (!usr.Active) { return RedirectToAction("InactiveMessage"); }
+                        if (!usr.Active)
+                        {
+                            return RedirectToAction("InactiveMessage");
+                        }
                     }
+
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -141,7 +135,9 @@ namespace BHelp.Controllers
             {
                 return View("Error");
             }
-            return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
+
+            return View(new VerifyCodeViewModel
+                { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
         // POST: /Account/VerifyCode
@@ -159,7 +155,8 @@ namespace BHelp.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code,
+                isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -187,7 +184,7 @@ namespace BHelp.Controllers
         }
 
         // POST: /Account/Register
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Administrator, Developer")]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
@@ -204,10 +201,10 @@ namespace BHelp.Controllers
                     PhoneNumberConfirmed = true,
                     EmailConfirmed = true,
                     BeginDate = DateTime.Today,
-                    LastDate = new DateTime(1900,01,01),
+                    LastDate = new DateTime(1900, 01, 01),
                     Active = true
                 };
-               
+
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -248,8 +245,10 @@ namespace BHelp.Controllers
                     return RedirectToAction("Login", "Account");
                     //return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
                 }
+
                 AddErrors(result);
             }
+
             // If we got this far, something failed, redisplay form
             return View(model);
         }
@@ -262,6 +261,7 @@ namespace BHelp.Controllers
             {
                 return View("Error");
             }
+
             var result = await UserManager.ConfirmEmailAsync(userId, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
@@ -332,6 +332,7 @@ namespace BHelp.Controllers
             {
                 return View(model);
             }
+
             model.UserName = User.Identity.Name;
             var user = await UserManager.FindByNameAsync(model.UserName);
             if (user == null)
@@ -339,17 +340,20 @@ namespace BHelp.Controllers
                 // Don't reveal that the user does not exist
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
+
             var code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-            code = code.Replace(" ", "+");    // Stackoverflow sometime fix
+            code = code.Replace(" ", "+"); // Stackoverflow sometime fix
             var result = await UserManager.ResetPasswordAsync(user.Id, code, model.Password);
             if (result.Succeeded)
             {
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
+
             AddErrors(result);
             return View();
         }
 
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult ResetAnyPassword(string code)
         {
             // this is Reset ANY password
@@ -373,10 +377,11 @@ namespace BHelp.Controllers
                 };
                 userNames.Add(userName);
             }
+
             return userNames;
         }
 
-        [HttpPost]
+        [HttpPost,Authorize(Roles = "Administrator, Developer")]
         public async Task<ActionResult> ResetAnyPassword(ResetAnyPasswordViewModel model)
         {
             if (!ModelState.IsValid)
@@ -401,6 +406,7 @@ namespace BHelp.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Administrator, Developer")]
         public ActionResult ResetAnyPasswordConfirmation(ResetAnyPasswordViewModel model)
         {
             return View(model);

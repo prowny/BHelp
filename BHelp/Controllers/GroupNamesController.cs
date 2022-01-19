@@ -8,6 +8,7 @@ using Castle.Core.Internal;
 
 namespace BHelp.Controllers
 {
+    [Authorize]
     public class GroupNamesController : Controller
     {
         private readonly BHelpContext db = new BHelpContext();

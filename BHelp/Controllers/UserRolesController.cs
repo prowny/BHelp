@@ -12,6 +12,7 @@ using BHelp.ViewModels;
 
 namespace BHelp.Controllers
 {
+    [Authorize]
     public class UserRolesController : Controller
     {
         private readonly BHelpContext _db = new BHelpContext();

@@ -10,6 +10,7 @@ using Castle.Core.Internal;
 
 namespace BHelp.Controllers
 {
+    [Authorize]
     public class HouseholdController : Controller
     {
         private readonly BHelpContext db = new BHelpContext();

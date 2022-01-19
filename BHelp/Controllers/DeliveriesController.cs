@@ -14,6 +14,7 @@ using ClosedXML.Excel;
 
 namespace BHelp.Controllers
 {
+    [Authorize]
     public class DeliveriesController : Controller
     {
         private readonly BHelpContext db = new BHelpContext();
@@ -1333,14 +1334,11 @@ namespace BHelp.Controllers
             private static ReportsViewModel GetHelperReportView(int year, int month)
             {
                 var view = new ReportsViewModel {Year = year, Month = month};
-                if (DateTimeFormatInfo.CurrentInfo != null)
-                {
-                    view.DateRangeTitle = DateTimeFormatInfo.CurrentInfo.GetMonthName(view.Month)
-                                          + " " + view.Year.ToString() + " Delivery Totals";
-                    view.ReportTitle ="Bethesda Helper Data "
-                                      + DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(view.Month) 
-                                      + " " + view.Year;
-                }
+                view.DateRangeTitle = DateTimeFormatInfo.CurrentInfo.GetMonthName(view.Month)
+                                      + " " + view.Year.ToString() + " Delivery Totals";
+                view.ReportTitle ="Bethesda Helper Data "
+                                  + DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(view.Month) 
+                                  + " " + view.Year;
                 view.MonthYear = new string[2];
                 var startDate = new DateTime(view.Year, view.Month, 1);
                 view.MonthYear[0] = startDate.ToShortDateString();
@@ -1518,23 +1516,21 @@ namespace BHelp.Controllers
                 if (qtr == 2) { view.Months = new[] { 4, 5, 6 }; }
                 if (qtr == 3) { view.Months = new[] { 7, 8, 9 }; }
                 if (qtr == 4) { view.Months = new[] { 10, 11, 12 }; }
-                if (DateTimeFormatInfo.CurrentInfo != null)
-                {
-                    view.MonthYear = new string[3];
-                    view.MonthYear[0] =
-                        DateTimeFormatInfo.CurrentInfo.GetMonthName(1 + 3 * (qtr - 1))
-                        + " " + view.Year.ToString();
-                    view.MonthYear[1] =
-                        DateTimeFormatInfo.CurrentInfo.GetMonthName(2 + 3 * (qtr - 1))
-                        + " " + view.Year.ToString();
-                    view.MonthYear[2] =
-                        DateTimeFormatInfo.CurrentInfo.GetMonthName(3 + 3 * (qtr - 1))
-                        + " " + view.Year.ToString();
-                    view.DateRangeTitle = view.MonthYear[0] + " through " + view.MonthYear[2];
-                    view.ReportTitle = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(1 + 3 * (qtr - 1))
-                                       + "-" + DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(3 + 3 * (qtr - 1))
-                                       + " " + view.Year.ToString() + " County Report";
-                }
+
+                view.MonthYear = new string[3];
+                view.MonthYear[0] =
+                    DateTimeFormatInfo.CurrentInfo.GetMonthName(1 + 3 * (qtr - 1))
+                    + " " + view.Year.ToString();
+                view.MonthYear[1] =
+                    DateTimeFormatInfo.CurrentInfo.GetMonthName(2 + 3 * (qtr - 1))
+                    + " " + view.Year.ToString();
+                view.MonthYear[2] =
+                    DateTimeFormatInfo.CurrentInfo.GetMonthName(3 + 3 * (qtr - 1))
+                    + " " + view.Year.ToString();
+                view.DateRangeTitle = view.MonthYear[0] + " through " + view.MonthYear[2];
+                view.ReportTitle = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(1 + 3 * (qtr - 1))
+                                   + "-" + DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(3 + 3 * (qtr - 1))
+                                   + " " + view.Year.ToString() + " County Report";
 
                 view.ZipCodes = AppRoutines.GetZipCodesList();
                 // Load Counts - extra zip code is for totals column.

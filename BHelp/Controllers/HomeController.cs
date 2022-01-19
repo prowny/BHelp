@@ -7,6 +7,7 @@ using Microsoft.Owin.Security;
 
 namespace BHelp.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         public ActionResult Index()
@@ -14,6 +15,7 @@ namespace BHelp.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult MaintainUsers()
         {
             return RedirectToAction("Index", "Users");
@@ -29,6 +31,7 @@ namespace BHelp.Controllers
             return RedirectToAction("ResetPassword", "Account");
         }
 
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult ViewAdminDocuments()
         {
             var upperBound = 3;
@@ -46,6 +49,7 @@ namespace BHelp.Controllers
             return View(view);
         }
 
+        [Authorize(Roles = "Administrator,Developer")]
         public ActionResult MaintainUserRoles()
         {
             return RedirectToAction("Index", "UserRoles");

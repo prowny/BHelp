@@ -11,6 +11,7 @@ using Castle.Core.Internal;
 
 namespace BHelp.Controllers
 {
+    [Authorize]
     public class DriverController : Controller
     {
         private readonly BHelpContext db = new BHelpContext();

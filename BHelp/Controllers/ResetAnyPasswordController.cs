@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 
 namespace BHelp.Controllers
 {
+    [Authorize]
     public class ResetAnyPasswordController : Controller
     {
         private readonly BHelpContext _db = new BHelpContext();
