@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using System.Web.Security;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using Castle.Core.Internal;
@@ -126,7 +125,7 @@ namespace BHelp.Controllers
             if (btnSave != null) // Button Save and Exit was pressed
             {
                 SaveHouseholdData(household);
-                return RedirectToAction("ReturnToDashboard");
+                return RedirectToAction("Index","Home");
             }  // Button Save and Exit was pressed
 
             if (btnAddMember != null || btnDeleteMember != null) // Button Add or Delete Family Member was pressed
@@ -415,12 +414,6 @@ namespace BHelp.Controllers
             view.DocNames[9, 1] = "/Documents/BH-Overview-of-Food-Assistance-Resources-in-MoCo-Summary.pdf";
 
             return View(view);
-        }
-
-        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
-        public ActionResult ReturnToDashboard()
-        {
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
     }
 }

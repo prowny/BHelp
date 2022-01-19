@@ -235,12 +235,6 @@ namespace BHelp.Controllers
         {
             return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
-
-        [Authorize(Roles = "Administrator,Developer")]
-        public ActionResult ReturnToDashboard()
-        {
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
-        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

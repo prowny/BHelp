@@ -1,4 +1,4 @@
-﻿@model BHelp.ViewModels.ClientViewModel
+﻿@Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)@model BHelp.ViewModels.ClientViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -119,7 +119,7 @@
 @if (Model.ReturnURL.Contains("OD")) // Dont let OD into Maintain Clients
 {
     <div>
-        @Html.ActionLink("Return To Dashboard", "ReturnToDashboard")
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
     </div>
 }
 else

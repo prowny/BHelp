@@ -7,7 +7,6 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
-using Castle.Core.Internal;
 
 namespace BHelp.Controllers
 {
@@ -156,12 +155,6 @@ namespace BHelp.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
-        }
-
-        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
-        public ActionResult ReturnToDashboard()
-        {
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
     }
 }

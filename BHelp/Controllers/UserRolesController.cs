@@ -166,12 +166,5 @@ namespace BHelp.Controllers
             await userManager.RemoveFromRolesAsync(userId, roles).ConfigureAwait(false);
             return RedirectToAction("Index");
         }
-
-        [Authorize(Roles = "Administrator,Developer")]
-        public ActionResult ReturnToDashboard()
-        {
-            return RedirectToAction("Index", "Home");
-        }
     }
-
 }

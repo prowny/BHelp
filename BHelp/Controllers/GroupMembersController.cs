@@ -5,7 +5,6 @@ using System.Linq;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
-using Castle.Core.Internal;
 
 namespace BHelp.Controllers
 {
@@ -250,12 +249,6 @@ namespace BHelp.Controllers
             };
             return Json(model, JsonRequestBehavior.AllowGet);
             // return RedirectToAction("MaintainGroupMembers", new{ groupId = newMember.NameId });
-        }
-
-        [Authorize(Roles = "Administrator,Staff,Developer")]
-        public ActionResult ReturnToDashboard()
-        {
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
     }
 }

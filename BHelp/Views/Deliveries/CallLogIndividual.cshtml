@@ -32,7 +32,7 @@
              }
                 <tr>
                     <td>
-                        &nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "ReturnToDashboard")
+                        &nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
                     </td>
                 </tr>
           </table>
@@ -122,7 +122,7 @@
     }
 </div>
 <div>
-    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
 </div>
 <script type="text/javascript">
     $("#clientList").change(EditCallLog);

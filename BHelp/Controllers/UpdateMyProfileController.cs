@@ -2,7 +2,6 @@
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.ViewModels;
-using Castle.Core.Internal;
 using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
@@ -52,12 +51,6 @@ namespace BHelp.Controllers
                 }
             }
             return RedirectToAction("Index", "Home");
-        }
-
-        [Authorize(Roles = "Administrator,Developer,Staff,OD,Driver")]
-        public ActionResult ReturnToDashboard()
-        {
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
     }
 }

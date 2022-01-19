@@ -160,11 +160,6 @@ namespace BHelp.Controllers
             return RedirectToAction("OpenFilters", "Deliveries",new{btnAllCheckAll="True"});
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
-        public ActionResult ReturnToDashboard()
-        {
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
-        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

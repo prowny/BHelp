@@ -1847,12 +1847,6 @@ namespace BHelp.Controllers
             }
 
             [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
-            public ActionResult ReturnToDashboard()
-            {
-                return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
-            }
-
-            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
             public ActionResult ReturnToReportsMenu()
             {
                 return RedirectToAction("ReportsMenu");

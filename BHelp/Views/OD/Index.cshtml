@@ -118,7 +118,7 @@
     @Html.ActionLink("Create New Household", "CreateNewHousehold", new {})
 </div>
 <div>
-    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new {})
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
 </div>
 </body>
 </html>
@@ -135,7 +135,7 @@
 </script> @*CallLogDate change*@
 <script type="text/javascript">
     $("#SearchString").click(function () {
-        var text = $("#SearchText").val();
+        var text = window.$("#SearchText").val();
         SearchHouseholds(text);
     });
 </script> @*SearchHouseholds*@

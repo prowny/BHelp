@@ -10,7 +10,6 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
-using Castle.Core.Internal;
 using ClosedXML.Excel;
 
 namespace BHelp.Controllers
@@ -554,12 +553,6 @@ namespace BHelp.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
-        }
-
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
-        public ActionResult ReturnToDashboard()
-        {
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
     }
 }

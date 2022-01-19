@@ -60,7 +60,7 @@
 
     <div id="ReturnToDashboard">
         <br>
-        @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
         <br />
         <a href="@Url.Action("Logout", "Home")">LogOut</a>
     </div>

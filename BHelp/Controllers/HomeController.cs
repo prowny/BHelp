@@ -58,12 +58,6 @@ namespace BHelp.Controllers
             return RedirectToAction("Index", "UserRoles");
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,OD,Driver")]
-        public ActionResult ReturnToDashboard()
-        {
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
-        }
-
         public ActionResult GoToBHelpSite()
         {
             return Redirect("https://www.bethesdahelp.org");

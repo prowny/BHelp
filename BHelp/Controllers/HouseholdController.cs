@@ -6,7 +6,6 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
-using Castle.Core.Internal;
 
 namespace BHelp.Controllers
 {
@@ -180,12 +179,6 @@ namespace BHelp.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             return RedirectToAction("Index");
-        }
-
-        [Authorize(Roles = "Administrator,Staff,Developer,OD,Driver")]
-        public ActionResult ReturnToDashboard()
-        {
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
 
         [Authorize(Roles = "Administrator,Staff,Developer,OD,Driver")]

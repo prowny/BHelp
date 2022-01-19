@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Castle.Core.Internal;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
@@ -66,7 +65,7 @@ namespace BHelp.Controllers
         public ActionResult Create([Bind(Include = "UserId,Category,Subcategory,"
                            + "WeekEndingDate,Hours,Minutes")] VolunteerHoursViewModel model)
         {
-            if (!ModelState.IsValid) return RedirectToAction("ReturnToDashboard");
+            if (!ModelState.IsValid) return RedirectToAction("Index","Home");
 
             if (model.Hours == 0 && model.Minutes == 0)
             {
@@ -100,7 +99,7 @@ namespace BHelp.Controllers
 
             db.VolunteerHours.Add(newRec);
             db.SaveChanges();
-            return RedirectToAction("ReturnToDashboard");
+            return RedirectToAction("Index","Home");
         }
 
         //private ActionResult CreateSuccess()
@@ -119,12 +118,5 @@ namespace BHelp.Controllers
         {
             return RedirectToAction("Create", new{friday =_friday.AddDays(7)});
         }
-
-        [Authorize(Roles = "Administrator,Developer,Staff,OD,Driver")]
-        public ActionResult ReturnToDashboard()
-        {
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
-        }
-
     }
 }

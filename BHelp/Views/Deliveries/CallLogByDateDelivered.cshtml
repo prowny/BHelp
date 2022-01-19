@@ -33,7 +33,7 @@
                 }
                 <tr>
                     <td>
-                       @Html.ActionLink("Return to Dashboard", "ReturnToDashboard")
+                        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null) 
                     </td>
                 </tr>
             </table>
@@ -121,7 +121,7 @@
         }
     </div>
 <div>
-    @Html.ActionLink("Return to Dashboard", "ReturnToDashboard", new { })
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
 </div>
 </body>
 </html>
