@@ -41,9 +41,8 @@
                 <span>
                     <b>Client:</b>&nbsp;@Html.Label(Model.ClientNameAddress)&nbsp;
                     <b>Phone:</b>&nbsp;@Html.Label(Model.Client.Phone)&nbsp;
-                    @*<b>Notes:</b>&nbsp;@Html.Label(Model.Notes)*@
                 </span>
-                <b>Notes:</b>&nbsp;@Html.TextBoxFor(n => n.Notes,
+                <b>Permanent Notes:</b>&nbsp;@Html.TextBoxFor(n => n.Notes,
  new
       {
           @readonly = "readonly",

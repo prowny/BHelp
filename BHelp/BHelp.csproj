@@ -415,9 +415,6 @@
     <Content Include="..\.editorconfig">
       <Link>.editorconfig</Link>
     </Content>
-    <Content Include="Documents\BH-administrator-manual.pdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Documents\BH-email.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -454,8 +451,9 @@
     <Content Include="Documents\Handout-Montgomery-County-Residents-Help.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="od-calllogProfile.pubxml" />
+    <Content Include="Documents\BH-administrator-manual.pdf" />
     <None Include="Properties\PublishProfiles\BhelpHostGator.pubxml" />
+    <None Include="Properties\PublishProfiles\Test.BhelpHostGator.pubxml" />
     <None Include="Properties\PublishProfiles\od-calllogProfile.pubxml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>

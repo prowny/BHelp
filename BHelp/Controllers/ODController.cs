@@ -140,6 +140,8 @@ namespace BHelp.Controllers
             if (client != null)
             {
                 var delDate = DateTime.Today.AddDays(1);
+                if (DateTime.Today.DayOfWeek == DayOfWeek.Saturday )
+                { delDate = DateTime.Today.AddDays(2); }
                 if (DateTime.Today.DayOfWeek == DayOfWeek.Friday)
                 { delDate = DateTime.Today.AddDays(3);}
 
