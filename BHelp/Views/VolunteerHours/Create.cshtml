@@ -4,92 +4,102 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width"/>
     <title>Create</title>
     <style>
-        #Hours {width: 30px;}
-        #Minutes {width: 30px;}
+        #Hours { width: 30px; }
+        #Minutes { width: 30px; }
+        #btnSubmit {background-color: blue;color: white}
     </style>
 </head>
 <body>
-    @using (Html.BeginForm())
-    {
-        @Html.HiddenFor(m => m.UserId);
-        @Html.HiddenFor(m => m.Category);
-        @Html.HiddenFor(m => m.Subcategory);
-        @Html.HiddenFor(m => m.WeekEndingDate);
-        @Html.AntiForgeryToken()
-        <div>
-            <table>
-                <tr>
-                    <td><b>Enter Volunteer Hours</b></td>
-                </tr>
-            </table>
-            <table>
-                <tr>
-                    <td>Volunteer</td>
-                    <td>Category</td>
-                    <td>Subcategory</td>
-                </tr>
-                <tr>
-                    <td>@Html.TextBoxFor(model => model.VolunteerName, new { @readonly = true }) </td>
-                    <td>
-                        @Html.TextBoxFor(model => model.CategoryName,
-                        new { @readonly = true, style = "width: 85px" })
-                    </td>
-                    <td>
-                        @Html.TextBoxFor(model => model.SubcategoryName,
-                        new { @readonly = true, style = "width: 130px" })
-                    </td>
-                </tr>
-            </table>
-            <table>
-                <tr>
-                    <td><b>Week Ending:</b></td>
-                    <td>
-                        @Html.TextBoxFor(model => model.WeekEndingDateString,
-                            new { @readonly = true, style = "width: 70px" })
-                    </td>
-                    <td style="width: 105px">
-                        @Html.ActionLink("Previous Friday", "PreviousFriday", new { _friday = Model.WeekEndingDate })
-                    </td>
-                    <td style="width: 105px">
-                        @Html.ActionLink("Next Friday", "NextFriday",
-                            new { _friday = Model.WeekEndingDate })
-                    </td>
-                </tr>
-            </table>
-            <table>
-                <tr>
-                    <td style="text-align: right"><b>Hours:</b></td>
-                    <td>
-                        @Html.EditorFor(m => m.Hours, new { htmlAttributes = new { min = "0", max = "80" }, id = "Hours" })
-                        @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })
-                    </td>
-                    <td style="text-align: right"><b>Minutes:</b></td>
-                    <td>
-                        @Html.EditorFor(m => m.Minutes, new { htmlAttributes = new { min = "0", max = "59" }, id = "Minutes" })
-                        @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <br />
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Submit" class="btn btn-default" />
-                @if (!string.IsNullOrEmpty(Model.SubmitError))
-                {<span style="color: red"><b>@Model.SubmitError</b></span>}
-            </div>
-        </div>
-    }
 
-    <div>
-        @Html.ActionLink("Back to Hours Menu", "Index")
-    </div>
+<div id="HeaderDiv">
+    @Html.HiddenFor(m => m.UserId)
+    @Html.HiddenFor(m => m.Category)
+    @Html.HiddenFor(m => m.Subcategory)
+    @Html.HiddenFor(m => m.WeekEndingDate)
+    @Html.AntiForgeryToken()
+    <span><b>Bethesda Help Enter Volunteer Hours</b></span>
+</div>
 
-    <div>
-        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+<div id="IndividualEntryDiv">
+    <table>
+        <tr>
+            <td>Volunteer</td><td>Category</td><td>Subcategory</td>
+        </tr>
+        <tr>
+            <td>@Html.TextBoxFor(model => model.VolunteerName, new { @readonly = true }) </td>
+            <td>
+                @Html.TextBoxFor(model => model.CategoryName,
+                    new { @readonly = true, style = "width: 85px" })
+            </td>
+            <td>
+                @Html.TextBoxFor(model => model.SubcategoryName,
+                    new { @readonly = true, style = "width: 130px" })
+            </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td><b>Week Ending:</b></td>
+            <td>
+                @Html.TextBoxFor(model => model.WeekEndingDateString,
+                    new { @readonly = true, style = "width: 70px" })
+            </td>
+            <td style="width: 105px">
+                @Html.ActionLink("Previous Friday", "PreviousFriday", new { _friday = Model.WeekEndingDate })
+            </td>
+            <td style="width: 105px">
+                @Html.ActionLink("Next Friday", "NextFriday",
+                    new { _friday = Model.WeekEndingDate })
+            </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td style="text-align: right"><b>Hours:</b></td>
+            <td>
+                @Html.EditorFor(m => m.Hours, new { htmlAttributes = new { min = "0", max = "80" }, id = "Hours" })
+                @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })
+            </td>
+            <td style="text-align: right"><b>Minutes:</b></td>
+            <td>
+                @Html.EditorFor(m => m.Minutes, new { htmlAttributes = new { min = "0", max = "59" }, id = "Minutes" })
+                @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
+            </td>
+        </tr>
+    </table>
+</div>
+
+@if (!Model.IsIndividual)  
+{
+    <div id="MultipleEntryDiv">
+
     </div>
+}
+
+<div id="SubmitDiv" class="col-md-offset-2 col-md-10">
+    <input type="submit" value="Submit" class="btn btn-default" id="btnSubmit"/>
+    @if (!string.IsNullOrEmpty(Model.SubmitError))
+    {<span style="color: red"><b>@Model.SubmitError</b></span>}
+</div>
+
+@if (Model.HoursList.Count > 0)
+{
+    <div id="ShowHoursDiv">
+        @foreach (var rec in Model.HoursList)
+        {
+           
+        }
+
+    </div>
+}
+<br/>
+<div>
+    @Html.ActionLink("Back to Hours Menu", "Index")
+    <br/>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
 </body>
 </html>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
@@ -20,11 +21,25 @@ namespace BHelp.Controllers
 
         // GET: Volunteer Hours Entry
         [Authorize(Roles = "Administrator,Developer,Staff,OD,Driver")]
-        public ActionResult Create(DateTime? friday)
+        public ActionResult Create(DateTime? friday)  // friday will be non-null if a new date is requested by the view
         {
             var usr = db.Users.Find(User.Identity.GetUserId());
             var catName = HoursRoutines.GetCategoryName(usr.VolunteerCategory);
             var subcatName = usr.VolunteerSubcategory ?? "(none)";
+            bool isIndividual = true; // default unless in higher role
+            bool isDeveloper =AppRoutines.UserIsInRole(usr.Id,"Developer");
+            if (isDeveloper)
+            {
+                bool isAdministrator = AppRoutines.UserIsInRole(usr.Id, "Administrator");
+                if (isAdministrator)
+                {
+                    bool isStaff = AppRoutines.UserIsInRole(usr.Id, "Staff");
+                    if (isStaff)
+                    {
+                        isIndividual = false;  // can enter hours for anyone, any category 
+                    }
+                }
+            }
             DateTime wkEnd;
             string wkEndString;
            
@@ -44,6 +59,7 @@ namespace BHelp.Controllers
             {
                 submitError = TempData["SubmitError"].ToString();
             }
+
             var view = new VolunteerHoursViewModel
             {
                 UserId = usr.Id,
@@ -54,8 +70,22 @@ namespace BHelp.Controllers
                 SubcategoryName = subcatName,
                 WeekEndingDate = wkEnd,
                 WeekEndingDateString = wkEndString,
-                SubmitError = submitError
+                SubmitError = submitError,
+                IsIndividual = isIndividual,
+                HoursList = new List<VolunteerHours>()
             };
+
+            if (isIndividual)  // get hours for individual only
+            {
+                var recs = db.VolunteerHours
+                    .Where(h => h.UserId  == usr.Id
+                                && h.Category == usr.VolunteerCategory
+                                && h.Subcategory == usr.VolunteerSubcategory).ToList();
+                foreach (var rec in recs)
+                {
+                    view .HoursList.Add(rec);
+                }
+            }
 
             return View(view);
         }
@@ -101,11 +131,6 @@ namespace BHelp.Controllers
             db.SaveChanges();
             return RedirectToAction("Index","Home");
         }
-
-        //private ActionResult CreateSuccess()
-        //{
-        //    return RedirectToAction("ReturnToDashboard");
-        //}
 
         [Authorize(Roles = "Administrator,Developer,Staff,OD,Driver")]
         public ActionResult PreviousFriday(DateTime _friday)

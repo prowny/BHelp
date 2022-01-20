@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
+using BHelp.Models;
 
 namespace BHelp.ViewModels
 {
@@ -30,6 +31,7 @@ namespace BHelp.ViewModels
         public List<SelectListItem> UserList { get; set; }
         public List<SelectListItem> CategoryList { get; set; }
         public List<SelectListItem> SubcategoryList { get; set; }
-
+        public List<VolunteerHours> HoursList { get; set; }
+        public Boolean IsIndividual { get; set; }  // Individual sees only defaults (User, Cat, Subcat)
     }
 }

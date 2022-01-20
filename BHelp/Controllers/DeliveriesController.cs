@@ -23,7 +23,8 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
         public ActionResult Index()
         {  
-            var listDeliveries = new List<Delivery>(db.Deliveries).Where(d =>  d.Status == 0)
+            var listDeliveries = new List<Delivery>(db.Deliveries)
+                .Where(d =>  d.Status == 0)
                 .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip).ToList();
             var listDeliveryViewModels = new List<DeliveryViewModel>();
             foreach (var delivery in listDeliveries)
@@ -169,12 +170,6 @@ namespace BHelp.Controllers
                 }
             }
 
-            //var model = new OpenDeliveryViewModel()
-            //{
- 
-                
-
-            //};
             return View(listDeliveryViewModels);
         }
 
