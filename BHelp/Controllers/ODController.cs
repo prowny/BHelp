@@ -16,7 +16,7 @@ namespace BHelp.Controllers
         private readonly BHelpContext db = new BHelpContext();
 
         // GET: Household
-        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         public ActionResult Index(string callLogDate, string searchString, int? selectedId)
         {
             if (callLogDate.IsNullOrEmpty())
@@ -41,7 +41,7 @@ namespace BHelp.Controllers
             return View(houseHoldView);
         }
         
-        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         public ActionResult SearchResults()
         {
             var householdView = new List<HouseholdViewModel>();
@@ -113,7 +113,7 @@ namespace BHelp.Controllers
             return (householdView);
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         public ActionResult HouseholdAndDeliveryActions(HouseholdViewModel household,
             string btnAddMember, string btnDeleteMember, string btnAdd, string btnSave, string btnDeliveryConfirmed )
         {
@@ -297,7 +297,7 @@ namespace BHelp.Controllers
             return null;
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         public ActionResult AdviseDeliveryCreated(int? newId)
         {
             var delivery = db.Deliveries.Find(newId);
@@ -314,7 +314,7 @@ namespace BHelp.Controllers
             return null;
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         public ActionResult UpdateHousehold(int Id) //Launches 2nd page of OD call log
         {
             var client = db.Clients.Find( Id);
@@ -370,20 +370,20 @@ namespace BHelp.Controllers
             return View(houseHold); // Launches page UpdateHousehold.cshtml
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         public ActionResult CreateNewHousehold()
         {
             return RedirectToAction("Create", "Clients");
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         public ActionResult FlagChanges()
         {
             TempData["UpdateHouseholdDirty"] = "true";
             return null;
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         public ActionResult ViewODDocuments()
         {
             var upperBound = 10;

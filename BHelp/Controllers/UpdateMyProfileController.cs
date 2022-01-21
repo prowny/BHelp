@@ -12,7 +12,7 @@ namespace BHelp.Controllers
         private readonly BHelpContext _db = new BHelpContext();
 
         // GET: UpdateMyProfile
-        [Authorize(Roles = "Administrator,Developer,Staff,OD,Driver")]
+        //[Authorize(Roles = "Administrator,Developer,Staff,OfficerOfTheDay,Driver")]
         public ActionResult Edit()
         {
             var userId = User.Identity.GetUserId();
@@ -30,7 +30,7 @@ namespace BHelp.Controllers
         }
 
         // POST: UpdateMyProfile/Edit
-        [HttpPost, Authorize(Roles = "Administrator,Developer,Staff,OD,Driver")]
+        [HttpPost, Authorize(Roles = "Administrator,Developer,Staff,OfficerOfTheDay,Driver")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Title,PhoneNumber,Email")] UpdateMyProfileViewModel viewModel)
         {

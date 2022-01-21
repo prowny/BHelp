@@ -20,7 +20,7 @@ namespace BHelp.Controllers
         private readonly BHelpContext db = new BHelpContext();
 
         // GET: Clients
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult Index()
         {
             var clientList = db.Clients.OrderBy(c => c.LastName).ToList();
@@ -82,7 +82,7 @@ namespace BHelp.Controllers
         }
 
         // GET: Clients/Create
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult Create()
         {
             var viewModel = new ClientViewModel {FamilyMembers = new List<FamilyMember>()};
@@ -104,7 +104,7 @@ namespace BHelp.Controllers
         }
 
         // POST: Clients/Create
-        [HttpPost,Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [HttpPost,Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Age,StreetNumber,"
                               + "StreetName,City,Zip,Phone,Notes,FamilyMembers,"
@@ -159,7 +159,7 @@ namespace BHelp.Controllers
         }
 
         // GET: Clients/Edit/5
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -185,7 +185,7 @@ namespace BHelp.Controllers
         }
 
         // POST: Clients/Edit/5
-        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Active,FirstName,LastName,Age," +
                            "StreetNumber,StreetName,City,Zip,Phone,Notes")] Client client)
@@ -208,7 +208,7 @@ namespace BHelp.Controllers
         }
 
         // GET: Clients/Delete/5
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -222,7 +222,7 @@ namespace BHelp.Controllers
         }
 
         // POST: Clients/Delete/5
-        [HttpPost, ActionName("Delete"), Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [HttpPost, ActionName("Delete"), Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
@@ -239,7 +239,7 @@ namespace BHelp.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult ClientListToCSV()
         {
             var view = GetClientViewModel();
@@ -298,7 +298,7 @@ namespace BHelp.Controllers
             return null;
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult ClientListToExcel()
         {
             var view = GetClientViewModel();

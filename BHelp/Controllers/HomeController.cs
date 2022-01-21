@@ -10,7 +10,7 @@ namespace BHelp.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        [Authorize(Roles = "Administrator,Staff,Developer,OD,Driver")]
+        //[Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay,Driver")]
         public ActionResult Index()
         {
             return View();
@@ -22,13 +22,13 @@ namespace BHelp.Controllers
             return RedirectToAction("Index", "Users");
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,OD,Driver")]
+        //[Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay,Driver")]
         public ActionResult UpdateMyProfile()
         {
             return RedirectToAction("Edit", "UpdateMyProfile");
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,OD,Driver")]
+        //[Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay,Driver")]
         public ActionResult ChangeMyPassword()
         {
             return RedirectToAction("ResetPassword", "Account");

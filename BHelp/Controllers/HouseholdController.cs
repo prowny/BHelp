@@ -15,7 +15,7 @@ namespace BHelp.Controllers
         private readonly BHelpContext db = new BHelpContext();
 
         // GET: Household
-        [Authorize(Roles = "Administrator,Staff,Developer,OD,Driver")]
+        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay,Driver")]
         public ActionResult Index(int clientId)
         {
             var householdView = new List<HouseholdViewModel>();
@@ -82,14 +82,14 @@ namespace BHelp.Controllers
             return View(householdView);
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,OD,Driver")]
+        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay,Driver")]
         public ActionResult SaveHousehold(HouseholdViewModel household)
         {
             return RedirectToAction("Index", household);
         }
 
         // POST: Save Household
-        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,OD,Driver")]
+        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay,Driver")]
         [ValidateAntiForgeryToken]
         public ActionResult Index(HouseholdViewModel household)
         {
@@ -171,7 +171,7 @@ namespace BHelp.Controllers
             return View(client);
         }
         
-        [Authorize(Roles = "Administrator,Staff,Developer,OD,Driver")]
+        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay,Driver")]
         public ActionResult Edit(int? Id)
         {
             if (Id == null)
@@ -181,7 +181,7 @@ namespace BHelp.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,OD,Driver")]
+        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay,Driver")]
         public ActionResult ConfirmChangesSaved(int clientId)
         {
             var newDeliveryView = new HouseholdViewModel { ClientId = clientId };

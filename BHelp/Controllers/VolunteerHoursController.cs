@@ -15,12 +15,12 @@ namespace BHelp.Controllers
         private readonly BHelpContext db = new BHelpContext();
 
         // GET: VolunteerHours Menu
-        [Authorize(Roles = "Administrator,Developer,Staff,OD,Driver")]
+        [Authorize(Roles = "Administrator,Developer,Staff,OfficerOfTheDay,Driver")]
         public ActionResult Index() // shows Enter / Maintain menu
         { return View(); }
 
         // GET: Volunteer Hours Entry
-        [Authorize(Roles = "Administrator,Developer,Staff,OD,Driver")]
+        [Authorize(Roles = "Administrator,Developer,Staff,OfficerOfTheDay,Driver")]
         public ActionResult Create(DateTime? friday)  // friday will be non-null if a new date is requested by the view
         {
             var usr = db.Users.Find(User.Identity.GetUserId());
@@ -91,7 +91,7 @@ namespace BHelp.Controllers
         }
 
         //POST: Volunteer Hours Entry 
-        [HttpPost, Authorize(Roles = "Administrator,Developer,Staff,OD,Driver")]
+        [HttpPost, Authorize(Roles = "Administrator,Developer,Staff,OfficerOfTheDay,Driver")]
         public ActionResult Create([Bind(Include = "UserId,Category,Subcategory,"
                            + "WeekEndingDate,Hours,Minutes")] VolunteerHoursViewModel model)
         {
@@ -132,13 +132,13 @@ namespace BHelp.Controllers
             return RedirectToAction("Index","Home");
         }
 
-        [Authorize(Roles = "Administrator,Developer,Staff,OD,Driver")]
+        [Authorize(Roles = "Administrator,Developer,Staff,OfficerOfTheDay,Driver")]
         public ActionResult PreviousFriday(DateTime _friday)
         {
             return RedirectToAction("Create",new{friday = _friday.AddDays(-7)});
         }
 
-        [Authorize(Roles = "Administrator,Developer,Staff,OD,Driver")]
+        [Authorize(Roles = "Administrator,Developer,Staff,OfficerOfTheDay,Driver")]
         public ActionResult NextFriday(DateTime _friday)
         {
             return RedirectToAction("Create", new{friday =_friday.AddDays(7)});

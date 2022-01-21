@@ -16,7 +16,7 @@ namespace BHelp.Controllers
         private BHelpContext db = new BHelpContext();
 
         // GET: FamilyMembers
-        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         public ActionResult Index()
         {
             var familyView = new FamilyViewModel();
@@ -48,7 +48,7 @@ namespace BHelp.Controllers
         }
 
         // GET: FamilyMembers/Create
-        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         public ActionResult Create()
         {
             return View();
@@ -57,7 +57,7 @@ namespace BHelp.Controllers
         // POST: FamilyMembers/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,OD")]
+        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,ClientId,Active,FirstName,LastName,DateOfBirth")] FamilyMember familyMember)
         {
@@ -72,7 +72,7 @@ namespace BHelp.Controllers
         }
 
         // GET: FamilyMembers/Edit/5
-        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         public ActionResult Edit(int? Id) // Id contains Client.Id 
         {
             if (Id == null)
@@ -91,7 +91,7 @@ namespace BHelp.Controllers
         // POST: FamilyMembers/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,OD")]
+        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,ClientId,Active,FirstName,LastName,DateOfBirth")] FamilyMember familyMember)
         {
@@ -106,7 +106,7 @@ namespace BHelp.Controllers
         }
 
         // GET: FamilyMembers/Delete/5
-        [Authorize(Roles = "Administrator,Staff,Developer,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -122,7 +122,7 @@ namespace BHelp.Controllers
         }
 
         // POST: FamilyMembers/Delete/5
-        [HttpPost, ActionName("Delete"), Authorize(Roles = "Administrator,Staff,Developer,OD")]
+        [HttpPost, ActionName("Delete"), Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {

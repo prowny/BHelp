@@ -17,7 +17,7 @@ namespace BHelp.Controllers
         private readonly BHelpContext db = new BHelpContext();
 
         // GET: Driver
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult Index(DateTime? logDate, string userId)
 
         {
@@ -77,7 +77,7 @@ namespace BHelp.Controllers
          }
         
         // GET: Driver/Edit/5
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -111,7 +111,7 @@ namespace BHelp.Controllers
         }
 
         // POST: Driver/Edit
-        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,FullBags,HalfBags,KidSnacks,GiftCards," +
                     "DateDelivered,DriverNotes,DriverId,SelectedStatus")] Delivery delivery)
@@ -147,14 +147,14 @@ namespace BHelp.Controllers
             return View(delivery);
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult ExcelOpenDeliveries()
         {
             var result = AppRoutines.ExcelOpenDeliveries(null);
             return result;
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult OpenFilters()
         {
             return RedirectToAction("OpenFilters", "Deliveries",new{btnAllCheckAll="True"});

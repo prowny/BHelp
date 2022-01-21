@@ -20,7 +20,7 @@ namespace BHelp.Controllers
         private readonly BHelpContext db = new BHelpContext();
 
         // GET:  Open Deliveries
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult Index()
         {  
             var listDeliveries = new List<Delivery>(db.Deliveries)
@@ -173,14 +173,14 @@ namespace BHelp.Controllers
             return View(listDeliveryViewModels);
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult OpenDeliveriesToCSV()
         {
             var result = AppRoutines.OpenDeliveriesToCSV(null);
             return result;
         }
 
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult ExcelOpenDeliveries()
         {
             var result = AppRoutines.ExcelOpenDeliveries(null);
@@ -188,7 +188,7 @@ namespace BHelp.Controllers
         }
        
         // GET: Open Delivery Filters
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult OpenFilters(string btnAllCheckAll)
         {
             var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0)
@@ -284,7 +284,7 @@ namespace BHelp.Controllers
         }
 
         // POST: 
-        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         [ValidateAntiForgeryToken]
         public ActionResult OpenFilters(OpenDeliveryViewModel model,
             string btnAllCheckAll, string btnAllClearAll,
@@ -677,7 +677,7 @@ namespace BHelp.Controllers
             }
 
             // GET: Deliveries/Edit/5
-            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
             public ActionResult Edit(int? id, string returnURL)
             {
                 switch (id)
@@ -825,7 +825,7 @@ namespace BHelp.Controllers
             }
 
             // POST: Deliveries/Edit/5
-            [HttpPost,Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+            [HttpPost,Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
             [ValidateAntiForgeryToken]
             public ActionResult Edit(
                 [Bind(Include = "Id,ClientId,LogDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards," +
@@ -901,7 +901,7 @@ namespace BHelp.Controllers
             }
         
             // GET: Deliveries/Delete/5
-            [Authorize(Roles = "Administrator,Staff,Developer")]
+            [Authorize(Roles = "Administrator,Staff,Develope,OfficerOfTheDayr")]
             public ActionResult Delete(int? id, string returnURL)
             {
                 if (id == null)
@@ -918,7 +918,7 @@ namespace BHelp.Controllers
             }
 
             // POST: Deliveries/Delete/5
-            [HttpPost, Authorize(Roles = "Administrator,Staff,Developer"), ActionName("Delete")]
+            [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay"), ActionName("Delete")]
             [ValidateAntiForgeryToken]
             public ActionResult DeleteConfirmed(int id, string returnURL)
             {
@@ -933,13 +933,13 @@ namespace BHelp.Controllers
                 return RedirectToAction("Index");
             }
 
-            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
             public ActionResult CallLogMenu()
             {
                 return View();
             }
 
-            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
             public ActionResult CallLogIndividual(int? clientId)
             {
                 var clientSelectList = new List<SelectListItem>();
@@ -1021,7 +1021,7 @@ namespace BHelp.Controllers
                 return View(callLogView);
             }
 
-            [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+            [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
             public ActionResult CallLogIndividual(string id)
             {
                 if (id == "") id ="0";
@@ -1050,7 +1050,7 @@ namespace BHelp.Controllers
                 }
             }
 
-            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
             public ActionResult CallLogByLogDate(DateTime? startDate, DateTime? endDate )
             {
                 Session["CallLogIndividualList"] = null;
@@ -1841,7 +1841,7 @@ namespace BHelp.Controllers
                 return RedirectToAction("QuorkReport", new{endingDate = saturday.ToShortDateString()});
             }
 
-            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OD")]
+            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
             public ActionResult ReturnToReportsMenu()
             {
                 return RedirectToAction("ReportsMenu");
