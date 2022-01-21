@@ -13,9 +13,6 @@ namespace BHelp.ViewModels
 
         [StringLength(128)]
         public string OriginatorUserId { get; set; }
-
-        [StringLength(128)]
-        public string VolunteerId { get; set; }
         public string VolunteerName { get; set; }
         public DateTime WeekEndingDate { get; set; }
         public string WeekEndingDateString { get; set; }
@@ -31,7 +28,11 @@ namespace BHelp.ViewModels
         public List<SelectListItem> UserList { get; set; }
         public List<SelectListItem> CategoryList { get; set; }
         public List<SelectListItem> SubcategoryList { get; set; }
-        public List<VolunteerHours> HoursList { get; set; }
+        public List<VolunteerHoursViewModel> HoursList { get; set; }
         public Boolean IsIndividual { get; set; }  // Individual sees only defaults (User, Cat, Subcat)
+        public string UserFullName { get; set; }
+        public string OriginatorFullName { get; set; }
+        public string HoursString { get; set; }
+        public string MinutesString { get; set; }
     }
 }

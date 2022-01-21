@@ -20,7 +20,7 @@ namespace BHelp.Controllers
         { return View(); }
 
         // GET: Volunteer Hours Entry
-        [Authorize(Roles = "Administrator,Developer,Staff,OfficerOfTheDay,Driver")]
+        [AllowAnonymous]
         public ActionResult Create(DateTime? friday)  // friday will be non-null if a new date is requested by the view
         {
             var usr = db.Users.Find(User.Identity.GetUserId());
@@ -55,14 +55,12 @@ namespace BHelp.Controllers
             }
 
             var submitError = string.Empty;
-            if (TempData["SubmitError"] != null)
-            {
-                submitError = TempData["SubmitError"].ToString();
-            }
+            if (TempData["SubmitError"] != null) submitError = TempData["SubmitError"].ToString();
 
             var view = new VolunteerHoursViewModel
             {
                 UserId = usr.Id,
+                UserFullName = usr.FullName,
                 Category = usr.VolunteerCategory,
                 Subcategory = usr.VolunteerSubcategory,
                 VolunteerName = usr.FullName,
@@ -72,7 +70,7 @@ namespace BHelp.Controllers
                 WeekEndingDateString = wkEndString,
                 SubmitError = submitError,
                 IsIndividual = isIndividual,
-                HoursList = new List<VolunteerHours>()
+                HoursList = new List<VolunteerHoursViewModel>()
             };
 
             if (isIndividual)  // get hours for individual only
@@ -83,7 +81,18 @@ namespace BHelp.Controllers
                                 && h.Subcategory == usr.VolunteerSubcategory).ToList();
                 foreach (var rec in recs)
                 {
-                    view .HoursList.Add(rec);
+                    var newView = new VolunteerHoursViewModel
+                    {
+                        UserId = usr.Id,
+                        UserFullName = usr.FullName,
+                        CategoryName = HoursRoutines .GetCategoryName(rec.Category),
+                        Subcategory = rec.Subcategory,
+                        VolunteerName = usr.FullName,
+                        WeekEndingDateString = wkEndString,
+                        HoursString = rec.Hours.ToString(),
+                        MinutesString = rec.Minutes.ToString()
+                    };
+                    view.HoursList.Add(newView);
                 }
             }
 
@@ -91,7 +100,7 @@ namespace BHelp.Controllers
         }
 
         //POST: Volunteer Hours Entry 
-        [HttpPost, Authorize(Roles = "Administrator,Developer,Staff,OfficerOfTheDay,Driver")]
+        [HttpPost,AllowAnonymous]
         public ActionResult Create([Bind(Include = "UserId,Category,Subcategory,"
                            + "WeekEndingDate,Hours,Minutes")] VolunteerHoursViewModel model)
         {
@@ -129,7 +138,7 @@ namespace BHelp.Controllers
 
             db.VolunteerHours.Add(newRec);
             db.SaveChanges();
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Create");
         }
 
         [Authorize(Roles = "Administrator,Developer,Staff,OfficerOfTheDay,Driver")]

@@ -17,8 +17,5 @@ namespace BHelp.Models
         public DateTime WeekEndingDate { get; set; }
         public int Hours { get; set; }
         public int Minutes { get; set; }
-
-        [NotMapped]
-        public string UserFullName { get; set;}
     }
 }

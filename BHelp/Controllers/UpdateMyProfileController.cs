@@ -12,12 +12,12 @@ namespace BHelp.Controllers
         private readonly BHelpContext _db = new BHelpContext();
 
         // GET: UpdateMyProfile
-        //[Authorize(Roles = "Administrator,Developer,Staff,OfficerOfTheDay,Driver")]
+        [AllowAnonymous]
         public ActionResult Edit()
         {
             var userId = User.Identity.GetUserId();
             var user = (from u in _db.Users where u.Id == userId select u).Single();
-            UpdateMyProfileViewModel model = new UpdateMyProfileViewModel()
+            var model = new UpdateMyProfileViewModel()
             {
                 Id = user.Id,
                 Email = user.Email,
@@ -37,18 +37,15 @@ namespace BHelp.Controllers
             if (ModelState.IsValid)
             {
                 var user = _db.Users.Find(viewModel.Id);
-                if (user != null)
-                {
-                    user.FirstName = viewModel.FirstName;
-                    user.LastName = viewModel.LastName;
-                    user.Title = viewModel.Title;
-                    user.PhoneNumber = viewModel.PhoneNumber;
-                    user.Email = viewModel.Email;
+                if (user == null) return RedirectToAction("Index", "Home");
+                user.FirstName = viewModel.FirstName;
+                user.LastName = viewModel.LastName;
+                user.Title = viewModel.Title;
+                user.PhoneNumber = viewModel.PhoneNumber;
+                user.Email = viewModel.Email;
+                _db.SaveChanges();
 
-                    _db.SaveChanges();
-
-                    return RedirectToAction("Index", "Home");
-                }
+                return RedirectToAction("Index", "Home");
             }
             return RedirectToAction("Index", "Home");
         }

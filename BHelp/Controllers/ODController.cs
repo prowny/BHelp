@@ -21,7 +21,7 @@ namespace BHelp.Controllers
         {
             if (callLogDate.IsNullOrEmpty())
             {
-                DateTime cdt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                var cdt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
                 var cdts = cdt.ToString("MM/dd/yyyy");
                 Session["CallLogDate"] = cdts;
             }
@@ -36,7 +36,7 @@ namespace BHelp.Controllers
                 var user = db.Users.Find(userIid);
                 Session["CurrentUserFullName"] = user.FullName;
             };
-            HouseholdViewModel houseHoldView = new HouseholdViewModel();
+            var houseHoldView = new HouseholdViewModel();
 
             return View(houseHoldView);
         }
@@ -47,8 +47,7 @@ namespace BHelp.Controllers
             var householdView = new List<HouseholdViewModel>();
             if (TempData["SearchResults"] is IEnumerable<HouseholdViewModel> searchList)
             {
-                foreach (HouseholdViewModel item in searchList)
-                { householdView.Add(item); }
+                householdView.AddRange(searchList);
                 return View(householdView);
             }
             return View();
@@ -149,7 +148,7 @@ namespace BHelp.Controllers
                 if (DateTime.Today.DayOfWeek == DayOfWeek.Friday)
                 { delDate = DateTime.Today.AddDays(3);}
 
-                Delivery delivery = new Delivery
+                var delivery = new Delivery
                 {
                     ODId = userid,
                     //DeliveryDateODId not specified
@@ -237,38 +236,46 @@ namespace BHelp.Controllers
 
                 foreach (var member in household.FamilyMembers)
                 {
-                    if (member.Id == 0 && member.ClientId == 0) // is Head of Household
+                    switch (member.Id)
                     {
-                        cli.FirstName = member.FirstName;
-                        cli.LastName = member.LastName;
-                        cli.DateOfBirth = DateTime.Today.AddYears(-member.Age);
-                    }
-                    else if (member.Id == 0 && member.ClientId < 0) //Adding new member (ClientId = -1)
-                    {
-                        var familyMember = new FamilyMember();
-                        if (member.FirstName != null || member.LastName != null)
+                        // is Head of Household
+                        case 0 when member.ClientId == 0:
+                            cli.FirstName = member.FirstName;
+                            cli.LastName = member.LastName;
+                            cli.DateOfBirth = DateTime.Today.AddYears(-member.Age);
+                            break;
+                        //Adding new member (ClientId = -1)
+                        case 0 when member.ClientId < 0:
                         {
-                            familyMember.ClientId = cli.Id;
-                            familyMember.Active = true;
-                            familyMember.Delete = false;
-                            familyMember.FirstName = member.FirstName;
-                            familyMember.LastName = member.LastName;
-                            familyMember.DateOfBirth = DateTime.Today.AddYears(-member.Age);
-                            db.FamilyMembers.Add(familyMember);
-                        }
-                    }
-                    else
-                    {
-                        var familyMember = db.FamilyMembers.Find(member.Id);
-                        if (familyMember != null)
-                        {
-                            familyMember.FirstName = member.FirstName;
-                            familyMember.LastName = member.LastName;
-                            familyMember.DateOfBirth = DateTime.Today.AddYears(-member.Age);
-                            if (member.Delete)
+                            var familyMember = new FamilyMember();
+                            if (member.FirstName != null || member.LastName != null)
                             {
-                                db.FamilyMembers.Remove(familyMember);
+                                familyMember.ClientId = cli.Id;
+                                familyMember.Active = true;
+                                familyMember.Delete = false;
+                                familyMember.FirstName = member.FirstName;
+                                familyMember.LastName = member.LastName;
+                                familyMember.DateOfBirth = DateTime.Today.AddYears(-member.Age);
+                                db.FamilyMembers.Add(familyMember);
                             }
+
+                            break;
+                        }
+                        default:
+                        {
+                            var familyMember = db.FamilyMembers.Find(member.Id);
+                            if (familyMember != null)
+                            {
+                                familyMember.FirstName = member.FirstName;
+                                familyMember.LastName = member.LastName;
+                                familyMember.DateOfBirth = DateTime.Today.AddYears(-member.Age);
+                                if (member.Delete)
+                                {
+                                    db.FamilyMembers.Remove(familyMember);
+                                }
+                            }
+
+                            break;
                         }
                     }
                 }
@@ -280,38 +287,30 @@ namespace BHelp.Controllers
         {
             var dt = TempData["NextEligibleDeliveryDate"];
             var client = db.Clients.Find(clientId);
-            if (client != null)
+            if (client == null) return null;
+            if (dt == null) return null;
+            var newDeliveryView = new DeliveryViewModel
             {
-                if (dt != null)
-                {
-                    var newDeliveryView = new DeliveryViewModel
-                    {
-                        FullName = client.LastName + ", " + client.FirstName,
-                        StreetNumber = client.StreetNumber,
-                        StreetName = client.StreetName,
-                        DateDelivered = (DateTime)dt
-                    };
-                    return View(newDeliveryView);
-                }
-            }
-            return null;
+                FullName = client.LastName + ", " + client.FirstName,
+                StreetNumber = client.StreetNumber,
+                StreetName = client.StreetName,
+                DateDelivered = (DateTime)dt
+            };
+            return View(newDeliveryView);
         }
 
         [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         public ActionResult AdviseDeliveryCreated(int? newId)
         {
             var delivery = db.Deliveries.Find(newId);
-            if (delivery != null)
+            if (delivery == null) return null;
+            var newDeliveryView = new DeliveryViewModel
             {
-                var newDeliveryView = new DeliveryViewModel
-                {
-                    FullName = delivery.LastName + ", " + delivery.FirstName,
-                    StreetNumber = delivery.StreetNumber,
-                    StreetName = delivery.StreetName
-                };
-                return View(newDeliveryView);
-            }
-            return null;
+                FullName = delivery.LastName + ", " + delivery.FirstName,
+                StreetNumber = delivery.StreetNumber,
+                StreetName = delivery.StreetName
+            };
+            return View(newDeliveryView);
         }
 
         [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
