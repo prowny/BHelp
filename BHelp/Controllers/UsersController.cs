@@ -37,7 +37,7 @@ namespace BHelp.Controllers
                 return HttpNotFound();
             }
 
-            user.VolunteerCategories = HoursRoutines.GetHoursCategories();
+            user.VolunteerCategories = HoursRoutines.GetHoursCategories(null);
             foreach (var cat in user.VolunteerCategories)
             {
                 if (user.VolunteerCategory == cat.Value) cat.Selected = true;

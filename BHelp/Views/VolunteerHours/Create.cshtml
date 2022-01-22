@@ -4,11 +4,11 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width"/>
+    <meta name="viewport" content="width=device-width" />
     <title>Create</title>
     <style>
-        #Hours { width: 30px; }
-        #Minutes { width: 30px; }
+        #Hours {width: 30px;}
+        #Minutes {width: 30px;}
         #btnSubmit {background-color: blue;color: white}
     </style>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
@@ -18,28 +18,31 @@
     <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
 </head>
 <body>
-@using (Html.BeginForm("Create", "VolunteerHours", FormMethod.Post))
-{
-    <div id="HeaderDiv">
-        @Html.HiddenFor(m => m.UserId)
-        @Html.HiddenFor(m => m.Category)
-        @Html.HiddenFor(m => m.Subcategory)
-        @Html.HiddenFor(m => m.WeekEndingDate)
-        @Html.AntiForgeryToken()
-        <span><b>Bethesda Help Enter Volunteer Hours</b></span>&nbsp;&nbsp;&nbsp;
-        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    @using (Html.BeginForm("Create", "VolunteerHours", FormMethod.Post))
+    {
+        <div id="HeaderDiv">
+            @Html.HiddenFor(m => m.Id)
+            @Html.HiddenFor(m => m.UserId)
+            @Html.HiddenFor(m => m.Category)
+            @Html.HiddenFor(m => m.Subcategory)
+            @Html.HiddenFor(m => m.Date)
+            @Html.AntiForgeryToken()
+            <span><b>Bethesda Help Enter Volunteer Hours</b></span>&nbsp;&nbsp;&nbsp;
+            @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+        </div>
 
-    </div>
-
-    <div id="IndividualEntryDiv">
-        <table>
-            <tr>
-                <td>Volunteer</td>
-                <td>Category</td>
-                <td>Subcategory</td>
-            </tr>
-            <tr>
-                <td>@Html.TextBoxFor(model => model.VolunteerName, new { @readonly = true }) </td>
+        <div id="IndividualEntryDiv">
+            <table>
+                <tr>
+                    <td>Volunteer</td>
+                    <td>Category</td>
+                    <td>Subcategory</td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.TextBoxFor(model => model.VolunteerName,
+                        new { @readonly = true, style = "width: 140px" })
+                </td>
                 <td>
                     @Html.TextBoxFor(model => model.CategoryName,
                         new { @readonly = true, style = "width: 85px" })
@@ -52,26 +55,12 @@
         </table>
         <table>
             <tr>
-
-
-                <td><b> for Date:</b></td>
+                <td><b>for Date:</b></td>
                 <td>
-                    @Html.TextBox("Date", @Model.WeekEndingDate, "{0:MM/dd/yyyy}",
+                    @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
                         new { id = "HoursDate", style = "width: 75px;" })
                     <span style="color: darkmagenta">&#8592;Click to change</span> @*Html left-arrow*@
-                </td> 
-
-                @*<td>
-                    @Html.TextBoxFor(model => model.WeekEndingDateString,
-                        new { @readonly = true, style = "width: 70px" })
                 </td>
-                <td style="width: 105px">
-                    @Html.ActionLink("Previous Friday", "PreviousFriday", new { _friday = Model.WeekEndingDate })
-                </td>
-                <td style="width: 105px">
-                    @Html.ActionLink("Next Friday", "NextFriday",
-                        new { _friday = Model.WeekEndingDate })
-                </td>*@
             </tr>
         </table>
         <table>
@@ -91,7 +80,7 @@
     </div>
 
     <div id="SubmitDiv" class="col-md-offset-2 col-md-10">
-        <input type="submit" value="Submit" class="btn btn-default" id="btnSubmit"/>
+        <input type="submit" value="Submit" class="btn btn-default" id="btnSubmit" />
         @if (!string.IsNullOrEmpty(Model.SubmitError))
         {
             <span style="color: red"><b>@Model.SubmitError</b></span>
@@ -101,11 +90,12 @@
     <div id="ShowHoursDiv">
         @if (Model.HoursList.Count > 0)
         {
-            <br/>
-            <span><i>Hours Entered for the Week Ending</i></span>
+            <hr />
+            <span><i>Hours Entered for the Reporting Week&nbsp;@Model.WeekBeginningDateString
+                - @Model.WeekEndingDateString</i></span>
             <table>
                 <tr>
-                    <td></td>  
+                    <td></td>
                     <td><b>Volunteer</b></td>
                     <td><b>Category</b></td>
                     <td><b>Subcategory</b></td>
@@ -116,11 +106,11 @@
                 @foreach (var item in Model.HoursList)
                 {
                     <tr>
-                        <td> @Html.ActionLink("Edit", "Create", new { fiiday = item.WeekEndingDate })</td>
+                        <td>@Html.ActionLink("Edit","Edit",new{ recId = item.Id })</td>
                         <td>@Html.Label(item.UserFullName)</td>
                         <td>@Html.Label(item.CategoryName)</td>
                         <td>@Html.Label(item.Subcategory)</td>
-                        <td>@Html.Label(item.WeekEndingDateString)</td>
+                        <td>@Html.Label(item.DateString)</td>
                         <td style="text-align: center">@Html.Label(item.HoursString)</td>
                         <td style="text-align: center">@Html.Label(item.MinutesString)</td>
                     </tr>
@@ -129,17 +119,26 @@
         }
     </div>
 
-    <br/>
+    <br />
     <div>
         @Html.ActionLink("Back to Hours Menu", "Index")
-        <br/>
+        <br />
         @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
     </div>
 }
 </body>
 </html>
-<script>
+<script type="text/javascript">
     $(function () {
-        window.$("#HoursDate").datepicker();
+        window.$("#HoursDate").datepicker({ maxDate: +0 });
     });
 </script>
+<script type="text/javascript">
+        $(function () {
+            window.$('#HoursDate').change(function () {
+                var _hoursDate = window.$(this).val();
+                window.location.href = '@Url.Action("Create",
+                                            "VolunteerHours")' + '?hoursDate=' + _hoursDate;
+            });
+        });
+    </script>

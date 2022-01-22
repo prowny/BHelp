@@ -14,7 +14,7 @@ namespace BHelp.Models
 
         [StringLength(1)] public string Category { get; set; } // A, F, or M
         public string Subcategory { get; set; }
-        public DateTime WeekEndingDate { get; set; }
+        public DateTime Date { get; set; }
         public int Hours { get; set; }
         public int Minutes { get; set; }
     }

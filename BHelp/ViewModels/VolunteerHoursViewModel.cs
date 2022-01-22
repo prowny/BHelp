@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 using BHelp.Models;
@@ -8,16 +9,16 @@ namespace BHelp.ViewModels
 {
     public class VolunteerHoursViewModel
     {
-        [StringLength(128)]
+        public int Id { get; set; }
         public string UserId { get; set; }
-
-        [StringLength(128)]
         public string OriginatorUserId { get; set; }
         public string VolunteerName { get; set; }
+        public DateTime Date { get; set; }
+        public string DateString { get; set; }
+        public DateTime WeekBeginningDate { get; set; }
+        public string WeekBeginningDateString { get; set; }
         public DateTime WeekEndingDate { get; set; }
         public string WeekEndingDateString { get; set; }
-
-        [StringLength(1)]
         public string Category { get; set; }  // A, F, or M
         public string CategoryName { get; set; }
         public string Subcategory { get; set; }

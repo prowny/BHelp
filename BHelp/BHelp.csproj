@@ -276,6 +276,10 @@
     <Compile Include="Migrations\202201131701484_AddVolunteerHoursTable.Designer.cs">
       <DependentUpon>202201131701484_AddVolunteerHoursTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202201221548121_ChangeNameWeekEndingDateToDate.cs" />
+    <Compile Include="Migrations\202201221548121_ChangeNameWeekEndingDateToDate.Designer.cs">
+      <DependentUpon>202201221548121_ChangeNameWeekEndingDateToDate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -729,6 +733,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202201131701484_AddVolunteerHoursTable.resx">
       <DependentUpon>202201131701484_AddVolunteerHoursTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202201221548121_ChangeNameWeekEndingDateToDate.resx">
+      <DependentUpon>202201221548121_ChangeNameWeekEndingDateToDate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
