@@ -11,6 +11,11 @@
         #Minutes { width: 30px; }
         #btnSubmit {background-color: blue;color: white}
     </style>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
 </head>
 <body>
 @using (Html.BeginForm("Create", "VolunteerHours", FormMethod.Post))
@@ -47,8 +52,16 @@
         </table>
         <table>
             <tr>
-                <td><b>Week Ending:</b></td>
+
+
+                <td><b> for Date:</b></td>
                 <td>
+                    @Html.TextBox("Date", @Model.WeekEndingDate, "{0:MM/dd/yyyy}",
+                        new { id = "HoursDate", style = "width: 75px;" })
+                    <span style="color: darkmagenta">&#8592;Click to change</span> @*Html left-arrow*@
+                </td> 
+
+                @*<td>
                     @Html.TextBoxFor(model => model.WeekEndingDateString,
                         new { @readonly = true, style = "width: 70px" })
                 </td>
@@ -58,7 +71,7 @@
                 <td style="width: 105px">
                     @Html.ActionLink("Next Friday", "NextFriday",
                         new { _friday = Model.WeekEndingDate })
-                </td>
+                </td>*@
             </tr>
         </table>
         <table>
@@ -125,3 +138,8 @@
 }
 </body>
 </html>
+<script>
+    $(function () {
+        window.$("#HoursDate").datepicker();
+    });
+</script>
