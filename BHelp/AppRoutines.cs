@@ -19,36 +19,31 @@ namespace BHelp
         public static DateTime GetLastDeliveryDate(int clientId)
         {
             var dt = DateTime.MinValue;
-            using (var db = new BHelpContext())
-            {
-                var delivery = db.Deliveries.Where(i => i.ClientId == clientId
-                                       && i.Status == 1 && i.DateDelivered != null)
-                    .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
+            var db = new BHelpContext();
+            var delivery = db.Deliveries.Where(i => i.ClientId == clientId
+                                   && i.Status == 1 && i.DateDelivered != null)
+                                   .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
                 if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
-            }
+            
             return dt;
         }
         public static DateTime GetPriorDeliveryDate(int clientId, DateTime callLogDate)
         {
             var dt = DateTime.MinValue;
-            using (var db = new BHelpContext())
-            {
-                var delivery = db.Deliveries.Where(i => i.ClientId == clientId
-                                         && i.Status == 1 && i.DateDelivered <= callLogDate)
-                    .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
-                if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
-            }
+            var db = new BHelpContext();
+            var delivery = db.Deliveries.Where(i => i.ClientId == clientId
+                                                    && i.Status == 1 && i.DateDelivered <= callLogDate)
+                                      .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
+            if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
             return dt;
         }
         public static DateTime GetDateLastGiftCard(int clientId)
         {
             var dt = DateTime.MinValue;
-            using (var db = new BHelpContext())
-            {
-                var delivery = db.Deliveries.Where(i => i.ClientId == clientId && i.GiftCards > 0
-                    && i.Status == 1).OrderByDescending(d => d.DateDelivered).FirstOrDefault();
-                if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
-            }
+            var db = new BHelpContext();
+            var delivery = db.Deliveries.Where(i => i.ClientId == clientId && i.GiftCards > 0
+                                  && i.Status == 1).OrderByDescending(d => d.DateDelivered).FirstOrDefault();
+            if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
             return dt;
         }
         public static int GetGiftCardsEligible(int clientId, DateTime dt)
@@ -92,12 +87,10 @@ namespace BHelp
             var startDate = new DateTime(dt.Year, dt.Month, 1);
             var endDate = new DateTime(dt.Year, dt.Month, DateTime.DaysInMonth(dt.Year, dt.Month));
 
-            using (var db = new BHelpContext())
-            {
-                var dtm= db.Deliveries.Count(i => i.ClientId == clientId && i.Status == 1 
-                                 && i.DateDelivered >= startDate && i.DateDelivered <= endDate);
-                return dtm;
-            }
+            var db = new BHelpContext();
+            var dtm= db.Deliveries.Count(i => i.ClientId == clientId && i.Status == 1 
+                             && i.DateDelivered >= startDate && i.DateDelivered <= endDate);
+            return dtm;
         }
         private static int GetAllGiftCardsThisMonth(int clientId, DateTime dt )
         {
@@ -112,21 +105,19 @@ namespace BHelp
         }
         public static DateTime GetDateLastGiftCard(int clientId, DateTime toDate)
         {
-            using (var db = new BHelpContext())
-            {
-                var delList = db.Deliveries.Where(d => d.ClientId == clientId 
+            var db = new BHelpContext();
+            var delList = db.Deliveries.Where(d => d.ClientId == clientId 
                                && d.Status == 1 && d.DateDelivered < toDate
                                && d.GiftCards > 0).OrderByDescending(d => d.DateDelivered).ToList();
-                if (delList.Count != 0)
+            if (delList.Count != 0)
+            {
+                var delivery = delList[0];
+                if (delivery.DateDelivered.HasValue)
                 {
-                    var delivery = delList[0];
-                    if (delivery.DateDelivered.HasValue)
-                    {
-                        return (DateTime)delivery.DateDelivered;
-                    }
+                    return (DateTime)delivery.DateDelivered;
                 }
-                return DateTime.MinValue;
             }
+            return DateTime.MinValue;
         }
         public static int GetPriorGiftCardsThisMonth(int clientId, DateTime dt)
         {
@@ -146,11 +137,9 @@ namespace BHelp
         {
             var startDate = new DateTime(dt.Year, dt.Month, 1);
             var endDate = new DateTime(dt.Year, dt.Month, DateTime.DaysInMonth(dt.Year, dt.Month));
-            using (var db = new BHelpContext())
-            {
-                return db.Deliveries.Where(i => i.ClientId == clientId && i.Status == 1 
+            var db = new BHelpContext();
+            return db.Deliveries.Where(i => i.ClientId == clientId && i.Status == 1 
                 && i.DateDelivered >= startDate && i.DateDelivered <= endDate).ToList();
-            }
         }
         public static DateTime GetNextEligibleDeliveryDate(int clientId, DateTime dt)
         {
@@ -259,67 +248,59 @@ namespace BHelp
         public static List<SelectListItem> GetFamilySelectList(int clientId)
         {
             List<SelectListItem> householdList = new List<SelectListItem>();
-            using (var db = new BHelpContext())
+            var db = new BHelpContext();
+            var client = db.Clients.Find(clientId);
+            if (client != null)
             {
-                var client = db.Clients.Find(clientId);
-                if (client != null)
+                client.FamilyMembers = GetFamilyMembers(clientId);
+                foreach (var mbr in client.FamilyMembers)
                 {
-                    client.FamilyMembers = GetFamilyMembers(clientId);
-                    foreach (var mbr in client.FamilyMembers)
-                    {
-                        var text = mbr.FirstName + " " + mbr.LastName + "/" +
-                                   GetAge(mbr.DateOfBirth, DateTime.Today);
-                        var selListItem = new SelectListItem() { Value = mbr.FirstName, Text = text };
-                        householdList.Add(selListItem);
-                    }
+                    var text = mbr.FirstName + " " + mbr.LastName + "/" +
+                               GetAge(mbr.DateOfBirth, DateTime.Today);
+                    var selListItem = new SelectListItem() { Value = mbr.FirstName, Text = text };
+                    householdList.Add(selListItem);
                 }
-
-                return (householdList);
             }
+            return (householdList);
         }
         public static List<FamilyMember> GetFamilyMembers(int clientId)
         {
             var familyMembers = new List<FamilyMember>(); // For editiing
-
-            using (var db = new BHelpContext())
+            var db = new BHelpContext();
+            var client = db.Clients.Find(clientId);
+            if (client != null)
             {
-                var client = db.Clients.Find(clientId);
-                if (client != null)
+                FamilyMember headOfHousehold = new FamilyMember()
                 {
-                    FamilyMember headOfHousehold = new FamilyMember()
-                    {
-                        FirstName = client.FirstName,
-                        LastName = client.LastName,
-                        DateOfBirth = client.DateOfBirth,
-                        Age = GetAge(client.DateOfBirth, DateTime.Today)
-                    };
-                    familyMembers.Add(headOfHousehold);
-                }
-                var familyList = db.FamilyMembers.Where(d => d.Active && d.ClientId == clientId).ToList();
-                foreach (FamilyMember member in familyList)
-                {
-                    member.Age = GetAge(member.DateOfBirth, DateTime.Today);
-                    member.NameAge = member.FirstName + " " + member.LastName + "/" + member.Age;
-                    familyMembers.Add(member);
-                }
+                    FirstName = client.FirstName,
+                    LastName = client.LastName,
+                    DateOfBirth = client.DateOfBirth,
+                    Age = GetAge(client.DateOfBirth, DateTime.Today)
+                };
+                familyMembers.Add(headOfHousehold);
+            }
+            var familyList = db.FamilyMembers.Where(d => d.Active && d.ClientId == clientId).ToList();
+            foreach (FamilyMember member in familyList)
+            {
+                member.Age = GetAge(member.DateOfBirth, DateTime.Today);
+                member.NameAge = member.FirstName + " " + member.LastName + "/" + member.Age;
+                familyMembers.Add(member);
             }
             return familyMembers;
         }
         public static List<SelectListItem> GetDriversSelectList()
         {
             List<SelectListItem> driverList = new List<SelectListItem>();
-            using (var db = new BHelpContext())
+            var db = new BHelpContext();
+            var userList = db.Users.OrderBy(u => u.LastName).Where(a => a.Active).ToList();
+            var selListItem = new SelectListItem() { Value = "0", Text = @"(nobody yet)" };
+            driverList.Add(selListItem);
+            foreach (var user in userList)
             {
-                var userList = db.Users.OrderBy(u => u.LastName).Where(a => a.Active).ToList();
-                var selListItem = new SelectListItem() { Value = "0", Text = @"(nobody yet)" };
-                driverList.Add(selListItem);
-                foreach (var user in userList)
+                if (UserIsInRole(user.Id, "Driver"))
                 {
-                    if (UserIsInRole(user.Id, "Driver"))
-                    {
-                        var newListItem = new SelectListItem() { Value = user.Id, Text = user.FullName };
-                        driverList.Add(newListItem);
-                    }
+                    var newListItem = new SelectListItem() { Value = user.Id, Text = user.FullName };
+                    driverList.Add(newListItem);
                 }
             }
             return (driverList);
@@ -327,18 +308,16 @@ namespace BHelp
         public static List<SelectListItem> GetODSelectList()
         {
             List<SelectListItem> odList = new List<SelectListItem>();
-            using (var db = new BHelpContext())
+            var db = new BHelpContext();
+            var userList = db.Users.OrderBy(u => u.LastName).Where(a => a.Active).ToList();
+            var selListItem = new SelectListItem() { Value = "0", Text = @"(nobody yet)" };
+            odList.Add(selListItem);
+            foreach (var user in userList)
             {
-                var userList = db.Users.OrderBy(u => u.LastName).Where(a => a.Active).ToList();
-                var selListItem = new SelectListItem() { Value = "0", Text = @"(nobody yet)" };
-                odList.Add(selListItem);
-                foreach (var user in userList)
+                if (UserIsInRole(user.Id, "OfficerOfTheDay"))
                 {
-                    if (UserIsInRole(user.Id, "OfficerOfTheDay"))
-                    {
-                        var newListItem = new SelectListItem() { Value = user.Id, Text = user.FullName };
-                        odList.Add(newListItem);
-                    }
+                    var newListItem = new SelectListItem() { Value = user.Id, Text = user.FullName };
+                    odList.Add(newListItem);
                 }
             }
             return (odList);
@@ -346,122 +325,103 @@ namespace BHelp
         public static Boolean UserIsInRole(string userId, string roleName)
         {
             var sqlString = "SELECT Id FROM AspNetRoles WHERE Name = '" + roleName + "'";
-            string roleId;
-            using (var context = new BHelpContext())
-            {
-                roleId = context.Database.SqlQuery<string>(sqlString).FirstOrDefault();
-                if (roleId == null)
-                {
-                    return false;
-                }
-            }
-
+            var context = new BHelpContext();
+            var roleId = context.Database.SqlQuery<string>(sqlString).FirstOrDefault();
+            if (roleId == null) return false;
+            
             sqlString = "SELECT UserId FROM AspNetUserRoles WHERE ";
             sqlString += "UserId = '" + userId + "' AND RoleId ='" + roleId + "'";
-            using (var context = new BHelpContext())
-            {
-                var success = context.Database.SqlQuery<string>(sqlString).FirstOrDefault();
-                if (success != null)
-                {
-                    return true;
-                }
-                return false;
-            }
+            var success = context.Database.SqlQuery<string>(sqlString).FirstOrDefault();
+            if (success != null) return true;
+
+            return false;
         }
         public static int GetNumberOfKids2_17(int clientId)
         {
             // Assume Head of Household is not a Child
-            using (var db = new BHelpContext())
+            var db = new BHelpContext();
+            var client = db.Clients.Find(clientId);
+            if (client != null)
             {
-                var client = db.Clients.Find(clientId);
-                if (client != null)
+                var count2_17 = 0;
+                var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId).ToList();
+                foreach (var member in familyList)
                 {
-                    var count2_17 = 0;
-                    var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId).ToList();
-                    foreach (var member in familyList)
+                    var age = GetAge(member.DateOfBirth);
+                    if (age >= 2 && age <= 17)
                     {
-                        var age = GetAge(member.DateOfBirth);
-                        if (age >= 2 && age <= 17)
-                        {
-                            count2_17++;
-                        }
+                        count2_17++;
                     }
-                    return count2_17;
                 }
+                return count2_17;
             }
             return 0;
         }
         public static int GetNumberOfChildren(int clientId)
         {
             // Assume Head of Household is not a Child
-            using (var db = new BHelpContext())
+            var db = new BHelpContext();
+            var kidCount = 0;
+            var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId).ToList();
+            foreach (var member in familyList)
             {
-                var kidCount = 0;
+                var age = GetAge(member.DateOfBirth);
+                if (age <= 17)
+                {
+                    kidCount++;
+                }
+            }
+            return kidCount;
+        }
+        public static int GetNumberOfAdults(int clientId)
+        {
+            var db = new BHelpContext();
+            var client = db.Clients.Find(clientId);
+            if (client != null)
+            {
+                var adultCount = 0;
+                var clientAge = GetAge(client.DateOfBirth);
+                if (clientAge >= 18 && clientAge <= 59)
+                {
+                    adultCount++;
+
+                }
                 var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId).ToList();
                 foreach (var member in familyList)
                 {
                     var age = GetAge(member.DateOfBirth);
-                    if (age <= 17)
-                    {
-                        kidCount++;
-                    }
-                }
-                return kidCount;
-            }
-        }
-        public static int GetNumberOfAdults(int clientId)
-        {
-            using (var db = new BHelpContext())
-            {
-                var client = db.Clients.Find(clientId);
-                if (client != null)
-                {
-                    var adultCount = 0;
-                    var clientAge = GetAge(client.DateOfBirth);
-                    if (clientAge >= 18 && clientAge <= 59)
+                    if (age >= 18 && age <= 59)
                     {
                         adultCount++;
-
                     }
-                    var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId).ToList();
-                    foreach (var member in familyList)
-                    {
-                        var age = GetAge(member.DateOfBirth);
-                        if (age >= 18 && age <= 59)
-                        {
-                            adultCount++;
-                        }
-                    }
-                    return adultCount;
                 }
+                return adultCount;
             }
             return 0;
         }
         public static int GetNumberOfSeniors(int clientId)
         {
-            using (var db = new BHelpContext())
+            var db = new BHelpContext();
+            var client = db.Clients.Find(clientId);
+            if (client != null)
             {
-                var client = db.Clients.Find(clientId);
-                if (client != null)
+                var seniorsCount = 0;
+                var clientAge = GetAge(client.DateOfBirth);
+                if (clientAge >= 60)
                 {
-                    var seniorsCount = 0;
-                    var clientAge = GetAge(client.DateOfBirth);
-                    if (clientAge >= 60)
+                    seniorsCount++;
+
+                }
+                var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId).ToList();
+                foreach (var member in familyList)
+                {
+                    var age = GetAge(member.DateOfBirth);
+                    if (age >= 60)
                     {
                         seniorsCount++;
-
                     }
-                    var familyList = db.FamilyMembers.Where(c => c.ClientId == clientId).ToList();
-                    foreach (var member in familyList)
-                    {
-                        var age = GetAge(member.DateOfBirth);
-                        if (age >= 60)
-                        {
-                            seniorsCount++;
-                        }
-                    }
-                    return seniorsCount;
                 }
+                return seniorsCount;
             }
             return 0;
         }
@@ -738,65 +698,63 @@ namespace BHelp
             //   OpenDeliveries[ Delivery, Column, Line ]
             { ReportTitle = "Bethesda Help Open Deliveries" };
 
-            using (var db = new BHelpContext())
+            var db = new BHelpContext();
+            var deliveryList = new List<Delivery>(db.Deliveries)
+                .Where(d => d.Status == 0)
+                .OrderBy(d => d.DateDelivered)
+                //.ThenBy(d => d.DriverId)  // change 01/05/2022
+                .ThenBy(z => z.Zip)
+                .ThenBy(n => n.LastName).ToList();
+            odv.OpenDeliveryCount = deliveryList.Count;
+
+            odv.OpenDeliveries = new string[deliveryList.Count, 20];
+            var i = 0;
+            foreach (var del in deliveryList)
             {
-                var deliveryList = new List<Delivery>(db.Deliveries)
-                    .Where(d => d.Status == 0)
-                    .OrderBy(d => d.DateDelivered)
-                    //.ThenBy(d => d.DriverId)  // change 01/05/2022
-                    .ThenBy(z => z.Zip)
-                    .ThenBy(n => n.LastName).ToList();
-                odv.OpenDeliveryCount = deliveryList.Count;
-
-                odv.OpenDeliveries = new string[deliveryList.Count, 20];
-                var i = 0;
-                foreach (var del in deliveryList)
+                var client = db.Clients.Find(del.ClientId);
+                if (del.DateDelivered != null) odv.OpenDeliveries[i, 1] = del.DateDelivered.Value.ToShortDateString();
+                
+                if (del.DeliveryDateODId != null)
                 {
-                    var client = db.Clients.Find(del.ClientId);
-                    if (del.DateDelivered != null) odv.OpenDeliveries[i, 1] = del.DateDelivered.Value.ToShortDateString();
-                    
-                    if (del.DeliveryDateODId != null)
+                    var usr = db.Users.Find(del.DeliveryDateODId);
+                    del.DeliveryDateODName = usr.FullName + " " + usr.PhoneNumber;
+                };
+
+                var driver = db.Users.Find(del.DriverId);
+                    if (driver != null)
+                    { odv.OpenDeliveries[i, 2] = driver.FullName; }
+
+                    odv.OpenDeliveries[i, 3] = del.Zip;
+                    odv.OpenDeliveries[i, 4] = del.LastName + ", " + del.FirstName; // Client
+                    odv.OpenDeliveries[i, 5] = del.StreetNumber + " " + del.StreetName;
+                    odv.OpenDeliveries[i, 6] = del.City;
+                    odv.OpenDeliveries[i, 7] = del.Phone;
+
+                    if (client != null)
                     {
-                        var usr = db.Users.Find(del.DeliveryDateODId);
-                        del.DeliveryDateODName = usr.FullName + " " + usr.PhoneNumber;
-                    };
+                        var familyMembers= db.FamilyMembers.Where(c => c.ClientId == client.Id).ToList();
+                        //var kids2_17 = GetNumberOfKids2_17(client.Id);
+                        var kidCount = AppRoutines.GetNumberOfChildren(client.Id);
+                        odv.OpenDeliveries[i, 8] = kidCount.ToString();
+                        odv.OpenDeliveries[i, 9] = AppRoutines.GetNumberOfAdults(client.Id).ToString();
+                        odv.OpenDeliveries[i, 10] = AppRoutines.GetNumberOfSeniors(client.Id).ToString();
+                        odv.OpenDeliveries[i, 11] = (familyMembers.Count + 1).ToString();
+                        odv.OpenDeliveries[i, 12] = GetNamesAgesOfAllInHousehold(client.Id);
 
-                    var driver = db.Users.Find(del.DriverId);
-                        if (driver != null)
-                        { odv.OpenDeliveries[i, 2] = driver.FullName; }
+                        odv.OpenDeliveries[i, 17] = client.Notes;
+                    }
+                
+                    odv.OpenDeliveries[i, 13] =  del.FullBags.ToString();
+                    odv.OpenDeliveries[i, 14] =  del.HalfBags.ToString();
+                    odv.OpenDeliveries[i, 15] =  del.KidSnacks.ToString();
+                    odv.OpenDeliveries[i, 16] =  del.GiftCards.ToString();
 
-                        odv.OpenDeliveries[i, 3] = del.Zip;
-                        odv.OpenDeliveries[i, 4] = del.LastName + ", " + del.FirstName; // Client
-                        odv.OpenDeliveries[i, 5] = del.StreetNumber + " " + del.StreetName;
-                        odv.OpenDeliveries[i, 6] = del.City;
-                        odv.OpenDeliveries[i, 7] = del.Phone;
-
-                        if (client != null)
-                        {
-                            var familyMembers= db.FamilyMembers.Where(c => c.ClientId == client.Id).ToList();
-                            //var kids2_17 = GetNumberOfKids2_17(client.Id);
-                            var kidCount = AppRoutines.GetNumberOfChildren(client.Id);
-                            odv.OpenDeliveries[i, 8] = kidCount.ToString();
-                            odv.OpenDeliveries[i, 9] = AppRoutines.GetNumberOfAdults(client.Id).ToString();
-                            odv.OpenDeliveries[i, 10] = AppRoutines.GetNumberOfSeniors(client.Id).ToString();
-                            odv.OpenDeliveries[i, 11] = (familyMembers.Count + 1).ToString();
-                            odv.OpenDeliveries[i, 12] = GetNamesAgesOfAllInHousehold(client.Id);
-
-                            odv.OpenDeliveries[i, 17] = client.Notes;
-                        }
-                    
-                        odv.OpenDeliveries[i, 13] =  del.FullBags.ToString();
-                        odv.OpenDeliveries[i, 14] =  del.HalfBags.ToString();
-                        odv.OpenDeliveries[i, 15] =  del.KidSnacks.ToString();
-                        odv.OpenDeliveries[i, 16] =  del.GiftCards.ToString();
-
-                        odv.OpenDeliveries[i,18] = del.ODNotes + " " + del.DriverNotes;
-                        i++;
-                }
-                odv.DistinctDeliveryDatesODList = GetDistinctDeliveryDatesOdList(deliveryList);
-
-                return odv;
+                    odv.OpenDeliveries[i,18] = del.ODNotes + " " + del.DriverNotes;
+                    i++;
             }
+            odv.DistinctDeliveryDatesODList = GetDistinctDeliveryDatesOdList(deliveryList);
+
+            return odv;
         }
         public static FileStreamResult OpenDeliveriesToCSV(OpenDeliveryViewModel view)
         {

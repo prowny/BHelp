@@ -54,21 +54,19 @@ namespace BHelp
             subCatList.Add(selListItem);
             return subCatList;
         }
-
         public static List<SelectListItem> GetUsersSelectList()
         {
-            using (var db = new BHelpContext())
+            var db = new BHelpContext();
+            var usrList = db.Users.Where(u => u.Active)
+                .OrderBy(u => u.LastName).ToList();
+            var usrsSelectList = new List<SelectListItem>();
+            foreach (var user in usrList)
             {
-                var usrList = db.Users.Where(u => u.Active)
-                    .OrderBy(u => u.LastName).ToList();
-                var usrsSelectList = new List<SelectListItem>();
-                foreach (var user in usrList)
-                {
-                    var item = new SelectListItem() { Text = user.FullName, Value = user.Id, Selected =false };
-                    usrsSelectList.Add(item);
-                }
-                return usrsSelectList;
+                var item = new SelectListItem() { Text = user.FullName, Value = user.Id, Selected = false };
+                usrsSelectList.Add(item);
             }
+
+            return usrsSelectList;
         }
         public static DateTime GetPreviousSaturday(DateTime curDt)
         {
@@ -79,24 +77,35 @@ namespace BHelp
         }
         public static Boolean IsIndividual(string usrId)
         {
-            using (var db = new BHelpContext())
+            var db = new BHelpContext();
+            var usr = db.Users.Find(usrId);
+            bool isDeveloper = AppRoutines.UserIsInRole(usr.Id, "Developer");
+            if (isDeveloper)
             {
-                var usr = db.Users.Find(usrId);
-                bool isDeveloper = AppRoutines.UserIsInRole(usr.Id, "Developer");
-                if (isDeveloper)
+                var isAdministrator = AppRoutines.UserIsInRole(usr.Id, "Administrator");
+                if (isAdministrator)
                 {
-                    var isAdministrator = AppRoutines.UserIsInRole(usr.Id, "Administrator");
-                    if (isAdministrator)
+                    var isStaff = AppRoutines.UserIsInRole(usr.Id, "Staff");
+                    if (isStaff)
                     {
-                        var isStaff = AppRoutines.UserIsInRole(usr.Id, "Staff");
-                        if (isStaff)
-                        {
-                            return false; // can enter hours for anyone, any category 
-                        }
+                        return false; // can enter hours for anyone, any category 
                     }
                 }
             }
             return true;  // default unless in higher role
+        }
+
+        public static List<SelectListItem> SetSelectedSubcategory( List<SelectListItem> list, string subcategory)
+        {
+            foreach (var item in list)
+            {
+                if (item.Text == subcategory)
+                {
+                    item.Selected = true;
+                    break;
+                }
+            }
+            return list;
         }
     }
 }

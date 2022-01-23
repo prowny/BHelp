@@ -18,17 +18,20 @@ namespace BHelp.Controllers
         // GET: VolunteerHours Menu
         [AllowAnonymous]
         public ActionResult Index() // shows Enter / Maintain menu
-        { return View(); }
+        {
+            return View();
+        }
 
         // GET: Volunteer Hours Entry
         [AllowAnonymous]
-        public ActionResult Create(DateTime? hoursDate)  // hoursDate will be non-null if a new date is requested by the view
+        public ActionResult
+            Create(DateTime? hoursDate) // hoursDate will be non-null if a new date is requested by the view
         {
             var usr = db.Users.Find(User.Identity.GetUserId());
             var catName = HoursRoutines.GetCategoryName(usr.VolunteerCategory);
             var subcatName = usr.VolunteerSubcategory ?? "(none)";
             bool isIndividual = HoursRoutines.IsIndividual(usr.Id);
-            
+
             var entryDate = DateTime.Today;
             DateTime wkBegin;
             string wkBeginString;
@@ -46,13 +49,13 @@ namespace BHelp.Controllers
                 entryDate = hoursDate.Value;
                 wkBegin = HoursRoutines.GetPreviousSaturday(hoursDate.Value);
                 wkBeginString = wkBegin.ToString("MM/dd/yyyy");
-                wkEnd =wkBegin.AddDays(6);
+                wkEnd = wkBegin.AddDays(6);
                 wkEndString = wkEnd.ToString("MM/dd/yyyy");
             }
 
             var submitError = string.Empty;
             if (TempData["SubmitError"] != null) submitError = TempData["SubmitError"].ToString();
-            
+
             var view = new VolunteerHoursViewModel
             {
                 UserId = usr.Id,
@@ -73,23 +76,23 @@ namespace BHelp.Controllers
                 HoursList = new List<VolunteerHoursViewModel>()
             };
 
-            if (isIndividual)  // get hours for individual only
+            if (isIndividual) // get hours for individual only
             {
                 var recs = db.VolunteerHours
-                    .Where(h => h.UserId  == usr.Id
+                    .Where(h => h.UserId == usr.Id
                                 && h.Date >= wkBegin && h.Date <= wkEnd).ToList();
                 foreach (var rec in recs)
                 {
                     var newView = new VolunteerHoursViewModel
                     {
-                        Id=rec.Id,
+                        Id = rec.Id,
                         UserId = usr.Id,
                         UserFullName = usr.FullName,
-                        CategoryName = HoursRoutines .GetCategoryName(rec.Category),
+                        CategoryName = HoursRoutines.GetCategoryName(rec.Category),
                         Subcategory = rec.Subcategory,
                         VolunteerName = usr.FullName,
                         Date = rec.Date,
-                        DateString = rec.Date .ToString("MM/dd/yyyy"),
+                        DateString = rec.Date.ToString("MM/dd/yyyy"),
                         HoursString = rec.Hours.ToString(),
                         MinutesString = rec.Minutes.ToString()
                     };
@@ -100,12 +103,13 @@ namespace BHelp.Controllers
             return View(view);
         }
 
-        //POST: Volunteer Hours Entry 
+        //POST: Volunteer Hours Create 
         [HttpPost, AllowAnonymous]
         public ActionResult Create([Bind(Include = "UserId,Category,Subcategory,"
-                           + "Date,Hours,Minutes")] VolunteerHoursViewModel model)
+                                                   + "Date,Hours,Minutes")]
+            VolunteerHoursViewModel model)
         {
-            if (!ModelState.IsValid) return RedirectToAction("Index","Home");
+            if (!ModelState.IsValid) return RedirectToAction("Index", "Home");
 
             if (model.Hours == 0 && model.Minutes == 0)
             {
@@ -116,10 +120,9 @@ namespace BHelp.Controllers
             // Look for duplicate record:
             var oldRec = db.VolunteerHours
                 .FirstOrDefault(r => r.UserId == model.UserId
-                                                               && r.Date == model.Date
-                                                               && r.Category == model.Category
-                                                               && r.Subcategory == model.Subcategory);
-
+                                     && r.Date == model.Date
+                                     && r.Category == model.Category
+                                     && r.Subcategory == model.Subcategory);
             if (oldRec != null)
             {
                 TempData["SubmitError"] = "A record for this date & categories was already submitted!";
@@ -129,11 +132,11 @@ namespace BHelp.Controllers
             var newRec = new VolunteerHours()
             {
                 UserId = model.UserId,
-                OriginatorUserId =System.Web.HttpContext.Current.User.Identity.GetUserId(),
-                Category =model.Category,
+                OriginatorUserId = System.Web.HttpContext.Current.User.Identity.GetUserId(),
+                Category = model.Category,
                 Subcategory = model.Subcategory,
                 Date = model.Date,
-                Hours=model.Hours,
+                Hours = model.Hours,
                 Minutes = model.Minutes
             };
 
@@ -151,9 +154,15 @@ namespace BHelp.Controllers
             var currentUser = db.Users.Find(User.Identity.GetUserId());
             var hoursUser = db.Users.Find(rec.UserId);
             if (hoursUser == null) return null;
+
+            var submitError = string.Empty;
+            if (TempData["SubmitError"] != null) submitError = TempData["SubmitError"].ToString();
+
             var view = new VolunteerHoursViewModel
             {
+                Id = rec.Id, 
                 UserId = rec.UserId,
+                OriginatorUserId = rec.OriginatorUserId,
                 IsIndividual = HoursRoutines.IsIndividual(currentUser.Id),
                 CategoryName = HoursRoutines.GetCategoryName(rec.Category),
                 Subcategory = rec.Subcategory,
@@ -161,13 +170,46 @@ namespace BHelp.Controllers
                 VolunteerName = hoursUser.FullName,
                 Date = rec.Date,
                 DateString = rec.Date.ToString("MM/dd/yyyy"),
+                Hours = rec.Hours,
                 HoursString = rec.Hours.ToString(),
+                Minutes = rec.Minutes,
                 MinutesString = rec.Minutes.ToString(),
                 CategoryList = HoursRoutines.GetHoursCategories(rec.Category),
-                SubcategoryList = HoursRoutines.GetHoursSubcategories()
+                SubcategoryList = HoursRoutines.GetHoursSubcategories(),
+                SubmitError = submitError
             };
-
+            if (view.IsIndividual) // Load subcategory selected
+            {
+                view.SubcategoryList = HoursRoutines.SetSelectedSubcategory(
+                    view.SubcategoryList, view.Subcategory);
+            }
             return View(view);
+        }
+
+        //POST: Volunteer Hours Edit 
+        [HttpPost, AllowAnonymous]
+        public ActionResult Edit([Bind(Include = "Id,UserId,OriginatorUserId,Category,Subcategory,"
+                                                 + "Date,Hours,Minutes")]
+            VolunteerHoursViewModel model)
+        {
+            if (!ModelState.IsValid) return RedirectToAction("Index", "Home");
+            if (model.Hours == 0 && model.Minutes == 0)
+            {
+                TempData["SubmitError"] = "No time was submitted!";
+                return RedirectToAction("Edit", new{ recId = model.Id});
+            }
+
+            var rec = db.VolunteerHours.Find(model.Id);
+            if (rec  == null) return RedirectToAction("Index", "Home");
+            rec.UserId = model.UserId;
+            rec.OriginatorUserId = model.OriginatorUserId;
+            rec.Category = model.Category;
+            rec.Subcategory = model.Subcategory;
+            rec.Date = model.Date;
+            rec.Hours = model.Hours;
+            rec.Minutes = model.Minutes;
+            db.SaveChanges();
+            return RedirectToAction("Create");
         }
     }
 }
