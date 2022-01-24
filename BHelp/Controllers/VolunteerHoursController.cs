@@ -5,7 +5,6 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
-using DocumentFormat.OpenXml.Vml.Office;
 using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
@@ -22,13 +21,13 @@ namespace BHelp.Controllers
             return View();
         }
 
-        // GET: Volunteer Hours Entry
+        // GET: Create Volunteer Hours Entry
         [AllowAnonymous]
         public ActionResult
             Create(DateTime? hoursDate) // hoursDate will be non-null if a new date is requested by the view
         {
             var usr = db.Users.Find(User.Identity.GetUserId());
-            var catName = HoursRoutines.GetCategoryName(usr.VolunteerCategory);
+            var catName = HoursRoutines.GetCategoryName(usr.VolunteerCategory) ?? "(none)";
             var subcatName = usr.VolunteerSubcategory ?? "(none)";
             bool isIndividual = HoursRoutines.IsIndividual(usr.Id);
 
@@ -60,8 +59,8 @@ namespace BHelp.Controllers
             {
                 UserId = usr.Id,
                 UserFullName = usr.FullName,
-                Category = usr.VolunteerCategory,
-                Subcategory = usr.VolunteerSubcategory,
+                Category = usr.VolunteerCategory ?? "(none)",
+                Subcategory = usr.VolunteerSubcategory ?? "(none)",
                 VolunteerName = usr.FullName,
                 CategoryName = catName,
                 SubcategoryName = subcatName,
@@ -129,6 +128,8 @@ namespace BHelp.Controllers
                 return RedirectToAction("Create");
             }
 
+            if (model.Subcategory == null) model.Subcategory = "(none)";
+                
             var newRec = new VolunteerHours()
             {
                 UserId = model.UserId,

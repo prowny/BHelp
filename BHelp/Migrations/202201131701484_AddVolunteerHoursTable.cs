@@ -16,7 +16,7 @@ namespace BHelp.Migrations
                         OriginatorUserId = c.String(maxLength: 128),
                         Category = c.String(maxLength: 1),
                         Subcategory = c.String(),
-                        WeekEndingDate = c.DateTime(nullable: false),
+                        Date = c.DateTime(nullable: false),
                         Hours = c.Int(nullable: false),
                         Minutes = c.Int(nullable: false),
                     })
