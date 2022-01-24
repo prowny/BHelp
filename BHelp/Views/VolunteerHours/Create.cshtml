@@ -30,7 +30,8 @@
             <span><b>Bethesda Help Enter Volunteer Hours</b></span>&nbsp;&nbsp;&nbsp;
             @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
         </div>
-
+        <hr>
+        <span><i>Use this section to submit new hours records:</i></span>
         <div id="IndividualEntryDiv">
             <table>
                 <tr>
@@ -87,13 +88,14 @@
         }
     </div>
 
-    <div id="ShowHoursDiv">
-        @if (Model.HoursList.Count > 0)
-        {
-            <hr />
-            <span><i>Hours Entered for the Reporting Week&nbsp;@Model.WeekBeginningDateString
-                - @Model.WeekEndingDateString</i></span>
-            <table>
+    if (Model.HoursList.Count > 0)
+    {
+        <div id="ShowHoursDiv">
+            <hr/>
+            <span>
+                <i>Hours Entered for the Reporting Week
+                    @Model.WeekBeginningDateString - @Model.WeekEndingDateString:</i></span>
+            <table class="table">
                 <tr>
                     <td></td>
                     <td><b>Volunteer</b></td>
@@ -102,23 +104,23 @@
                     <td style="text-align: center"><b>Date</b></td>
                     <td><b>Hours</b></td>
                     <td><b>Minutes</b></td>
+
                 </tr>
                 @foreach (var item in Model.HoursList)
                 {
-                    <tr>
-                        <td>@Html.ActionLink("Edit","Edit",new{ recId = item.Id })</td>
-                        <td>@Html.Label(item.UserFullName)</td>
-                        <td>@Html.Label(item.CategoryName)</td>
-                        <td>@Html.Label(item.Subcategory)</td>}
-                        <td>@Html.Label(item.DateString)</td>
-                        <td style="text-align: center">@Html.Label(item.HoursString)</td>
-                        <td style="text-align: center">@Html.Label(item.MinutesString)</td>
-                    </tr>
+            <tr>
+                <td>@Html.ActionLink("Edit", "Edit", new { recId = item.Id })</td>
+                <td>@Html.Label(item.UserFullName)</td>
+                <td>@Html.Label(item.CategoryName)</td>
+                <td>@Html.Label(item.Subcategory)</td>
+                <td>@Html.Label(item.DateString)</td>
+                <td style="text-align: center">@Html.Label(item.HoursString)</td>
+                <td style="text-align: center">@Html.Label(item.MinutesString)</td>
+            </tr>
                 }
             </table>
-        }
-    </div>
-
+        </div>
+    }
     <br />
     <div>
         @Html.ActionLink("Back to Hours Menu", "Index")

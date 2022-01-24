@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
     <style>
         #btnSave {background-color: blue;color: white}
+        #btnDelete {background-color: white;color: red }
     </style>
 </head>
 <body>
@@ -70,16 +71,15 @@
         <div class="col-md-10">
             @Html.EditorFor(model => model.Minutes, new { htmlAttributes = new { min = "0", max = "59" }, id = "Minutes" })
             @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
+            @if (!string.IsNullOrEmpty(Model.SubmitError))
+            {<span style="color: red"><b>@Model.SubmitError</b></span>}
         </div>
     </div>
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Save" class="btn btn-default" id="btnSave"/>
-            @if (!string.IsNullOrEmpty(Model.SubmitError))
-            {
-                <span style="color: red"><b>@Model.SubmitError</b></span>
-            }
+            <input name ="btnEdit "type="submit" value="Save" class="btn btn-default" id="btnSave"/>
+            <input name ="btnDelete" type="submit" value="Delete" class="btn btn-default" id="btnDelete"/>
         </div>
     </div>
 }

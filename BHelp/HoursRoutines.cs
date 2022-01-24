@@ -94,7 +94,6 @@ namespace BHelp
             }
             return true;  // default unless in higher role
         }
-
         public static List<SelectListItem> SetSelectedSubcategory( List<SelectListItem> list, string subcategory)
         {
             foreach (var item in list)

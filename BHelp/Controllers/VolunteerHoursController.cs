@@ -26,6 +26,7 @@ namespace BHelp.Controllers
         public ActionResult
             Create(DateTime? hoursDate) // hoursDate will be non-null if a new date is requested by the view
         {
+            if (TempData["HoursDate"] != null) hoursDate = Convert.ToDateTime(TempData["HoursDate"]);
             var usr = db.Users.Find(User.Identity.GetUserId());
             var catName = HoursRoutines.GetCategoryName(usr.VolunteerCategory) ?? "(none)";
             var subcatName = usr.VolunteerSubcategory ?? "(none)";
@@ -143,7 +144,7 @@ namespace BHelp.Controllers
 
             db.VolunteerHours.Add(newRec);
             db.SaveChanges();
-            return RedirectToAction("Create");
+            return RedirectToAction("Create", new{hoursDate = newRec.Date });
         }
 
         //GET Edit Volunteer Hours
@@ -190,10 +191,21 @@ namespace BHelp.Controllers
         //POST: Volunteer Hours Edit 
         [HttpPost, AllowAnonymous]
         public ActionResult Edit([Bind(Include = "Id,UserId,OriginatorUserId,Category,Subcategory,"
-                                                 + "Date,Hours,Minutes")]
+                                                 + "Date,Hours,Minutes,btnSave,btnDelete")]
             VolunteerHoursViewModel model)
         {
             if (!ModelState.IsValid) return RedirectToAction("Index", "Home");
+
+            if (model.BtnDelete != null)
+            {
+                var hrsRec = db.VolunteerHours.Find(model.Id);
+                if (hrsRec == null) return RedirectToAction("Edit", new { recId = model.Id });
+                db.VolunteerHours.Remove(hrsRec);
+                db.SaveChanges();
+                TempData["HoursDate"] = hrsRec.Date.ToString("MM/dd/yyyy");
+                return RedirectToAction("Create");
+            }
+
             if (model.Hours == 0 && model.Minutes == 0)
             {
                 TempData["SubmitError"] = "No time was submitted!";

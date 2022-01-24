@@ -35,5 +35,7 @@ namespace BHelp.ViewModels
         public string OriginatorFullName { get; set; }
         public string HoursString { get; set; }
         public string MinutesString { get; set; }
+        public string BtnSave { get; set; }
+        public string BtnDelete { get; set; }
     }
 }
