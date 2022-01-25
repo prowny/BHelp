@@ -3,25 +3,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using Castle.Core.Internal;
 
 namespace BHelp
 {
     public static class HoursRoutines
     {
-        public static List<SelectListItem> GetHoursCategories(string cat)
+        public static List<SelectListItem> GetHoursCategoriesSelectList()
         {
-            string selectCat = "";
-            if (!cat.IsNullOrEmpty()) selectCat = cat;
             List<SelectListItem> getHoursCategories = new List<SelectListItem>();
             var selListItem = new SelectListItem() { Value = "F", Text = @"F" };
-            if (selectCat == "F") selListItem.Selected = true; 
             getHoursCategories.Add(selListItem);    // Food Service
             selListItem = new SelectListItem() { Value = "A", Text = @"A" };
-            if (selectCat == "A") selListItem.Selected = true;
             getHoursCategories.Add(selListItem);    // Administration
             selListItem = new SelectListItem() { Value = "M", Text = @"M" };
-            if (selectCat == "M") selListItem.Selected = true;
             getHoursCategories.Add(selListItem);     // Management
             return getHoursCategories;
         }
@@ -35,7 +29,7 @@ namespace BHelp
                 default: return "Food Service";
             }
         }
-        public static List<SelectListItem> GetHoursSubcategories()
+        public static List<SelectListItem> GetHoursSubcategoriesSelectList()
         {
             List<SelectListItem> subCatList = new List<SelectListItem>();
             var selListItem = new SelectListItem() { Value = "(none)", Text = @"(none)" };
@@ -75,23 +69,16 @@ namespace BHelp
                 lastSaturday = lastSaturday.AddDays(-1);
             return lastSaturday;
         }
-        public static Boolean IsIndividual(string usrId)
+        public static bool IsIndividual(string usrId)
         {
             var db = new BHelpContext();
             var usr = db.Users.Find(usrId);
             bool isDeveloper = AppRoutines.UserIsInRole(usr.Id, "Developer");
-            if (isDeveloper)
-            {
-                var isAdministrator = AppRoutines.UserIsInRole(usr.Id, "Administrator");
-                if (isAdministrator)
-                {
-                    var isStaff = AppRoutines.UserIsInRole(usr.Id, "Staff");
-                    if (isStaff)
-                    {
-                        return false; // can enter hours for anyone, any category 
-                    }
-                }
-            }
+            if (isDeveloper) return false;
+            var isAdministrator = AppRoutines.UserIsInRole(usr.Id, "Administrator");
+            if (isAdministrator) return false;
+            var isStaff = AppRoutines.UserIsInRole(usr.Id, "Staff");
+            if (isStaff) return false;
             return true;  // default unless in higher role
         }
         public static List<SelectListItem> SetSelectedSubcategory( List<SelectListItem> list, string subcategory)
@@ -103,6 +90,20 @@ namespace BHelp
                     item.Selected = true;
                     break;
                 }
+            }
+            return list;
+        }
+
+        public static List<SelectListItem> GetActiveUsersSelectList()
+        {
+            var list = new List<SelectListItem>();
+            var db = new BHelpContext();
+            var activeUsers = db.Users.OrderBy(n => n.LastName)
+                .Where(u => u.Active).ToList();
+            foreach (var user in activeUsers)
+            {
+                var usr = new SelectListItem() { Value = user.Id, Text = user.FullName };
+                list .Add(usr);
             }
             return list;
         }

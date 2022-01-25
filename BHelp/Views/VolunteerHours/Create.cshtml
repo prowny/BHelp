@@ -1,4 +1,5 @@
-﻿@model BHelp.ViewModels.VolunteerHoursViewModel
+﻿@using DocumentFormat.OpenXml.Office2010.ExcelAc
+@model BHelp.ViewModels.VolunteerHoursViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -31,53 +32,68 @@
             @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
         </div>
         <hr>
-        <span><i>Use this section to submit new hours records:</i></span>
-        <div id="IndividualEntryDiv">
+        <span><i>Use this section to submit new hours:</i></span>
+        <div id="SubmitHoursDiv">
             <table>
-                <tr>
-                    <td>Volunteer</td>
-                    <td>Category</td>
-                    <td>Subcategory</td>
-                </tr>
+                <tr><td>Volunteer</td><td>Category</td><td>Subcategory</td></tr>
+                
+                @if (!Model.IsIndividual)
+                {
+                    <tr>
+                        <td>
+                            @Html.DropDownListFor(model => model.UserId,
+                                new SelectList(Model.UserList, "Value", "Text"))
+                        </td>
+                        <td>
+                            @Html.DropDownListFor(model => model.Category,
+                                new SelectList(Model.UserList, "Value", "Text"))
+                        </td>
+                        <td>
+                            @Html.DropDownListFor(model => model.Subcategory,
+                                new SelectList(Model.UserList, "Value", "Text"))
+                        </td>
+                    </tr>
+                }
                 <tr>
                     <td>
                         @Html.TextBoxFor(model => model.VolunteerName,
                         new { @readonly = true, style = "width: 140px" })
-                </td>
-                <td>
-                    @Html.TextBoxFor(model => model.CategoryName,
-                        new { @readonly = true, style = "width: 85px" })
-                </td>
-                <td>
-                    @Html.TextBoxFor(model => model.SubcategoryName,
-                        new { @readonly = true, style = "width: 130px" })
-                </td>
-            </tr>
-        </table>
-        <table>
-            <tr>
-                <td><b>for Date:</b></td>
-                <td>
-                    @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
-                        new { id = "HoursDate", style = "width: 75px;" })
-                    <span style="color: darkmagenta">&#8592;Click to change</span> @*Html left-arrow*@
-                </td>
-            </tr>
-        </table>
-        <table>
-            <tr>
-                <td style="text-align: right"><b>Hours:</b></td>
-                <td>
-                    @Html.EditorFor(m => m.Hours, new { htmlAttributes = new { min = "0", max = "80" }, id = "Hours" })
-                    @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })
-                </td>
-                <td style="text-align: right"><b>Minutes:</b></td>
-                <td>
-                    @Html.EditorFor(m => m.Minutes, new { htmlAttributes = new { min = "0", max = "59" }, id = "Minutes" })
-                    @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
-                </td>
-            </tr>
-        </table>
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(model => model.CategoryName,
+                            new { @readonly = true, style = "width: 85px" })
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(model => model.SubcategoryName,
+                            new { @readonly = true, style = "width: 130px" })
+                    </td>
+                </tr>
+            </table>
+            
+            <table>
+                <tr>
+                    <td><b>for Date:</b></td>
+                    <td>
+                        @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
+                            new { id = "HoursDate", style = "width: 75px;" })
+                        <span style="color: darkmagenta">&#8592;Click to change. (Also to set the week-ending date in the section below.) </span> @*Html left-arrow*@
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td style="text-align: right"><b>Hours:</b></td>
+                    <td>
+                        @Html.EditorFor(m => m.Hours, new { htmlAttributes = new { min = "0", max = "80" }, id = "Hours" })
+                        @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })
+                    </td>
+                    <td style="text-align: right"><b>Minutes:</b></td>
+                    <td>
+                        @Html.EditorFor(m => m.Minutes, new { htmlAttributes = new { min = "0", max = "59" }, id = "Minutes" })
+                        @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
+                    </td>
+                </tr>
+            </table>
     </div>
 
     <div id="SubmitDiv" class="col-md-offset-2 col-md-10">

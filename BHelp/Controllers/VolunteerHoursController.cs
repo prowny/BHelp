@@ -100,6 +100,20 @@ namespace BHelp.Controllers
                 }
             }
 
+            if (!isIndividual)  // not individual - can update all users and categories.
+            {
+                if (Session["ActiveUsers"] == null)
+                {
+                    var activeUsers = HoursRoutines.GetActiveUsersSelectList();
+                    Session["ActiveUsers"] = activeUsers;
+                    view.UserList = activeUsers;
+                }
+                else
+                {
+                    view.UserList = (List<SelectListItem>)Session["ActiveUsers"];
+                }
+            }
+
             return View(view);
         }
 
@@ -176,15 +190,11 @@ namespace BHelp.Controllers
                 HoursString = rec.Hours.ToString(),
                 Minutes = rec.Minutes,
                 MinutesString = rec.Minutes.ToString(),
-                CategoryList = HoursRoutines.GetHoursCategories(rec.Category),
-                SubcategoryList = HoursRoutines.GetHoursSubcategories(),
+                CategoryList = HoursRoutines.GetHoursCategoriesSelectList(),
+                SubcategoryList = HoursRoutines.GetHoursSubcategoriesSelectList(),
                 SubmitError = submitError
             };
-            if (view.IsIndividual) // Load subcategory selected
-            {
-                view.SubcategoryList = HoursRoutines.SetSelectedSubcategory(
-                    view.SubcategoryList, view.Subcategory);
-            }
+
             return View(view);
         }
 

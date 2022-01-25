@@ -37,13 +37,13 @@ namespace BHelp.Controllers
                 return HttpNotFound();
             }
 
-            user.VolunteerCategories = HoursRoutines.GetHoursCategories(null);
+            user.VolunteerCategories = HoursRoutines.GetHoursCategoriesSelectList();
             foreach (var cat in user.VolunteerCategories)
             {
                 if (user.VolunteerCategory == cat.Value) cat.Selected = true;
             }
 
-            user.VolunteerSubcategories = HoursRoutines.GetHoursSubcategories();
+            user.VolunteerSubcategories = HoursRoutines.GetHoursSubcategoriesSelectList();
             foreach (var subCat in user.VolunteerSubcategories)
             {
                 if (user.VolunteerSubcategory == subCat .Value) subCat.Selected = true;
