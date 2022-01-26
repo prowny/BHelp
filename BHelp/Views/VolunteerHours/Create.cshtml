@@ -1,5 +1,4 @@
-﻿@using DocumentFormat.OpenXml.Office2010.ExcelAc
-@model BHelp.ViewModels.VolunteerHoursViewModel
+﻿@model BHelp.ViewModels.VolunteerHoursViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -42,15 +41,18 @@
                     <tr>
                         <td>
                             @Html.DropDownListFor(model => model.UserId,
-                                new SelectList(Model.UserList, "Value", "Text"))
+                                new SelectList(Model.UserList, "Value", "Text"),
+                                new { id = "UserDDL" })
                         </td>
                         <td>
                             @Html.DropDownListFor(model => model.Category,
-                                new SelectList(Model.UserList, "Value", "Text"))
+                                new SelectList(Model.CategoryList, "Value", "Text"),
+                                new { id = "CategoryDDL"})
                         </td>
                         <td>
                             @Html.DropDownListFor(model => model.Subcategory,
-                                new SelectList(Model.UserList, "Value", "Text"))
+                                new SelectList(Model.SubcategoryList, "Value", "Text"),
+                                new { id = "SubcategoryDDL"})
                         </td>
                     </tr>
                 }
@@ -152,11 +154,28 @@
     });
 </script>
 <script type="text/javascript">
-        $(function () {
-            window.$('#HoursDate').change(function () {
-                var _hoursDate = window.$(this).val();
-                window.location.href = '@Url.Action("Create",
-                                            "VolunteerHours")' + '?hoursDate=' + _hoursDate;
-            });
+    $(function () {
+        window.$('#HoursDate').change(function () {
+            var _hoursDate = window.$(this).val();
+            window.location.href = '@Url.Action("Create",
+                                        "VolunteerHours")' + '?hoursDate=' + _hoursDate;
         });
-    </script>
+    });
+</script>
+@*<script>
+    function userChange(val) {
+        window.location.href = '@Url.Action("Create",
+                                        "VolunteerHours")' + '? userId = ' + val; 
+    }
+</script>*@
+<script>
+    $(function() {
+        window.$('#UserDDL').change(function () {
+            var _userId = window.$(this).val();
+            var link = '@Url.Action("Create", "VolunteerHours",
+                            new { userId = "-1" })';
+            link = link.replace("-1", _userId);
+            window.location.href = link;
+        });
+    });
+</script>

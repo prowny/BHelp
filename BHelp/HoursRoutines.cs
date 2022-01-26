@@ -8,6 +8,19 @@ namespace BHelp
 {
     public static class HoursRoutines
     {
+        public static List<SelectListItem> GetActiveUsersSelectList()
+        {
+            var list = new List<SelectListItem>();
+            var db = new BHelpContext();
+            var activeUsers = db.Users.OrderBy(n => n.LastName)
+                .Where(u => u.Active).ToList();
+            foreach (var user in activeUsers)
+            {
+                var usr = new SelectListItem() { Value = user.Id, Text = user.FullName };
+                list.Add(usr);
+            }
+            return list;
+        }
         public static List<SelectListItem> GetHoursCategoriesSelectList()
         {
             List<SelectListItem> getHoursCategories = new List<SelectListItem>();
@@ -19,23 +32,13 @@ namespace BHelp
             getHoursCategories.Add(selListItem);     // Management
             return getHoursCategories;
         }
-        public static string GetCategoryName(string catName)
-        {
-            switch (catName)
-            {
-                case "A": return "Administration";
-                case "M": return "Management";
-                case "F": return "Food Service";
-                default: return "Food Service";
-            }
-        }
         public static List<SelectListItem> GetHoursSubcategoriesSelectList()
         {
             List<SelectListItem> subCatList = new List<SelectListItem>();
             var selListItem = new SelectListItem() { Value = "(none)", Text = @"(none)" };
-            subCatList.Add(selListItem);   
+            subCatList.Add(selListItem);
             selListItem = new SelectListItem() { Value = "Bagger", Text = @"Bagger" };
-            subCatList.Add(selListItem);   
+            subCatList.Add(selListItem);
             selListItem = new SelectListItem() { Value = "Bagger Supervisor", Text = @"Bagger Supervisor" };
             subCatList.Add(selListItem);
             selListItem = new SelectListItem() { Value = "Driver", Text = @"Driver" };
@@ -48,19 +51,15 @@ namespace BHelp
             subCatList.Add(selListItem);
             return subCatList;
         }
-        public static List<SelectListItem> GetUsersSelectList()
+        public static string GetCategoryName(string catName)
         {
-            var db = new BHelpContext();
-            var usrList = db.Users.Where(u => u.Active)
-                .OrderBy(u => u.LastName).ToList();
-            var usrsSelectList = new List<SelectListItem>();
-            foreach (var user in usrList)
+            switch (catName)
             {
-                var item = new SelectListItem() { Text = user.FullName, Value = user.Id, Selected = false };
-                usrsSelectList.Add(item);
+                case "A": return "Administration";
+                case "M": return "Management";
+                case "F": return "Food Service";
+                default: return "Food Service";
             }
-
-            return usrsSelectList;
         }
         public static DateTime GetPreviousSaturday(DateTime curDt)
         {
@@ -81,29 +80,11 @@ namespace BHelp
             if (isStaff) return false;
             return true;  // default unless in higher role
         }
-        public static List<SelectListItem> SetSelectedSubcategory( List<SelectListItem> list, string subcategory)
+        public static List<SelectListItem> SetSelectedItem( List<SelectListItem> list, string text)
         {
             foreach (var item in list)
             {
-                if (item.Text == subcategory)
-                {
-                    item.Selected = true;
-                    break;
-                }
-            }
-            return list;
-        }
-
-        public static List<SelectListItem> GetActiveUsersSelectList()
-        {
-            var list = new List<SelectListItem>();
-            var db = new BHelpContext();
-            var activeUsers = db.Users.OrderBy(n => n.LastName)
-                .Where(u => u.Active).ToList();
-            foreach (var user in activeUsers)
-            {
-                var usr = new SelectListItem() { Value = user.Id, Text = user.FullName };
-                list .Add(usr);
+                item.Selected = false || item.Text == text;
             }
             return list;
         }

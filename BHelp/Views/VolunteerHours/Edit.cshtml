@@ -82,9 +82,10 @@
             <input name ="btnDelete" type="submit" value="Delete" class="btn btn-default" id="btnDelete"/>
         </div>
     </div>
+
 }
 <div>
-    @Html.ActionLink("Back to Entry", "Create")
+    @Html.ActionLink("Back to Entry", "Create", new { hoursDate = Model.Date })
 </div>
 </body>
 </html>

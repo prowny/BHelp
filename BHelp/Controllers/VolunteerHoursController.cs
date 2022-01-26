@@ -24,10 +24,17 @@ namespace BHelp.Controllers
         // GET: Create Volunteer Hours Entry
         [AllowAnonymous]
         public ActionResult
-            Create(DateTime? hoursDate) // hoursDate will be non-null if a new date is requested by the view
+            Create(DateTime? hoursDate, string userId) // hoursDate will be non-null if a new date is requested by the view
         {
-            if (TempData["HoursDate"] != null) hoursDate = Convert.ToDateTime(TempData["HoursDate"]);
-            var usr = db.Users.Find(User.Identity.GetUserId());
+            if (TempData["HoursDate"] != null)
+            {
+                hoursDate = Convert.ToDateTime(TempData["HoursDate"]);
+                if(TempData["CurrentUserId"] != null){ userId = (string)TempData ["CurrrentUserId"];}
+            }
+            var _id = userId ?? User.Identity.GetUserId();
+            TempData["CurrentUserId"] = _id;
+
+            var usr = db.Users.Find(_id);
             var catName = HoursRoutines.GetCategoryName(usr.VolunteerCategory) ?? "(none)";
             var subcatName = usr.VolunteerSubcategory ?? "(none)";
             bool isIndividual = HoursRoutines.IsIndividual(usr.Id);
@@ -73,7 +80,9 @@ namespace BHelp.Controllers
                 WeekEndingDateString = wkEndString,
                 SubmitError = submitError,
                 IsIndividual = isIndividual,
-                HoursList = new List<VolunteerHoursViewModel>()
+                HoursList = new List<VolunteerHoursViewModel>(),
+                CategoryList =HoursRoutines.GetHoursCategoriesSelectList(),
+                SubcategoryList =HoursRoutines.GetHoursSubcategoriesSelectList()
             };
 
             if (isIndividual) // get hours for individual only
@@ -112,6 +121,30 @@ namespace BHelp.Controllers
                 {
                     view.UserList = (List<SelectListItem>)Session["ActiveUsers"];
                 }
+
+                var recs = db.VolunteerHours
+                    .Where(h => h.Date >= wkBegin && h.Date <= wkEnd).ToList();
+                foreach (var rec in recs)
+                {
+                    var newView = new VolunteerHoursViewModel
+                    {
+                        Id = rec.Id,
+                        UserId = usr.Id,
+                        UserFullName = usr.FullName,
+                        CategoryName = HoursRoutines.GetCategoryName(rec.Category),
+                        Subcategory = rec.Subcategory,
+                        VolunteerName = usr.FullName,
+                        Date = rec.Date,
+                        DateString = rec.Date.ToString("MM/dd/yyyy"),
+                        HoursString = rec.Hours.ToString(),
+                        MinutesString = rec.Minutes.ToString()
+                    };
+                    view.HoursList.Add(newView);
+                }
+
+                view.UserList = HoursRoutines.SetSelectedItem(view.UserList, usr.FullName);
+                view.CategoryList = HoursRoutines.SetSelectedItem(view.CategoryList, usr.VolunteerCategory);
+                view.SubcategoryList = HoursRoutines.SetSelectedItem(view.SubcategoryList, usr.VolunteerSubcategory);
             }
 
             return View(view);
