@@ -1119,6 +1119,15 @@ namespace BHelp.Controllers
                     }
                     var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
                     del.PoundsOfFood = fullWeight;
+                    callLogView.TotalHouseholdCount += del.HouseoldCount;
+                    callLogView.TotalChildren += del.Children;
+                    callLogView.TotalAdults += del.Adults;
+                    callLogView.TotalSeniors += del.Seniors;
+                    callLogView.TotalFullBags += del.FullBags;
+                    callLogView.TotalHalfBags += del.HalfBags;
+                    callLogView.TotalKidSnacks += del.KidSnacks;
+                    callLogView.TotalGiftCards += del.GiftCards;
+                    callLogView.TotalPoundsOfFood += del.PoundsOfFood;
                 }
                 Session["CallLogByLogDateList"] = callLogView;
                 return View(callLogView);
@@ -1143,7 +1152,7 @@ namespace BHelp.Controllers
                         if (view != null) view.ReportTitle = " CallLog" + DateTime.Today.ToString("MM-dd-yy");
                     }
 
-                    AppRoutines.CallLogHistoryResultToCSV(view, false);
+                    AppRoutines.CallLogHistoryResultToCSV(view, allData);
                     Session["CallLogByLogDateList"] = null;
                 }
         }
@@ -1217,7 +1226,7 @@ namespace BHelp.Controllers
                 return View(callLogView);
             }
 
-            public void CallLogByDateDeliveredToCSV()
+            public void  CallLogByDateDeliveredToCSV(bool allData)
             {
                 if (Session["CallLogByDateDeliveredList"] != null)
                 {
@@ -1237,7 +1246,7 @@ namespace BHelp.Controllers
                         if (view != null) view.ReportTitle = " CallLog" + DateTime.Today.ToString("MM-dd-yy");
                     }
 
-                    AppRoutines.CallLogHistoryResultToCSV(view, false);
+                    AppRoutines.CallLogHistoryResultToCSV(view, allData);
                     Session["CallLogByDateDeliveredList"] = null;
                 }
             }

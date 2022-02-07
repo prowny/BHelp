@@ -113,6 +113,26 @@
                         }
                     </tr>
                 }
+                <tr >
+                    @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
+                    {<td></td>}
+                    <td>Totals</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td ></td>
+                    <td style="text-align: center">@Model.TotalHouseholdCount</td>
+                    <td style="text-align: center">@Model.TotalChildren</td>
+                    <td style="text-align: center">@Model.TotalAdults</td>
+                    <td style="text-align: center">@Model.TotalSeniors</td>
+                    <td style="text-align: center">@Model.TotalFullBags</td>
+                    <td style="text-align: center">@Model.TotalHalfBags</td>
+                    <td style="text-align: center">@Model.TotalKidSnacks</td>
+                    <td style="text-align: center">@Model.TotalGiftCards</td>
+                    <td style="text-align: center">@Model.TotalPoundsOfFood</td>
+
+                </tr>
             </table>
             <br/>
             if (Model.DeliveryList.Count > 0)

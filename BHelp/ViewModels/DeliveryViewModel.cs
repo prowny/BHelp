@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
 using BHelp.Models;
+using DocumentFormat.OpenXml.Office.CoverPageProps;
 
 namespace BHelp.ViewModels
 {
@@ -109,5 +110,14 @@ namespace BHelp.ViewModels
         public DateTime NextGiftCardEligibleDate { get; set; }
         public Boolean EligiibilityRulesException { get; set; }
         public Boolean OkToEdit { get; set; }
+        public int TotalHouseholdCount { get; set; }  // Total in DeliveyList
+        public int TotalChildren { get; set; }  // Total in DeliveyList
+        public int TotalAdults { get; set; }  // Total in DeliveyList
+        public int TotalSeniors { get; set; }  // Total in DeliveyList
+        public int TotalFullBags { get; set; }  // Total in DeliveyList
+        public int TotalHalfBags { get; set; }  // Total in DeliveyList
+        public int TotalKidSnacks { get; set; }  // Total in DeliveyList
+        public int TotalGiftCards { get; set; }  // Total in DeliveyList
+        public int TotalPoundsOfFood { get; set; }  // Total in DeliveyList
     }
 }
