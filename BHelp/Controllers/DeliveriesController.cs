@@ -1221,6 +1221,15 @@ namespace BHelp.Controllers
                         var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
                         del.PoundsOfFood = fullWeight;
                     }
+                    callLogView.TotalHouseholdCount += del.HouseoldCount;
+                    callLogView.TotalChildren += del.Children;
+                    callLogView.TotalAdults += del.Adults;
+                    callLogView.TotalSeniors += del.Seniors;
+                    callLogView.TotalFullBags += del.FullBags;
+                    callLogView.TotalHalfBags += del.HalfBags;
+                    callLogView.TotalKidSnacks += del.KidSnacks;
+                    callLogView.TotalGiftCards += del.GiftCards;
+                    callLogView.TotalPoundsOfFood += del.PoundsOfFood;
                 }
                 Session["CallLogByDateDeliveredList"] = callLogView;
                 return View(callLogView);
