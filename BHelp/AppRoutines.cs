@@ -449,15 +449,23 @@ namespace BHelp
             ws.Range(ws.Cell(1,8), ws.Cell(1,16)).Merge();
 
             var deliveryDateODs = "";
-            foreach (var delDtOD in view.DistinctDeliveryDatesODList)
-            { deliveryDateODs += " OD on " + delDtOD.Value + ": " + delDtOD.Text + ";"; }
+            if (view.DistinctDeliveryDatesODList.Count > 0)
+            {
+                foreach (var delDtOD in view.DistinctDeliveryDatesODList)
+                {
+                    deliveryDateODs += " OD on " + delDtOD.Value + ": " + delDtOD.Text + ";";
+                }
 
-            if (deliveryDateODs.Substring(deliveryDateODs.Length - 1, 1) == ";")
-            { deliveryDateODs = deliveryDateODs.Remove(deliveryDateODs.Length - 1); }
-            ws.Cell(2, 1).SetValue(deliveryDateODs);
-            ws.Cell(2, 1).Style.Alignment.WrapText = true;
-            ws.Cell(2, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-            ws.Range(ws.Cell(2, 1), ws.Cell(2, 18)).Merge();
+                if (deliveryDateODs.Substring(deliveryDateODs.Length - 1, 1) == ";")
+                {
+                    deliveryDateODs = deliveryDateODs.Remove(deliveryDateODs.Length - 1);
+                }
+
+                ws.Cell(2, 1).SetValue(deliveryDateODs);
+                ws.Cell(2, 1).Style.Alignment.WrapText = true;
+                ws.Cell(2, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                ws.Range(ws.Cell(2, 1), ws.Cell(2, 18)).Merge();
+            }
 
             ws.Columns("1").Width = 10;
             ws.Cell(3, 1).SetValue("Delivery Date").Style.Font.SetBold(true);

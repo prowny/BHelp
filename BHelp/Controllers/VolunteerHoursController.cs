@@ -109,7 +109,8 @@ namespace BHelp.Controllers
                 }
             }
 
-            if (!isIndividual)  // not individual - can update all users and categories.
+            // ============  not individual - can update all users and categories. ===========
+            if (!isIndividual) 
             {
                 if (Session["ActiveUsers"] == null)
                 {
@@ -129,16 +130,17 @@ namespace BHelp.Controllers
                     var newView = new VolunteerHoursViewModel
                     {
                         Id = rec.Id,
-                        UserId = usr.Id,
-                        UserFullName = usr.FullName,
+                        UserId = rec.UserId,
                         CategoryName = HoursRoutines.GetCategoryName(rec.Category),
                         Subcategory = rec.Subcategory,
-                        VolunteerName = usr.FullName,
                         Date = rec.Date,
                         DateString = rec.Date.ToString("MM/dd/yyyy"),
                         HoursString = rec.Hours.ToString(),
                         MinutesString = rec.Minutes.ToString()
                     };
+                    var _usr = db.Users.Find(rec.UserId);
+                    if (_usr != null)
+                    { newView.VolunteerName = _usr.FullName; }
                     view.HoursList.Add(newView);
                 }
 
