@@ -18,48 +18,49 @@
     <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
 </head>
 <body>
-    @using (Html.BeginForm("Create", "VolunteerHours", FormMethod.Post))
-    {
-        <div id="HeaderDiv">
-            @Html.HiddenFor(m => m.Id)
-            @Html.HiddenFor(m => m.UserId)
-            @Html.HiddenFor(m => m.Category)
-            @Html.HiddenFor(m => m.Subcategory)
-            @Html.HiddenFor(m => m.Date)
-            @Html.AntiForgeryToken()
-            <span><b>Bethesda Help Enter Volunteer Hours</b></span>&nbsp;&nbsp;&nbsp;
-            @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
-        </div>
-        <hr>
-        <span><i>Use this section to submit new hours:</i></span>
-        <div id="SubmitHoursDiv">
-            <table>
-                <tr><td>Volunteer</td><td>Category</td><td>Subcategory</td></tr>
-                
-                @if (!Model.IsIndividual)
-                {
-                    <tr>
-                        <td>
-                            @Html.DropDownListFor(model => model.UserId,
-                                new SelectList(Model.UserList, "Value", "Text"),
-                                new { id = "UserDDL" })
-                        </td>
-                        <td>
-                            @Html.DropDownListFor(model => model.Category,
-                                new SelectList(Model.CategoryList, "Value", "Text"),
-                                new { id = "CategoryDDL"})
-                        </td>
-                        <td>
-                            @Html.DropDownListFor(model => model.Subcategory,
-                                new SelectList(Model.SubcategoryList, "Value", "Text"),
-                                new { id = "SubcategoryDDL"})
-                        </td>
-                    </tr>
-                }
-                @*<tr>
+@using (Html.BeginForm("Create", "VolunteerHours", FormMethod.Post))
+{
+    <div id="HeaderDiv">
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.UserId)
+        @Html.HiddenFor(m => m.Category)
+        @Html.HiddenFor(m => m.Subcategory)
+        @Html.HiddenFor(m => m.Date)
+        @Html.AntiForgeryToken()
+        <span><b>Bethesda Help Enter Volunteer Hours</b></span>&nbsp;&nbsp;&nbsp;
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
+    <hr>
+    <span><i>Use this section to submit new hours:</i></span>
+    <div id="SubmitHoursDiv">
+        <table>
+            <tr><td>Volunteer</td><td>Category</td><td>Subcategory</td></tr>
+            @if (!Model.IsIndividual)
+            { /* this section for non-individuals (with dropdown boxes) */
+                <tr>
+                    <td>
+                        @Html.DropDownListFor(model => model.UserId,
+                            new SelectList(Model.UserList, "Value", "Text"),
+                            new { id = "UserDDL" })
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(model => model.Category,
+                            new SelectList(Model.CategoryList, "Value", "Text"),
+                            new { id = "CategoryDDL"})
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(model => model.Subcategory,
+                            new SelectList(Model.SubcategoryList, "Value", "Text"),
+                            new { id = "SubcategoryDDL"})
+                    </td>
+                </tr>
+            }
+            else 
+            { /* this section for individuals (no dropdown boxes) */
+                <tr>
                     <td>
                         @Html.TextBoxFor(model => model.VolunteerName,
-                        new { @readonly = true, style = "width: 140px" })
+                            new { @readonly = true, style = "width: 140px" })
                     </td>
                     <td>
                         @Html.TextBoxFor(model => model.CategoryName,
@@ -69,33 +70,34 @@
                         @Html.TextBoxFor(model => model.SubcategoryName,
                             new { @readonly = true, style = "width: 130px" })
                     </td>
-                </tr>*@
-            </table>
+                </tr>
+            }
+        </table>
             
-            <table>
-                <tr>
-                    <td><b>for Date:</b></td>
-                    <td>
-                        @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
-                            new { id = "HoursDate", style = "width: 75px;" })
-                        <span style="color: darkmagenta">&#8592;Click to change. (Also to set the week-ending date in the section below.) </span> @*Html left-arrow*@
-                    </td>
-                </tr>
-            </table>
-            <table>
-                <tr>
-                    <td style="text-align: right"><b>Hours:</b></td>
-                    <td>
-                        @Html.EditorFor(m => m.Hours, new { htmlAttributes = new { min = "0", max = "80" }, id = "Hours" })
-                        @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })
-                    </td>
-                    <td style="text-align: right"><b>Minutes:</b></td>
-                    <td>
-                        @Html.EditorFor(m => m.Minutes, new { htmlAttributes = new { min = "0", max = "59" }, id = "Minutes" })
-                        @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
-                    </td>
-                </tr>
-            </table>
+        <table>
+            <tr>
+                <td><b>for Date:</b></td>
+                <td>
+                    @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
+                        new { id = "HoursDate", style = "width: 75px;" })
+                    <span style="color: darkmagenta">&#8592;Click to change. (Also to set the week-ending date in the section below.) </span> @*Html left-arrow*@
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td style="text-align: right"><b>Hours:</b></td>
+                <td>
+                    @Html.EditorFor(m => m.Hours, new { htmlAttributes = new { min = "0", max = "80" }, id = "Hours" })
+                    @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })
+                </td>
+                <td style="text-align: right"><b>Minutes:</b></td>
+                <td>
+                    @Html.EditorFor(m => m.Minutes, new { htmlAttributes = new { min = "0", max = "59" }, id = "Minutes" })
+                    @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+        </table>
     </div>
 
     <div id="SubmitDiv" class="col-md-offset-2 col-md-10">
@@ -122,32 +124,32 @@
                     <td style="text-align: center"><b>Date</b></td>
                     <td><b>Hours</b></td>
                     <td><b>Minutes</b></td>
-
                 </tr>
                 @foreach (var item in Model.HoursList)
                 {
-            <tr>
-                <td>@Html.ActionLink("Edit", "Edit", new { recId = item.Id })</td>
-                <td>@Html.Label(item.UserFullName)</td>
-                <td>@Html.Label(item.CategoryName)</td>
-                <td>@Html.Label(item.Subcategory)</td>
-                <td>@Html.Label(item.DateString)</td>
-                <td style="text-align: center">@Html.Label(item.HoursString)</td>
-                <td style="text-align: center">@Html.Label(item.MinutesString)</td>
-            </tr>
+                    <tr>
+                        <td>@Html.ActionLink("Edit", "Edit", new { recId = item.Id })</td>
+                        <td>@Html.Label(item.VolunteerName)</td>
+                        <td>@Html.Label(item.CategoryName)</td>
+                        <td>@Html.Label(item.Subcategory)</td>
+                        <td>@Html.Label(item.DateString)</td>
+                        <td style="text-align: center">@Html.Label(item.HoursString)</td>
+                        <td style="text-align: center">@Html.Label(item.MinutesString)</td>
+                    </tr>
                 }
             </table>
         </div>
     }
     <br />
     <div>
-        @Html.ActionLink("Back to Hours Menu", "Index")
-        <br />
+        @*@Html.ActionLink("Back to Hours Menu", "Index")
+        <br />*@
         @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
     </div>
 }
 </body>
 </html>
+
 <script type="text/javascript">
     $(function () {
         window.$("#HoursDate").datepicker({ maxDate: +0 });

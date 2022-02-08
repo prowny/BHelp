@@ -39,7 +39,7 @@
             <a href="@Url.Action("SetStatusFlags", "Home")">Set Status Flags</a><br />*@
         <a href="@Url.Action("Index", "GroupNames")">Maintain Group Names</a><br />
         <a href="@Url.Action("Index", "GroupMembers")">Maintain Group Members</a><br />
-        <a href="@Url.Action("Index", "VolunteerHours")">Volunteer Hours</a><br />
+        <a href="@Url.Action("Create", "VolunteerHours")">Volunteer Hours</a><br />
         <br />
     </div>
     }
@@ -94,10 +94,11 @@
 <br />
 
 <div>
-    <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br />
-    <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br />
-    <a href="@Url.Action("GoToBHelpSite", "Home")">Go To Bethesda Help Website</a><br />
-    <br />
+    <a href="@Url.Action("Create", "VolunteerHours")">Enter Volunteer Hours</a><br />
+    <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br/>
+    <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br/>
+    <a href="@Url.Action("GoToBHelpSite", "Home")">Go To Bethesda Help Website</a><br/>
+    <br/>
     @Html.AntiForgeryToken()
     <a href="@Url.Action("Logout", "Home")">LogOut</a>
 </div>

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using BHelp.Models;
 
 namespace BHelp
 {
@@ -24,19 +25,23 @@ namespace BHelp
         public static List<SelectListItem> GetHoursCategoriesSelectList()
         {
             List<SelectListItem> getHoursCategories = new List<SelectListItem>();
-            var selListItem = new SelectListItem() { Value = "F", Text = @"F" };
+            var selListItem = new SelectListItem() { Value = "F", Text = @"Food Service" };
             getHoursCategories.Add(selListItem);    // Food Service
-            selListItem = new SelectListItem() { Value = "A", Text = @"A" };
+            selListItem = new SelectListItem() { Value = "A", Text = @"Administration" };
             getHoursCategories.Add(selListItem);    // Administration
-            selListItem = new SelectListItem() { Value = "M", Text = @"M" };
+            selListItem = new SelectListItem() { Value = "M", Text = @"Management" };
             getHoursCategories.Add(selListItem);     // Management
             return getHoursCategories;
         }
-        public static List<SelectListItem> GetHoursSubcategoriesSelectList()
+        public static List<SelectListItem> GetHoursSubcategoriesSelectList(ApplicationUser usr)
         {
             List<SelectListItem> subCatList = new List<SelectListItem>();
             var selListItem = new SelectListItem() { Value = "(none)", Text = @"(none)" };
             subCatList.Add(selListItem);
+
+            if (usr.VolunteerCategory == "M" || usr.VolunteerCategory == "A")
+            { return subCatList; }
+
             selListItem = new SelectListItem() { Value = "Bagger", Text = @"Bagger" };
             subCatList.Add(selListItem);
             selListItem = new SelectListItem() { Value = "Bagger Supervisor", Text = @"Bagger Supervisor" };
@@ -84,7 +89,8 @@ namespace BHelp
         {
             foreach (var item in list)
             {
-                item.Selected = false || item.Text == text;
+                item.Selected = false;
+                if (item.Text == text) { item.Selected = true; }
             }
             return list;
         }

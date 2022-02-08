@@ -18,6 +18,8 @@ namespace BHelp.Controllers
         [AllowAnonymous]
         public ActionResult Index() // shows Enter / Maintain menu
         {
+            if (!User.IsInRole("Administrator") && !User.IsInRole("Staff"))
+            { return RedirectToAction("Create");}
             return View();
         }
 
@@ -31,13 +33,15 @@ namespace BHelp.Controllers
                 hoursDate = Convert.ToDateTime(TempData["HoursDate"]);
                 if(TempData["CurrentUserId"] != null){ userId = (string)TempData ["CurrrentUserId"];}
             }
-            var _id = userId ?? User.Identity.GetUserId();
+
+            var _curUsrId = User.Identity.GetUserId();
+            var _id = userId ??_curUsrId;
             TempData["CurrentUserId"] = _id;
 
             var usr = db.Users.Find(_id);
             var catName = HoursRoutines.GetCategoryName(usr.VolunteerCategory) ?? "(none)";
             var subcatName = usr.VolunteerSubcategory ?? "(none)";
-            bool isIndividual = HoursRoutines.IsIndividual(usr.Id);
+            bool isIndividual = HoursRoutines.IsIndividual(_curUsrId);
 
             var entryDate = DateTime.Today;
             DateTime wkBegin;
@@ -82,7 +86,7 @@ namespace BHelp.Controllers
                 IsIndividual = isIndividual,
                 HoursList = new List<VolunteerHoursViewModel>(),
                 CategoryList =HoursRoutines.GetHoursCategoriesSelectList(),
-                SubcategoryList =HoursRoutines.GetHoursSubcategoriesSelectList()
+                SubcategoryList =HoursRoutines.GetHoursSubcategoriesSelectList(usr)
             };
 
             if (isIndividual) // get hours for individual only
@@ -226,7 +230,7 @@ namespace BHelp.Controllers
                 Minutes = rec.Minutes,
                 MinutesString = rec.Minutes.ToString(),
                 CategoryList = HoursRoutines.GetHoursCategoriesSelectList(),
-                SubcategoryList = HoursRoutines.GetHoursSubcategoriesSelectList(),
+                SubcategoryList = HoursRoutines.GetHoursSubcategoriesSelectList(hoursUser),
                 SubmitError = submitError
             };
 

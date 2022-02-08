@@ -43,7 +43,7 @@ namespace BHelp.Controllers
                 if (user.VolunteerCategory == cat.Value) cat.Selected = true;
             }
 
-            user.VolunteerSubcategories = HoursRoutines.GetHoursSubcategoriesSelectList();
+            user.VolunteerSubcategories = HoursRoutines.GetHoursSubcategoriesSelectList(user);
             foreach (var subCat in user.VolunteerSubcategories)
             {
                 if (user.VolunteerSubcategory == subCat .Value) subCat.Selected = true;
