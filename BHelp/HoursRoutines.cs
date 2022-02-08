@@ -73,6 +73,15 @@ namespace BHelp
                 lastSaturday = lastSaturday.AddDays(-1);
             return lastSaturday;
         }
+
+        public static DateTime GetPreviousMonday(DateTime curDt)
+        {
+            var lastMonday = curDt;
+            while (lastMonday.DayOfWeek != DayOfWeek.Monday)
+                lastMonday = lastMonday.AddDays(-1);
+            return lastMonday;
+        }
+
         public static bool IsIndividual(string usrId)
         {
             var db = new BHelpContext();

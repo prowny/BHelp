@@ -50,17 +50,17 @@ namespace BHelp.Controllers
             string wkEndString;
             if (hoursDate == null)
             {
-                wkBegin = HoursRoutines.GetPreviousSaturday(DateTime.Today);
+                wkBegin = HoursRoutines.GetPreviousMonday(DateTime.Today);
                 wkBeginString = wkBegin.ToString("MM/dd/yyyy");
-                wkEnd = wkBegin.AddDays(6);
+                wkEnd = wkBegin.AddDays(4);
                 wkEndString = wkEnd.ToString("MM/dd/yyyy");
             }
             else
             {
                 entryDate = hoursDate.Value;
-                wkBegin = HoursRoutines.GetPreviousSaturday(hoursDate.Value);
+                wkBegin = HoursRoutines.GetPreviousMonday(hoursDate.Value);
                 wkBeginString = wkBegin.ToString("MM/dd/yyyy");
-                wkEnd = wkBegin.AddDays(6);
+                wkEnd = wkBegin.AddDays(4);
                 wkEndString = wkEnd.ToString("MM/dd/yyyy");
             }
 

@@ -26,6 +26,7 @@
         @Html.HiddenFor(m => m.Category)
         @Html.HiddenFor(m => m.Subcategory)
         @Html.HiddenFor(m => m.Date)
+        @Html.Hidden("IsIndividual", Model.IsIndividual)
         @Html.AntiForgeryToken()
         <span><b>Bethesda Help Enter Volunteer Hours</b></span>&nbsp;&nbsp;&nbsp;
         @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
@@ -77,11 +78,22 @@
         <table>
             <tr>
                 <td><b>for Date:</b></td>
+                @if(Model.IsIndividual)
+                {
                 <td>
                     @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
                         new { id = "HoursDate", style = "width: 75px;" })
                     <span style="color: darkmagenta">&#8592;Click to change. (Also to set the week-ending date in the section below.) </span> @*Html left-arrow*@
                 </td>
+                }
+                else
+                {
+                    <td>
+                        @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
+                            new { id = "HoursDateNonIndiividual", style = "width: 75px;" })
+                        <span style="color: darkmagenta">&#8592;Click to change. (Also to set the week-ending date in the section below.) </span> @*Html left-arrow*@
+                    </td> 
+                }
             </tr>
         </table>
         <table>
@@ -151,12 +163,39 @@
 </html>
 
 <script type="text/javascript">
+    var setMinDate = 0;
+    var dateToday = new Date();
+    var dayToday = dateToday.getDay();
+    if (dayToday === 1) { setMinDate = -1; } /* go back to previous Monday*/
+    if (dayToday === 2) { setMinDate = -2; }
+    if (dayToday === 3) { setMinDate = -3; }
+    if (dayToday === 4) { setMinDate = -4; }
+    if (dayToday === 5) { setMinDate = -5; }
     $(function () {
-        window.$("#HoursDate").datepicker({ maxDate: +0 });
+        window.$("#HoursDate").datepicker({
+            maxDate: +0, minDate: setMinDate, beforeShowDay: window.$.datepicker.noWeekends });
     });
 </script>
+
 <script type="text/javascript">
+    /* DatePicker for All Users*/
+    var setMinDate = 0;
+    var dateToday = new Date();
+    var dayToday = dateToday.getDay();
+    if (dayToday === 1) { setMinDate = -3; } /* go back to previous Friday*/
+    if (dayToday === 2) { setMinDate = -4; }
+    if (dayToday === 3) { setMinDate = -5; }
+    if (dayToday === 4) { setMinDate = -6; }
+    if (dayToday === 5) { setMinDate = -7; }
     $(function () {
+        window.$("#HoursDateNonIndiividual").datepicker({
+            maxDate: +0, minDate: setMinDate , beforeShowDay: window.$.datepicker.noWeekends
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    window.$(function () {
         window.$('#HoursDate').change(function () {
             var _hoursDate = window.$(this).val();
             window.location.href = '@Url.Action("Create",
@@ -164,14 +203,19 @@
         });
     });
 </script>
-@*<script>
-    function userChange(val) {
-        window.location.href = '@Url.Action("Create",
-                                        "VolunteerHours")' + '? userId = ' + val; 
-    }
-</script>*@
+
+<script type="text/javascript">
+    window.$(function () {
+        window.$('#HoursDateNonIndiividual').change(function () {
+            var _hoursDate = window.$(this).val();
+            window.location.href = '@Url.Action("Create",
+                                        "VolunteerHours")' + '?hoursDate=' + _hoursDate;
+        });
+    });
+</script>
+
 <script>
-    $(function() {
+    window.$(function() {
         window.$('#UserDDL').change(function () {
             var _userId = window.$(this).val();
             var link = '@Url.Action("Create", "VolunteerHours",
