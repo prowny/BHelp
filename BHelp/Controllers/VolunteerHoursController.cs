@@ -179,12 +179,12 @@ namespace BHelp.Controllers
             if (oldRec != null)
             {
                 TempData["SubmitError"] = "A record for this date & categories was already submitted!";
-                return RedirectToAction("Create");
+                return RedirectToAction("Create", new{userId = model.UserId });
             }
 
             if (model.Subcategory == null) model.Subcategory = "(none)";
                 
-            var newRec = new VolunteerHours()
+            var newRec = new VolunteerHours
             {
                 UserId = model.UserId,
                 OriginatorUserId = System.Web.HttpContext.Current.User.Identity.GetUserId(),

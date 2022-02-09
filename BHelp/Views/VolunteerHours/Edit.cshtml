@@ -41,10 +41,10 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Subcategory, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(m => m.Subcategory, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(model => model.Subcategory, new SelectList(Model.SubcategoryList,"Value","Text"), new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Subcategory, "", new { @class = "text-danger" })
+                @Html.DropDownListFor(m => m.Subcategory, new SelectList(Model.SubcategoryList,"Value","Text"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Subcategory, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -90,7 +90,16 @@
 </body>
 </html>
 <script type="text/javascript">
+    var setMinDate = 0;
+    var dateToday = new Date();
+    var dayToday = dateToday.getDay();
+    if (dayToday === 1) { setMinDate = -1; } /* go back to previous Monday*/
+    if (dayToday === 2) { setMinDate = -2; }
+    if (dayToday === 3) { setMinDate = -3; }
+    if (dayToday === 4) { setMinDate = -4; }
+    if (dayToday === 5) { setMinDate = -5; }
     $(function () {
-        window.$("#HoursDate").datepicker({ maxDate: +0 });
+        window.$("#HoursDate").datepicker({
+            maxDate: +0, minDate: setMinDate, beforeShowDay: window.$.datepicker.noWeekends});
     });
 </script>

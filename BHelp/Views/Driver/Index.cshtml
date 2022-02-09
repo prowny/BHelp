@@ -20,23 +20,25 @@
             <tr>
                 <td><b>DelivDate</b></td>
                 <td><b>Driver</b></td>
-                <td><b>Zip</b></td>
+                <td style="text-align: center"><b>Zip</b></td>
                 <td><b>Client</b></td>
+                <td><b>City</b></td>
                 <td><b>Phone</b></td>
                 <td><b>#HH</b></td>
             </tr>
 
             @foreach (var item in Model.DeliveryList)
             {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.DateDelivered)</td>
-                <td>@Html.DisplayFor(modelItem => item.DriverName)</td>
-                <td>@Html.DisplayFor(modelItem => item.Zip)</td>
-                <td>@Html.DisplayFor(modelItem => item.ClientNameAddress)</td>
-                <td>@Html.DisplayFor(modelItem => item.Phone)</td>
-                <td style="text-align: center">@Html.DisplayFor(modelItem => item.HouseoldCount)</td>
-                <td>@Html.ActionLink("Edit", "Edit", new { id = item.Id })</td>
-            </tr>
+        <tr>
+            <td>@Html.DisplayFor(modelItem => item.DateDelivered)</td>
+            <td>@Html.DisplayFor(modelItem => item.DriverName)</td>
+            <td>@Html.DisplayFor(modelItem => item.Zip)</td>
+            <td>@Html.DisplayFor(modelItem => item.ClientNameAddress)</td>
+            <td>@Html.DisplayFor(modelItem => item.City)</td>
+            <td>@Html.DisplayFor(modelItem => item.Phone)</td>
+            <td style="text-align: center">@Html.DisplayFor(modelItem => item.HouseoldCount)</td>
+            <td>@Html.ActionLink("Edit", "Edit", new { id = item.Id })</td>
+        </tr>
             }
         </table>
     }

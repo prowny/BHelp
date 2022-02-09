@@ -94,7 +94,11 @@
 <br />
 
 <div>
-    <a href="@Url.Action("Create", "VolunteerHours")">Enter Volunteer Hours</a><br />
+    @if (!(User.IsInRole("OfficerOfTheDay") && !User.IsInRole("Administrator") && !User.IsInRole("Staff")))
+    {
+        <a href="@Url.Action("Create", "VolunteerHours")">Enter Volunteer Hours</a>
+        <br/>
+    }
     <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br/>
     <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br/>
     <a href="@Url.Action("GoToBHelpSite", "Home")">Go To Bethesda Help Website</a><br/>

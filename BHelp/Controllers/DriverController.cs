@@ -48,6 +48,7 @@ namespace BHelp.Controllers
                 var client = db.Clients.Find(delivery.ClientId);
                 if (client != null)
                 {
+                    delivery.City = client.City;
                     delivery.ClientNameAddress = client.LastName + ", " + client.FirstName
                        + " " + client.StreetNumber + " " + client.StreetName;
                     delivery.Notes = client.Notes;

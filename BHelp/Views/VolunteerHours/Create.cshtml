@@ -21,11 +21,6 @@
 @using (Html.BeginForm("Create", "VolunteerHours", FormMethod.Post))
 {
     <div id="HeaderDiv">
-        @Html.HiddenFor(m => m.Id)
-        @Html.HiddenFor(m => m.UserId)
-        @Html.HiddenFor(m => m.Category)
-        @Html.HiddenFor(m => m.Subcategory)
-        @Html.HiddenFor(m => m.Date)
         @Html.Hidden("IsIndividual", Model.IsIndividual)
         @Html.AntiForgeryToken()
         <span><b>Bethesda Help Enter Volunteer Hours</b></span>&nbsp;&nbsp;&nbsp;
@@ -45,12 +40,12 @@
                             new { id = "UserDDL" })
                     </td>
                     <td>
-                        @Html.DropDownListFor(model => model.Category,
+                        @Html.DropDownListFor(m => m.Category,
                             new SelectList(Model.CategoryList, "Value", "Text"),
-                            new { id = "CategoryDDL"})
+                            new { id = "CategoryDDL" })
                     </td>
                     <td>
-                        @Html.DropDownListFor(model => model.Subcategory,
+                        @Html.DropDownListFor(m => m.Subcategory,
                             new SelectList(Model.SubcategoryList, "Value", "Text"),
                             new { id = "SubcategoryDDL"})
                     </td>
