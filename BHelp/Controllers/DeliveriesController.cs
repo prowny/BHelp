@@ -1260,7 +1260,7 @@ namespace BHelp.Controllers
                 }
             }
 
-            [Authorize(Roles = "Administrator,Staff,Developer")]
+            [Authorize(Roles = "Reports,Administrator,Staff,Developer")]
             public ActionResult ReportsMenu()
             {
                 return View();

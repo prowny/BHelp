@@ -58,20 +58,27 @@
 
     @if (User.IsInRole("Staff") || User.IsInRole("Administrator"))
     {
-<div>
-    <strong>Staff Menu</strong><br />
-    <a href="@Url.Action("Index", "Clients")">Maintain Clients</a>
-    <span style="color: darkmagenta">("Alpha List")</span><br />
-    <a href="@Url.Action("Index", "OD")">Maintain Family Members (Family)</a>
-    <span style="color: darkmagenta"> (Go to OD Select Client page)</span><br />
-    <a href="@Url.Action("CallLogMenu", "Deliveries")">Maintain Call Log History</a><br />
-    <a href="@Url.Action("Index", "Deliveries")">Maintain Open Deliveries</a><br />
-    <a href="@Url.Action("ReportsMenu", "Deliveries")">Reports</a><br />
-</div>
+        <div>
+            <strong>Staff Menu</strong><br />
+            <a href="@Url.Action("Index", "Clients")">Maintain Clients</a>
+            <span style="color: darkmagenta">("Alpha List")</span><br />
+            <a href="@Url.Action("Index", "OD")">Maintain Family Members (Family)</a>
+            <span style="color: darkmagenta"> (Go to OD Select Client page)</span><br />
+            <a href="@Url.Action("CallLogMenu", "Deliveries")">Maintain Call Log History</a><br />
+            <a href="@Url.Action("Index", "Deliveries")">Maintain Open Deliveries</a><br />
+        </div>
     }
     <br />
+@if (User.IsInRole("Reports") || User.IsInRole("Developer") || User.IsInRole("Administrator"))
+{
+<div>
+    <strong>Reports Menu</strong><br />
+    <a href="@Url.Action("ReportsMenu", "Deliveries")">Reports</a><br />
+</div>
+}    
 
-    @if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("OfficerOfTheDay") || User.IsInRole("Staff") || User.IsInRole("Administrator"))
+
+@if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("OfficerOfTheDay") || User.IsInRole("Staff") || User.IsInRole("Administrator"))
     {
 <div>
     <strong>Officer of the Day Menu</strong><br />
