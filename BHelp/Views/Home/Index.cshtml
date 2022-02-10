@@ -52,7 +52,6 @@
         <a href="@Url.Action("MaintainUsers", "Home")">Maintain Volunteers / Website Users</a><br />
         <a href="@Url.Action("MaintainUserRoles", "Home")">Maintain User Permissions (&quot;Roles&quot;)</a><br />
         <a href="@Url.Action("ResetAnyPassword", "Account")">Reset Any Password</a><br />
-        <a href="@Url.Action("Reset", "ResetAnyPassword")">Reset Any Password</a><br />
         <br />
     </div>
     }
@@ -80,6 +79,9 @@
     <a href="@Url.Action("Index", "Deliveries")">Maintain Open Deliveries</a><br />
     <a href="@Url.Action("CallLogMenu", "Deliveries")">View Call Log History</a><br />
     <a href="@Url.Action("ViewODDocuments", "OD")">View OD Documents</a><br />
+    <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
+    <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;password: voicemail)</span>
+    <br />
 </div>
     }
     <br />
@@ -97,14 +99,14 @@
     @if (!(User.IsInRole("OfficerOfTheDay") && !User.IsInRole("Administrator") && !User.IsInRole("Staff")))
     {
         <a href="@Url.Action("Create", "VolunteerHours")">Enter Volunteer Hours</a>
-        <br/>
+        <br />
     }
-    <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br/>
-    <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br/>
-    <a href="@Url.Action("GoToBHelpSite", "Home")">Go To Bethesda Help Website</a><br/>
-    <br/>
+    <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br />
+    <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br />
+    <a href="http://www.bethesdahelp.org" target="_blank">Go To Bethesda Help Website</a><br />
+    <br />
     @Html.AntiForgeryToken()
-    <a href="@Url.Action("Logout", "Home")">LogOut</a>
+    <a href="@Url.Action("Logout", "Home")" >LogOut</a>
 </div>
 
 </body>

@@ -391,9 +391,9 @@ namespace BHelp.Controllers
                 DocNames = new string[upperBound,2], // Display Name, File Name
                 DocNamesUpperBound = upperBound
             };
-            view.DocNames[0, 0] = "Voice Messages";
+            view.DocNames[0, 0] = "Voice Messages by Telephone";
             view.DocNames[0, 1] = "/Documents/BH-voice-msg.pdf";
-            view.DocNames[1, 0] = "Email Messages";
+            view.DocNames[1, 0] = "Voicemail and Email Messages in Outlook";
             view.DocNames[1, 1] = "/Documents/BH-email.pdf";
             view.DocNames[2, 0] = "Food Eligibility";
             view.DocNames[2, 1] = "/Documents/BH-food-eligibility.pdf";

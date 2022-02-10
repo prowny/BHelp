@@ -58,10 +58,6 @@ namespace BHelp.Controllers
             return RedirectToAction("Index", "UserRoles");
         }
 
-        public ActionResult GoToBHelpSite()
-        {
-            return Redirect("https://www.bethesdahelp.org");
-        }
         public ActionResult GoToHostGatorSite()
         {
             return Redirect("https://www.bethesdahelpfd.org");
