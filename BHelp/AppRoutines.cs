@@ -222,6 +222,27 @@ namespace BHelp
             }
             return getZipCodesList;
         }
+        public static string GetVoicemailPassword()
+        {
+            string _password = "";
+            string[] lines =
+                File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/BHelpVoicemailCredentials.txt");
+            foreach (var line in lines)
+            {
+                if (line.Substring(0, 1) != "/")
+                {
+                    _password = line;
+                }
+            }
+            return _password;
+        }
+        public static string[] GetVoicemailInfoLines()
+        {
+            string[] lines = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory
+                                               + "/App_Data/BHelpVoicemailCredentials.txt");
+            lines = lines.Take(lines.Count() - 1).ToArray();
+            return lines;
+        }
         public static int GetAge(DateTime dob, [Optional] DateTime today)
         {
             if (today.ToString(CultureInfo.CurrentCulture).IsNullOrEmpty() || today == DateTime.MinValue)

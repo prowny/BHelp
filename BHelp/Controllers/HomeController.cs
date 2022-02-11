@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System;
+using System.Web;
 using System.Web.Mvc;
 using BHelp.ViewModels;
 using Castle.Core.Internal;
@@ -13,6 +14,7 @@ namespace BHelp.Controllers
         [AllowAnonymous]
         public ActionResult Index()
         {
+            ViewData["vmPassword"]  = AppRoutines.GetVoicemailPassword();
             return View();
         }
 
@@ -108,6 +110,44 @@ namespace BHelp.Controllers
         public ActionResult SetStatusFlags()
         {
             Utilities.SetStatusFlags();
+            return RedirectToAction("Index", "Home");
+        }
+
+        // GET: Reset Voicemail Password/Edit
+        [Authorize(Roles = "Administrator,Developer")]
+        public ActionResult ResetVoicemailPassword()
+        {
+            var _vmPassword = AppRoutines.GetVoicemailPassword();
+            var _infoLines = AppRoutines.GetVoicemailInfoLines();
+            var view = new VoicemailPasswordViewModel
+            {
+                VoicemailPassword = _vmPassword,
+                InfoText = _infoLines
+            };
+            return View(view);
+        }
+
+        // POST: Reset Voicemail Password/Edit
+        [HttpPost, Authorize(Roles = "Administrator,Developer")]
+        [ValidateAntiForgeryToken]
+        public ActionResult ResetVoicemailPassword(
+            [Bind(Include = "VoicemailPassword,InfoText")]
+            VoicemailPasswordViewModel view)
+        {
+            if (!ModelState.IsValid) return View(view);
+            var file = AppDomain.CurrentDomain.BaseDirectory
+                       + "/App_Data/BHelpVoicemailCredentials.txt";
+            var replacementText = "";
+            foreach (string line in view.InfoText)
+            {
+                replacementText += line + "\r\n";
+            }
+            replacementText += view.VoicemailPassword;
+            using (var sw = new System.IO.StreamWriter((file), false))
+            {
+             sw.Write(replacementText);
+            }
+
             return RedirectToAction("Index", "Home");
         }
     }

@@ -46,14 +46,15 @@
 
     @if (User.IsInRole("Administrator") || User.IsInRole("Developer"))
     {
-        <div>
-            <strong>Administrator Menu</strong><br />
-            <a href="@Url.Action("ViewAdminDocuments", "Home")">View Admin Documents</a><br />
-            <a href="@Url.Action("MaintainUsers", "Home")">Maintain Volunteers / Website Users</a><br />
-            <a href="@Url.Action("MaintainUserRoles", "Home")">Maintain User Permissions (&quot;Roles&quot;)</a><br />
-            <a href="@Url.Action("ResetAnyPassword", "Account")">Reset Any Password</a><br />
-            <br />
-        </div>
+<div>
+    <strong>Administrator Menu</strong><br />
+    <a href="@Url.Action("ViewAdminDocuments", "Home")">View Admin Documents</a><br />
+    <a href="@Url.Action("MaintainUsers", "Home")">Maintain Volunteers / Website Users</a><br />
+    <a href="@Url.Action("MaintainUserRoles", "Home")">Maintain User Permissions (&quot;Roles&quot;)</a><br />
+    <a href="@Url.Action("ResetVoicemailPassword", "Home")">Reset Voicemail Password</a><br />
+    <a href="@Url.Action("ResetAnyPassword", "Account")">Reset Any Password</a><br />
+    <br />
+</div>
     }
 
     @if (User.IsInRole("Staff") || User.IsInRole("Administrator"))
@@ -87,7 +88,7 @@
             <a href="@Url.Action("CallLogMenu", "Deliveries")">View Call Log History</a><br />
             <a href="@Url.Action("ViewODDocuments", "OD")">View OD Documents</a><br />
             <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
-            <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;password: voicemail)</span>
+            <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["vmPassword"])</span>
             <br />
         </div>
     }

@@ -338,6 +338,7 @@
     <Compile Include="Controllers\DeliveriesController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="ViewModels\VoicemailPasswordViewModel.cs" />
     <Compile Include="ViewModels\UpdateMyProfileViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -347,6 +348,9 @@
     <Compile Include="ViewModels\VolunteerHoursViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\BHelpVoicemailCredentials.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="App_Data\BHelpZipCodes.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -546,6 +550,7 @@
     <Content Include="Views\VolunteerHours\Edit.cshtml" />
     <Content Include="Views\VolunteerHours\Index.cshtml" />
     <Content Include="Views\VolunteerHours\CreateSuccess.cshtml" />
+    <Content Include="Views\Home\ResetVoicemailPassword.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
