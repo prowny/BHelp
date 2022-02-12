@@ -251,7 +251,9 @@
     <Compile Include="Controllers\UsersController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Controllers\VolunteerHoursController.cs" />
+    <Compile Include="Controllers\VolunteerHoursController.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="DataAccessLayer\BHelpContext.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -548,12 +550,24 @@
     <Content Include="Views\GroupMembers\Index.cshtml" />
     <Content Include="Views\GroupMembers\MaintainGroupMembers.cshtml" />
     <Content Include="Views\GroupMembers\AddGroupMember.cshtml" />
-    <Content Include="Views\VolunteerHours\Create.cshtml" />
-    <Content Include="Views\VolunteerHours\Delete.cshtml" />
-    <Content Include="Views\VolunteerHours\Details.cshtml" />
-    <Content Include="Views\VolunteerHours\Edit.cshtml" />
-    <Content Include="Views\VolunteerHours\Index.cshtml" />
-    <Content Include="Views\VolunteerHours\CreateSuccess.cshtml" />
+    <Content Include="Views\VolunteerHours\Create.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\VolunteerHours\Delete.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\VolunteerHours\Details.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\VolunteerHours\Edit.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\VolunteerHours\Index.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\VolunteerHours\CreateSuccess.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Views\Home\ResetVoicemailPassword.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -182,6 +182,8 @@
     if (dayToday === 3) { setMinDate = -5; }
     if (dayToday === 4) { setMinDate = -6; }
     if (dayToday === 5) { setMinDate = -7; }
+    if (dayToday === 6) { setMinDate = -7; }
+    if (dayToday === 7) { setMinDate = -7; }
     $(function () {
         window.$("#HoursDateNonIndiividual").datepicker({
             maxDate: +0, minDate: setMinDate , beforeShowDay: window.$.datepicker.noWeekends
@@ -193,8 +195,9 @@
     window.$(function () {
         window.$('#HoursDate').change(function () {
             var _hoursDate = window.$(this).val();
+            var _userId = window.$('#UserDDL').val();
             window.location.href = '@Url.Action("Create",
-                                        "VolunteerHours")' + '?hoursDate=' + _hoursDate;
+                                        "VolunteerHours")' + '?hoursDate=' + _hoursDate + ', ?userId=' + _userId;
         });
     });
 </script>
@@ -203,8 +206,12 @@
     window.$(function () {
         window.$('#HoursDateNonIndiividual').change(function () {
             var _hoursDate = window.$(this).val();
-            window.location.href = '@Url.Action("Create",
-                                        "VolunteerHours")' + '?hoursDate=' + _hoursDate;
+            var _userId = window.$('#UserDDL').val();
+            var link = '@Url.Action("Create", "VolunteerHours",
+                            new { hoursDate = "-1",userId = "-2" })';
+            link = link.replace("-1", _hoursDate);
+            link = link.replace("-2", _userId);
+            window.location.href = link;
         });
     });
 </script>

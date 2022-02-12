@@ -28,52 +28,45 @@ namespace BHelp.Controllers
         public ActionResult
             Create(DateTime? hoursDate, string userId) // hoursDate will be non-null if a new date is requested by the view
         {
-            if (TempData["HoursDate"] != null)
-            {
-                hoursDate = Convert.ToDateTime(TempData["HoursDate"]);
-                if(TempData["CurrentUserId"] != null){ userId = (string)TempData ["CurrrentUserId"];}
-            }
+            if (Session["CurrentUserId"] == null) // set to logged-in user
+            { Session["CurrentUserId"] = User.Identity.GetUserId(); }
+            
+            if (Session["IsIndividual"] == null)
+            { Session["IsIndividual"] = HoursRoutines.IsIndividual(Session["CurrentUserId"].ToString()); }
 
-            var _curUsrId = User.Identity.GetUserId();
-            var _id = userId ??_curUsrId;
-            TempData["CurrentUserId"] = _id;
+            if (Session["HoursUserId"] == null) // initially set to logged-in user
+            { Session["HoursUserId"] = Session["CurrentUserId"]; }
+            if (userId != null)
+            { Session["HoursUserId"] = userId; }
 
-            var usr = db.Users.Find(_id);
-            var catName = HoursRoutines.GetCategoryName(usr.VolunteerCategory) ?? "(none)";
-            var subcatName = usr.VolunteerSubcategory ?? "(none)";
-            bool isIndividual = HoursRoutines.IsIndividual(_curUsrId);
+            if (Session["HoursDate"] == null) // initially set to today
+            { Session["HoursDate"] = DateTime.Today; }
+            if (hoursDate != null)
+            { Session["HoursDate"] = hoursDate; }
 
-            var entryDate = DateTime.Today;
-            DateTime wkBegin;
-            string wkBeginString;
-            DateTime wkEnd;
-            string wkEndString;
-            if (hoursDate == null)
-            {
-                wkBegin = HoursRoutines.GetPreviousMonday(DateTime.Today);
-                wkBeginString = wkBegin.ToString("MM/dd/yyyy");
-                wkEnd = wkBegin.AddDays(4);
-                wkEndString = wkEnd.ToString("MM/dd/yyyy");
-            }
-            else
-            {
-                entryDate = hoursDate.Value;
-                wkBegin = HoursRoutines.GetPreviousMonday(hoursDate.Value);
-                wkBeginString = wkBegin.ToString("MM/dd/yyyy");
-                wkEnd = wkBegin.AddDays(4);
-                wkEndString = wkEnd.ToString("MM/dd/yyyy");
-            }
+
+            var _id = Session["HoursUserId"].ToString();
+            var _hoursUser = db.Users.Find(_id);
+            var catName = HoursRoutines.GetCategoryName(_hoursUser.VolunteerCategory) ?? "(none)";
+            var subcatName = _hoursUser.VolunteerSubcategory ?? "(none)";
+            bool _isIndividual = (bool)Session["IsIndividual"];
+
+            var entryDate = (DateTime)Session["HoursDate"];
+            var wkBegin = HoursRoutines.GetPreviousMonday(entryDate);
+            var wkBeginString = wkBegin.ToString("MM/dd/yyyy");
+            var wkEnd = wkBegin.AddDays(4);
+            var wkEndString = wkEnd.ToString("MM/dd/yyyy");
 
             var submitError = string.Empty;
             if (TempData["SubmitError"] != null) submitError = TempData["SubmitError"].ToString();
 
             var view = new VolunteerHoursViewModel
             {
-                UserId = usr.Id,
-                UserFullName = usr.FullName,
-                Category = usr.VolunteerCategory ?? "(none)",
-                Subcategory = usr.VolunteerSubcategory ?? "(none)",
-                VolunteerName = usr.FullName,
+                UserId = _hoursUser.Id,
+                UserFullName = _hoursUser.FullName,
+                Category = _hoursUser.VolunteerCategory ?? "(none)",
+                Subcategory = _hoursUser.VolunteerSubcategory ?? "(none)",
+                VolunteerName = _hoursUser.FullName,
                 CategoryName = catName,
                 SubcategoryName = subcatName,
                 Date = entryDate,
@@ -83,27 +76,27 @@ namespace BHelp.Controllers
                 WeekEndingDate = wkEnd,
                 WeekEndingDateString = wkEndString,
                 SubmitError = submitError,
-                IsIndividual = isIndividual,
+                IsIndividual = _isIndividual,
                 HoursList = new List<VolunteerHoursViewModel>(),
                 CategoryList =HoursRoutines.GetHoursCategoriesSelectList(),
-                SubcategoryList =HoursRoutines.GetHoursSubcategoriesSelectList(usr)
+                SubcategoryList =HoursRoutines.GetHoursSubcategoriesSelectList(_hoursUser)
             };
 
-            if (isIndividual) // get hours for individual only
+            if (_isIndividual) // get hours for individual only
             {
                 var recs = db.VolunteerHours
-                    .Where(h => h.UserId == usr.Id
+                    .Where(h => h.UserId == _hoursUser.Id
                                 && h.Date >= wkBegin && h.Date <= wkEnd).ToList();
                 foreach (var rec in recs)
                 {
                     var newView = new VolunteerHoursViewModel
                     {
                         Id = rec.Id,
-                        UserId = usr.Id,
-                        UserFullName = usr.FullName,
+                        UserId = _hoursUser.Id,
+                        UserFullName = _hoursUser.FullName,
                         CategoryName = HoursRoutines.GetCategoryName(rec.Category),
                         Subcategory = rec.Subcategory,
-                        VolunteerName = usr.FullName,
+                        VolunteerName = _hoursUser.FullName,
                         Date = rec.Date,
                         DateString = rec.Date.ToString("MM/dd/yyyy"),
                         HoursString = rec.Hours.ToString(),
@@ -114,7 +107,7 @@ namespace BHelp.Controllers
             }
 
             // ============  not individual - can update all users and categories. ===========
-            if (!isIndividual) 
+            if (!_isIndividual) 
             {
                 if (Session["ActiveUsers"] == null)
                 {
@@ -148,9 +141,9 @@ namespace BHelp.Controllers
                     view.HoursList.Add(newView);
                 }
 
-                view.UserList = HoursRoutines.SetSelectedItem(view.UserList, usr.FullName);
-                view.CategoryList = HoursRoutines.SetSelectedItem(view.CategoryList, usr.VolunteerCategory);
-                view.SubcategoryList = HoursRoutines.SetSelectedItem(view.SubcategoryList, usr.VolunteerSubcategory);
+                view.UserList = HoursRoutines.SetSelectedItem(view.UserList, _hoursUser.FullName);
+                view.CategoryList = HoursRoutines.SetSelectedItem(view.CategoryList, _hoursUser.VolunteerCategory);
+                view.SubcategoryList = HoursRoutines.SetSelectedItem(view.SubcategoryList, _hoursUser.VolunteerSubcategory);
             }
 
             return View(view);
