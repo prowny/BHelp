@@ -33,33 +33,38 @@
             <span><strong>Edit Volunteer Hours for&nbsp;@Model.VolunteerName </strong></span>
             <br />
         }
-
-        <div class="form-group">
-            @Html.Label("Category:")&nbsp;
-            @Html.TextBoxFor(model => model.CategoryName ,
-                htmlAttributes: new {@readonly = true})
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.Subcategory, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(m => m.Subcategory, new SelectList(Model.SubcategoryList,"Value","Text"), new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.Subcategory, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.Label("Date")
-            <div>
-                @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
-                    new { id = "HoursDate", style = "width: 75px;" })
-                <span style="color: darkmagenta">&#8592;Click to change</span> @*Html left-arrow*@
-            </div>
+        
+    <div class="form-group">
+        @Html.Label("Volunteer:")&nbsp;@Model.VolunteerName
+    </div>
+    <div class="form-group">
+        @Html.Label("Category")&nbsp;
+        <div>
+            @Html.TextBoxFor(model => model.CategoryName,
+                htmlAttributes: new { @readonly = true })
         </div>
     </div>
 
     <div class="form-group">
-        <span>Hours></span>
+        @Html.LabelFor(m => m.Subcategory, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownListFor(m => m.Subcategory, new SelectList(Model.SubcategoryList, "Value", "Text"), new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Subcategory, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Date")
+        <div>
+            @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
+                new { id = "HoursDate", style = "width: 75px;" })
+            <span style="color: darkmagenta">&#8592;Click to change</span> @*Html left-arrow*@
+        </div>
+    </div>
+</div>
+
+    <div class="form-group">
+        <span>Hours</span>
         <div class="col-md-10">
             @Html.EditorFor(model => model.Hours, new { htmlAttributes = new {min = "0", max = "80"}, id = "Hours"})
             @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })

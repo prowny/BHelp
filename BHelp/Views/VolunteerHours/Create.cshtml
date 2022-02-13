@@ -29,10 +29,30 @@
     <hr>
     <span><i>Use this section to submit new hours:</i></span>
     <div id="SubmitHoursDiv">
-        <table>
-            <tr><td>Volunteer</td><td>Category</td><td>Subcategory</td></tr>
-            @if (!Model.IsIndividual)
-            { /* this section for non-individuals (with dropdown boxes) */
+        @if (Model.IsIndividual)
+        { /* this section for individuals (no dropdown boxes) */
+            <table>
+                <tr><td>Volunteer</td><td>Category</td><td>Subcategory</td></tr>
+                <tr>
+                    <td>
+                        @Html.TextBoxFor(m => m.VolunteerName,
+                            new { @readonly = true, style = "width: 140px" })
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.CategoryName,
+                            new { @readonly = true, style = "width: 85px" })
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.SubcategoryName,
+                            new { @readonly = true, style = "width: 130px" })
+                    </td>
+                </tr>
+            </table>
+        } @*if IsIndividual*@
+
+        @if (!Model.IsIndividual)
+        { /* this section for non-individuals (ALL - with dropdown boxes) */
+            <table>
                 <tr>
                     <td>
                         @Html.DropDownListFor(model => model.UserId,
@@ -47,65 +67,54 @@
                     <td>
                         @Html.DropDownListFor(m => m.Subcategory,
                             new SelectList(Model.SubcategoryList, "Value", "Text"),
-                            new { id = "SubcategoryDDL"})
+                            new { id = "SubcategoryDDL" })
                     </td>
                 </tr>
-            }
-            else 
-            { /* this section for individuals (no dropdown boxes) */
-                <tr>
-                    <td>
-                        @Html.TextBoxFor(model => model.VolunteerName,
-                            new { @readonly = true, style = "width: 140px" })
-                    </td>
-                    <td>
-                        @Html.TextBoxFor(model => model.CategoryName,
-                            new { @readonly = true, style = "width: 85px" })
-                    </td>
-                    <td>
-                        @Html.TextBoxFor(model => model.SubcategoryName,
-                            new { @readonly = true, style = "width: 130px" })
-                    </td>
-                </tr>
-            }
-        </table>
-            
-        <table>
+            </table>
+        }
+
+        @if (Model.IsIndividual)
+        { /* this section for individuals (HoursDateIndividual) */
+          <table>
             <tr>
                 <td><b>for Date:</b></td>
-                @if(Model.IsIndividual)
-                {
-                <td>
-                    @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
-                        new { id = "HoursDate", style = "width: 75px;" })
-                    <span style="color: darkmagenta">&#8592;Click to change. (Also to set the week-ending date in the section below.) </span> @*Html left-arrow*@
-                </td>
-                }
-                else
-                {
+                    <td>
+                        @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
+                            new { id = "HoursDateIndividual", style = "width: 75px;" })
+                        <span style="color: darkmagenta">&#8592;Click to change. (Also to set the week-ending date in the section below.) </span> @*Html left-arrow*@
+                    </td>
+                </tr>
+            </table>
+        }
+
+        @if (!Model.IsIndividual)
+        { /* this section for individuals (HoursDateNonIndividual) */
+            <table>
+                <tr>
                     <td>
                         @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
                             new { id = "HoursDateNonIndiividual", style = "width: 75px;" })
                         <span style="color: darkmagenta">&#8592;Click to change. (Also to set the week-ending date in the section below.) </span> @*Html left-arrow*@
-                    </td> 
-                }
-            </tr>
-        </table>
-        <table>
-            <tr>
-                <td style="text-align: right"><b>Hours:</b></td>
-                <td>
-                    @Html.EditorFor(m => m.Hours, new { htmlAttributes = new { min = "0", max = "80" }, id = "Hours" })
-                    @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })
-                </td>
-                <td style="text-align: right"><b>Minutes:</b></td>
-                <td>
-                    @Html.EditorFor(m => m.Minutes, new { htmlAttributes = new { min = "0", max = "59" }, id = "Minutes" })
-                    @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
-                </td>
-            </tr>
-        </table>
+                    </td>
+                </tr>
+            </table>
+        }
+            <table>
+                <tr>
+                    <td style="text-align: right"><b>Hours:</b></td>
+                    <td>
+                        @Html.EditorFor(m => m.Hours, new { htmlAttributes = new { min = "0", max = "80" }, id = "Hours" })
+                        @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })
+                    </td>
+                    <td style="text-align: right"><b>Minutes:</b></td>
+                    <td>
+                        @Html.EditorFor(m => m.Minutes, new { htmlAttributes = new { min = "0", max = "59" }, id = "Minutes" })
+                        @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
+                    </td>
+                </tr>
+            </table>
     </div>
+    
 
     <div id="SubmitDiv" class="col-md-offset-2 col-md-10">
         <input type="submit" value="Submit" class="btn btn-default" id="btnSubmit" />
@@ -158,33 +167,35 @@
 </html>
 
 <script type="text/javascript">
-    var setMinDate = 0;
-    var dateToday = new Date();
-    var dayToday = dateToday.getDay();
-    if (dayToday === 1) { setMinDate = -1; } /* go back to previous Monday*/
-    if (dayToday === 2) { setMinDate = -2; }
-    if (dayToday === 3) { setMinDate = -3; }
-    if (dayToday === 4) { setMinDate = -4; }
-    if (dayToday === 5) { setMinDate = -5; }
+   
     $(function () {
-        window.$("#HoursDate").datepicker({
+        /* DatePicker for Individual Users*/
+        var setMinDate = 0;
+        var dateToday = new Date();
+        var dayToday = dateToday.getDay();
+        if (dayToday === 2) { setMinDate = -1; } /* go back to previous Monday*/
+        if (dayToday === 3) { setMinDate = -2; }
+        if (dayToday === 4) { setMinDate = -3; }
+        if (dayToday === 5) { setMinDate = -4; }
+        if (dayToday === 0) { setMinDate = -6; }
+        window.$("#HoursDateIndividual").datepicker({
             maxDate: +0, minDate: setMinDate, beforeShowDay: window.$.datepicker.noWeekends });
     });
 </script>
 
 <script type="text/javascript">
-    /* DatePicker for All Users*/
-    var setMinDate = 0;
-    var dateToday = new Date();
-    var dayToday = dateToday.getDay();
-    if (dayToday === 1) { setMinDate = -3; } /* go back to previous Friday*/
-    if (dayToday === 2) { setMinDate = -4; }
-    if (dayToday === 3) { setMinDate = -5; }
-    if (dayToday === 4) { setMinDate = -6; }
-    if (dayToday === 5) { setMinDate = -7; }
-    if (dayToday === 6) { setMinDate = -7; }
-    if (dayToday === 7) { setMinDate = -7; }
     $(function () {
+        /* DatePicker for All Users*/
+        var setMinDate = 0;
+        var dateToday = new Date();
+        var dayToday = dateToday.getDay();
+        if (dayToday === 1) { setMinDate = -3; } /* go back to previous Friday*/
+        if (dayToday === 2) { setMinDate = -4; }
+        if (dayToday === 3) { setMinDate = -5; }
+        if (dayToday === 4) { setMinDate = -6; }
+        if (dayToday === 5) { setMinDate = -7; }
+        if (dayToday === 6) { setMinDate = -8; }
+        if (dayToday === 0) { setMinDate = -9; }
         window.$("#HoursDateNonIndiividual").datepicker({
             maxDate: +0, minDate: setMinDate , beforeShowDay: window.$.datepicker.noWeekends
         });
@@ -193,11 +204,14 @@
 
 <script type="text/javascript">
     window.$(function () {
-        window.$('#HoursDate').change(function () {
+        window.$('#HoursDateIndividual').change(function () {
             var _hoursDate = window.$(this).val();
             var _userId = window.$('#UserDDL').val();
-            window.location.href = '@Url.Action("Create",
-                                        "VolunteerHours")' + '?hoursDate=' + _hoursDate + ', ?userId=' + _userId;
+            var link = '@Url.Action("Create", "VolunteerHours",
+                            new { hoursDate = "-1",userId = "-2" })';
+            link = link.replace("-1", _hoursDate);
+            link = link.replace("-2", _userId);
+            window.location.href = link;
         });
     });
 </script>

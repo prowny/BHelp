@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
+using DocumentFormat.OpenXml.Vml.Spreadsheet;
 using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
@@ -39,8 +40,13 @@ namespace BHelp.Controllers
             if (userId != null)
             { Session["HoursUserId"] = userId; }
 
-            if (Session["HoursDate"] == null) // initially set to today
-            { Session["HoursDate"] = DateTime.Today; }
+            if (Session["HoursDate"] == null) // initially set to today, or last Friday
+            {
+                var _hd =DateTime.Today;
+                if (_hd.DayOfWeek == DayOfWeek.Saturday || _hd.DayOfWeek == DayOfWeek.Sunday)
+                { _hd = HoursRoutines.GetPreviousFriday(_hd);}
+                Session["HoursDate"] = _hd;
+            }
             if (hoursDate != null)
             { Session["HoursDate"] = hoursDate; }
 
@@ -104,6 +110,8 @@ namespace BHelp.Controllers
                     };
                     view.HoursList.Add(newView);
                 }
+                // Save for Edit:
+                TempData["IndividualViewModel"] = view;
             }
 
             // ============  not individual - can update all users and categories. ===========
@@ -152,7 +160,7 @@ namespace BHelp.Controllers
         //POST: Volunteer Hours Create 
         [HttpPost, AllowAnonymous]
         public ActionResult Create([Bind(Include = "UserId,Category,Subcategory,"
-                                                   + "Date,Hours,Minutes")]
+                                                   + "Date,Hours,Minutes,IsIndividual")]
             VolunteerHoursViewModel model)
         {
             if (!ModelState.IsValid) return RedirectToAction("Index", "Home");
@@ -163,6 +171,13 @@ namespace BHelp.Controllers
                 return RedirectToAction("Create");
             }
 
+            if (model.IsIndividual)
+            {
+                var view = (VolunteerHoursViewModel)TempData["IndividualViewModel"];
+                model.UserId = view.UserId;
+                model.Category = view.Category;
+                model.Subcategory = view.Subcategory;
+            }
             // Look for duplicate record:
             var oldRec = db.VolunteerHours
                 .FirstOrDefault(r => r.UserId == model.UserId

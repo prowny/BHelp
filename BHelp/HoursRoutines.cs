@@ -66,12 +66,12 @@ namespace BHelp
                 default: return "Food Service";
             }
         }
-        public static DateTime GetPreviousSaturday(DateTime curDt)
+        public static DateTime GetPreviousFriday(DateTime curDt)
         {
-            var lastSaturday = curDt;
-            while (lastSaturday.DayOfWeek != DayOfWeek.Saturday)
-                lastSaturday = lastSaturday.AddDays(-1);
-            return lastSaturday;
+            var lastFriday = curDt;
+            while (lastFriday.DayOfWeek != DayOfWeek.Friday )
+                lastFriday = lastFriday.AddDays(-1);
+            return lastFriday;
         }
 
         public static DateTime GetPreviousMonday(DateTime curDt)
