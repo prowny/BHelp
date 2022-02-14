@@ -30,9 +30,12 @@ namespace BHelp.Controllers
         {
             if (Session["CurrentUserId"] == null) // set to logged-in user
             { Session["CurrentUserId"] = User.Identity.GetUserId(); }
-            
+
             if (Session["IsIndividual"] == null)
-            { Session["IsIndividual"] = HoursRoutines.IsIndividual(Session["CurrentUserId"].ToString()); }
+            {
+                //var _usrIdentityId = User.Identity.GetUserId();
+                Session["IsIndividual"] = HoursRoutines.IsIndividual(User.Identity.GetUserId());
+            }
 
             if (Session["HoursUserId"] == null) // initially set to logged-in user
             { Session["HoursUserId"] = Session["CurrentUserId"]; }
@@ -151,11 +154,11 @@ namespace BHelp.Controllers
                     { newView.VolunteerName = _usr.FullName; }
                     view.HoursList.Add(newView);
                 }
-
-                view.TotalsList = HoursRoutines.GetTotalsList(view.HoursList);
+                
                 view.UserList = HoursRoutines.SetSelectedItem(view.UserList, _hoursUser.FullName);
                 view.CategoryList = HoursRoutines.SetSelectedItem(view.CategoryList, _hoursUser.VolunteerCategory);
                 view.SubcategoryList = HoursRoutines.SetSelectedItem(view.SubcategoryList, _hoursUser.VolunteerSubcategory);
+                view.TotalsList = HoursRoutines.GetSummaryTotalsList(view.HoursList);
             }
 
             return View(view);

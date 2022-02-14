@@ -22,6 +22,7 @@ namespace BHelp.ViewModels
         public string SubcategoryName { get; set; }
         public int Hours { get; set; }
         public int Minutes { get; set; }
+        public int PeopleCount { get; set; }
         public string SubmitError { get; set; }
         public List<SelectListItem> UserList { get; set; }
         public List<SelectListItem> CategoryList { get; set; }

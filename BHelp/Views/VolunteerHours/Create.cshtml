@@ -75,9 +75,9 @@
 
         @if (Model.IsIndividual)
         { /* this section for individuals (HoursDateIndividual) */
-          <table>
-            <tr>
-                <td><b>for Date:</b></td>
+            <table>
+                <tr>
+                    <td><b>for Date:</b></td>
                     <td>
                         @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
                             new { id = "HoursDateIndividual", style = "width: 75px;" })
@@ -99,22 +99,21 @@
                 </tr>
             </table>
         }
-            <table>
-                <tr>
-                    <td style="text-align: right"><b>Hours:</b></td>
-                    <td>
-                        @Html.EditorFor(m => m.Hours, new { htmlAttributes = new { min = "0", max = "80" }, id = "Hours" })
-                        @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })
-                    </td>
-                    <td style="text-align: right"><b>Minutes:</b></td>
-                    <td>
-                        @Html.EditorFor(m => m.Minutes, new { htmlAttributes = new { min = "0", max = "59" }, id = "Minutes" })
-                        @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
-                    </td>
-                </tr>
-            </table>
+        <table>
+            <tr>
+                <td style="text-align: right"><b>Hours:</b></td>
+                <td>
+                    @Html.EditorFor(m => m.Hours, new { htmlAttributes = new { min = "0", max = "80" }, id = "Hours" })
+                    @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })
+                </td>
+                <td style="text-align: right"><b>Minutes:</b></td>
+                <td>
+                    @Html.EditorFor(m => m.Minutes, new { htmlAttributes = new { min = "0", max = "59" }, id = "Minutes" })
+                    @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+        </table>
     </div>
-    
 
     <div id="SubmitDiv" class="col-md-offset-2 col-md-10">
         <input type="submit" value="Submit" class="btn btn-default" id="btnSubmit" />
@@ -154,6 +153,27 @@
                     </tr>
                 }
             </table>
+            @if (!Model.IsIndividual && Model.TotalsList.Count > 0)
+            {
+            <table>
+                <tr>
+                    <td><b>Summary:&nbsp;</b></td>
+                    <td><b>Category</b></td>
+                    <td><b>People Count</b></td>
+                    <td><b>Total Hours</b></td>
+                </tr>
+                @foreach (var item in Model.TotalsList)
+                {
+                    <tr>
+                        <td></td>
+                        <td>@item.CategoryName</td>
+                        <td style="text-align: center">@item.PeopleCount.ToString()</td>
+                        <td style="text-align: center">@item.TotalHours.ToString("0.00")</td>
+                    </tr>
+                }
+            </table>
+            }
+
         </div>
     }
     <br />

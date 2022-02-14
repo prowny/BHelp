@@ -110,22 +110,30 @@ namespace BHelp
 
             IEnumerable<VolunteerHoursTotalsViewModel> totalList = new List<VolunteerHoursTotalsViewModel>
             {
-                new VolunteerHoursTotalsViewModel(){Category ="A", Subcategory = "(none)",TotalHours = 0},
-                new VolunteerHoursTotalsViewModel(){Category ="M", Subcategory = "(none)",TotalHours = 0},
-                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Bagger",TotalHours = 0},
-                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Bagger Supervisor",TotalHours = 0},
-                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Driver",TotalHours = 0},
-                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Food Staff",TotalHours = 0},
-                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Food Staff Supervisor",TotalHours = 0},
-                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "OD",TotalHours = 0}
+                new VolunteerHoursTotalsViewModel(){Category ="A", Subcategory = "(none)",PeopleCount =0,TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="M", Subcategory = "(none)",PeopleCount =0,TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Bagger",PeopleCount =0,TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Bagger Supervisor",PeopleCount =0,TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Driver",PeopleCount =0,TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Food Staff",PeopleCount =0,TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Food Staff Supervisor",PeopleCount =0,TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "OD",PeopleCount =0,TotalHours = 0}
             };
    
             foreach (var view in sortedList)
             {
                 foreach (var total in totalList)
                 {
-                    if (view.Category == total.Category && view.Subcategory == total.Subcategory)
+                    if (view.Category == total.Category && view .Subcategory == total.Subcategory)
                     {
+                        if (total.UserId == null)
+                        {
+                            total.UserId = view.UserId;
+                            total.PeopleCount = 1;
+                        }
+                        if (view.UserId != total.UserId)
+                        { total.PeopleCount++;}
+
                         total.TotalHours +=  view.Hours + view.Minutes / 60f;
                         break;
                     }
@@ -134,10 +142,54 @@ namespace BHelp
             foreach (var _view in totalList)
             {
                 if (_view.TotalHours != 0)
+                {
+                    _view.CategoryName = GetCategoryName(_view.Category);
                     returnList.Add(_view);
+                }
             }
             return returnList;
         }
+        public static List<VolunteerHoursTotalsViewModel> GetSummaryTotalsList(List<VolunteerHoursViewModel> list)
+        {
+            var sortedList = list.OrderBy(s => s.Subcategory)
+                .ThenByDescending(c => c.Category).ToList();
+            var returnList = new List<VolunteerHoursTotalsViewModel>();
 
+            IEnumerable<VolunteerHoursTotalsViewModel> totalList = new List<VolunteerHoursTotalsViewModel>
+            {
+                new VolunteerHoursTotalsViewModel(){Category ="A", CategoryName = "Administration", PeopleCount =0,TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="M", CategoryName = "Management", PeopleCount =0,TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", CategoryName = "Food Service", PeopleCount =0,TotalHours = 0},
+            };
+
+            foreach (var view in sortedList)
+            {
+                foreach (var total in totalList)
+                {
+                    if (view.Category == total.Category)
+                    {
+                        if (total.UserId == null)
+                        {
+                            total.UserId = view.UserId;
+                            total.PeopleCount = 1;
+                        }
+                        if (view.UserId != total.UserId)
+                        { total.PeopleCount++; }
+
+                        total.TotalHours += view.Hours + view.Minutes / 60f;
+                        break;
+                    }
+                }
+            }
+            foreach (var _view in totalList)
+            {
+                if (_view.TotalHours != 0)
+                {
+                    _view.CategoryName = GetCategoryName(_view.Category);
+                    returnList.Add(_view);
+                }
+            }
+            return returnList;
+        }
     }
 }
