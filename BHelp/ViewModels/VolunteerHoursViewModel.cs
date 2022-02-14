@@ -27,6 +27,7 @@ namespace BHelp.ViewModels
         public List<SelectListItem> CategoryList { get; set; }
         public List<SelectListItem> SubcategoryList { get; set; }
         public List<VolunteerHoursViewModel> HoursList { get; set; }
+        public List<VolunteerHoursTotalsViewModel> TotalsList { get; set; }
         public Boolean IsIndividual { get; set; }  // Individual sees only defaults (User, Cat, Subcat)
         public string UserFullName { get; set; }
         public string OriginatorFullName { get; set; }

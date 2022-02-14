@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using BHelp.Models;
+using BHelp.ViewModels;
 
 namespace BHelp
 {
@@ -73,7 +74,6 @@ namespace BHelp
                 lastFriday = lastFriday.AddDays(-1);
             return lastFriday;
         }
-
         public static DateTime GetPreviousMonday(DateTime curDt)
         {
             var lastMonday = curDt;
@@ -81,7 +81,6 @@ namespace BHelp
                 lastMonday = lastMonday.AddDays(-1);
             return lastMonday;
         }
-
         public static bool IsIndividual(string usrId)
         {
             var db = new BHelpContext();
@@ -103,5 +102,42 @@ namespace BHelp
             }
             return list;
         }
+        public static List<VolunteerHoursTotalsViewModel> GetTotalsList(List<VolunteerHoursViewModel> list)
+        {
+            var sortedList = list.OrderBy(s => s.Subcategory)
+                .ThenByDescending(c => c.Category).ToList();
+            var returnList = new List<VolunteerHoursTotalsViewModel>();
+
+            IEnumerable<VolunteerHoursTotalsViewModel> totalList = new List<VolunteerHoursTotalsViewModel>
+            {
+                new VolunteerHoursTotalsViewModel(){Category ="A", Subcategory = "(none)",TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="M", Subcategory = "(none)",TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Bagger",TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Bagger Supervisor",TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Driver",TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Food Staff",TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Food Staff Supervisor",TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "OD",TotalHours = 0}
+            };
+   
+            foreach (var view in sortedList)
+            {
+                foreach (var total in totalList)
+                {
+                    if (view.Category == total.Category && view.Subcategory == total.Subcategory)
+                    {
+                        total.TotalHours +=  view.Hours + view.Minutes / 60f;
+                        break;
+                    }
+                }
+            }
+            foreach (var _view in totalList)
+            {
+                if (_view.TotalHours != 0)
+                    returnList.Add(_view);
+            }
+            return returnList;
+        }
+
     }
 }

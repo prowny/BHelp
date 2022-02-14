@@ -349,6 +349,7 @@
     <Compile Include="ViewModels\UsersInRolesReportViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="ViewModels\VolunteerHoursTotalsViewModel.cs" />
     <Compile Include="ViewModels\VolunteerHoursViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

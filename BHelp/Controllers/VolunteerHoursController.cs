@@ -5,7 +5,6 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
-using DocumentFormat.OpenXml.Vml.Spreadsheet;
 using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
@@ -49,7 +48,6 @@ namespace BHelp.Controllers
             }
             if (hoursDate != null)
             { Session["HoursDate"] = hoursDate; }
-
 
             var _id = Session["HoursUserId"].ToString();
             var _hoursUser = db.Users.Find(_id);
@@ -129,18 +127,23 @@ namespace BHelp.Controllers
                 }
 
                 var recs = db.VolunteerHours
-                    .Where(h => h.Date >= wkBegin && h.Date <= wkEnd).ToList();
+                    .Where(h => h.Date >= wkBegin && h.Date <= wkEnd)
+                    .OrderBy(s => s.Subcategory)
+                    .ThenBy(c => c.Category).ToList();
                 foreach (var rec in recs)
                 {
                     var newView = new VolunteerHoursViewModel
                     {
                         Id = rec.Id,
                         UserId = rec.UserId,
+                        Category = rec.Category,
                         CategoryName = HoursRoutines.GetCategoryName(rec.Category),
                         Subcategory = rec.Subcategory,
                         Date = rec.Date,
                         DateString = rec.Date.ToString("MM/dd/yyyy"),
+                        Hours = rec.Hours,
                         HoursString = rec.Hours.ToString(),
+                        Minutes = rec.Minutes,
                         MinutesString = rec.Minutes.ToString()
                     };
                     var _usr = db.Users.Find(rec.UserId);
@@ -149,6 +152,7 @@ namespace BHelp.Controllers
                     view.HoursList.Add(newView);
                 }
 
+                view.TotalsList = HoursRoutines.GetTotalsList(view.HoursList);
                 view.UserList = HoursRoutines.SetSelectedItem(view.UserList, _hoursUser.FullName);
                 view.CategoryList = HoursRoutines.SetSelectedItem(view.CategoryList, _hoursUser.VolunteerCategory);
                 view.SubcategoryList = HoursRoutines.SetSelectedItem(view.SubcategoryList, _hoursUser.VolunteerSubcategory);
@@ -160,8 +164,7 @@ namespace BHelp.Controllers
         //POST: Volunteer Hours Create 
         [HttpPost, AllowAnonymous]
         public ActionResult Create([Bind(Include = "UserId,Category,Subcategory,"
-                                                   + "Date,Hours,Minutes,IsIndividual")]
-            VolunteerHoursViewModel model)
+            + "Date,Hours,Minutes,IsIndividual")] VolunteerHoursViewModel model)
         {
             if (!ModelState.IsValid) return RedirectToAction("Index", "Home");
 
@@ -171,6 +174,12 @@ namespace BHelp.Controllers
                 return RedirectToAction("Create");
             }
 
+            if (model.Category == "F" && model.Subcategory == "(none)")
+            {
+                TempData["SubmitError"] = "Select Food Service Subcategory!";
+                return RedirectToAction("Create");
+            }
+            
             if (model.IsIndividual)
             {
                 var view = (VolunteerHoursViewModel)TempData["IndividualViewModel"];
@@ -227,6 +236,7 @@ namespace BHelp.Controllers
                 UserId = rec.UserId,
                 OriginatorUserId = rec.OriginatorUserId,
                 IsIndividual = HoursRoutines.IsIndividual(currentUser.Id),
+                Category =rec.Category,
                 CategoryName = HoursRoutines.GetCategoryName(rec.Category),
                 Subcategory = rec.Subcategory,
                 SubcategoryName = hoursUser.VolunteerSubcategory ?? "(none)",
