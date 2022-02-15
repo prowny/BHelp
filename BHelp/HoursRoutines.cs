@@ -155,33 +155,43 @@ namespace BHelp
                 .ThenByDescending(c => c.Category).ToList();
             var returnList = new List<VolunteerHoursTotalsViewModel>();
 
-            IEnumerable<VolunteerHoursTotalsViewModel> totalList = new List<VolunteerHoursTotalsViewModel>
+            IEnumerable<VolunteerHoursTotalsViewModel> catTotalList = new List<VolunteerHoursTotalsViewModel>
             {
                 new VolunteerHoursTotalsViewModel(){Category ="A", CategoryName = "Administration", PeopleCount =0,TotalHours = 0},
                 new VolunteerHoursTotalsViewModel(){Category ="M", CategoryName = "Management", PeopleCount =0,TotalHours = 0},
                 new VolunteerHoursTotalsViewModel(){Category ="F", CategoryName = "Food Service", PeopleCount =0,TotalHours = 0},
             };
 
+            // for checking duplicate PeopleCounts:
+            var catTotalEntriesSoFar = new List<VolunteerHoursViewModel>(); 
+
             foreach (var view in sortedList)
             {
-                foreach (var total in totalList)
+                foreach (var catTotal in catTotalList)
                 {
-                    if (view.Category == total.Category)
+                    if (view.Category == catTotal.Category)
                     {
-                        if (total.UserId == null)
+                        catTotal.TotalHours += view.Hours + view.Minutes / 60f;
+                        // if this user has duplicate Cat & subcat this period, don't add to peoplecount
+                        var okToAddPeople = true;
+                        foreach (var _entry in catTotalEntriesSoFar)
                         {
-                            total.UserId = view.UserId;
-                            total.PeopleCount = 1;
+                            if (view.Category == _entry.Category 
+                                && view.Subcategory == _entry.Subcategory 
+                                && view.UserId == _entry.UserId 
+                                && view.PeopleCount == 1) // not a bulk entry
+                            {
+                                okToAddPeople = false;
+                                break;
+                            }
                         }
-                        if (view.UserId != total.UserId)
-                        { total.PeopleCount++; }
-
-                        total.TotalHours += view.Hours + view.Minutes / 60f;
+                        if(okToAddPeople) catTotal.PeopleCount += view.PeopleCount;
+                        catTotalEntriesSoFar.Add(view);
                         break;
                     }
                 }
             }
-            foreach (var _view in totalList)
+            foreach (var _view in catTotalList)
             {
                 if (_view.TotalHours != 0)
                 {

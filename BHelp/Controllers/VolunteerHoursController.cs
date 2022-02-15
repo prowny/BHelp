@@ -86,7 +86,8 @@ namespace BHelp.Controllers
                 IsIndividual = _isIndividual,
                 HoursList = new List<VolunteerHoursViewModel>(),
                 CategoryList =HoursRoutines.GetHoursCategoriesSelectList(),
-                SubcategoryList =HoursRoutines.GetHoursSubcategoriesSelectList(_hoursUser)
+                SubcategoryList =HoursRoutines.GetHoursSubcategoriesSelectList(_hoursUser),
+                PeopleCount =1
             };
 
             if (_isIndividual) // get hours for individual only
@@ -107,7 +108,8 @@ namespace BHelp.Controllers
                         Date = rec.Date,
                         DateString = rec.Date.ToString("MM/dd/yyyy"),
                         HoursString = rec.Hours.ToString(),
-                        MinutesString = rec.Minutes.ToString()
+                        MinutesString = rec.Minutes.ToString(),
+                        PeopleCount = 1
                     };
                     view.HoursList.Add(newView);
                 }
@@ -147,7 +149,8 @@ namespace BHelp.Controllers
                         Hours = rec.Hours,
                         HoursString = rec.Hours.ToString(),
                         Minutes = rec.Minutes,
-                        MinutesString = rec.Minutes.ToString()
+                        MinutesString = rec.Minutes.ToString(),
+                        PeopleCount = rec.PeopleCount 
                     };
                     var _usr = db.Users.Find(rec.UserId);
                     if (_usr != null)
@@ -166,8 +169,8 @@ namespace BHelp.Controllers
 
         //POST: Volunteer Hours Create 
         [HttpPost, AllowAnonymous]
-        public ActionResult Create([Bind(Include = "UserId,Category,Subcategory,"
-            + "Date,Hours,Minutes,IsIndividual")] VolunteerHoursViewModel model)
+                public ActionResult Create([Bind(Include = "UserId,Category,Subcategory,"
+            + "Date,Hours,Minutes,PeopleCount,IsIndividual")] VolunteerHoursViewModel model)
         {
             if (!ModelState.IsValid) return RedirectToAction("Index", "Home");
 
@@ -189,6 +192,7 @@ namespace BHelp.Controllers
                 model.UserId = view.UserId;
                 model.Category = view.Category;
                 model.Subcategory = view.Subcategory;
+                model.PeopleCount = view.PeopleCount;
             }
             // Look for duplicate record:
             var oldRec = db.VolunteerHours
@@ -212,7 +216,8 @@ namespace BHelp.Controllers
                 Subcategory = model.Subcategory,
                 Date = model.Date,
                 Hours = model.Hours,
-                Minutes = model.Minutes
+                Minutes = model.Minutes,
+                PeopleCount = model.PeopleCount
             };
 
             db.VolunteerHours.Add(newRec);

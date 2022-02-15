@@ -9,6 +9,7 @@
     <style>
         #Hours {width: 30px;}
         #Minutes {width: 30px;}
+        #PeopleCount {width: 30px;}
         #btnSubmit {background-color: blue;color: white}
     </style>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
@@ -22,6 +23,7 @@
 {
     <div id="HeaderDiv">
         @Html.Hidden("IsIndividual", Model.IsIndividual)
+        @if(Model.IsIndividual){@Html.Hidden("PeopleCount", Model.PeopleCount)}
         @Html.AntiForgeryToken()
         <span><b>Bethesda Help Enter Volunteer Hours</b></span>&nbsp;&nbsp;&nbsp;
         @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
@@ -104,13 +106,22 @@
                 <td style="text-align: right"><b>Hours:</b></td>
                 <td>
                     @Html.EditorFor(m => m.Hours, new { htmlAttributes = new { min = "0", max = "80" }, id = "Hours" })
-                    @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(m => m.Hours, "", new { @class = "text-danger" })
                 </td>
                 <td style="text-align: right"><b>Minutes:</b></td>
                 <td>
                     @Html.EditorFor(m => m.Minutes, new { htmlAttributes = new { min = "0", max = "59" }, id = "Minutes" })
                     @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
                 </td>
+
+                @if (!Model.IsIndividual) /*Get PeopleCount if bulk entry - for non-Individuals*/
+                {
+                    <td style="text-align: right"><b>People Count:</b></td>
+                    <td>
+                        @Html.EditorFor(p => p.PeopleCount, new { htmlAttributes = new { min = "1", max = "50" }, id = "PeopleCount" })
+                        @Html.ValidationMessageFor(m => m.PeopleCount, "", new { @class = "text-danger" })
+                    </td>
+                }
             </tr>
         </table>
     </div>
@@ -193,7 +204,11 @@
         var setMinDate = 0;
         var dateToday = new Date();
         var dayToday = dateToday.getDay();
-        if (dayToday === 2) { setMinDate = -1; } /* go back to previous Monday*/
+        if (dayToday === 2) { setMinDate = -1; } /* go back to previous Mo
+                                     * 
+                                     * 
+                                     * 
+                                     * nday*/
         if (dayToday === 3) { setMinDate = -2; }
         if (dayToday === 4) { setMinDate = -3; }
         if (dayToday === 5) { setMinDate = -4; }
