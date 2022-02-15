@@ -12,6 +12,9 @@
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
     <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
     <style>
+        #Hours {width: 30px;}
+        #Minutes {width: 30px;}
+        #PeopleCount {width: 30px;}
         #btnSave {background-color: blue;color: white}
         #btnDelete {background-color: white;color: red }
     </style>
@@ -31,6 +34,7 @@
 
         @if (Model.IsIndividual)
         {
+            @Html.HiddenFor(m => m.PeopleCount)
             <span><strong>Edit Volunteer Hours for&nbsp;@Model.VolunteerName </strong></span>
             <br />
         }
@@ -75,13 +79,28 @@
     <div class="form-group">
         <span><b>Minutes</b></span>
         <div class="col-md-10">
-            @Html.EditorFor(model => model.Minutes, new { htmlAttributes = new { min = "0", max = "59" }, id = "Minutes" })
-            @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
+            @Html.EditorFor(m => m.Minutes, new { htmlAttributes = new { min = "0", max = "59" }, id = "Minutes" })
+            @Html.ValidationMessageFor(m => m.Minutes, "", new { @class = "text-danger" })
             @if (!string.IsNullOrEmpty(Model.SubmitError))
             {<span style="color: red"><b>@Model.SubmitError</b></span>}
         </div>
     </div>
-
+    if (!Model.IsIndividual)
+    {
+        <div>
+            <span><b>People Count</b></span>
+            <div class="col-md-10">
+                @Html.EditorFor(m => m.PeopleCount , new { htmlAttributes = new { min = "1", max = "50" }, id = "PeopleCount" })
+                @Html.ValidationMessageFor(m => m.PeopleCount , "", new { @class = "text-danger" })
+                @if (!string.IsNullOrEmpty(Model.SubmitError))
+                {
+                    @Html.HiddenFor(m => m.PeopleCount)
+                    <span style="color: red"><b>@Model.SubmitError</b></span>
+                }
+            </div>
+        </div>
+    }
+    <br/>
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <input name ="btnEdit "type="submit" value="Save" class="btn btn-default" id="btnSave"/>

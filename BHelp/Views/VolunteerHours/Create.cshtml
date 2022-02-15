@@ -23,7 +23,6 @@
 {
     <div id="HeaderDiv">
         @Html.Hidden("IsIndividual", Model.IsIndividual)
-        @if(Model.IsIndividual){@Html.Hidden("PeopleCount", Model.PeopleCount)}
         @Html.AntiForgeryToken()
         <span><b>Bethesda Help Enter Volunteer Hours</b></span>&nbsp;&nbsp;&nbsp;
         @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
@@ -119,6 +118,7 @@
                     <td style="text-align: right"><b>People Count:</b></td>
                     <td>
                         @Html.EditorFor(p => p.PeopleCount, new { htmlAttributes = new { min = "1", max = "50" }, id = "PeopleCount" })
+                        <span style="color: darkmagenta">&nbsp;For Bulk-Entry records</span>
                         @Html.ValidationMessageFor(m => m.PeopleCount, "", new { @class = "text-danger" })
                     </td>
                 }
@@ -184,7 +184,6 @@
                 }
             </table>
             }
-
         </div>
     }
     <br />

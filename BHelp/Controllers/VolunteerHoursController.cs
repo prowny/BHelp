@@ -25,8 +25,7 @@ namespace BHelp.Controllers
 
         // GET: Create Volunteer Hours Entry
         [AllowAnonymous]
-        public ActionResult
-            Create(DateTime? hoursDate, string userId) // hoursDate will be non-null if a new date is requested by the view
+        public ActionResult Create(DateTime? hoursDate, string userId) // hoursDate will be non-null if a new date is requested by the view
         {
             if (Session["CurrentUserId"] == null) // set to logged-in user
             { Session["CurrentUserId"] = User.Identity.GetUserId(); }
@@ -87,7 +86,7 @@ namespace BHelp.Controllers
                 HoursList = new List<VolunteerHoursViewModel>(),
                 CategoryList =HoursRoutines.GetHoursCategoriesSelectList(),
                 SubcategoryList =HoursRoutines.GetHoursSubcategoriesSelectList(_hoursUser),
-                PeopleCount =1
+                PeopleCount = 1
             };
 
             if (_isIndividual) // get hours for individual only
@@ -109,7 +108,7 @@ namespace BHelp.Controllers
                         DateString = rec.Date.ToString("MM/dd/yyyy"),
                         HoursString = rec.Hours.ToString(),
                         MinutesString = rec.Minutes.ToString(),
-                        PeopleCount = 1
+                        PeopleCount = rec.PeopleCount 
                     };
                     view.HoursList.Add(newView);
                 }
@@ -255,6 +254,7 @@ namespace BHelp.Controllers
                 HoursString = rec.Hours.ToString(),
                 Minutes = rec.Minutes,
                 MinutesString = rec.Minutes.ToString(),
+                PeopleCount = rec.PeopleCount,
                 CategoryList = HoursRoutines.GetHoursCategoriesSelectList(),
                 SubcategoryList = HoursRoutines.GetHoursSubcategoriesSelectList(hoursUser),
                 SubmitError = submitError
@@ -266,7 +266,7 @@ namespace BHelp.Controllers
         //POST: Volunteer Hours Edit 
         [HttpPost, AllowAnonymous]
         public ActionResult Edit([Bind(Include = "Id,UserId,OriginatorUserId,Category,Subcategory,"
-                                                 + "Date,Hours,Minutes,btnSave,btnDelete")]
+                                                 + "Date,Hours,Minutes,PeopleCount,btnSave,btnDelete")]
             VolunteerHoursViewModel model)
         {
             if (!ModelState.IsValid) return RedirectToAction("Index", "Home");
@@ -296,6 +296,7 @@ namespace BHelp.Controllers
             rec.Date = model.Date;
             rec.Hours = model.Hours;
             rec.Minutes = model.Minutes;
+            rec.PeopleCount=model.PeopleCount;
             db.SaveChanges();
             return RedirectToAction("Create");
         }
