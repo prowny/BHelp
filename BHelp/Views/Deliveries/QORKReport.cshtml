@@ -1,0 +1,71 @@
+﻿@using System.Web.Mvc.Html
+@using BHelp.ViewModels
+
+@model ReportsViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>QORKReport</title>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    @*Put page javascript in a separate .js file where breaks can be set during debugging:*@
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
+    <style>
+        #EndDate {width: 60px;}
+    </style>
+</head>
+<body>
+    <table>
+        <tr><td><b>QORK Report</b></td></tr>
+        <tr>
+            <td style="text-align: right">End Date:</td>&nbsp;&nbsp;
+            <td>@Model.EndDateString</td>
+        </tr>
+    </table>
+    <table>
+        <tr><td>Bethesda Help, Inc. Quork Report</td></tr>
+        <tr>
+            <td style="text-align: center">Time Period</td>
+        </tr>
+        <tr>
+            <td style="text-align: center">@Html.Label(Model.DateRangeTitle)</td>
+            <td>@Html.ActionLink(" Previous Sunday", "SundayPrevious", new { sunday = Model.EndDate })</td>
+            <td>@Html.ActionLink(" Next Sunday", "SundayNext", new { sunday = Model.EndDate })</td>
+        </tr>
+    </table>
+    <table>
+        <tr id="Header Row">
+            <td><b>Zip Code</b></td>
+            <td><b>Children Served (&lt;18)</b></td>
+            <td><b>Adult Non-seniors Served (18-59)</b></td>
+            <td><b>Seniors (60+)</b></td>
+            <td><b>Households Served</b></td>
+            <td><b>Pounds Distributed</b></td>
+            <td><b>Prepared Meals Served</b></td>
+            <td><b>Individuals Served</b></td>
+        </tr>
+
+        @for (var i = 0; i < Model.ZipCount; i++)
+        {
+            <tr>
+                <td>@Model.ZipCodes[i]</td>
+                @for (var j = 1; j < 9; j++)
+                {
+                    <td style="text-align: center">@Model.Counts[0, i, j].ToString()</td>
+                }
+            </tr>
+        }
+    </table>
+    <br />
+    <div>
+        @Html.ActionLink("Download to Excel File", "QORKReportToExcel", new { endingDate = Model.EndDateString }, null)
+        <br />
+        @Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu", new { })
+        <br />
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
+</body>
+</html>

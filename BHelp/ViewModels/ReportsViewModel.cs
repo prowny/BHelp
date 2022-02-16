@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Web.Mvc;
-using BHelp.Models;
 
 namespace BHelp.ViewModels
 {
@@ -27,5 +25,6 @@ namespace BHelp.ViewModels
         public int[] Months { get; set; }   // month numbers for the quarter e.g. 1,2,3 or 7,8,9
         public int[,] ZipCounts { get; set; } // for Bethesda Helper Data Report
         public string[] HelperTitles { get; set; }
+        public int ZipCount { get; set; } // for New QORK Report
     }
 }

@@ -1747,32 +1747,6 @@ namespace BHelp.Controllers
                 var view = GetQuorkReportView(endDate);
                 return View(view);
             }
-
-            [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
-            public ActionResult QORKReport(string endingDate = "") // New QORK Report 02/22
-            {
-                DateTime endDate;
-                if (endingDate.IsNullOrEmpty())
-                {
-                    // Ends on a Sunday - weekday Monday is 1, Saturday is 6, Sunday is 0
-                    // If today is a  Sunday, default to this week
-                    int weekDay = Convert.ToInt32(DateTime.Today.DayOfWeek);
-                    if (weekDay == 0) // Default to this this Sunday, else Sunday last week
-                    { endDate = DateTime.Today; }
-                    else
-                    {
-                        DateTime lastSunday = DateTime.Now.AddDays(-1);
-                        while (lastSunday.DayOfWeek != DayOfWeek.Monday) lastSunday = lastSunday.AddDays(-1);
-                        endDate = lastSunday;
-                    }
-                }
-                else
-                {
-                    endDate = Convert.ToDateTime(endingDate);
-                }
-            var view = GetQORKReportView(endDate);
-            return View(view);
-        }
             private ReportsViewModel GetQuorkReportView(DateTime endDate)
             {
                 DateTime startDate = endDate.AddDays(-6); 
@@ -1816,48 +1790,6 @@ namespace BHelp.Controllers
                 }
                 return view;
             }
-            private ReportsViewModel GetQORKReportView(DateTime endDate) // new QORK Report 02/22
-        {
-            DateTime startDate = endDate.AddDays(-6);
-            var view = new ReportsViewModel()
-            {
-                BeginDate = startDate,
-                EndDate = endDate
-            };
-            view.EndDateString = view.EndDate.ToString("M-d-yy");
-            view.DateRangeTitle = startDate.ToShortDateString() + " - " + endDate.ToShortDateString();
-            view.ReportTitle = view.EndDateString + " QORK Weekly Report";
-
-            view.ZipCodes = AppRoutines.GetZipCodesList();
-            // Load Counts - extra zip code is for totals row.
-            view.Counts = new int[1, 8, view.ZipCodes.Count + 1]; // 0 (unused), Counts, Zipcodes
-            var deliveries = db.Deliveries
-                .Where(d => d.Status == 1 && d.DateDelivered >= startDate
-                                          && d.DateDelivered < endDate).ToList();
-
-            foreach (var delivery in deliveries)
-            {
-                var zipCount = view.ZipCodes.Count;  // Extra zip code Row is for totals
-                for (var j = 0; j < view.ZipCodes.Count; j++)
-                {
-                    if (delivery.Zip == view.ZipCodes[j]) // 0 (unused), Counts, Zipcodes
-                    {
-                        var c = Convert.ToInt32(delivery.Children);
-                        var a = Convert.ToInt32(delivery.Adults);
-                        var s = Convert.ToInt32(delivery.Seniors);
-                        view.Counts[0, 1, j] += c; view.Counts[0, 1, zipCount] += c; //# children
-                        view.Counts[0, 2, j] += a; view.Counts[0, 2, zipCount] += a; //# adults
-                        view.Counts[0, 3, j] += s; view.Counts[0, 3, zipCount] += s;  //# seniors
-                        view.Counts[0, 4, j]++; view.Counts[0, 4, zipCount]++;  //# deliveries (households)
-                        var lbs = Convert.ToInt32(delivery.FullBags * 10 + delivery.HalfBags * 9);
-                        view.Counts[0, 5, j] += lbs; view.Counts[0, 5, zipCount] += lbs;   //pounds of food
-                        // column 6 - prepared meals served
-                        view.Counts[0, 7, j] += (a + c + s); view.Counts[0, 7, zipCount] += (a + c + s); //# residents served
-                    }
-                }
-            }
-            return view;
-        }
 
             [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
             public ActionResult QuorkReportToExcel(string endingDate)
@@ -1916,6 +1848,79 @@ namespace BHelp.Controllers
                 return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                     { FileDownloadName = view.ReportTitle + ".xlsx" };
             }
+
+            [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
+            public ActionResult QORKReport(string endingDate = "") // New QORK Report 02/22
+            {
+                DateTime endDate;
+                if (endingDate.IsNullOrEmpty())
+                {
+                    // Ends on a Sunday - weekday Monday is 1, Saturday is 6, Sunday is 0
+                    // If today is a  Sunday, default to this week
+                    int weekDay = Convert.ToInt32(DateTime.Today.DayOfWeek);
+                    if (weekDay == 0) // Default to this this Sunday, else Sunday last week
+                    { endDate = DateTime.Today; }
+                    else
+                    {
+                        DateTime lastSunday = DateTime.Now.AddDays(-1);
+                        while (lastSunday.DayOfWeek != DayOfWeek.Sunday) lastSunday = lastSunday.AddDays(-1);
+                        endDate = lastSunday;
+                    }
+                }
+                else
+                {
+                    endDate = Convert.ToDateTime(endingDate);
+                }
+                var view = GetQORKReportView(endDate);
+                return View(view);
+            }
+            private ReportsViewModel GetQORKReportView(DateTime endDate) // new QORK Report 02/22
+            {
+                DateTime startDate = endDate.AddDays(-6);
+                var view = new ReportsViewModel()
+                {
+                    BeginDate = startDate,
+                    EndDate = endDate
+                };
+                view.EndDateString = view.EndDate.ToString("M-d-yy");
+                view.DateRangeTitle = startDate.ToShortDateString() + " - " + endDate.ToShortDateString();
+                view.ReportTitle = view.EndDateString + " QORK Weekly Report";
+
+                view.ZipCodes = AppRoutines.GetZipCodesList();
+                // Load Counts - extra zip code is for totals row.
+                view.Counts = new int[1, 9, view.ZipCodes.Count + 1]; // 0 (unused), Counts, Zipcodes
+                view.ZipCount = view.ZipCodes.Count;
+                var deliveries = db.Deliveries
+                    .Where(d => d.Status == 1 && d.DateDelivered >= startDate
+                                              && d.DateDelivered < endDate).ToList();
+
+                foreach (var delivery in deliveries)
+                {
+                    var zipCount = view.ZipCodes.Count;  // Extra zip code Row is for totals
+                    for (var zip = 0; zip < view.ZipCodes.Count; zip++)
+                    {
+                        if (delivery.Zip == view.ZipCodes[zip]) // 0 (unused), Column, ZipCode
+                        {
+                            var c = Convert.ToInt32(delivery.Children);
+                            var a = Convert.ToInt32(delivery.Adults);
+                            var s = Convert.ToInt32(delivery.Seniors);
+                            view.Counts[0, 1, zip] += c; view.Counts[0, 1, zipCount] += c; //# children
+                            view.Counts[0, 2, zip] += a; view.Counts[0, 2, zipCount] += a; //# adults
+                            view.Counts[0, 3, zip] += s; view.Counts[0, 3, zipCount] += s;  //# seniors
+                            view.Counts[0, 4, zip]++; view.Counts[0, 4, zipCount]++;  //#  households served
+                            var lbs = Convert.ToInt32(delivery.FullBags * 10 + delivery.HalfBags * 9);
+                            view.Counts[0, 5, zip] += lbs; view.Counts[0, 5, zipCount] += lbs;   //pounds distributed
+                            // column 6 - prepared meals served
+                            view.Counts[0, 7, zip] += (a + c + s); view.Counts[0, 7, zipCount] += (a + c + s); //# individuals served
+                        }
+                    }
+                }
+                return view;
+            }
+
+            [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
+            public ActionResult QORKReportToExcel()
+            { return null;}
             public ActionResult SaturdayNext(DateTime saturday)
             {
                 saturday = saturday.AddDays(7);
@@ -1926,8 +1931,17 @@ namespace BHelp.Controllers
                 saturday = saturday.AddDays(-7);
                 return RedirectToAction("QuorkReport", new{endingDate = saturday.ToShortDateString()});
             }
-
-            [Authorize(Roles = "Reports,Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
+            public ActionResult SundayNext(DateTime sunday)
+            {
+                sunday = sunday.AddDays(7);
+                return RedirectToAction("QORKReport", new { endingDate = sunday.ToShortDateString() });
+            }
+            public ActionResult SundayPrevious(DateTime sunday)
+            {
+                sunday = sunday.AddDays(-7);
+                return RedirectToAction("QORKReport", new { endingDate = sunday.ToShortDateString() });
+            }
+        [Authorize(Roles = "Reports,Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
             public ActionResult ReturnToReportsMenu()
             {
                 return RedirectToAction("ReportsMenu");
