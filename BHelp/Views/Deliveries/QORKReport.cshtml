@@ -52,12 +52,25 @@
         {
             <tr>
                 <td>@Model.ZipCodes[i]</td>
-                @for (var j = 1; j < 9; j++)
+                @for (var j = 1; j < 8; j++)
                 {
-                    <td style="text-align: center">@Model.Counts[0, i, j].ToString()</td>
+                    if (j == 6)
+                    {<td style="text-align: center">N/A</td>  @*prepared meals column*@}
+                    else
+                    {<td style="text-align: center">@Model.Counts[0, j, i].ToString()</td>}
                 }
-            </tr>
+           </tr>
         }
+        <tr>
+            <td>Totals:</td>
+            @for (var j = 1; j < 8; j++)
+            {
+                if (j == 6)
+                {<td style="text-align: center">N/A</td>  @*prepared meals column*@}
+                else
+                {<td style="text-align: center">@Model.Counts[0, j, Model.ZipCount].ToString()</td>}
+            }
+        </tr>
     </table>
     <br />
     <div>
