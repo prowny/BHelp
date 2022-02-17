@@ -1919,8 +1919,33 @@ namespace BHelp.Controllers
             }
 
             [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
-            public ActionResult QORKReportToExcel()
-            { return null;}
+            public ActionResult QORKReportToCSV(string endingDate = "")
+            {
+                DateTime endDate;
+                if (endingDate.IsNullOrEmpty())
+                {
+                    // Ends on a Sunday - weekday Monday is 1, Saturday is 6, Sunday is 0
+                    // If today is a  Sunday, default to this week
+                    int weekDay = Convert.ToInt32(DateTime.Today.DayOfWeek);
+                    if (weekDay == 0) // Default to this this Sunday, else Sunday last week
+                    { endDate = DateTime.Today; }
+                    else
+                    {
+                        DateTime lastSunday = DateTime.Now.AddDays(-1);
+                        while (lastSunday.DayOfWeek != DayOfWeek.Sunday) lastSunday = lastSunday.AddDays(-1);
+                        endDate = lastSunday;
+                    }
+                }
+                else
+                {
+                    endDate = Convert.ToDateTime(endingDate);
+                }
+            var view = GetQORKReportView(endDate);
+            view.ReportTitle = "Bethesda Help, Inc. QORK Report for week ending " + endDate.ToString("MM/dd/yyyy");
+
+            var result = AppRoutines.QORKReportToCSV(view);
+            return result;
+        }
             public ActionResult SaturdayNext(DateTime saturday)
             {
                 saturday = saturday.AddDays(7);
@@ -1941,7 +1966,8 @@ namespace BHelp.Controllers
                 sunday = sunday.AddDays(-7);
                 return RedirectToAction("QORKReport", new { endingDate = sunday.ToShortDateString() });
             }
-        [Authorize(Roles = "Reports,Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
+
+            [Authorize(Roles = "Reports,Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
             public ActionResult ReturnToReportsMenu()
             {
                 return RedirectToAction("ReportsMenu");

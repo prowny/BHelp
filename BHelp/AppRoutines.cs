@@ -789,7 +789,6 @@ namespace BHelp
         {
             // view Parameter contains data only from Filtered Opens
             if (view == null) view = GetOpenDeliveriesViewModel();
-            //var view = GetOpenDeliveriesViewModel();
             var sb = new StringBuilder();
 
             sb.Append(view.ReportTitle + ',');
@@ -819,7 +818,6 @@ namespace BHelp
                         {
                             sb.Append(view.OpenDeliveries[i, col] + ",");
                         }
-
                     }
                     else
                     {
@@ -943,7 +941,31 @@ namespace BHelp
             response.End();
             return null;
         }
+        public static FileStreamResult QORKReportToCSV(ReportsViewModel view)
+        {
+            var sb = new StringBuilder();
+            sb.Append(view.ReportTitle + ',');
+            sb.AppendLine();
 
+            sb.Append("ZipCode,Children Served (<18),Adult Non-seniors Served (18-59),");
+            sb.Append("Households Served,Pounds Distributed,Prepared Meals Served,");
+            sb.Append("Individuals Served");
+            sb.AppendLine();
+
+            for (var i = 0; i < view.ZipCount; i++)
+            {
+                sb.Append(view.ZipCodes[i] + ",");
+                for(var j = 1; j < 8; j++)
+                {
+                    if (j == 6)
+                    { sb.Append("N/A,"); } //prepared meals column
+                    else
+                    { sb.Append(view.Counts[0, j, i].ToString() + ","); }
+                }
+            }
+
+            return null;
+        }
         public static List<SelectListItem> GetDistinctDeliveryDatesOdList(List<Delivery> deliveryList)
         {
             var distinctDeliveryDatesOdList = new List<SelectListItem>();
@@ -972,7 +994,6 @@ namespace BHelp
                     }
                 }
             }
-
             return distinctDeliveryDatesOdList;
         }
     }
