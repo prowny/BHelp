@@ -66,7 +66,8 @@ namespace BHelp
                 if (eligible + totalThisMonth > 2) eligible = 0;
             }
 
-            return eligible;}
+            return eligible;
+        }
         public static List<SelectListItem> GetZipCodesSelectList()
         {
             List<SelectListItem> getZipCodesSelectList = new List<SelectListItem>();
@@ -948,8 +949,8 @@ namespace BHelp
             sb.AppendLine();
 
             sb.Append("ZipCode,Children Served (<18),Adult Non-seniors Served (18-59),");
-            sb.Append("Households Served,Pounds Distributed,Prepared Meals Served,");
-            sb.Append("Individuals Served");
+            sb.Append("Seniors (60+),Households Served,Pounds Distributed,");
+            sb.Append("Prepared Meals Served,Individuals Served");
             sb.AppendLine();
 
             for (var i = 0; i < view.ZipCount; i++)
@@ -960,10 +961,31 @@ namespace BHelp
                     if (j == 6)
                     { sb.Append("N/A,"); } //prepared meals column
                     else
-                    { sb.Append(view.Counts[0, j, i].ToString() + ","); }
+                    { sb.Append(view.Counts[0, j, i] + ","); }
                 }
+                sb.AppendLine();
             }
+            
+            sb.Append("Totals:,");
+            for (var j = 1; j < 8; j++)
+            {
+                if (j == 6)
+                { sb.Append("N/A,"); } // prepared meals column
+                else
+                {sb.Append(view.Counts[0, j, view.ZipCount] + ","); }
+            }
+            sb.AppendLine();
 
+            var response = System.Web.HttpContext.Current.Response;
+            response.BufferOutput = true;
+            response.Clear();
+            response.ClearHeaders();
+            response.ContentEncoding = Encoding.Unicode;
+            response.AddHeader("content-disposition", "attachment;filename=" 
+                              + "BHelpQORK" + view.EndDate.ToString("MM-dd-yyyy") + ".csv");
+            response.ContentType = "text/plain";
+            response.Write(sb.ToString());
+            response.End();
             return null;
         }
         public static List<SelectListItem> GetDistinctDeliveryDatesOdList(List<Delivery> deliveryList)
