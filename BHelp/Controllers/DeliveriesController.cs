@@ -116,7 +116,7 @@ namespace BHelp.Controllers
                     if (!ODid.IsNullOrEmpty() && ODid != "0")
                     {
                         var user = db.Users.Find(ODid);
-                        deliveryView.ODName = user.FullName;
+                        if (user != null) deliveryView.ODName = user.FullName;
                     };
                     deliveryView.FirstName = client.FirstName;
                     deliveryView.LastName = client.LastName;
@@ -925,13 +925,16 @@ namespace BHelp.Controllers
                 Delivery delivery = db.Deliveries.Find(id);
                 if (delivery != null) db.Deliveries.Remove(delivery);
                 db.SaveChanges();
-                if (returnURL == null) return RedirectToAction("Index");
                 if (returnURL.Contains("UpdateHousehold"))
-                {
-                    return RedirectToAction("Index", "OD");
-                }
+                { return RedirectToAction("Index", "OD"); }
+                if (returnURL.Contains("CallLogByLogDate"))
+                {return RedirectToAction("CallLogByLogDate");}
+                if (returnURL.Contains("CallLogIndividual"))
+                { return RedirectToAction("CallLogIndividual"); }
+               
                 return RedirectToAction("Index");
-            }
+
+        }
 
             [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
             public ActionResult CallLogMenu()
@@ -1885,7 +1888,6 @@ namespace BHelp.Controllers
                 view.EndDateString = view.EndDate.ToString("M-d-yy");
                 view.DateRangeTitle = startDate.ToShortDateString() + " - " + endDate.ToShortDateString();
                 view.ReportTitle = view.EndDateString + " QORK Weekly Report";
-
                 view.ZipCodes = AppRoutines.GetZipCodesList();
                 // Load Counts - extra zip code is for totals row.
                 view.Counts = new int[1, 9, view.ZipCodes.Count + 1]; // 0 (unused), Counts, Zipcodes

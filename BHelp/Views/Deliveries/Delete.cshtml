@@ -35,19 +35,27 @@
             <br/>
             <input type="submit" value="Delete" class="btn btn-default" style="color: red"/>
             <br/>
-            <br/>
-            @if (Model.ReturnURL != null)
+            @if (Model.ReturnURL.Contains("CallLogByLogDate"))
             {
-                if (Model.ReturnURL.Contains("UpdateHousehold"))
-                {
-                    @Html.ActionLink("Back to OD Section", "Index", "OD")
-                }
-                else
-                {
-                    @Html.ActionLink("Back to List", "Index")
-                }
+                @Html.ActionLink("Back to Delivery List", "CallLogByLogDate")
             }
-            else
+            
+            @if (Model.ReturnURL.Contains("CallLogByDateDelivered"))
+            {
+                @Html.ActionLink("Back to Delivery List", "CallLogByDateDelivered")
+            }
+
+            @if (Model.ReturnURL.Contains("CallLogIndividual"))
+            {
+                @Html.ActionLink("Back to Delivery List", "CallLogIndividual", new { clientId = Model.ClientId })
+            }
+                
+            @if (Model.ReturnURL.Contains("UpdateHousehold"))
+            {
+                @Html.ActionLink("Back to OD Section", "Index", "OD")
+            }
+            
+            @if (Model.ReturnURL == null)
             {
                 @Html.ActionLink("Back to List", "Index")
             }

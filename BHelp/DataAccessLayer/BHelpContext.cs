@@ -30,5 +30,7 @@ namespace BHelp.DataAccessLayer
         public DbSet<GroupMember> GroupMembers { get; set; }
 
         public DbSet<VolunteerHours> VolunteerHours { get; set; }
+
+        public System.Data.Entity.DbSet<BHelp.Models.Document> Documents { get; set; }
     }
 }

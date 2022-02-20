@@ -65,37 +65,18 @@ namespace BHelp.Controllers
             return Redirect("https://www.bethesdahelpfd.org");
         }
 
-        [AllowAnonymous]
-        public ActionResult LogOut()
+        [AllowAnonymous] public ActionResult LogOut()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             Session.Abandon();
             Session.RemoveAll();
             return RedirectToAction("Login", "Account");
         }
-
         private IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
-
         public ActionResult GetZipCodes()
         {
             AppRoutines.GetZipCodesSelectList();
             return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
-        }
-
-        public ActionResult UploadClients()
-        {
-            Utilities.UploadClients();
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
-        }
-        public ActionResult UploadDeliveries()
-        {
-            Utilities.UploadDeliveries();
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
-        }
-        public ActionResult CopyClientZipToDelivery()
-        {
-            Utilities.CopyClientZipToDelivery();
-            return RedirectToAction("Index", "Home");
         }
         public ActionResult CopySnapshotDataToDelivery()
         {
@@ -131,8 +112,7 @@ namespace BHelp.Controllers
         [HttpPost, Authorize(Roles = "Administrator,Developer")]
         [ValidateAntiForgeryToken]
         public ActionResult ResetVoicemailPassword(
-            [Bind(Include = "VoicemailPassword,InfoText")]
-            VoicemailPasswordViewModel view)
+            [Bind(Include = "VoicemailPassword,InfoText")] VoicemailPasswordViewModel view)
         {
             if (!ModelState.IsValid) return View(view);
             var file = AppDomain.CurrentDomain.BaseDirectory
@@ -149,6 +129,13 @@ namespace BHelp.Controllers
             }
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [Authorize(Roles = "Administrator,Developer")]
+        public ActionResult MaintainDocuments()
+        {
+
+            return null;
         }
     }
 }

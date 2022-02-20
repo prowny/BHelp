@@ -1,4 +1,8 @@
-﻿namespace BHelp.ViewModels
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
+
+namespace BHelp.ViewModels
 {
     public class DocumentsViewModel
     {

@@ -222,6 +222,7 @@
     <Compile Include="Controllers\ClientsController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Controllers\DocumentsController.cs" />
     <Compile Include="Controllers\DriverController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -286,6 +287,14 @@
     <Compile Include="Migrations\202202151413480_AddPeopleCount.Designer.cs">
       <DependentUpon>202202151413480_AddPeopleCount.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202202191951321_AddDocuments.cs" />
+    <Compile Include="Migrations\202202191951321_AddDocuments.Designer.cs">
+      <DependentUpon>202202191951321_AddDocuments.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202202192121514_AddDocumentsFileContent.cs" />
+    <Compile Include="Migrations\202202192121514_AddDocumentsFileContent.Designer.cs">
+      <DependentUpon>202202192121514_AddDocumentsFileContent.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -293,6 +302,7 @@
     <Compile Include="Models\ApplicationUser.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Models\Document.cs" />
     <Compile Include="Models\Client.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -577,6 +587,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Deliveries\QORKReport.cshtml" />
+    <Content Include="Views\Documents\Upload.cshtml" />
+    <Content Include="Views\Documents\Delete.cshtml" />
+    <Content Include="Views\Documents\Details.cshtml" />
+    <Content Include="Views\Documents\Edit.cshtml" />
+    <Content Include="Views\Documents\Index.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
@@ -770,6 +785,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202202151413480_AddPeopleCount.resx">
       <DependentUpon>202202151413480_AddPeopleCount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202202191951321_AddDocuments.resx">
+      <DependentUpon>202202191951321_AddDocuments.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202202192121514_AddDocumentsFileContent.resx">
+      <DependentUpon>202202192121514_AddDocumentsFileContent.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
