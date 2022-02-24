@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace BHelp.Models
 {
@@ -10,12 +12,19 @@ namespace BHelp.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+
+        [DisplayName("Menu Title")]
         public string Title { get; set; }
+        [DisplayName("Menu Category")]
         public string MenuCategory { get; set; }
+        [DisplayName("File Name")]
         public string FileName { get; set; }
         public byte[] FileContent { get; set; }
         [StringLength(128)] public string OrginatorId { get; set; }
         [NotMapped] public List<SelectListItem> Categories { get; set; }
-        [NotMapped] public string ErrorMessage { get; set; }
+        [NotMapped] public string TitleErrorMessage { get; set; }
+        [NotMapped] public string FileErrorMessage { get; set; }
+        [NotMapped] public string ViewSourceFile { get; set; }
+        [NotMapped] public string OriginatorName { get; set; }
     }
 }

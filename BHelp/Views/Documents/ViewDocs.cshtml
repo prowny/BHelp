@@ -1,0 +1,26 @@
+﻿@model BHelp.ViewModels.ViewDocsViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ViewDocs</title>
+</head>
+<body>
+    <div>
+        <div class="row">
+            <div class="form-group-sm">
+                <div class="col-md-12" style="padding-left: 0px;">
+                    <iframe style="width: 75%; height: 500px;" 
+                            src=Model.ImageData></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+<br/>
+<div>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
+</body>
+</html>

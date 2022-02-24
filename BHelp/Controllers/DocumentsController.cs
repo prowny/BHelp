@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
+using Castle.Core.Internal;
+using Microsoft.Ajax.Utilities;
+using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
 {
@@ -22,18 +26,35 @@ namespace BHelp.Controllers
        // GET: Documents/Upload
         public ActionResult Upload()
         {
-            var view = new Document { Categories = new List<SelectListItem>() };
-            var role = new SelectListItem() { Value = "Everyone", Text = @"Everyone" };
-            view.Categories.Add(role);
-             role = new SelectListItem() {Value = "Administrator", Text = @"Administrator"};
-            view.Categories.Add(role);
-             role = new SelectListItem() { Value = "Staff", Text = @"Staff" };
-            view.Categories.Add(role);
-            role = new SelectListItem() { Value = "Driver", Text = @"Driver" };
-            view.Categories.Add(role);
-            role = new SelectListItem() { Value = "Reports", Text = @"Reports" };
-            view.Categories.Add(role);
+            var view = new Document { Categories = LoadMenuCategories()};
+            if (TempData["DocumentTitleError"] != null)
+            {view.TitleErrorMessage = TempData["DocumentTitleError"].ToString(); }
+
+            if (TempData["DocumentFileError"] != null)
+            {
+                view.FileErrorMessage = TempData["DocumentFileError"].ToString();
+                view.Title=TempData ["DocumentTitle"].ToString();
+            }
+
             return View(view);
+        }
+
+        private List<SelectListItem> LoadMenuCategories()
+        {
+            var selList = new List<SelectListItem>();
+            var role = new SelectListItem() { Value = "Everyone", Text = @"Everyone" };
+            selList.Add(role);
+            role = new SelectListItem() { Value = "Administrator", Text = @"Administrator" };
+            selList.Add(role);
+            role = new SelectListItem() { Value = "Staff", Text = @"Staff" };
+            selList.Add(role);
+            role = new SelectListItem() { Value = "OfficerOfTheDay", Text = @"OD" };
+            selList.Add(role);
+            role = new SelectListItem() { Value = "Driver", Text = @"Driver" };
+            selList.Add(role); 
+            role = new SelectListItem() { Value = "Reports", Text = @"Reports" };
+            selList.Add(role);
+            return selList;
         }
 
         // POST: Documents/Upload
@@ -43,13 +64,48 @@ namespace BHelp.Controllers
         {
             if (ModelState.IsValid)
             {
-                
+                if (doc.Title.IsNullOrEmpty())
+                {
+                    TempData["DocumentTitleError"] = "Title Required!";
+                    return RedirectToAction("Upload");
+                }
+
+                if(postedFile == null)
+                {
+                    TempData ["DocumentTitle"] = doc.Title;
+                    TempData["DocumentFileError"] = "File Required!";
+                    return RedirectToAction("Upload");
+                }
+
+                var fileData = new MemoryStream();
+                postedFile.InputStream.CopyTo(fileData);
+                var newDoc = new Document()
+                {
+                    Title =doc.Title,
+                    MenuCategory=doc.MenuCategory,
+                    FileName = postedFile.FileName,
+                    OrginatorId = User.Identity.GetUserId(),
+                    FileContent = fileData.ToArray()  
+                };
+                db.Documents.Add(newDoc);
                 //db.SaveChanges();
                 return RedirectToAction("Index");
             }
             return RedirectToAction("Index");
         }
    
+        // GET: Document View
+        [HttpGet]
+        public ActionResult ViewDocument(int? id)
+        {
+            var doc = db.Documents.Find(id);
+            if (doc != null)
+            {
+                var contentType = MimeMapping.GetMimeMapping(doc.FileName);
+                return new FileContentResult(doc.FileContent, contentType);
+            }
+            return null;
+        }
 
         // GET: Documents/Edit/5
         public ActionResult Edit(int? id)
@@ -58,7 +114,7 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Document document = db.Documents.Find(id);
+            var document = db.Documents.Find(id);
             if (document == null)
             {
                 return HttpNotFound();
@@ -102,7 +158,7 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Document document = db.Documents.Find(id);
+            var document = db.Documents.Find(id);
             if (document != null) db.Documents.Remove(document);
             db.SaveChanges();
             return RedirectToAction("Index");
