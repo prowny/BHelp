@@ -8,7 +8,6 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using Castle.Core.Internal;
-using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
@@ -20,6 +19,16 @@ namespace BHelp.Controllers
         // GET: Documents
         public ActionResult Index()
         {
+            var view = db.Documents.ToList();
+            for (var i = 0; i < view.Count; i++)
+            {
+                var doc = view[i];
+                if (doc.MenuCategory == "OfficerOfTheDay")
+                {
+                    doc.MenuCategory = "OD";
+                }
+            }
+
             return View(db.Documents.ToList());
         }
 
@@ -39,7 +48,7 @@ namespace BHelp.Controllers
             return View(view);
         }
 
-        private List<SelectListItem> LoadMenuCategories()
+        private static List<SelectListItem> LoadMenuCategories()
         {
             var selList = new List<SelectListItem>();
             var role = new SelectListItem() { Value = "Everyone", Text = @"Everyone" };
@@ -115,9 +124,16 @@ namespace BHelp.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             var document = db.Documents.Find(id);
-            if (document == null)
+            if (document == null) return HttpNotFound();
+
+            document.Categories = LoadMenuCategories();
+            foreach (var cat in document.Categories)
             {
-                return HttpNotFound();
+                if (cat.Value == document.MenuCategory)
+                {
+                    cat.Selected = true;
+                    break;
+                }
             }
             return View(document);
         }
@@ -127,13 +143,20 @@ namespace BHelp.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Title,MenuCategory,FileName,OrginatorId")] Document document)
+        public ActionResult Edit([Bind(Include = "Id,Title,MenuCategory")] Document document)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(document).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                var updateData = db.Documents.Find(document.Id);
+                if (updateData != null)
+                {
+                    updateData.Title = document.Title;
+                    updateData.MenuCategory = document.MenuCategory;
+                    db.Entry(updateData).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                return RedirectToAction("Edit", new{ id = document.Id });
             }
             return View(document);
         }

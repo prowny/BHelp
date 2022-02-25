@@ -271,3 +271,16 @@
         });
     });
 </script>
+<script>
+    window.$(function() {
+        window.$('#CategoryDDL').change(function() {
+            var _cat = window.$(this).val();
+            if (_cat === "A" || _cat === "M") {
+                var link = '@Url.Action("Create", "VolunteerHours",
+                                new {a_mCat = "-1" })';
+                link = link.replace("-1", _cat);
+                window.location.href = link;
+            }
+        });
+    });
+</script>

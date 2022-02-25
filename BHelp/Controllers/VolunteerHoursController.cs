@@ -25,7 +25,7 @@ namespace BHelp.Controllers
 
         // GET: Create Volunteer Hours Entry
         [AllowAnonymous]
-        public ActionResult Create(DateTime? hoursDate, string userId) // hoursDate will be non-null if a new date is requested by the view
+        public ActionResult Create(DateTime? hoursDate, string userId, string a_mCat) // hoursDate will be non-null if a new date is requested by the view
         {
             if (Session["CurrentUserId"] == null) // set to logged-in user
             { Session["CurrentUserId"] = User.Identity.GetUserId(); }
@@ -153,8 +153,10 @@ namespace BHelp.Controllers
                     };
                     var _usr = db.Users.Find(rec.UserId);
                     if (_usr != null)
-                    { newView.VolunteerName = _usr.FullName; }
-                    view.HoursList.Add(newView);
+                    {
+                        newView.VolunteerName = _usr.FullName;
+                        view.HoursList.Add(newView);
+                    }
                 }
                 
                 view.UserList = HoursRoutines.SetSelectedItem(view.UserList, _hoursUser.FullName);

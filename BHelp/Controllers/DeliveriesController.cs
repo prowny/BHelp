@@ -837,67 +837,67 @@ namespace BHelp.Controllers
             if (delivery.DriverId == "0") delivery.DriverId = null;
             if (delivery.DeliveryDateODId == "0") delivery.DeliveryDateODId = null;
             if (ModelState.IsValid)
+            {
+                var updateData  = db.Deliveries.Find(delivery.Id);
+
+                if (updateData != null)
                 {
-                    var updateData  = db.Deliveries.Find(delivery.Id);
-
-                    if (updateData != null)
+                    Client client = db.Clients.Find(updateData.ClientId);
+                    if (client != null) updateData.Zip = client.Zip;
+                    updateData.DateDelivered = delivery.LogDate;
+                    updateData.LogDate = delivery.LogDate;
+                    updateData.FullBags = delivery.FullBags;
+                    updateData.HalfBags = delivery.HalfBags;
+                    updateData.KidSnacks = delivery.KidSnacks;
+                    updateData.GiftCards = delivery.GiftCards;
+                    updateData.GiftCardsEligible = delivery.GiftCardsEligible;
+                    updateData.ODNotes = delivery.ODNotes;
+                    updateData.DriverId = updateData.DriverId == "0" ? null : delivery.DriverId;
+                    updateData.ODId = delivery.ODId;
+                    updateData.DeliveryDateODId = delivery.DeliveryDateODId;
+                    updateData.DriverNotes = delivery.DriverNotes;
+                    updateData.DateDelivered = delivery.DateDelivered;
+                    updateData.Zip = delivery.Zip;
+                    switch (delivery.SelectedStatus)
                     {
-                        Client client = db.Clients.Find(updateData.ClientId);
-                        if (client != null) updateData.Zip = client.Zip;
-                        updateData.DateDelivered = delivery.LogDate;
-                        updateData.LogDate = delivery.LogDate;
-                        updateData.FullBags = delivery.FullBags;
-                        updateData.HalfBags = delivery.HalfBags;
-                        updateData.KidSnacks = delivery.KidSnacks;
-                        updateData.GiftCards = delivery.GiftCards;
-                        updateData.GiftCardsEligible = delivery.GiftCardsEligible;
-                        updateData.ODNotes = delivery.ODNotes;
-                        updateData.DriverId = updateData.DriverId == "0" ? null : delivery.DriverId;
-                        updateData.ODId = delivery.ODId;
-                        updateData.DeliveryDateODId = delivery.DeliveryDateODId;
-                        updateData.DriverNotes = delivery.DriverNotes;
-                        updateData.DateDelivered = delivery.DateDelivered;
-                        updateData.Zip = delivery.Zip;
-                        switch (delivery.SelectedStatus)
-                        {
-                            case "Open":
-                                updateData.Status = 0;
-                                break;
-                            case "Delivered":
-                                updateData.Status = 1;
-                                break;
-                            case "Undelivered":
-                                updateData.Status = 2;
-                                break;
-                        }
-
-                        if (updateData.Status == 1 && updateData.FullBags == 0 && updateData.HalfBags == 0
-                            && updateData.KidSnacks == 0 && updateData.GiftCards == 0)
-                        {  // Cannot save delivery as completed with zero products: 
-                            return RedirectToAction("AdviseCannotSave", new { _id = delivery.Id });
-                        }
-                        db.Entry(updateData).State = EntityState.Modified;
-                        db.SaveChanges();
-                    }
-                    if(delivery.ReturnURL.Contains("CallLogIndividual"))
-                    {
-                        if (updateData != null)
-                            return RedirectToAction("CallLogIndividual", new {clientId = updateData.ClientId});
+                        case "Open":
+                            updateData.Status = 0;
+                            break;
+                        case "Delivered":
+                            updateData.Status = 1;
+                            break;
+                        case "Undelivered":
+                            updateData.Status = 2;
+                            break;
                     }
 
-                    if (delivery.ReturnURL.Contains("CallLogByLogDate"))
-                    { return RedirectToAction("CallLogByLogDate", 
-                        new{startDate = Session["CallLogStartDate"], endDate = Session["CallLogEndDate"]}); }
-
-                    if (delivery.ReturnURL.Contains("CallLogByDateDelivered"))
-                    { return RedirectToAction("CallLogByDateDelivered"); }
-
-                    if (delivery.ReturnURL.Contains("UpdateHousehold"))
-                    { return RedirectToAction("Index", "OD"); }
-
-                    return RedirectToAction("Index");
+                    if (updateData.Status == 1 && updateData.FullBags == 0 && updateData.HalfBags == 0
+                        && updateData.KidSnacks == 0 && updateData.GiftCards == 0)
+                    {  // Cannot save delivery as completed with zero products: 
+                        return RedirectToAction("AdviseCannotSave", new { _id = delivery.Id });
+                    }
+                    db.Entry(updateData).State = EntityState.Modified;
+                    db.SaveChanges();
                 }
-                return View(delivery);
+                if(delivery.ReturnURL.Contains("CallLogIndividual"))
+                {
+                    if (updateData != null)
+                        return RedirectToAction("CallLogIndividual", new {clientId = updateData.ClientId});
+                }
+
+                if (delivery.ReturnURL.Contains("CallLogByLogDate"))
+                { return RedirectToAction("CallLogByLogDate", 
+                    new{startDate = Session["CallLogStartDate"], endDate = Session["CallLogEndDate"]}); }
+
+                if (delivery.ReturnURL.Contains("CallLogByDateDelivered"))
+                { return RedirectToAction("CallLogByDateDelivered"); }
+
+                if (delivery.ReturnURL.Contains("UpdateHousehold"))
+                { return RedirectToAction("Index", "OD"); }
+
+                return RedirectToAction("Index");
+            }
+            return View(delivery);
             }
         
             // GET: Deliveries/Delete/5
@@ -934,7 +934,7 @@ namespace BHelp.Controllers
                
                 return RedirectToAction("Index");
 
-        }
+            }
 
             [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
             public ActionResult CallLogMenu()
@@ -1158,7 +1158,7 @@ namespace BHelp.Controllers
                     AppRoutines.CallLogHistoryResultToCSV(view, allData);
                     Session["CallLogByLogDateList"] = null;
                 }
-        }
+            }
             public ActionResult CallLogByDateDelivered(DateTime? startDate, DateTime? endDate)
             {
                 if (!startDate.HasValue || !endDate.HasValue)  // default to today and 1 week ago
@@ -1942,12 +1942,12 @@ namespace BHelp.Controllers
                 {
                     endDate = Convert.ToDateTime(endingDate);
                 }
-            var view = GetQORKReportView(endDate);
-            view.ReportTitle = "Bethesda Help, Inc. QORK Report for week ending " + endDate.ToString("MM/dd/yyyy");
+                var view = GetQORKReportView(endDate);
+                view.ReportTitle = "Bethesda Help, Inc. QORK Report for week ending " + endDate.ToString("MM/dd/yyyy");
 
-            var result = AppRoutines.QORKReportToCSV(view);
-            return result;
-        }
+                var result = AppRoutines.QORKReportToCSV(view);
+                return result;
+            }
             public ActionResult SaturdayNext(DateTime saturday)
             {
                 saturday = saturday.AddDays(7);
