@@ -65,11 +65,14 @@
                             new SelectList(Model.CategoryList, "Value", "Text"),
                             new { id = "CategoryDDL" })
                     </td>
-                    <td>
-                        @Html.DropDownListFor(m => m.Subcategory,
-                            new SelectList(Model.SubcategoryList, "Value", "Text"),
-                            new { id = "SubcategoryDDL" })
-                    </td>
+                    @if (string.IsNullOrEmpty(Model.A_MCategory))
+                    {
+                        <td>
+                            @Html.DropDownListFor(m => m.Subcategory,
+                                new SelectList(Model.SubcategoryList, "Value", "Text"),
+                                new { id = "SubcategoryDDL" })
+                        </td>
+                    }
                 </tr>
             </table>
         }
@@ -280,6 +283,13 @@
                                 new {a_mCat = "-1" })';
                 link = link.replace("-1", _cat);
                 window.location.href = link;
+            }
+            else
+            {
+                var linkF = '@Url.Action("Create", "VolunteerHours",
+                                new {a_mCat = "" })';
+                linkF = linkF.replace("-1", _cat);
+                window.location.href = linkF;
             }
         });
     });

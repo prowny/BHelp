@@ -71,7 +71,7 @@
         <br />
     }
 
-    @if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("OfficerOfTheDay") || User.IsInRole("Staff") || User.IsInRole("Administrator"))
+    @if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("Staff") || User.IsInRole("Staff") || User.IsInRole("Administrator"))
     {
         <div>
             <strong>Officer of the Day Menu</strong><br />
@@ -98,11 +98,12 @@
     <br />
 
     <div>
-        @if (!(User.IsInRole("OfficerOfTheDay") && !User.IsInRole("Administrator") && !User.IsInRole("Staff")))
+        @*@if (!(User.IsInRole("OfficerOfTheDay") && !User.IsInRole("Administrator") && !User.IsInRole("Staff")))
         {
             <a href="@Url.Action("Create", "VolunteerHours")">Enter Volunteer Hours</a>
             <br />
-        }
+        }*@
+        <a href="@Url.Action("Create", "VolunteerHours")">Enter Volunteer Hours</a><br/>
         <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br />
         <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br />
         <a href="http://www.bethesdahelp.org" target="_blank">Go To Bethesda Help Website</a><br />

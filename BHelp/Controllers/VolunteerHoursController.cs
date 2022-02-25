@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
+using Castle.Core.Internal;
 using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
@@ -32,7 +33,6 @@ namespace BHelp.Controllers
 
             if (Session["IsIndividual"] == null)
             {
-                //var _usrIdentityId = User.Identity.GetUserId();
                 Session["IsIndividual"] = HoursRoutines.IsIndividual(User.Identity.GetUserId());
             }
 
@@ -88,6 +88,22 @@ namespace BHelp.Controllers
                 SubcategoryList =HoursRoutines.GetHoursSubcategoriesSelectList(_hoursUser),
                 PeopleCount = 1
             };
+
+            if (view.Category == "A" || view.Category == "M")
+            {
+                a_mCat = view.Category;
+            }
+
+            if (a_mCat.IsNullOrEmpty())
+            {
+                view.A_MCategory = null;
+            }
+            else
+            {
+                view.A_MCategory = a_mCat;
+                view.Category = a_mCat;
+                view.CategoryList = HoursRoutines.SetSelectedItem(view.CategoryList, a_mCat);
+            }
 
             if (_isIndividual) // get hours for individual only
             {

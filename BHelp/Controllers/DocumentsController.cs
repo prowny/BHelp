@@ -19,17 +19,13 @@ namespace BHelp.Controllers
         // GET: Documents
         public ActionResult Index()
         {
-            var view = db.Documents.ToList();
-            for (var i = 0; i < view.Count; i++)
+            var view = db.Documents.OrderBy(d => d.MenuCategory).ToList();
+            foreach (var doc in view.Where(doc => doc.MenuCategory == "OfficerOfTheDay"))
             {
-                var doc = view[i];
-                if (doc.MenuCategory == "OfficerOfTheDay")
-                {
-                    doc.MenuCategory = "OD";
-                }
+                doc.MenuCategory = "OD";
             }
 
-            return View(db.Documents.ToList());
+            return View(view);
         }
 
        // GET: Documents/Upload
@@ -97,7 +93,7 @@ namespace BHelp.Controllers
                     FileContent = fileData.ToArray()  
                 };
                 db.Documents.Add(newDoc);
-                //db.SaveChanges();
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
             return RedirectToAction("Index");

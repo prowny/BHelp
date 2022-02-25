@@ -1,9 +1,5 @@
 ﻿@model BHelp.Models.Document
-
-@{
-    Layout = null;
-}
-
+@{ Layout = null; }
 <!DOCTYPE html>
 
 <html>
@@ -14,48 +10,20 @@
 <body>
     <h3>Are you sure you want to delete this?</h3>
     <div>
-        <h4>Document</h4>
+        <h4>Document&nbsp;@Model.Title</h4>
         <hr />
-        <dl class="dl-horizontal">
-            <dt>
-                @Html.DisplayNameFor(model => model.Title)
-            </dt>
-    
-            <dd>
-                @Html.DisplayFor(model => model.Title)
-            </dd>
-    
-            <dt>
-                @Html.DisplayNameFor(model => model.MenuCategory)
-            </dt>
-    
-            <dd>
-                @Html.DisplayFor(model => model.MenuCategory)
-            </dd>
-    
-            <dt>
-                @Html.DisplayNameFor(model => model.FileName)
-            </dt>
-    
-            <dd>
-                @Html.DisplayFor(model => model.FileName)
-            </dd>
-    
-            <dt>
-                @Html.DisplayNameFor(model => model.OrginatorId)
-            </dt>
-    
-            <dd>
-                @Html.DisplayFor(model => model.OrginatorId)
-            </dd>
-    
-        </dl>
+        <table>
+            <tr><td>Title:&nbsp;</td><td>@Model.Title</td> </tr>
+            <tr><td>Menu Category:&nbsp;</td><td>@Model.MenuCategory</td> </tr>
+            <tr><td>File Name:&nbsp;</td><td>@Model.FileName</td> </tr>
+            <tr><td>Menu Category:&nbsp;</td><td>@Model.MenuCategory</td> </tr>
+        </table>
     
         @using (Html.BeginForm()) {
             @Html.AntiForgeryToken()
-    
-            <div class="form-actions no-color">
-                <input type="submit" value="Delete" class="btn btn-default" /> |
+            <div>
+                <input type="submit" value="Delete" class="btn btn-default" />
+                <br/>
                 @Html.ActionLink("Back to List", "Index")
             </div>
         }

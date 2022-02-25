@@ -23,15 +23,15 @@
     </tr>
     
     @foreach (var item in Model) {
-<tr>
-    <td>@Html.DisplayFor(modelItem => item.Title)</td>
-    <td>@Html.DisplayFor(modelItem => item.MenuCategory)</td>
-    <td>@Html.DisplayFor(modelItem => item.FileName)</td>
-    <td>@Html.ActionLink("Edit", "Edit", new { id = item.Id }) | </td>
-    <td>@Html.ActionLink("Delete", "Delete", null,new { id = item.Id, style = "color:Red"}) |</td>
-    <td><input id="btnView" type="button" value="View" onclick="window.open('@Url.Action("ViewDocument", "Documents", new {id = item.Id})')" />
-    </td>
-</tr>
+    <tr>
+        <td>@Html.DisplayFor(modelItem => item.Title)</td>
+        <td style="text-align:center" >@Html.DisplayFor(modelItem => item.MenuCategory)</td>
+        <td>@Html.DisplayFor(modelItem => item.FileName)</td>
+        <td>@Html.ActionLink("Edit", "Edit", new { id = item.Id }) | </td>
+        <td>@Html.ActionLink("Delete", "Delete", new { id = item.Id }) |</td>
+        <td><input id="btnView" type="button" value="View" onclick="window.open('@Url.Action("ViewDocument", "Documents", new {id = item.Id})')" />
+        </td>
+    </tr>
     }
 </table>
 <br />

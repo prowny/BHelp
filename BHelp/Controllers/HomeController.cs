@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using BHelp.DataAccessLayer;
 using BHelp.ViewModels;
 using Castle.Core.Internal;
 using Microsoft.AspNet.Identity;
@@ -39,18 +41,29 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Developer")]
         public ActionResult ViewAdminDocuments()
         {
-            var upperBound = 3;
+            var db = new BHelpContext();
+            var docList = db.Documents.Where(d => d.MenuCategory == "Administrator").ToList();
+            
             var view = new DocumentsViewModel
             {
-                DocNames = new string[upperBound, 2], // Display Name, File Name
-                DocNamesUpperBound = upperBound
+                DocNames = new string[docList.Count, 2],  // Display Name, File Id, base 0
+                DocIds = new int[ docList.Count],
+                DocNamesUpperBound = docList.Count
             };
-            view.DocNames[0, 0] = "Administrator Manual";
-            view.DocNames[0, 1] = "/Documents/BH-administrator-manual.pdf";
-            view.DocNames[1, 0] = "Program Description";
-            view.DocNames[1, 1] = "/Documents/BH-program-description.pdf";
-            view.DocNames[2, 0] = "Retrieve Database Tables";
-            view.DocNames[2, 1] = "/Documents/BH-retrieve-tables.pdf";
+
+            for (var i = 0; i < docList.Count; i++)
+            {
+                view.DocNames[i, 0] = docList[i].Title;
+                view.DocNames[i, 1] = docList[i].Id.ToString();
+                view.DocIds[i] = docList[i].Id;
+            }
+            
+            //view.DocNames[0, 0] = "Administrator Manual";
+            //view.DocNames[0, 1] = "/Documents/BH-administrator-manual.pdf";
+            //view.DocNames[1, 0] = "Program Description";
+            //view.DocNames[1, 1] = "/Documents/BH-program-description.pdf";
+            //view.DocNames[2, 0] = "Retrieve Database Tables";
+            //view.DocNames[2, 1] = "/Documents/BH-retrieve-tables.pdf";
             return View(view);
         }
 
