@@ -6,10 +6,6 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>ViewAdminDocuments</title>
-    <style>
-        #btnView {background-color: white;color: blue; border: none;
-            text-decoration: underline; padding: 0; font-size:14px}
-    </style>
 </head>
 <body>
 <div>
@@ -20,7 +16,7 @@
     @for (int i = 0; i < Model.DocNamesUpperBound; i++)
     {
         <div>
-            @Html.Label(Model.DocNames[i, 0])
+            @Html.Label(Model.DocNames[i])
             <input type="image" src="~/Images/PDF10.png" alt="Submit" width="16" height="16"
                    onclick="window.open('@Url.Action("ViewDocument", "Documents", new { id = @Model.DocIds[i] }) ')"/>
         </div>

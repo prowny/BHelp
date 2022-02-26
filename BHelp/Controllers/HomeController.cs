@@ -46,24 +46,16 @@ namespace BHelp.Controllers
             
             var view = new DocumentsViewModel
             {
-                DocNames = new string[docList.Count, 2],  // Display Name, File Id, base 0
+                DocNames = new string[docList.Count],  // Display Name, base 0
                 DocIds = new int[ docList.Count],
                 DocNamesUpperBound = docList.Count
             };
 
             for (var i = 0; i < docList.Count; i++)
             {
-                view.DocNames[i, 0] = docList[i].Title;
-                view.DocNames[i, 1] = docList[i].Id.ToString();
+                view.DocNames[i] = docList[i].Title;
                 view.DocIds[i] = docList[i].Id;
             }
-            
-            //view.DocNames[0, 0] = "Administrator Manual";
-            //view.DocNames[0, 1] = "/Documents/BH-administrator-manual.pdf";
-            //view.DocNames[1, 0] = "Program Description";
-            //view.DocNames[1, 1] = "/Documents/BH-program-description.pdf";
-            //view.DocNames[2, 0] = "Retrieve Database Tables";
-            //view.DocNames[2, 1] = "/Documents/BH-retrieve-tables.pdf";
             return View(view);
         }
 

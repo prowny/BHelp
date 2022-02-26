@@ -385,33 +385,19 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         public ActionResult ViewODDocuments()
         {
-            var upperBound = 10;
+            var docList = db.Documents.Where(d => d.MenuCategory == "OfficerOfTheDay").ToList();
             var view = new DocumentsViewModel
             {
-                DocNames = new string[upperBound,2], // Display Name, File Name
-                DocNamesUpperBound = upperBound
+                DocNames = new string[docList.Count],  // Display Name, base 0
+                DocIds = new int[docList.Count],
+                DocNamesUpperBound = docList.Count
             };
-            view.DocNames[0, 0] = "Voice Messages by Telephone";
-            view.DocNames[0, 1] = "/Documents/BH-voice-msg.pdf";
-            view.DocNames[1, 0] = "Voicemail and Email Messages in Outlook";
-            view.DocNames[1, 1] = "/Documents/BH-email.pdf";
-            view.DocNames[2, 0] = "Food Eligibility";
-            view.DocNames[2, 1] = "/Documents/BH-food-eligibility.pdf";
-            view.DocNames[3, 0] = "Baggers / Drivers Pantry Items";
-            view.DocNames[3, 1] = "/Documents/BH-BAGGERS-Pantry-Items-1-16-2022.pdf";
-            view.DocNames[4, 0] = "Montgomery County Assistance Handout";
-            view.DocNames[4, 1] = "/Documents/Handout-Montgomery-County-Residents-Help.pdf";
-            view.DocNames[5, 0] = "Montgomery County Groups that Deliver Food";
-            view.DocNames[5, 1] = "/Documents/Groups-that-DELIVER-Food-(08-04-2021).pdf";
-            view.DocNames[6, 0] = "Holiday Schedule 2022";
-            view.DocNames[6, 1] = "/Documents/Bethesda-Help-2022-Holiday-Schedule.pdf";
-            view.DocNames[7, 0] = "Resources for Out Of Area Clients";
-            view.DocNames[7, 1] = "/Documents/BH-VI-RESOURCE-PAGE-FOR-OUT-OF-AREA-CLIENTS-(2021).pdf";
-            view.DocNames[8, 0] = "Utility Bill Assistance Flowchart";
-            view.DocNames[8, 1] = "/Documents/BH-Utilities-from-Peoples-Council-6-pages.pdf";
-            view.DocNames[9, 0] = "Food Assistance Resources Overview";
-            view.DocNames[9, 1] = "/Documents/BH-Overview-of-Food-Assistance-Resources-in-MoCo-Summary.pdf";
 
+            for (var i = 0; i < docList.Count; i++)
+            {
+                view.DocNames[i] = docList[i].Title;
+                view.DocIds[i] = docList[i].Id;
+            }
             return View(view);
         }
     }
