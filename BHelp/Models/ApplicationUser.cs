@@ -106,11 +106,13 @@ namespace BHelp.Models
             get { return string.Format("{0} {1}", FirstName, LastName); }
             set => throw new NotImplementedException();
         }
-
-        [NotMapped]
-        public List<SelectListItem> VolunteerCategories { get; set; }
-
-        [NotMapped]
-        public List<SelectListItem> VolunteerSubcategories { get; set; }
+        [NotMapped] public List<SelectListItem> VolunteerCategories { get; set; }
+        [NotMapped] public List<SelectListItem> VolunteerSubcategories { get; set; }
+        [NotMapped] public bool ShowAdminDocumentsMenu { get; set; }
+        [NotMapped] public bool ShowStaffDocumentsMenu { get; set; }
+        [NotMapped] public bool ShowODDocumentsMenu { get; set; }
+        [NotMapped] public bool ShowDriverDocumentsMenu { get; set; }
+        [NotMapped] public bool ShowEveryoneDocumentsMenu { get; set; }
+        [NotMapped] public bool ShowReportsDocumentsMenu { get; set; }
     }
 }

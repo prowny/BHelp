@@ -1,0 +1,27 @@
+﻿@model BHelp.ViewModels.DocumentsViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ViewDocumentCategory</title>
+</head>
+<body>
+    <b>@Model.MenuCategory&nbsp;Documents</b><br />
+    <div>
+        @for (var i = 0; i < Model.DocNamesUpperBound; i++)
+        {
+            <div>
+                @Html.Label(Model.DocNames[i])
+                <input type="image" src="~/Images/PDF10.png" alt="Submit" width="16" height="16"
+                       onclick="window.open('@Url.Action("ViewDocument", "Documents", new { id = @Model.DocIds[i] }) ')" />
+            </div>
+        }
+    </div>
+    <br />
+    <div>
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
+</body>
+</html>

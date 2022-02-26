@@ -381,24 +381,5 @@ namespace BHelp.Controllers
             TempData["UpdateHouseholdDirty"] = "true";
             return null;
         }
-
-        [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
-        public ActionResult ViewODDocuments()
-        {
-            var docList = db.Documents.Where(d => d.MenuCategory == "OfficerOfTheDay").ToList();
-            var view = new DocumentsViewModel
-            {
-                DocNames = new string[docList.Count],  // Display Name, base 0
-                DocIds = new int[docList.Count],
-                DocNamesUpperBound = docList.Count
-            };
-
-            for (var i = 0; i < docList.Count; i++)
-            {
-                view.DocNames[i] = docList[i].Title;
-                view.DocIds[i] = docList[i].Id;
-            }
-            return View(view);
-        }
     }
 }

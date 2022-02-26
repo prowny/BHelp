@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
+using BHelp.ViewModels;
 using Castle.Core.Internal;
 using Microsoft.AspNet.Identity;
 
@@ -181,6 +182,25 @@ namespace BHelp.Controllers
             if (document != null) db.Documents.Remove(document);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public ActionResult ViewDocumentCategory(string menuCat)
+        {
+            var docList = db.Documents.Where(d => d.MenuCategory == menuCat).ToList();
+            var view = new DocumentsViewModel()
+            {
+                MenuCategory = menuCat,
+                DocNamesUpperBound = docList.Count,
+                DocNames = new string[docList.Count],
+                DocIds = new int[docList.Count]
+            };
+            for (int i = 0; i < docList.Count; i++)
+            {
+                view.DocNames[i] = docList[i].Title;
+                view.DocIds[i] = docList[i].Id;
+            }
+
+            return View(view);
         }
 
         protected override void Dispose(bool disposing)

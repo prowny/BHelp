@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
+using BHelp.Models;
 using BHelp.ViewModels;
 using Castle.Core.Internal;
 using Microsoft.AspNet.Identity;
@@ -16,8 +17,30 @@ namespace BHelp.Controllers
         [AllowAnonymous]
         public ActionResult Index()
         {
+            var view = new ApplicationUser()
+                {
+                    ShowAdminDocumentsMenu = false,
+                    ShowDriverDocumentsMenu = false,
+                    ShowODDocumentsMenu = false,
+                    ShowStaffDocumentsMenu = false,
+                    ShowEveryoneDocumentsMenu = false,
+                    ShowReportsDocumentsMenu = false
+                };
+            var db = new BHelpContext();
+            var docList = db.Documents.ToList();
+            var menuCatString = "";
+            foreach (var doc in docList)
+            { menuCatString += doc.MenuCategory; }
+
+            if (menuCatString.Contains("Admin")) view.ShowAdminDocumentsMenu = true;
+            if (menuCatString.Contains("Driver")) view.ShowDriverDocumentsMenu = true;
+            if (menuCatString.Contains("Officer")) view.ShowODDocumentsMenu = true;
+            if (menuCatString.Contains("Staff")) view.ShowStaffDocumentsMenu = true;
+            if (menuCatString.Contains("Everyone")) view.ShowEveryoneDocumentsMenu = true;
+            if (menuCatString.Contains("Reports")) view.ShowReportsDocumentsMenu = true;
+
             ViewData["vmPassword"]  = AppRoutines.GetVoicemailPassword();
-            return View();
+            return View(view);
         }
 
         [Authorize(Roles = "Administrator,Developer")]
@@ -36,27 +59,6 @@ namespace BHelp.Controllers
         public ActionResult ChangeMyPassword()
         {
             return RedirectToAction("ResetPassword", "Account");
-        }
-
-        [Authorize(Roles = "Administrator,Developer")]
-        public ActionResult ViewAdminDocuments()
-        {
-            var db = new BHelpContext();
-            var docList = db.Documents.Where(d => d.MenuCategory == "Administrator").ToList();
-            
-            var view = new DocumentsViewModel
-            {
-                DocNames = new string[docList.Count],  // Display Name, base 0
-                DocIds = new int[ docList.Count],
-                DocNamesUpperBound = docList.Count
-            };
-
-            for (var i = 0; i < docList.Count; i++)
-            {
-                view.DocNames[i] = docList[i].Title;
-                view.DocIds[i] = docList[i].Id;
-            }
-            return View(view);
         }
 
         [Authorize(Roles = "Administrator,Developer")]
