@@ -966,7 +966,7 @@ namespace BHelp
                 sb.AppendLine();
             }
             
-            sb.Append("Totals:,");
+            sb.Append("Total Served:,");
             for (var j = 1; j < 8; j++)
             {
                 if (j == 6)
@@ -975,6 +975,18 @@ namespace BHelp
                 {sb.Append(view.Counts[0, j, view.ZipCount] + ","); }
             }
             sb.AppendLine();
+            if (view.ShowHoursTotals)
+            {
+                sb.Append("Category,People Count,Food Service Hours");
+                sb.AppendLine();
+                for (var i = 0; i < 3; i++)
+                {
+                    sb.Append(view.HoursTotal[i, 0] + ",");
+                    sb.Append(view.HoursTotal[i, 1] + ",");
+                    sb.Append(view.HoursTotal[i, 2] + ",");
+                    sb.AppendLine();
+                }
+            }
 
             var response = System.Web.HttpContext.Current.Response;
             response.BufferOutput = true;

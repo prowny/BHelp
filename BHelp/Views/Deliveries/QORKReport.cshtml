@@ -62,7 +62,7 @@
            </tr>
         }
         <tr>
-            <td>Totals:</td>
+            <td>Total Served:</td>
             @for (var j = 1; j < 8; j++)
             {
                 if (j == 6)
@@ -73,6 +73,25 @@
         </tr>
     </table>
     <br />
+    @if (Model.ShowHoursTotals)
+    {
+        <table>
+            <tr>
+                <td><b>Category</b></td>
+                <td><b>People Count</b></td>
+                <td><b>Volunteer Hours</b></td>
+            </tr>
+            @for (var i = 0; i < 3; i++)
+            {
+                <tr>
+                    <td>@Model.HoursTotal[i, 0]</td>
+                    <td style="text-align: center">@Model.HoursTotal[i, 1]</td>
+                    <td style="text-align: center">@Model.HoursTotal[i, 2]</td>
+                </tr>
+            }
+        </table>
+        <br/>
+    }
     <div>
         @Html.ActionLink("Download to CSV File", "QORKReportToCSV", new { endingDate = Model.EndDateString }, null)
         <br />

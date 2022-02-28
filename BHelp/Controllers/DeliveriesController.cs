@@ -1917,6 +1917,44 @@ namespace BHelp.Controllers
                         }
                     }
                 }
+                // Section to add Volunteer Hours Summary ========================
+                var hoursList = db.VolunteerHours.Where(h => h.Date >= startDate && h.Date <= endDate).ToList();
+                double totalAHours = 0; double totalFHours = 0; double totalMHours = 0;
+                var totalAPeople = 0; var totalFPeople = 0; var totalMPeople = 0;
+                if (hoursList.Count != 0)
+                {
+                    foreach (var rec in hoursList)
+                    {
+                        switch (rec.Category)
+                        {
+                            case "A":
+                                totalAHours += rec.Hours + (rec.Minutes / 60);
+                                totalAPeople += rec.PeopleCount;
+                                break;
+                            case "F":
+                                totalFHours += rec.Hours + (rec.Minutes / 60);
+                                totalFPeople += rec.PeopleCount;
+                                break;
+                            case "M":
+                                totalMHours += rec.Hours + (rec.Minutes / 60);
+                                totalMPeople += rec.PeopleCount;
+                                break;
+                        }
+                    }
+
+                    view.HoursTotal = new string[3,3];  // A-F-M, total volunteer hours 
+                    view.HoursTotal[0, 0] = "Administration";
+                    view.HoursTotal[0, 1] = totalAPeople.ToString();
+                    view.HoursTotal[0, 2] = totalAHours.ToString("#.00");
+                    view.HoursTotal[1, 0] = "Management";
+                    view.HoursTotal[1, 1] = totalMPeople.ToString();
+                    view.HoursTotal[1, 2] = totalMHours.ToString("#.00");
+                    view.HoursTotal[2, 0] = "Food Service";
+                    view.HoursTotal[2, 1] = totalFPeople.ToString();
+                    view.HoursTotal[2, 2] = totalFHours.ToString("#.00");
+                view.ShowHoursTotals = true;
+                }
+                
                 return view;
             }
 
