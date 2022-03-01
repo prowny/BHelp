@@ -529,17 +529,25 @@
     <Content Include="Views\Home\About.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Deliveries\CallLogByDateDelivered.cshtml" />
-    <Content Include="Views\Deliveries\HelperReport.cshtml" />
+    <Content Include="Views\Deliveries\CallLogByDateDelivered.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Deliveries\HelperReport.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Views\Household\ConfirmChangesSaved.cshtml" />
     <Content Include="Views\OD\ConfirmCreateDelivery.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Deliveries\OpenFilters.cshtml" />
+    <Content Include="Views\Deliveries\OpenFilters.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Views\OD\AdviseDeliveryCreated.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Deliveries\AdviseCannotSave.cshtml" />
+    <Content Include="Views\Deliveries\AdviseCannotSave.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Views\GroupNames\Create.cshtml" />
     <Content Include="Views\GroupNames\Index.cshtml" />
     <Content Include="Views\GroupNames\Edit.cshtml" />
@@ -571,7 +579,9 @@
     <Content Include="Views\Home\ResetVoicemailPassword.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Deliveries\QORKReport.cshtml" />
+    <Content Include="Views\Deliveries\QORKReport.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Views\Documents\Upload.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -764,8 +774,12 @@
     <Content Include="Views\Deliveries\CallLogIndividual.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Deliveries\CallLogByLogDate.cshtml" />
-    <Content Include="Views\Deliveries\Index.cshtml" />
+    <Content Include="Views\Deliveries\CallLogByLogDate.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Deliveries\Index.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202112281608060_AddGroups.resx">
