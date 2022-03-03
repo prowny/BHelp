@@ -10,9 +10,8 @@ namespace BHelp.ViewModels
 
         [DisplayName("Group Name")]
         public string Name { get; set; }
-        
         public IEnumerable<GroupName> GroupNameList { get; set; }
-
         public List<string> GroupMembersList { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }

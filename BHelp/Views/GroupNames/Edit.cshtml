@@ -8,6 +8,7 @@
     <title>Edit</title>
     <style>
         #btnSave {background-color: blue;color: white}
+        #btnDelete {background-color: white;color: red}
     </style>
 </head>
 <body>
@@ -27,10 +28,11 @@
                     @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
                 </div>
             </div>
-    
+            <br/>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="submit" value="Save" class="btn btn-default" id="btnSave" />
+                    @if (Model.ErrorMessage != null){@Model.ErrorMessage}
                 </div>
             </div>
         </div>

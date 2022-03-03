@@ -16,5 +16,6 @@ namespace BHelp.ViewModels
         public string SelectedMemberId { get; set; }
         public List<SelectListItem> AllClients { get; set; }
         public string SelectedClientId { get; set; }
+        public string ClientNameAddress { get; set; }
     }
 }

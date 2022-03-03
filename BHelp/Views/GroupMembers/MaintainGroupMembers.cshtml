@@ -1,8 +1,7 @@
 ﻿@model BHelp.ViewModels.GroupMemberViewModel
-@{
-    Layout = null;
-}
+@{Layout = null; }
 <!DOCTYPE html>
+
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
@@ -11,49 +10,46 @@
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
-    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
     @*var _size =@Model.GroupMemberSelectList.Count*@
 </head>
 <body>
     <b>@Html.Label("Maintain Group Members for " + Model.SelectedGroupName)</b>
-<div id="GroupMembersDiv">
-@*@using (Html.BeginForm("Index", "GroupMembers", FormMethod.Post))
-{*@
-<table>
+<div>
 
-    @*@foreach (var member in Model.GroupMemberSelectList)
+    @if (Model.GroupMemberSelectList.Count > 0)
     {
-        <tr>
-            <td>@member.Text</td>
-        </tr>
-    }*@
-
-    <tr>
-        <td>
-            @Html.DropDownListFor(m => m.SelectedMemberId,
-                new SelectList(Model.GroupMemberSelectList, "Value", 
-                    "Text", new{size = 10}))
-        </td>
-        <td>
-            <b>&nbsp;&nbsp;@Html.Label("Add Member: ") </b>
-            @Html.DropDownList("selectClientDDL", Model.AllClients)
-        </td>
-    </tr>
-</table>
-    <!--<table>
+        <table>
+            @for (int i = 0; i < Model.GroupMemberSelectList.Count; i++)
+            {
+            <tr>
+                <td>@Model.GroupMemberSelectList[i].Text</td>
+                <td>
+                @Html.ActionLink("Remove", "Delete",
+                    new
+                    {
+                        id = Model.GroupMemberSelectList[i].Value,
+                        nameId = Model.NameId})
+                </td>
+            </tr>
+            }
+        </table>
+    }
+    
+    <table>
         <tr>
             <td>
-                <input type="button" value="Remove Selected Client" onclick="location.href='@Url.Action("Remove","GroupMembers", new {model = Model}) '" />
-            </td>-->
-            @*<td ><input name="btnRemove" type="submit" value="Remove Selected Client" class="btn btn-default" /></td>*@
-        <!--</tr>
-    </table>-->
-
+            <b>@Html.Label("Add Member: ") </b>
+            @Html.DropDownListFor(m => m.SelectedClientId,
+                new SelectList(Model.AllClients, "Value", "Text"),
+                new { id = "ClientDDL" })
+            </td>
+        </tr>
+    </table>
 </div>
     <br />
 <div>
-    @Html.ActionLink("Add New Group Member", "AddGroupMember")
-    <br />
+    @*@Html.ActionLink("Add New Group Member", "AddGroupMember")
+    <br />*@
     @Html.ActionLink("Back To Group List", "Index")
     <br/>
     @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
@@ -62,35 +58,13 @@
 </html>
 
 <script type="text/javascript">
-    $("#selectClientDDL").change(AddGroupMember);
-</script>
-
-@*<script type="text/javascript">
-        $(document).ready(function() {
-            window.$("#selectClientDDL").change(function() {
-                var _clientId = window.$('#selectClientDDL').val();
-                window.location.href =
-                    '@Url.Action("AddGroupMember", "GroupMembers")'
-                    + '?groupId=' + _clientId;
-            });
-        });
-    </script>*@
-
-@*<script type="text/javascript">
-        $(function () {
-            window.$('#selectClientDDL').change(function () {
-                var _clientId = window.$(this).val();
-                window.location.href = '@Url.Action("AddGroupMember",
-                                            "GroupMembers")' + '?clientId=' + _clientId;
-            });
-        });
-    </script>*@
-<!--<script type="text/javascript">-->
-@*$("#selectClientDDL").change(function ()
-    {
+    $('#ClientDDL').change(function () {
         var mbrId = window.$(this).val();
         var gpId = @Model.SelectedGroupId;
-        window.Location.href = '@Url.Action("AddGroupMember", "GroupMembers")''
-            + 'gpId=' + @Model.SelectedGroupId + ' ?clientId =' + mbrId;
-    });*@
-<!--</script>-->
+        var link = '@Url.Action("AddGroupMember", "GroupMembers",
+                         new {  clientId="-2"})';
+        link = link.replace("-1", gpId);  
+        link = link.replace("-2", mbrId);
+        window.location.href = link;
+    });
+</script>

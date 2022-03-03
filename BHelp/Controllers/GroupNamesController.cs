@@ -1,5 +1,4 @@
-﻿using System.Data.Entity;
-using System.Linq;
+﻿using System.Linq;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
@@ -23,12 +22,6 @@ namespace BHelp.Controllers
             return View(groupNamesView);
         }
 
-        // GET: Group/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
         // GET: Group/Create
         [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Create()
@@ -42,7 +35,7 @@ namespace BHelp.Controllers
         {
             if (ModelState.IsValid)
             {
-                GroupName gpNm = new GroupName { Name = groupName.Name };
+                GroupName gpNm = new GroupName { Name = groupName.Name.Trim() };
                 db.GroupNames.Add(gpNm);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -62,14 +55,25 @@ namespace BHelp.Controllers
             return View(groupNameView);
         }
 
-        // POST: Group/Edit/5
+        // POST: Group/Edit/5I
         [HttpPost, Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Edit([Bind(Include = "Id, Name")] GroupNameViewModel groupName)
         {
             if (!ModelState.IsValid) return View(groupName);
-            if (groupName.Name == null) { groupName.Name = ""; }
-            db.Entry(groupName).State = EntityState.Modified;
-            db.SaveChanges();
+            var groupNameRec = db.GroupNames.Find(groupName.Id);
+            if (groupNameRec != null)
+            {
+                var dupNameRec = db.GroupNames.FirstOrDefault(n => n.Name ==
+                                                 groupName.Name && n.Id != groupNameRec.Id);
+                if (dupNameRec != null)
+                {
+                    groupName.ErrorMessage = "That group name already exists!";
+                    return View(groupName);
+                }
+                groupNameRec.Name = groupName.Name.Trim();
+                db.SaveChanges();
+            }
+            
             return RedirectToAction("Index");
         }
 
@@ -77,23 +81,30 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Delete(int id)
         {
-            return View();
+            var groupName = db.GroupNames.Find(id);
+            if (groupName == null) return View();
+            var view = new GroupNameViewModel()
+            {
+                Id =id,
+                Name = groupName.Name
+            };
+            return View(view);
         }
 
         // POST: Group/Delete/5
-        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer")]
-        public ActionResult Delete(int id, FormCollection collection)
+        [HttpPost, ActionName("Delete"),Authorize(Roles = "Administrator,Staff,Developer")]
+        public ActionResult DeleteConfirmed(int id)
         {
-            try
+            var gpMembers = db.GroupMembers.Where(m => m.Id == id).ToList();
+            foreach (var mbr in gpMembers)
             {
-                // TODO: Add delete logic here
+                db.GroupMembers.Remove(mbr);
+            }
+            var gpNameRec = db.GroupNames.Find(id);
+            if (gpNameRec != null) db.GroupNames.Remove(gpNameRec);
+            db.SaveChanges();
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Index");
         }
     }
 }

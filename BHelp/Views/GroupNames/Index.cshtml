@@ -9,7 +9,7 @@
 </head>
 <body>
     <p>
-        @Html.ActionLink("Create New Group Name", "Create")
+        @Html.ActionLink("Create New Client Group Name", "Create")
     </p>
 <table class="table">
     <tr>
@@ -23,7 +23,8 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.Id })
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) | 
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
             </td>
         </tr>
     }

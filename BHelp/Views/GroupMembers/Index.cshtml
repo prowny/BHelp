@@ -14,38 +14,15 @@
     <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
 </head>
 <body>
-    <span><b>Maintain Group Members</b></span>
+    <span><b>Maintain Client Group Members</b></span>
     <br/>
-    <div id="GroupNameDiv">
-        @using (Html.BeginForm("Index", "GroupMembers", FormMethod.Post))
-        {
-            <table class="table">
-                <tr>
-                    <td>
-                        @Html.DropDownList("selectGroupDDL", Model.GroupNameSelectList
-                            , "-Select Group-")
-                    </td>
-                </tr>
-            </table>
-        }
-    </div>
-
-@*<div id="GroupMembersDiv" style ="display:none">*@
+    @using (Html.BeginForm("Index", "GroupMembers", FormMethod.Post))
+    {
     <div>
-        <table>
-            <tr>
-                @*<td>
-                    @Html.DropDownList("selectMembersDDL", new SelectList(string.Empty,
-                        "Value", "Text"), new { size = 10 })
-                </td>*@
-                @*<td>
-                    <b>&nbsp;&nbsp;@Html.Label("Add Member: ") </b>
-                    @Html.DropDownList("selectClientDDL", Model.AllClients)
-                </td>*@
-
-            </tr>
-        </table>
-    </div>
+        @Html.DropDownList("selectGroupDDL", Model.GroupNameSelectList,
+            "-Select Group-")
+     </div>
+    }
     <br/>
     <div>
         @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)   
@@ -62,8 +39,3 @@
         });
     });
 </script>
-@*<script type="text/javascript">
-    $("#selectGroupDDL").change(GroupNameChange);
-</script>*@
-
-

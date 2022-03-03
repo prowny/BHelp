@@ -183,7 +183,7 @@ function AddGroupMember() {
         type: "GET",
         cache: false,
         dataType: "json",
-        data: { clientId: _clientId },
+        data: { gpId: gpId, clientId: mbrId },
         success: function(result) {
             window.$("#selectMembersDDL").empty();
             window.$("#selectClientDDL").empty();
