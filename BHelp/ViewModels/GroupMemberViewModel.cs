@@ -8,7 +8,7 @@ namespace BHelp.ViewModels
         public int Id { get; set; }
         public int NameId { get; set; }
         public int ClientId { get; set; }
-        public int GroupName { get; set; }
+        public string GroupName { get; set; }
         public List<SelectListItem> GroupNameSelectList { get; set; }
         public int? SelectedGroupId { get; set; }
         public string SelectedGroupName { get; set; }

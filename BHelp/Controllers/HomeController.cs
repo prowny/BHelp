@@ -24,7 +24,8 @@ namespace BHelp.Controllers
                     ShowODDocumentsMenu = false,
                     ShowStaffDocumentsMenu = false,
                     ShowEveryoneDocumentsMenu = false,
-                    ShowReportsDocumentsMenu = false
+                    ShowReportsDocumentsMenu = false,
+                    ShowPantryCoordinatorDocumentsMenu = false
                 };
             var db = new BHelpContext();
             var docList = db.Documents.ToList();
@@ -38,6 +39,7 @@ namespace BHelp.Controllers
             if (menuCatString.Contains("Staff")) view.ShowStaffDocumentsMenu = true;
             if (menuCatString.Contains("Everyone")) view.ShowEveryoneDocumentsMenu = true;
             if (menuCatString.Contains("Reports")) view.ShowReportsDocumentsMenu = true;
+            if (menuCatString.Contains("PantryCoordinator")) view.ShowPantryCoordinatorDocumentsMenu = true;
 
             ViewData["vmPassword"]  = AppRoutines.GetVoicemailPassword();
             return View(view);

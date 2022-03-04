@@ -114,5 +114,6 @@ namespace BHelp.Models
         [NotMapped] public bool ShowDriverDocumentsMenu { get; set; }
         [NotMapped] public bool ShowEveryoneDocumentsMenu { get; set; }
         [NotMapped] public bool ShowReportsDocumentsMenu { get; set; }
+        [NotMapped] public bool ShowPantryCoordinatorDocumentsMenu { get; set; }
     }
 }

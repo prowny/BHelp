@@ -62,38 +62,7 @@ namespace BHelp.Controllers
         {
             return View();
         }
-
-        // GET: GroupMembers/Delete/5
-        [Authorize(Roles = "Administrator,Staff,Developer")]
-        public ActionResult Delete(int id, int nameId)
-        {
-            var mbr = db.GroupMembers.Find(id);
-            if (mbr != null)
-            {
-                var view = new GroupMemberViewModel()
-                {
-
-                };
-            }
-            return View();
-        }
-
-        // POST: GroupMembers/Delete/5
-        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer")]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
+        
         [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult MaintainGroupMembers(int? groupId)
         {

@@ -27,47 +27,47 @@
 
     @if (User.IsInRole("Developer"))
     {
-        <div>
+        @*<div>
             <strong>Developer Menu</strong><br />
-            <a href="@Url.Action("Index", "GroupNames")">Maintain Client Group Names</a><br />
-            <a href="@Url.Action("Index", "GroupMembers")">Maintain Client Group Members</a><br />
         </div>
-        <br/>
+        <br />*@
     }
 
     @if (User.IsInRole("Administrator") || User.IsInRole("Developer"))
     {
-    <div>
-        <strong>Administrator Menu</strong><br />
-        @if (Model.ShowAdminDocumentsMenu)
-        {
-            <a href="@Url.Action("ViewDocumentCategory", "Documents", new{menuCat="Administrator"})">View Admin Documents</a><br/>
-        }
-        <a href="@Url.Action("MaintainUsers", "Home")">Maintain Volunteers / Website Users</a><br />
-        <a href="@Url.Action("MaintainUserRoles", "Home")">Maintain User Permissions (&quot;Roles&quot;)</a><br />
-        <a href="@Url.Action("ResetVoicemailPassword", "Home")">Reset Voicemail Password</a><br />
-        <a href="@Url.Action("ResetAnyPassword", "Account")">Reset Any Password</a><br />
-        <a href="@Url.Action("Index", "Documents")">Maintain Documents</a><br />
-        <br />
-    </div>
+        <div>
+            <strong>Administrator Menu</strong><br />
+            @if (Model.ShowAdminDocumentsMenu)
+            {
+                <a href="@Url.Action("ViewDocumentCategory", "Documents", new{menuCat="Administrator"})">View Admin Documents</a><br />
+            }
+            <a href="@Url.Action("MaintainUsers", "Home")">Maintain Volunteers / Website Users</a><br />
+            <a href="@Url.Action("MaintainUserRoles", "Home")">Maintain User Permissions (&quot;Roles&quot;)</a><br />
+            <a href="@Url.Action("ResetVoicemailPassword", "Home")">Reset Voicemail Password</a><br />
+            <a href="@Url.Action("ResetAnyPassword", "Account")">Reset Any Password</a><br />
+            <a href="@Url.Action("Index", "Documents")">Maintain Documents</a><br />
+            <br />
+        </div>
     }
 
     @if (User.IsInRole("Staff") || User.IsInRole("Administrator"))
     {
-    <div>
-        <strong>Staff Menu</strong><br />
-        <a href="@Url.Action("Index", "Clients")">Maintain Clients</a>
-        <span style="color: darkmagenta">("Alpha List")</span><br />
-        <a href="@Url.Action("Index", "OD")">Maintain Family Members (Family)</a>
-        <span style="color: darkmagenta"> (Go to OD Select Client page)</span><br />
-        <a href="@Url.Action("CallLogMenu", "Deliveries")">Maintain Call Log History</a><br />
-        <a href="@Url.Action("Index", "Deliveries")">Maintain Open Deliveries</a><br />
-        @if (Model.ShowStaffDocumentsMenu)
-        {
-            <a href="@Url.Action("ViewDocumentCategory", "Documents", new {menuCat="Staff"})">View Staff Documents</a><br/>
-        }
-        <br/>
-    </div>
+<div>
+    <strong>Staff Menu</strong><br />
+    <a href="@Url.Action("Index", "Clients")">Maintain Clients</a>
+    <span style="color: darkmagenta">("Alpha List")</span><br />
+    <a href="@Url.Action("Index", "OD")">Maintain Family Members (Family)</a>
+    <span style="color: darkmagenta"> (Go to OD Select Client page)</span><br />
+    <a href="@Url.Action("CallLogMenu", "Deliveries")">Maintain Call Log History</a><br />
+    <a href="@Url.Action("Index", "Deliveries")">Maintain Open Deliveries</a><br />
+    <a href="@Url.Action("Index", "GroupNames")">Maintain Client Group Names</a><br />
+    <a href="@Url.Action("Index", "GroupMembers")">Maintain Client Group Members</a><br />
+    @if (Model.ShowStaffDocumentsMenu)
+    {
+        <a href="@Url.Action("ViewDocumentCategory", "Documents", new {menuCat="Staff"})">View Staff Documents</a><br />
+    }
+    <br />
+</div>
     }
 
     @if (User.IsInRole("Reports") || User.IsInRole("Developer") || User.IsInRole("Administrator"))
@@ -76,22 +76,28 @@
             <strong>Reports Menu</strong><br />
             @if (Model.ShowReportsDocumentsMenu)
             {
-                <a href="@Url.Action("ViewDocumentCategory", "Documents", new {menuCat="Reports"})">View Reports Documents</a><br/>
+                <a href="@Url.Action("ViewDocumentCategory", "Documents", new {menuCat="Reports"})">View Reports Documents</a><br />
             }
             <a href="@Url.Action("ReportsMenu", "Deliveries")">Reports</a><br />
         </div>
         <br />
     }
-    
-@if (User.IsInRole("PantryCoordinator") || User.IsInRole("Developer") || User.IsInRole("Administrator"))
-{
-    <div>
-        <strong>Pantry Coordinator Menu</strong><br />
-        <a href="@Url.Action("Index", "Deliveries")">View Open Deliveries</a><br />
-    </div>
-}
 
-@if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("Staff") || User.IsInRole("Staff") || User.IsInRole("Administrator"))
+    @if (User.IsInRole("PantryCoordinator") || User.IsInRole("Developer") || User.IsInRole("Administrator"))
+    {
+        <div>
+            <strong>Pantry Coordinator Menu</strong><br/>
+            <a href="@Url.Action("Index", "Deliveries")">View Open Deliveries</a><br/>
+            @if (Model.ShowPantryCoordinatorDocumentsMenu)
+            {
+            <a href="@Url.Action("ViewDocumentCategory", "Documents", new {menuCat="PantryCoordinator"})">View Pantry Coordinator Documents</a><br />
+            }
+        </div>
+        
+        <br/>
+    }
+
+    @if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("Staff") || User.IsInRole("Staff") || User.IsInRole("Administrator"))
     {
         <div>
             <strong>Officer of the Day Menu</strong><br />
@@ -100,46 +106,47 @@
             <a href="@Url.Action("CallLogMenu", "Deliveries")">View Call Log History</a><br />
             @if (Model.ShowODDocumentsMenu)
             {
-                <a href="@Url.Action("ViewDocumentCategory", "Documents", new{menuCat="OfficerOfTheDay"})">View OD Documents</a><br/>
+                <a href="@Url.Action("ViewDocumentCategory", "Documents", new{menuCat="OfficerOfTheDay"})">View OD Documents</a><br />
             }
             <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
             <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["vmPassword"])</span>
-            <br />
         </div>
+        <br />
     }
 
     @if (User.IsInRole("Driver") || User.IsInRole("Staff") || User.IsInRole("Administrator"))
     {
-<div>
-    <strong>Driver Menu</strong><br />
-    <a href="@Url.Action("Index", "Driver")">Call Log - Driver Section</a><br />
-    <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
-    <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["vmPassword"])</span>
-    @if (Model.ShowDriverDocumentsMenu)
-    {
-        <a href="@Url.Action("ViewDocumentCategory", "Documents", new{menuCat="Driver"})">Driver Documents</a><br />
-    }
-</div>
+        <div>
+            <strong>Driver Menu</strong><br />
+            <a href="@Url.Action("Index", "Driver")">Call Log - Driver Section</a><br />
+            <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
+            <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["vmPassword"])</span>
+            @if (Model.ShowDriverDocumentsMenu)
+            {
+                <br/>
+                <a href="@Url.Action("ViewDocumentCategory", "Documents", new{menuCat="Driver"})">Driver Documents</a><br />
+            }
+        </div>
     }
     <br />
 
-<div>
-    @if (!(User.IsInRole("OfficerOfTheDay") && !User.IsInRole("Administrator") && !User.IsInRole("Staff")))
-    {
-        <a href="@Url.Action("Create", "VolunteerHours")">Enter Volunteer Hours</a>
-        <br/>
-    }
-    <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br/>
-    <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br/>
-    <a href="http://www.bethesdahelp.org" target="_blank">Go To Bethesda Help Website</a><br/>
-    @if (Model.ShowEveryoneDocumentsMenu)
-    {
-        <a href="@Url.Action("ViewDocumentCategory", "Documents", new { menuCat = "Everyone" })">Documents</a><br/>
-    }
-    <br/>
-    @Html.AntiForgeryToken()
-    <a href="@Url.Action("Logout", "Home")">LogOut</a>
-</div>
+    <div>
+        @if (!(User.IsInRole("OfficerOfTheDay") && !User.IsInRole("Administrator") && !User.IsInRole("Staff")))
+        {
+            <a href="@Url.Action("Create", "VolunteerHours")">Enter Volunteer Hours</a>
+            <br />
+        }
+        <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br />
+        <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br />
+        <a href="http://www.bethesdahelp.org" target="_blank">Go To Bethesda Help Website</a><br />
+        @if (Model.ShowEveryoneDocumentsMenu)
+        {
+            <a href="@Url.Action("ViewDocumentCategory", "Documents", new { menuCat = "Everyone" })">Documents</a><br />
+        }
+        <br />
+        @Html.AntiForgeryToken()
+        <a href="@Url.Action("Logout", "Home")">LogOut</a>
+    </div>
 
 </body>
 </html>
