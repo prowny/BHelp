@@ -46,9 +46,17 @@
     @foreach (var item in Model)
     {
         <tr>
-            <td>
+            @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
+            {
+                <td>@Html.ActionLink("Edit", "Edit", new { id = item.Id })</td>
+            }
+            else
+            {
+                <td></td>
+            }
+            @*<td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id, desiredDeliveryDate = item.DateDelivered })
-            </td>
+            </td>*@
             <td>@Html.DisplayFor(modelItem => item.DateDeliveredString)</td>
             @if (item.EligiibilityRulesException)
             {<td style="color: red"><b>EX!</b></td>}
@@ -79,9 +87,13 @@
             <td style="text-align: center">@Html.DisplayFor(modelItem => item.KidSnacks)</td>
             <td style="text-align: center">@Html.DisplayFor(modelItem => item.GiftCards)</td>
             <td title=@item.DriverNotesToolTip>@Html.DisplayFor(modelItem => item.DriverNotes)</td>
-            <td>
+            @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
+            {
+                <td>@Html.ActionLink("Edit", "Edit", new { id = item.Id })</td>
+            }
+            @*<td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id, desiredDeliveryDate = item.DeliveryDate })
-            </td>
+            </td>*@
         </tr>
     }
 </table>

@@ -20,7 +20,7 @@ namespace BHelp.Controllers
         private readonly BHelpContext db = new BHelpContext();
 
         // GET:  Open Deliveries
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay,PantryCoordinator")]
         public ActionResult Index()
         {  
             var listDeliveries = new List<Delivery>(db.Deliveries)
