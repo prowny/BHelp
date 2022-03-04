@@ -1949,7 +1949,7 @@ namespace BHelp.Controllers
                     view.HoursTotal[1, 0] = "Management";
                     view.HoursTotal[1, 1] = totalMPeople.ToString();
                     view.HoursTotal[1, 2] = totalMHours.ToString("#.00");
-                    view.HoursTotal[2, 0] = "Food Service";
+                    view.HoursTotal[2, 0] = "Food Program";
                     view.HoursTotal[2, 1] = totalFPeople.ToString();
                     view.HoursTotal[2, 2] = totalFHours.ToString("#.00");
                 view.ShowHoursTotals = true;

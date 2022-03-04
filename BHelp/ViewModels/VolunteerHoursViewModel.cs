@@ -36,6 +36,6 @@ namespace BHelp.ViewModels
         public string MinutesString { get; set; }
         public string BtnSave { get; set; }
         public string BtnDelete { get; set; }
-        public string A_MCategory { get; set; }
+        public string A_MCategory { get; set; } // Administration or Management
     }
 }

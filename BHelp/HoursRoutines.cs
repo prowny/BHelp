@@ -26,8 +26,8 @@ namespace BHelp
         public static List<SelectListItem> GetHoursCategoriesSelectList()
         {
             List<SelectListItem> getHoursCategories = new List<SelectListItem>();
-            var selListItem = new SelectListItem() { Value = "F", Text = @"Food Service" };
-            getHoursCategories.Add(selListItem);    // Food Service
+            var selListItem = new SelectListItem() { Value = "F", Text = @"Food Program" };
+            getHoursCategories.Add(selListItem);    // Food Program
             selListItem = new SelectListItem() { Value = "A", Text = @"Administration" };
             getHoursCategories.Add(selListItem);    // Administration
             selListItem = new SelectListItem() { Value = "M", Text = @"Management" };
@@ -63,8 +63,8 @@ namespace BHelp
             {
                 case "A": return "Administration";
                 case "M": return "Management";
-                case "F": return "Food Service";
-                default: return "Food Service";
+                case "F": return "Food Program";
+                default: return "Food Program";
             }
         }
         public static DateTime GetPreviousFriday(DateTime curDt)
@@ -159,7 +159,7 @@ namespace BHelp
             {
                 new VolunteerHoursTotalsViewModel(){Category ="A", CategoryName = "Administration", PeopleCount =0,TotalHours = 0},
                 new VolunteerHoursTotalsViewModel(){Category ="M", CategoryName = "Management", PeopleCount =0,TotalHours = 0},
-                new VolunteerHoursTotalsViewModel(){Category ="F", CategoryName = "Food Service", PeopleCount =0,TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", CategoryName = "Food Program", PeopleCount =0,TotalHours = 0},
             };
 
             // for checking duplicate PeopleCounts:

@@ -66,6 +66,7 @@
                     <td><b>Log Date</b></td>
                     <td><b>Client Name</b></td>
                     <td><b>Addess</b></td>
+                    <td><b>City</b></td>
                     <td><b>Driver</b></td>
                     <td><b>DelivDate</b></td>
                     <td><b>Status</b></td>
@@ -95,6 +96,7 @@
                         @{ var addr = delivery.StreetNumber + " " + delivery.StreetName; }
                         <td>@name</td>
                         <td>@addr</td>
+                        <td>@delivery.City</td>
                         <td>@delivery.DriverName</td>
                         <td>@delivery.DateDeliveredString</td>
                         <td>@delivery.SelectedStatus</td>

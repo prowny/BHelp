@@ -977,15 +977,18 @@ namespace BHelp
             sb.AppendLine();
             if (view.ShowHoursTotals)
             {
-                sb.Append("Category,People Count,Food Service Hours");
+                var _hours = view.HoursTotal[2, 2];
+                sb.Append("Food Program Hours:," + _hours +",");
+                var _people = view.HoursTotal[2, 1];
+                sb.Append("People Count:," + _people);
                 sb.AppendLine();
-                for (var i = 0; i < 3; i++)
-                {
-                    sb.Append(view.HoursTotal[i, 0] + ",");
-                    sb.Append(view.HoursTotal[i, 1] + ",");
-                    sb.Append(view.HoursTotal[i, 2] + ",");
-                    sb.AppendLine();
-                }
+                //for (var i = 0; i < 3; i++)  // detail removed 03/03/2022
+                //{
+                //    sb.Append(view.HoursTotal[i, 0] + ",");
+                //    sb.Append(view.HoursTotal[i, 1] + ",");
+                //    sb.Append(view.HoursTotal[i, 2] + ",");
+                //    sb.AppendLine();
+                //}
             }
 
             var response = System.Web.HttpContext.Current.Response;

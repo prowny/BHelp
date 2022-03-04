@@ -115,19 +115,23 @@
     }
     <br />
 
-    <div>
-        <a href="@Url.Action("Create", "VolunteerHours")">Enter Volunteer Hours</a><br />
-        <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br />
-        <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br />
-        <a href="http://www.bethesdahelp.org" target="_blank">Go To Bethesda Help Website</a><br />
-        @if (Model.ShowEveryoneDocumentsMenu)
-        {
-            <a href="@Url.Action("ViewDocumentCategory", "Documents", new{menuCat="Everyone"})">Documents</a><br />
-        }
-        <br />
-        @Html.AntiForgeryToken()
-        <a href="@Url.Action("Logout", "Home")">LogOut</a>
-    </div>
+<div>
+    @if (!(User.IsInRole("OfficerOfTheDay") && !User.IsInRole("Administrator") && !User.IsInRole("Staff")))
+    {
+        <a href="@Url.Action("Create", "VolunteerHours")">Enter Volunteer Hours</a>
+        <br/>
+    }
+    <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br/>
+    <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br/>
+    <a href="http://www.bethesdahelp.org" target="_blank">Go To Bethesda Help Website</a><br/>
+    @if (Model.ShowEveryoneDocumentsMenu)
+    {
+        <a href="@Url.Action("ViewDocumentCategory", "Documents", new { menuCat = "Everyone" })">Documents</a><br/>
+    }
+    <br/>
+    @Html.AntiForgeryToken()
+    <a href="@Url.Action("Logout", "Home")">LogOut</a>
+</div>
 
 </body>
 </html>

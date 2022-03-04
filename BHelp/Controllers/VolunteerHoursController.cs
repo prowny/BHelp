@@ -199,7 +199,7 @@ namespace BHelp.Controllers
 
             if (model.Category == "F" && model.Subcategory == "(none)")
             {
-                TempData["SubmitError"] = "Select Food Service Subcategory!";
+                TempData["SubmitError"] = "Select Food Program Subcategory!";
                 return RedirectToAction("Create");
             }
             

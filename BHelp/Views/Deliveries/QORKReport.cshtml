@@ -72,23 +72,23 @@
             }
         </tr>
     </table>
-    <br />
-    @if (Model.ShowHoursTotals)
+@if (Model.ShowHoursTotals)
     {
         <table>
             <tr>
-                <td><b>Category</b></td>
-                <td><b>People Count</b></td>
-                <td><b>Volunteer Hours</b></td>
+                <td>Food Program Hours: </td>
+                <td style="text-align: center">@Model.HoursTotal[2,2]</td>
+                <td>People Count: </td>
+                <td style="text-align: center">@Model.HoursTotal[2, 1]</td>
             </tr>
-            @for (var i = 0; i < 3; i++)
+            @*@for (var i = 0; i < 3; i++)
             {
                 <tr>
                     <td>@Model.HoursTotal[i, 0]</td>
                     <td style="text-align: center">@Model.HoursTotal[i, 1]</td>
                     <td style="text-align: center">@Model.HoursTotal[i, 2]</td>
                 </tr>
-            }
+            }*@
         </table>
         <br/>
     }

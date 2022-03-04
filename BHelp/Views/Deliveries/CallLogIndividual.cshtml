@@ -55,21 +55,22 @@
         <table>
             <tr>
                 <td></td>
-                <td>Log Date</td>
-                <td>Name</td>
-                <td>Address</td>
-                <td style="text-align: center">Driver</td>
-                <td>DelivDate</td>
-                <td style="text-align: center">Status</td>
-                <td style="text-align: center">#HH</td>
-                <td style="text-align: center">#C</td>
-                <td style="text-align: center">#A</td>
-                <td style="text-align: center">#S</td>
-                <td style="text-align: center">#F</td>
-                <td style="text-align: center">#H</td>
-                <td style="text-align: center">#KS</td>
-                <td style="text-align: center">#GC</td>
-                <td style="text-align: center">Lbs.</td>
+                <td><b>Log Date</b></td>
+                <td><b>Name</b></td>
+                <td><b>Address</b></td>
+                <td><b>City</b></td>
+                <td style="text-align: center"><b>Driver</b></td>
+                <td><b>DelivDate</b></td>
+                <td style="text-align: center"><b>Status</b></td>
+                <td style="text-align: center"><b>#HH</b></td>
+                <td style="text-align: center"><b>#C</b></td>
+                <td style="text-align: center"><b>#A</b></td>
+                <td style="text-align: center"><b>#S</b></td>
+                <td style="text-align: center"><b>#F</b></td>
+                <td style="text-align: center"><b>#H</b></td>
+                <td style="text-align: center"><b>#KS</b></td>
+                <td style="text-align: center"><b>#GC</b></td>
+                <td style="text-align: center"><b>Lbs.</b></td>
             </tr>
             @foreach (var delivery in Model.DeliveryList)
             {
@@ -89,6 +90,7 @@
                     @{ string addr = delivery.StreetNumber + " " + delivery.StreetName; }
                     <td>@name</td>
                     <td>@addr</td>
+                    <td>@delivery.City</td>
                     <td>@delivery.DriverName</td>
                     <td style="text-align: center">@delivery.DateDeliveredString</td>
                     <td style="text-align: center">@delivery.SelectedStatus</td>
