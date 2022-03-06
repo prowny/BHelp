@@ -13,7 +13,7 @@
     @*var _size =@Model.GroupMemberSelectList.Count*@
 </head>
 <body>
-    <b>@Html.Label("Maintain Group Members for " + Model.SelectedGroupName)</b>
+    <b>@Html.Label("Maintain Group Members for " + Model.SelectedGroupName)</b>&nbsp;(@Model.GroupMemberSelectList.Count)
 <div>
 
     @if (Model.GroupMemberSelectList.Count > 0)
@@ -35,18 +35,45 @@
     <table>
         <tr>
             <td>
-            <b>@Html.Label("Add Member: ") </b>
-            @Html.DropDownListFor(m => m.SelectedClientId,
-                new SelectList(Model.AllClients, "Value", "Text"),
-                new { id = "ClientDDL" })
+                <b>@Html.Label("Add Member: ") </b>
+                @Html.DropDownListFor(m => m.SelectedClientId,
+                    new SelectList(Model.AllClients, "Value", "Text"),
+                    new { id = "ClientDDL" })
+            </td>
+            <td>
+                @Html.Label("Sort by Last Name:")
+                @if (Model.SelectedSortOrder == "LastName")
+                {
+                    <input type="radio" checked="checked" onclick="window.location.href = '@Url.Action("ChangeClientSortOrder",
+                     "GroupMembers", new {sortOrder = "LastName" })';" />
+                    @Html.Label("by Street Name:")
+                    <input type="radio" onclick="window.location.href = '@Url.Action("ChangeClientSortOrder",
+                   "GroupMembers", new {sortOrder = "StreetName" })';" />
+                }
+                else
+                {
+                    <input type="radio" onclick="window.location.href = '@Url.Action("ChangeClientSortOrder",
+                       "GroupMembers", new {  sortOrder = "LastName" })';" />
+                    @Html.Label("by Street Name:")
+                    <input type="radio"checked ="checked" onclick="window.location.href = '@Url.Action("ChangeClientSortOrder",
+                             "GroupMembers", new {sortOrder = "StreetName" })';" />
+                }
             </td>
         </tr>
+        @if (Model.GroupMemberSelectList.Count > 0)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink("Create a delivery for all group members", "CreateDeliveries",
+                        new { nameId = Model.NameId })
+                </td>
+            </tr>
+        }
     </table>
 </div>
     <br />
 <div>
-    @*@Html.ActionLink("Add New Group Member", "AddGroupMember")
-    <br />*@
+
     @Html.ActionLink("Back To Group List", "Index")
     <br/>
     @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
@@ -54,13 +81,20 @@
 </body>
 </html>
 
-<script type="text/javascript">
+<script>
+    $('#Sort').change(function() {
+        window.location.href = '@Url.Action("ChangeClientSortOrder", "GroupMembers",
+                                    new { sortOrder = "LastName" })';
+    });
+</script>
+
+<script>
     $('#ClientDDL').change(function () {
         var mbrId = window.$(this).val();
         var gpId = @Model.SelectedGroupId;
         var link = '@Url.Action("AddGroupMember", "GroupMembers",
-                         new {  clientId="-2"})';
-        link = link.replace("-1", gpId);  
+                        new {  clientId="-2"})';
+        link = link.replace("-1", gpId);
         link = link.replace("-2", mbrId);
         window.location.href = link;
     });

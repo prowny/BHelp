@@ -17,5 +17,7 @@ namespace BHelp.ViewModels
         public List<SelectListItem> AllClients { get; set; }
         public string SelectedClientId { get; set; }
         public string ClientNameAddress { get; set; }
+        public int ClientSortOrder { get; set; }  // 0 = LastName, 1 = StreetName
+        public string SelectedSortOrder { get; set; }
     }
 }

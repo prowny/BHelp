@@ -37,7 +37,6 @@ namespace BHelp.Controllers
         public ActionResult Remove (int? clientId)
         {
             var _gpId = Convert.ToInt32(Session["GroupId"]);
-            //var _mbrId = Convert.ToInt32(clientId);
             var memberList = db.GroupMembers.Where(g => g.NameId == _gpId).ToList();
             foreach (var mbr in memberList)
             {
@@ -52,8 +51,23 @@ namespace BHelp.Controllers
                     }
                 }
             }
-            
             return RedirectToAction("MaintainGroupMembers", new { groupId = _gpId });
+        }
+
+        [Authorize(Roles = "Administrator,Staff,Developer")]
+        public ActionResult ChangeClientSortOrder(string sortOrder)
+        {
+            switch (sortOrder)
+            {
+                case "LastName":
+                    Session["ClientSortOrder"] = 0;
+                    break;
+                case "StreetName":
+                    Session["ClientSortOrder"] = 1;
+                    break;
+            }
+            return RedirectToAction("MaintainGroupMembers",
+                new {groupId = (int)TempData["SelectedGroupId"]});
         }
 
         // GET: GroupMembers/Create
@@ -66,12 +80,19 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult MaintainGroupMembers(int? groupId)
         {
+            if (Session["ClientSortOrder"] == null) Session["ClientSortOrder"] = 0;  // deffault LastName
             var memberViewModel = new GroupMemberViewModel()
             {
                 SelectedGroupId=groupId,
                 AllClients = new List<SelectListItem>(),
-                GroupMemberSelectList = new List<SelectListItem>()
+                GroupMemberSelectList = new List<SelectListItem>(),
+                ClientSortOrder = (int)Session["ClientSortOrder"]
             };
+
+            memberViewModel.SelectedSortOrder = "LastName";
+            if (memberViewModel.ClientSortOrder == 1)
+            { memberViewModel.SelectedSortOrder = "StreetName"; }
+
             if (groupId != null)
             {
                 TempData["SelectedGroupId"] = groupId;
@@ -79,9 +100,10 @@ namespace BHelp.Controllers
                 var group = db.GroupNames.Find(groupId);
                 if (group != null)
                 {
+                    memberViewModel.NameId = (int)groupId;  
                     memberViewModel.SelectedGroupName = group.Name;
                     memberViewModel.GroupMemberSelectList = GetGroupMembers(group.Id);
-                    memberViewModel.AllClients = GetAllClients();
+                    memberViewModel.AllClients = GetAllClients((int)Session["ClientSortOrder"]);
                 }
             }
             
@@ -107,15 +129,35 @@ namespace BHelp.Controllers
             return groupMemberSelectList;
         }
 
-        public List<SelectListItem> GetAllClients()
+        public List<SelectListItem> GetAllClients(int sortBy)
         {
-            var allClientsSelectList = new List<SelectListItem>();
-            var clientList = db.Clients.OrderBy(n => n.LastName).ThenBy(n => n.FirstName).ToList();
-            allClientsSelectList.Add(new SelectListItem { Text = @"-Select Client to Add To Group-", Value = "0" });
+            List<Client> clientList;
+            var allClientsSelectList = new List<SelectListItem>()
+                { new SelectListItem { Text = @"-Select Client to Add To Group-", Value = "0" } };
+            if (sortBy == 0)
+            {
+                clientList = db.Clients.OrderBy(n => n.LastName)
+                    .ThenBy(n => n.FirstName).Where(a => a.Active).ToList();
+            }
+            else
+            {
+                clientList = db.Clients.OrderBy(n => n.StreetName)
+                    .ThenBy(n => n.LastName).ThenBy(n => n.FirstName).Where(a => a.Active).ToList();
+            }
+
             foreach (var client in clientList)
             {
-                var text = client.LastName + ", " + client.FirstName + " ";
-                text += client.StreetNumber + " " + client.StreetName;
+                string text;
+                if (sortBy == 0)
+                { 
+                     text = client.LastName + ", " + client.FirstName + " "
+                     + client.StreetNumber + " " + client.StreetName;
+                }
+                else
+                {
+                     text = client.StreetNumber + " " + client.StreetName + " "
+                     + client.LastName + ", " + client.FirstName;
+                }
                 allClientsSelectList.Add(new SelectListItem()
                     { Text = text, Value = client.Id.ToString(), Selected = false });
             }
@@ -169,10 +211,14 @@ namespace BHelp.Controllers
             model = new GroupMemberViewModel()
             {
                 GroupMemberSelectList = GetGroupMembers(gpId),
-                AllClients = GetAllClients()
+                AllClients = GetAllClients((int)Session["ClientSortOrder"])
             };
             return Json(model, JsonRequestBehavior.AllowGet);
-            // return RedirectToAction("MaintainGroupMembers", new{ groupId = newMember.NameId });
+        }
+
+        public ActionResult CreateDeliveries(int nameId)
+        {
+            return null;
         }
     }
 }
