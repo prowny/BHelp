@@ -10,7 +10,10 @@
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
-    @*var _size =@Model.GroupMemberSelectList.Count*@
+    <style>
+        #GoButton {background-color: blue;color: white}
+        #GoButtonLabel { color: blue; text-decoration:underline}
+    </style>
 </head>
 <body>
     <b>@Html.Label("Maintain Group Members for " + Model.SelectedGroupName)</b>&nbsp;(@Model.GroupMemberSelectList.Count)
@@ -64,9 +67,11 @@
         {
             <tr>
                 <td>
-                    @Html.ActionLink("Create a delivery for all group members", "CreateDeliveries",
-                        new { nameId = Model.NameId })
-                </td>
+                    <span id="GoButtonLabel">Create a delivery for all group members</span>&nbsp;
+                    <input type="button" id="GoButton" value="Go" onclick="window.location.href =
+                         '@Url.Action("CreateDeliveries", "GroupMembers",
+                              new {nameId = Model.NameId})';" />
+                 </td>
             </tr>
             <tr>
                 <td>

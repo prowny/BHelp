@@ -7,6 +7,7 @@ using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
 using ClosedXML.Excel;
+using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
 {
@@ -224,7 +225,81 @@ namespace BHelp.Controllers
 
         public ActionResult CreateDeliveries(int nameId)
         {
-            return null;
+            var clientIdList = db.GroupMembers
+                .Where(n => n.NameId == nameId)
+                .Select(n => n.ClientId).ToList();
+            foreach (var clientId in clientIdList)
+            {
+                var userid = System.Web.HttpContext.Current.User.Identity.GetUserId();
+                var client = db.Clients.Find(clientId);
+                if (client != null)
+                {
+                    var delDate = DateTime.Today.AddDays(1);
+                    if (DateTime.Today.DayOfWeek == DayOfWeek.Saturday)
+                    {
+                        delDate = DateTime.Today.AddDays(2);
+                    }
+
+                    if (DateTime.Today.DayOfWeek == DayOfWeek.Friday)
+                    {
+                        delDate = DateTime.Today.AddDays(3);
+                    }
+
+                    var delivery = new Delivery
+                    {
+                        ODId = userid,
+                        //DeliveryDateODId not specified
+                        ClientId = clientId,
+                        LogDate = DateTime.Today,
+                        FirstName = client.FirstName,
+                        LastName = client.LastName,
+                        StreetNumber = client.StreetNumber,
+                        StreetName = client.StreetName,
+                        Phone = client.Phone,
+                        City = client.City,
+                        Zip = client.Zip,
+                        NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(clientId),
+                        Children = 0,
+                        Adults = 0,
+                        Seniors = 0,
+                        DateDelivered = delDate
+                    };
+
+                    var familyList = AppRoutines.GetFamilyMembers(clientId);
+                    if (familyList != null)
+                    {
+                        foreach (var mbr in familyList)
+                        {
+                            if (mbr.Age < 18) { delivery.Children += 1; }
+                            if (mbr.Age >= 18 && mbr.Age < 60) { delivery.Adults += 1; }
+                            if (mbr.Age >= 60) { delivery.Seniors += 1; }
+                        }
+                    }
+
+                    var nextDeliveryEligible =
+                        AppRoutines.GetNextEligibleDeliveryDate(clientId, delivery.DateDelivered.Value);
+                    delivery.GiftCardsEligible = AppRoutines.GetGiftCardsEligible(delivery.ClientId, delivery.DateDelivered.Value);
+                    delivery.GiftCards = delivery.GiftCardsEligible;
+                    // Full Bags:
+                    var numberInHousehold = delivery.Children + delivery.Adults + delivery.Seniors;
+                    if (numberInHousehold <= 2) { delivery.FullBags = 1; }
+                    if (numberInHousehold >= 3 && numberInHousehold <= 4) { delivery.FullBags = 2; }
+                    if (numberInHousehold == 5 || numberInHousehold == 6) { delivery.FullBags = 3; }
+                    if (numberInHousehold == 7 || numberInHousehold == 8) { delivery.FullBags = 4; }
+                    if (numberInHousehold >= 9) { delivery.FullBags = 5; }
+                    // Half Bags:
+                    if (numberInHousehold <= 4) { delivery.HalfBags = 1; }
+                    if (numberInHousehold >= 5 && numberInHousehold <= 8) { delivery.HalfBags = 2; }
+                    if (numberInHousehold >= 9) { delivery.HalfBags = 3; }
+                    // Kid Snacks:
+                    delivery.KidSnacks = AppRoutines.GetNumberOfKids2_17(clientId);
+
+                    delivery.FirstDelivery = db.Deliveries.Count(d => d.ClientId == clientId) == 0;
+                    db.Deliveries.Add(delivery);
+                }
+                db.SaveChanges();
+            }
+            return RedirectToAction("Index", "Deliveries");
         }
 
         public ActionResult GroupToExcel(int nameId)
