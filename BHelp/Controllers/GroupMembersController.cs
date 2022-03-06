@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Web.Mvc;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
+using ClosedXML.Excel;
 
 namespace BHelp.Controllers
 {
@@ -134,15 +136,16 @@ namespace BHelp.Controllers
             List<Client> clientList;
             var allClientsSelectList = new List<SelectListItem>()
                 { new SelectListItem { Text = @"-Select Client to Add To Group-", Value = "0" } };
-            if (sortBy == 0)
+            if (sortBy == 0) // by LastName
             {
                 clientList = db.Clients.OrderBy(n => n.LastName)
                     .ThenBy(n => n.FirstName).Where(a => a.Active).ToList();
             }
-            else
+            else  // by StreetName
             {
                 clientList = db.Clients.OrderBy(n => n.StreetName)
-                    .ThenBy(n => n.LastName).ThenBy(n => n.FirstName).Where(a => a.Active).ToList();
+                    .ThenBy(n => n.StreetNumber).ThenBy(n => n.LastName)
+                    .ThenBy(n => n.FirstName).Where(a => a.Active).ToList();
             }
 
             foreach (var client in clientList)
@@ -155,8 +158,11 @@ namespace BHelp.Controllers
                 }
                 else
                 {
-                     text = client.StreetNumber + " " + client.StreetName + " "
-                     + client.LastName + ", " + client.FirstName;
+                    var _padding = new String('\xA0', 40);
+                    var _streetNo =(client.StreetNumber + _padding).Substring(0,10);
+                    var _streetName = (client.StreetName + _padding).Substring(0, 40);
+                    text =_streetNo + _streetName  + " "
+                          + client.LastName + ", " + client.FirstName;
                 }
                 allClientsSelectList.Add(new SelectListItem()
                     { Text = text, Value = client.Id.ToString(), Selected = false });
@@ -218,6 +224,66 @@ namespace BHelp.Controllers
 
         public ActionResult CreateDeliveries(int nameId)
         {
+            return null;
+        }
+
+        public ActionResult GroupToExcel(int nameId)
+        {
+            var view = GetGroupReportView(nameId);
+            XLWorkbook workbook = new XLWorkbook();
+            IXLWorksheet ws = workbook.Worksheets.Add(view.Name  + " Member List");
+            int activeRow = 1;
+            ws.Cell(activeRow, 1).SetValue(view.Name + "  " + DateTime.Today.ToShortDateString());
+            ws.Cell(activeRow, 1).Style.Alignment.WrapText = true;
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue("Last Name");
+            ws.Cell(activeRow, 2).SetValue("First Name");
+            ws.Cell(activeRow, 3).SetValue("Street Number");
+            ws.Cell(activeRow, 4).SetValue("Street Name");
+            ws.Cell(activeRow, 5).SetValue("City");
+            ws.Cell(activeRow, 6).SetValue("Zip Code");
+            ws.Cell(activeRow, 7).SetValue("Notes");
+            foreach (var mbr in view.GroupMembersIdList)
+            {
+                var client = db.Clients.Find(mbr);
+                if (client != null)
+                {
+                    activeRow++;
+                    ws.Cell(activeRow, 1).SetValue(client.LastName);
+                    ws.Cell(activeRow, 2).SetValue(client.FirstName);
+                    ws.Cell(activeRow, 3).SetValue(client.StreetNumber);
+                    ws.Cell(activeRow, 4).SetValue(client.StreetName);
+                    ws.Cell(activeRow, 5).SetValue(client.City);
+                    ws.Cell(activeRow, 6).SetValue(client.Zip);
+                    ws.Cell(activeRow, 7).SetValue(client.Notes);
+                    ws.Cell(activeRow, 7).Style.Alignment.WrapText = true;
+                }
+            }
+            MemoryStream ms = new MemoryStream();
+            workbook.SaveAs(ms);
+            ms.Position = 0;
+            var fileName = "BH Client Group " + view.Name + DateTime.Now.ToShortDateString();
+            return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                { FileDownloadName = fileName + ".xlsx" };
+        }
+
+        private GroupNameViewModel GetGroupReportView(int groupId)
+        {
+            if (groupId != 0)
+            {
+                var view = new GroupNameViewModel()
+                {
+                    Name = db.GroupNames.Where(n => n.Id == groupId)
+                        .Select(n => n.Name).FirstOrDefault(),
+                    GroupMembersIdList = new List<int>()
+                };
+                var memberList = db.GroupMembers.Where(m => m.NameId == groupId).ToList();
+                foreach (var mbr in memberList)
+                {
+                    view.GroupMembersIdList.Add(mbr.ClientId);
+                }
+                return view;
+            }
             return null;
         }
     }

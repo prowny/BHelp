@@ -68,10 +68,14 @@
                         new { nameId = Model.NameId })
                 </td>
             </tr>
+            <tr>
+                <td>
+                    @Html.ActionLink("Download to Excel File", "GroupToExcel", new { nameId = Model.NameId })
+                </td>
+            </tr>
         }
     </table>
 </div>
-    <br />
 <div>
 
     @Html.ActionLink("Back To Group List", "Index")
