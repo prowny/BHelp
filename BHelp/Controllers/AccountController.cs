@@ -418,51 +418,22 @@ namespace BHelp.Controllers
                 + Environment.NewLine + "  Please do not reply to this email.";
             using (MailMessage msg = new MailMessage())
             {
-                msg.From = new MailAddress("Admin@SenecaHeights.org", "Administrator, SHEP/HFED");
+                msg.From = new MailAddress("Admin@BethesdaHelpFd.org", "Administrator, BHelp");
                 msg.To.Add(new MailAddress(user.Email, user.FullName));
                 msg.Subject = "Healthy Food Every Day - Schedule";
                 msg.Body = plainTextContent;
                 msg.IsBodyHtml = false;
                 msg.Priority = MailPriority.Normal;
-                using (SmtpClient mailClient = new SmtpClient("SenecaHeights.org", 587))
+                using (SmtpClient mailClient = new SmtpClient("BethesdaHelpFd.org", 587))
                 {
-                    mailClient.Credentials = new NetworkCredential("Admin@SenecaHeights.org", "@fEfY8-9vFFDwD!YTo!A");
+                    mailClient.Credentials = new NetworkCredential("Admin@BethesdaHelpFd.org", "Qo3YQoyYAghL*U.W-KEU");
                     await mailClient.SendMailAsync(msg);
                 }
             }
 
             return RedirectToAction("Index", "Home");
         }
-        public async Task<ActionResult> EmailSheduleChange(ApplicationUser tutor, string msgText)
-        {
-            var receiverRole = "ReceiveScheduleChangeEmail";
-            UserManager<ApplicationUser> userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
-
-            foreach (ApplicationUser user in db.Users)
-            {
-                bool isReceiver = await userManager.IsInRoleAsync(user.Id, receiverRole).ConfigureAwait(false);
-                if (isReceiver)
-                {
-                    using (MailMessage msg = new MailMessage())
-                    {
-                        msg.From = new MailAddress("Admin@SenecaHeights.org", "Administrator, SHEP");
-                        msg.To.Add(new MailAddress(tutor.Email, tutor.FullName));
-                        msg.Subject = "SHEP: Seneca Heights Education Program";
-                        msg.Body = msgText;
-                        msg.IsBodyHtml = false;
-                        msg.Priority = MailPriority.Normal;
-                        using (SmtpClient mailClient = new SmtpClient("SenecaHeights.org", 587))
-                        {
-                            mailClient.Credentials = new NetworkCredential("Admin@SenecaHeights.org", "@fEfY8-9vFFDwD!YTo!A");
-                            await mailClient.SendMailAsync(msg);
-                        }
-                    }
-                }
-            }
-            // ReSharper disable once Mvc.ActionNotResolved
-            return RedirectToAction("Index");
-        }
-
+        
         // GET: /Account/ResetPasswordConfirmation
         [AllowAnonymous]
         public ActionResult ResetPasswordConfirmation()

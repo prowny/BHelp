@@ -41,8 +41,24 @@ namespace BHelp.Models
         [JsonProperty, DisplayName("Last Name")]
         public string LastName { get; set; }
 
-        [DisplayName("Title")]
+        [JsonProperty, DisplayName("Title")]
         public string Title { get; set; }
+
+        [JsonProperty, DisplayName("Address")]  
+        public string Address { get; set; }  // Added PER 03/07/2022
+
+        [JsonProperty, DisplayName("City")]
+        public string City { get; set; }  // Added PER 03/07/2022
+
+        [JsonProperty, StringLength(2), DisplayName("State")]
+        public string State { get; set; }  // Added PER 03/07/2022
+
+        [JsonProperty, StringLength(10), DisplayName("State")]
+        public string Zip { get; set; }  // Added PER 03/07/2022
+
+        [JsonProperty, DisplayName("Phone 2")]
+        public string PhoneNumber2 { get; set; }  // Added PER 03/07/2022
+
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
@@ -99,7 +115,7 @@ namespace BHelp.Models
                 base.PhoneNumber = value;
             }
         }
-        
+
         [NotMapped]
         public string FullName
         {

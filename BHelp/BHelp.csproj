@@ -325,6 +325,14 @@
     <Compile Include="Migrations\202202192121514_AddDocumentsFileContent.Designer.cs">
       <DependentUpon>202202192121514_AddDocumentsFileContent.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202203071810442_AddAddress-Phone2.cs" />
+    <Compile Include="Migrations\202203071810442_AddAddress-Phone2.Designer.cs">
+      <DependentUpon>202203071810442_AddAddress-Phone2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202203071945131_AddZipCode.cs" />
+    <Compile Include="Migrations\202203071945131_AddZipCode.Designer.cs">
+      <DependentUpon>202203071945131_AddZipCode.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -805,6 +813,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202202192121514_AddDocumentsFileContent.resx">
       <DependentUpon>202202192121514_AddDocumentsFileContent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202203071810442_AddAddress-Phone2.resx">
+      <DependentUpon>202203071810442_AddAddress-Phone2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202203071945131_AddZipCode.resx">
+      <DependentUpon>202203071945131_AddZipCode.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
