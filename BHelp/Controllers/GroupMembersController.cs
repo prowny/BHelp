@@ -106,7 +106,7 @@ namespace BHelp.Controllers
                     memberViewModel.NameId = (int)groupId;  
                     memberViewModel.SelectedGroupName = group.Name;
                     memberViewModel.GroupMemberSelectList = GetGroupMembers(group.Id);
-                    memberViewModel.AllClients = GetAllClients((int)Session["ClientSortOrder"]);
+                    memberViewModel.AllClients = GetAllClientsSerlectList(memberViewModel);
                 }
             }
             
@@ -132,12 +132,16 @@ namespace BHelp.Controllers
             return groupMemberSelectList;
         }
 
-        public List<SelectListItem> GetAllClients(int sortBy)
+        public List<SelectListItem> GetAllClientsSerlectList(GroupMemberViewModel view)
         {
+            var existingMemberIds = string.Empty;
+            foreach (var mbr in view.GroupMemberSelectList)
+            { existingMemberIds += mbr.Value + "."; }
+            
             List<Client> clientList;
             var allClientsSelectList = new List<SelectListItem>()
                 { new SelectListItem { Text = @"-Select Client to Add To Group-", Value = "0" } };
-            if (sortBy == 0) // by LastName
+            if (view.ClientSortOrder == 0) // by LastName
             {
                 clientList = db.Clients.OrderBy(n => n.LastName)
                     .ThenBy(n => n.FirstName).Where(a => a.Active).ToList();
@@ -152,21 +156,25 @@ namespace BHelp.Controllers
             foreach (var client in clientList)
             {
                 string text;
-                if (sortBy == 0)
+                if (view.ClientSortOrder == 0)
                 { 
                      text = client.LastName + ", " + client.FirstName + " "
                      + client.StreetNumber + " " + client.StreetName;
                 }
                 else
                 {
-                    var _padding = new String('\xA0', 40);
+                    var _padding = new string('\xA0', 40);
                     var _streetNo =(client.StreetNumber + _padding).Substring(0,10);
                     var _streetName = (client.StreetName + _padding).Substring(0, 40);
                     text =_streetNo + _streetName  + " "
                           + client.LastName + ", " + client.FirstName;
                 }
-                allClientsSelectList.Add(new SelectListItem()
-                    { Text = text, Value = client.Id.ToString(), Selected = false });
+
+                if (!existingMemberIds.Contains(client.Id.ToString()))
+                {
+                    allClientsSelectList.Add(new SelectListItem()
+                        { Text = text, Value = client.Id.ToString(), Selected = false });
+                }
             }
 
             return allClientsSelectList;
@@ -217,14 +225,22 @@ namespace BHelp.Controllers
 
             model = new GroupMemberViewModel()
             {
+                NameId =gpId,
                 GroupMemberSelectList = GetGroupMembers(gpId),
-                AllClients = GetAllClients((int)Session["ClientSortOrder"])
+                AllClients = GetAllClientsSerlectList(model)
             };
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult CreateDeliveries(int nameId)
         {
+            var openDeliveries = db.Deliveries.Where(s => s.Status == 0).ToList();
+            var openDeliveryIds = string.Empty;
+            foreach (var del in openDeliveries)
+            {
+                openDeliveryIds += del.ClientId + " " + del.DateDelivered;
+            }
+
             var clientIdList = db.GroupMembers
                 .Where(n => n.NameId == nameId)
                 .Select(n => n.ClientId).ToList();
@@ -276,8 +292,8 @@ namespace BHelp.Controllers
                         }
                     }
 
-                    var nextDeliveryEligible =
-                        AppRoutines.GetNextEligibleDeliveryDate(clientId, delivery.DateDelivered.Value);
+                    //  NOT Used for confirmation:
+                    //  var nextDeliveryEligible = AppRoutines.GetNextEligibleDeliveryDate(clientId, delivery.DateDelivered.Value);
                     delivery.GiftCardsEligible = AppRoutines.GetGiftCardsEligible(delivery.ClientId, delivery.DateDelivered.Value);
                     delivery.GiftCards = delivery.GiftCardsEligible;
                     // Full Bags:
@@ -295,7 +311,11 @@ namespace BHelp.Controllers
                     delivery.KidSnacks = AppRoutines.GetNumberOfKids2_17(clientId);
 
                     delivery.FirstDelivery = db.Deliveries.Count(d => d.ClientId == clientId) == 0;
-                    db.Deliveries.Add(delivery);
+
+                    if (!openDeliveryIds.Contains(delivery.ClientId + " " + delivery.DateDelivered))
+                    {
+                        db.Deliveries.Add(delivery);
+                    }
                 }
                 db.SaveChanges();
             }

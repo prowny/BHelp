@@ -1,4 +1,5 @@
-﻿@model BHelp.Models.Delivery
+﻿@using Castle.Core.Internal
+@model BHelp.Models.Delivery
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -55,7 +56,7 @@
                 @Html.ActionLink("Back to OD Section", "Index", "OD")
             }
             
-            @if (Model.ReturnURL == null)
+            @if (Model.ReturnURL.Contains("Index") || Model.ReturnURL.IsNullOrEmpty())
             {
                 @Html.ActionLink("Back to List", "Index")
             }
