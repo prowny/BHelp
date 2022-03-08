@@ -255,23 +255,31 @@ namespace BHelp.Controllers
 
             var workbook = new XLWorkbook();
             var ws = workbook.Worksheets.Add("Active Volunteers");
+            ws.Columns("1").Width = 10;
             ws.Cell(1, 1).SetValue("Active Volunteers").Style.Font.SetBold(true);
             ws.Cell(1, 1).Style.Alignment.WrapText = true;
             ws.Cell(1, 2).SetValue(DateTime.Today.ToShortDateString()).Style.Font.SetBold(true);
-            
             ws.Cell(2, 1).SetValue("Last Name").Style.Font.SetBold(true);
+            ws.Columns("2").Width = 15;
             ws.Cell(2, 2).SetValue("First Name").Style.Font.SetBold(true);
+            ws.Columns("3").Width = 15;
             ws.Cell(2, 3).SetValue("Title").Style.Font.SetBold(true);
+            ws.Columns("4").Width = 40;
             ws.Cell(2, 4).SetValue("Address").Style.Font.SetBold(true);
             ws.Cell(2, 5).SetValue("City").Style.Font.SetBold(true);
             ws.Cell(2, 6).SetValue("State").Style.Font.SetBold(true);
             ws.Cell(2, 7).SetValue("Zip Code").Style.Font.SetBold(true);
+            ws.Columns("8").Width = 40;
             ws.Cell(2, 8).SetValue("Email").Style.Font.SetBold(true);
+            ws.Columns("9").Width = 12;
             ws.Cell(2, 9).SetValue("Phone 1").Style.Font.SetBold(true);
+            ws.Columns("10").Width = 12;
             ws.Cell(2, 10).SetValue("Phone 2").Style.Font.SetBold(true);
             ws.Cell(2, 11).SetValue("Roles").Style.Font.SetBold(true);
             ws.Cell(2, 12).SetValue("Notes").Style.Font.SetBold(true);
-            var activeRow = 12;
+
+
+            var activeRow = 2;
 
             foreach (var vol in activeVolunteersList)
             {
