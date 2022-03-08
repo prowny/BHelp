@@ -24,15 +24,31 @@ namespace BHelp.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Title = user.Title,
-                PhoneNumber = user.PhoneNumber
+                PhoneNumber = user.PhoneNumber,
+                PhoneNumber2 = user.PhoneNumber2,
+                Address = user.Address,
+                City = user .City ,
+                State = user.State,
+                Zip =user.Zip,
+                States =AppRoutines .GetStatesSelectList()
             };
+            foreach (var state in model.States)
+            {
+                if (model.State == state.Value)
+                {
+                    state.Selected = true;
+                    continue;
+                }
+            }
             return View(model);
         }
 
         // POST: UpdateMyProfile/Edit
         [HttpPost, Authorize(Roles = "Administrator,Developer,Staff,OfficerOfTheDay,Driver")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Title,PhoneNumber,Email")] UpdateMyProfileViewModel viewModel)
+        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Title" +
+                    ",PhoneNumber,PhoneNumber2,Email,Address,City,State,Zip")]
+                    UpdateMyProfileViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
@@ -42,7 +58,12 @@ namespace BHelp.Controllers
                 user.LastName = viewModel.LastName;
                 user.Title = viewModel.Title;
                 user.PhoneNumber = viewModel.PhoneNumber;
+                user.PhoneNumber2 = viewModel.PhoneNumber2;
                 user.Email = viewModel.Email;
+                user.Address = viewModel.Address;
+                user.City = viewModel.City;
+                user.State = viewModel.State;
+                user.Zip = viewModel.Zip;
                 _db.SaveChanges();
 
                 return RedirectToAction("Index", "Home");

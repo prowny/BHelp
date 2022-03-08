@@ -344,6 +344,31 @@ namespace BHelp
             }
             return (odList);
         }
+
+        public static List<SelectListItem> GetStatesSelectList()
+        {
+            var allStates = "MD,VA,DC,AL,AK,AR,AZ,CA,CO,CT,DE,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,ME,"
+                + "MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,PA,RI,SC,"
+                + "SD,TN,TX,UT,VT,WA,WV,WI,WY";
+            var allStateNames = "Maryland,Virginia,District of Columbia,Alabama,Alaska,Arkansas,Arizona,California,Colorado,Connecticut,"
+                                + "Delaware,Florida,Georgia,Hawaii,Idaho,Illinois,Indiana,"
+                                + "Iowa,Kansas,Kentucky,Louisiana,Maine,Massachusetts,Michigan,"
+                                + "Minnesota,Mississippi,Missouri,Montana,Nebraska,Nevada,New Hampshire,"
+                                + "New Jersey,New Mexico,New York,North Carolina,North Dakota,Ohio,Oklahoma,"
+                                + "Oregon,Pennsylvania,Rhode Island,South Carolina,South Dakota,Tennessee,"
+                                + "Texas,Utah,Vermont,Washington,WestVirginia,Wisconsin,Wyoming";
+            string[] statesList = allStates.Split(',');
+            string[] stateNamesList = allStateNames.Split(',');
+            List<SelectListItem> stList = new List<SelectListItem>();
+            for(var i = 0; i < statesList.Length; i++)
+            {
+                var newListItem = new SelectListItem()
+                    { Value = statesList[i], Text = stateNamesList[i] };
+                stList.Add(newListItem);
+            }
+            return stList;
+        }
+
         public static Boolean UserIsInRole(string userId, string roleName)
         {
             var sqlString = "SELECT Id FROM AspNetRoles WHERE Name = '" + roleName + "'";

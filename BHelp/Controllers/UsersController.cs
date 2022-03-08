@@ -31,7 +31,8 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ApplicationUser user = (from u in _db.Users.Where(u => u.UserName == userName) select u).Single();
+            ApplicationUser user = (from u in _db.Users
+                .Where(u => u.UserName == userName) select u).Single();
             if (user == null)
             {
                 return HttpNotFound();
@@ -49,15 +50,25 @@ namespace BHelp.Controllers
                 if (user.VolunteerSubcategory == subCat .Value) subCat.Selected = true;
             }
 
+            user.States = AppRoutines.GetStatesSelectList();
+            foreach (var state in user.States)
+            {
+                if (user.State == state.Value)
+                {
+                    state.Selected = true;
+                }
+            }
+
             return View(user);
         }
 
         // POST: Users/Edit/5
         [HttpPost, Authorize(Roles = "Administrator,Developer")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,UserName,Active,FirstName,LastName," +
-                                                 "Title,PhoneNumber,Email,BeginDate,LastDate,Notes," +
-                                                 "VolunteerCategory,VolunteerSubcategory")] ApplicationUser user)
+        public ActionResult Edit([Bind(Include = "Id,UserName,Active,FirstName,LastName,"
+                                + "Title,PhoneNumber,PhoneNumber2,Email,BeginDate,LastDate,"
+                                + "Notes,VolunteerCategory,VolunteerSubcategory,Address,City,"
+                                + "State,Zip")] ApplicationUser user)
         {
             if (ModelState.IsValid)
             {
@@ -68,6 +79,11 @@ namespace BHelp.Controllers
                 saveUser.LastName = user.LastName;
                 saveUser.Title = user.Title;
                 saveUser.PhoneNumber = user.PhoneNumber;
+                saveUser.PhoneNumber2 = user.PhoneNumber2;
+                saveUser.Address = user.Address;
+                saveUser.City = user.City;
+                saveUser.State = user.State;
+                saveUser.Zip = user.Zip;
                 saveUser.Email = user.Email;
                 saveUser.BeginDate = user.BeginDate;
                 saveUser.LastDate = user.LastDate;
@@ -229,6 +245,24 @@ namespace BHelp.Controllers
             }
             return report;
         }
+
+        [Authorize(Roles = "Administrator,Developer")]
+        public ActionResult ActiveVolunteerDetailsToExcel()
+        {
+            //var activeVolunteersList = GetActiveVolunteerDetails();
+            return null;
+        }
+
+        //private List<ApplicationUser> GetActiveVolunteerDetails()
+        //{
+        //    var volList = new List<ApplicationUser>();
+        //    var activeList = _db.Users
+        //        .Where(u => u.Active).OrderBy(u => u.LastName)
+        //        .ThenBy(u => u.FirstName).ToList();
+
+        //    return null;
+        //}
+
 
         [Authorize(Roles = "Administrator,Developer")]
         public ActionResult ReturnToReportsMenu()

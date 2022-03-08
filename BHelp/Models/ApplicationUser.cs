@@ -53,7 +53,7 @@ namespace BHelp.Models
         [JsonProperty, StringLength(2), DisplayName("State")]
         public string State { get; set; }  // Added PER 03/07/2022
 
-        [JsonProperty, StringLength(10), DisplayName("State")]
+        [JsonProperty, StringLength(10), DisplayName("Zip Code")]
         public string Zip { get; set; }  // Added PER 03/07/2022
 
         [JsonProperty, DisplayName("Phone 2")]
@@ -131,5 +131,6 @@ namespace BHelp.Models
         [NotMapped] public bool ShowEveryoneDocumentsMenu { get; set; }
         [NotMapped] public bool ShowReportsDocumentsMenu { get; set; }
         [NotMapped] public bool ShowPantryCoordinatorDocumentsMenu { get; set; }
+        [NotMapped] public List<SelectListItem> States { get; set; }
     }
 }
