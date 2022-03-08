@@ -26,6 +26,12 @@ namespace BHelp.Controllers
             var listDeliveries = new List<Delivery>(db.Deliveries)
                 .Where(d =>  d.Status == 0)
                 .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip).ToList();
+
+            var dups = from x in listDeliveries
+                       group x by x.ClientId into g
+                       let count = g.Count()
+                       select new { Count = count, Id = g.First().ClientId };
+
             var listDeliveryViewModels = new List<DeliveryViewModel>();
             foreach (var delivery in listDeliveries)
             {
@@ -98,6 +104,15 @@ namespace BHelp.Controllers
                             (delivery.ClientId, DateTime.Today);
                     if (deliveryView.DateDelivered < deliveryView.NextDeliveryEligibleDate)
                         deliveryView.EligiibilityRulesException = true;
+
+                    
+                    foreach (var dup in dups)
+                    {
+                        if (dup.Id == deliveryView.ClientId && dup.Count > 1)
+                        {
+                            deliveryView.EligiibilityRulesException = true;
+                        }
+                    }
                     if (deliveryView.GiftCards > 0)
                     {
                         deliveryView.NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate

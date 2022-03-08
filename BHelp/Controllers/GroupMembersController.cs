@@ -7,7 +7,6 @@ using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
 using ClosedXML.Excel;
-using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
 {
@@ -15,6 +14,7 @@ namespace BHelp.Controllers
     public class GroupMembersController : Controller
     {
         private readonly BHelpContext db = new BHelpContext();
+
         // GET: GroupMembers
         [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Index()
@@ -30,14 +30,14 @@ namespace BHelp.Controllers
             foreach (var gName in groupNamesList)
             {
                 groupMembersView.GroupNameSelectList.Add(new SelectListItem()
-                    {Text=gName.Name, Value = gName.Id.ToString(), Selected = false });
+                    { Text = gName.Name, Value = gName.Id.ToString(), Selected = false });
             }
 
             return View(groupMembersView);
         }
 
         [Authorize(Roles = "Administrator,Staff,Developer")]
-        public ActionResult Remove (int? clientId)
+        public ActionResult Remove(int? clientId)
         {
             var _gpId = Convert.ToInt32(Session["GroupId"]);
             var memberList = db.GroupMembers.Where(g => g.NameId == _gpId).ToList();
@@ -54,6 +54,7 @@ namespace BHelp.Controllers
                     }
                 }
             }
+
             return RedirectToAction("MaintainGroupMembers", new { groupId = _gpId });
         }
 
@@ -69,8 +70,9 @@ namespace BHelp.Controllers
                     Session["ClientSortOrder"] = 1;
                     break;
             }
+
             return RedirectToAction("MaintainGroupMembers",
-                new {groupId = (int)TempData["SelectedGroupId"]});
+                new { groupId = (int)TempData["SelectedGroupId"] });
         }
 
         // GET: GroupMembers/Create
@@ -79,14 +81,14 @@ namespace BHelp.Controllers
         {
             return View();
         }
-        
+
         [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult MaintainGroupMembers(int? groupId)
         {
-            if (Session["ClientSortOrder"] == null) Session["ClientSortOrder"] = 0;  // deffault LastName
+            if (Session["ClientSortOrder"] == null) Session["ClientSortOrder"] = 0; // deffault LastName
             var memberViewModel = new GroupMemberViewModel()
             {
-                SelectedGroupId=groupId,
+                SelectedGroupId = groupId,
                 AllClients = new List<SelectListItem>(),
                 GroupMemberSelectList = new List<SelectListItem>(),
                 ClientSortOrder = (int)Session["ClientSortOrder"]
@@ -94,7 +96,9 @@ namespace BHelp.Controllers
 
             memberViewModel.SelectedSortOrder = "LastName";
             if (memberViewModel.ClientSortOrder == 1)
-            { memberViewModel.SelectedSortOrder = "StreetName"; }
+            {
+                memberViewModel.SelectedSortOrder = "StreetName";
+            }
 
             if (groupId != null)
             {
@@ -103,15 +107,16 @@ namespace BHelp.Controllers
                 var group = db.GroupNames.Find(groupId);
                 if (group != null)
                 {
-                    memberViewModel.NameId = (int)groupId;  
+                    memberViewModel.NameId = (int)groupId;
                     memberViewModel.SelectedGroupName = group.Name;
                     memberViewModel.GroupMemberSelectList = GetGroupMembers(group.Id);
                     memberViewModel.AllClients = GetAllClientsSerlectList(memberViewModel);
                 }
             }
-            
+
             return View(memberViewModel);
         }
+
         public List<SelectListItem> GetGroupMembers(int groupId)
         {
             var groupMemberSelectList = new List<SelectListItem>();
@@ -136,8 +141,10 @@ namespace BHelp.Controllers
         {
             var existingMemberIds = string.Empty;
             foreach (var mbr in view.GroupMemberSelectList)
-            { existingMemberIds += mbr.Value + "."; }
-            
+            {
+                existingMemberIds += mbr.Value + ".";
+            }
+
             List<Client> clientList;
             var allClientsSelectList = new List<SelectListItem>()
                 { new SelectListItem { Text = @"-Select Client to Add To Group-", Value = "0" } };
@@ -146,7 +153,7 @@ namespace BHelp.Controllers
                 clientList = db.Clients.OrderBy(n => n.LastName)
                     .ThenBy(n => n.FirstName).Where(a => a.Active).ToList();
             }
-            else  // by StreetName
+            else // by StreetName
             {
                 clientList = db.Clients.OrderBy(n => n.StreetName)
                     .ThenBy(n => n.StreetNumber).ThenBy(n => n.LastName)
@@ -157,17 +164,17 @@ namespace BHelp.Controllers
             {
                 string text;
                 if (view.ClientSortOrder == 0)
-                { 
-                     text = client.LastName + ", " + client.FirstName + " "
-                     + client.StreetNumber + " " + client.StreetName;
+                {
+                    text = client.LastName + ", " + client.FirstName + " "
+                           + client.StreetNumber + " " + client.StreetName;
                 }
                 else
                 {
                     var _padding = new string('\xA0', 40);
-                    var _streetNo =(client.StreetNumber + _padding).Substring(0,10);
+                    var _streetNo = (client.StreetNumber + _padding).Substring(0, 10);
                     var _streetName = (client.StreetName + _padding).Substring(0, 40);
-                    text =_streetNo + _streetName  + " "
-                          + client.LastName + ", " + client.FirstName;
+                    text = _streetNo + _streetName + " "
+                           + client.LastName + ", " + client.FirstName;
                 }
 
                 if (!existingMemberIds.Contains(client.Id.ToString()))
@@ -179,7 +186,7 @@ namespace BHelp.Controllers
 
             return allClientsSelectList;
         }
-        
+
         [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult AddGroupMember(string clientId)
         {
@@ -192,7 +199,7 @@ namespace BHelp.Controllers
                     .Where(m => m.NameId == gpId).ToList();
                 foreach (var mbr in grpMembers)
                 {
-                    if (mbr.ClientId == iClientId ) dup = true;
+                    if (mbr.ClientId == iClientId) dup = true;
                 }
 
                 if (dup == false)
@@ -206,12 +213,12 @@ namespace BHelp.Controllers
                     db.SaveChanges();
                 }
             }
-            
-            return RedirectToAction("MaintainGroupMembers", new {groupId = gpId});
+
+            return RedirectToAction("MaintainGroupMembers", new { groupId = gpId });
         }
 
         [HttpPost, Authorize(Roles = "Administrator,Staff,Developer")]
-        public ActionResult AddGroupMember([Bind(Include= "AllClients")] GroupMemberViewModel model)
+        public ActionResult AddGroupMember([Bind(Include = "AllClients")] GroupMemberViewModel model)
         {
             var clientId = model.ClientId;
             var gpId = Convert.ToInt32(Session["GroupId"]);
@@ -225,7 +232,7 @@ namespace BHelp.Controllers
 
             model = new GroupMemberViewModel()
             {
-                NameId =gpId,
+                NameId = gpId,
                 GroupMemberSelectList = GetGroupMembers(gpId),
                 AllClients = GetAllClientsSerlectList(model)
             };
@@ -246,82 +253,17 @@ namespace BHelp.Controllers
                 .Select(n => n.ClientId).ToList();
             foreach (var clientId in clientIdList)
             {
-                var userid = System.Web.HttpContext.Current.User.Identity.GetUserId();
-                var client = db.Clients.Find(clientId);
-                if (client != null)
+                var delivery = AppRoutines.NewDeliveryRecord(clientId);
+
+                if (!openDeliveryIds.Contains(delivery.ClientId + " " + delivery.DateDelivered))
                 {
-                    var delDate = DateTime.Today.AddDays(1);
-                    if (DateTime.Today.DayOfWeek == DayOfWeek.Saturday)
-                    {
-                        delDate = DateTime.Today.AddDays(2);
-                    }
-
-                    if (DateTime.Today.DayOfWeek == DayOfWeek.Friday)
-                    {
-                        delDate = DateTime.Today.AddDays(3);
-                    }
-
-                    var delivery = new Delivery
-                    {
-                        ODId = userid,
-                        //DeliveryDateODId not specified
-                        ClientId = clientId,
-                        LogDate = DateTime.Today,
-                        FirstName = client.FirstName,
-                        LastName = client.LastName,
-                        StreetNumber = client.StreetNumber,
-                        StreetName = client.StreetName,
-                        Phone = client.Phone,
-                        City = client.City,
-                        Zip = client.Zip,
-                        NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(clientId),
-                        Children = 0,
-                        Adults = 0,
-                        Seniors = 0,
-                        DateDelivered = delDate
-                    };
-
-                    var familyList = AppRoutines.GetFamilyMembers(clientId);
-                    if (familyList != null)
-                    {
-                        foreach (var mbr in familyList)
-                        {
-                            if (mbr.Age < 18) { delivery.Children += 1; }
-                            if (mbr.Age >= 18 && mbr.Age < 60) { delivery.Adults += 1; }
-                            if (mbr.Age >= 60) { delivery.Seniors += 1; }
-                        }
-                    }
-
-                    //  NOT Used for confirmation:
-                    //  var nextDeliveryEligible = AppRoutines.GetNextEligibleDeliveryDate(clientId, delivery.DateDelivered.Value);
-                    delivery.GiftCardsEligible = AppRoutines.GetGiftCardsEligible(delivery.ClientId, delivery.DateDelivered.Value);
-                    delivery.GiftCards = delivery.GiftCardsEligible;
-                    // Full Bags:
-                    var numberInHousehold = delivery.Children + delivery.Adults + delivery.Seniors;
-                    if (numberInHousehold <= 2) { delivery.FullBags = 1; }
-                    if (numberInHousehold >= 3 && numberInHousehold <= 4) { delivery.FullBags = 2; }
-                    if (numberInHousehold == 5 || numberInHousehold == 6) { delivery.FullBags = 3; }
-                    if (numberInHousehold == 7 || numberInHousehold == 8) { delivery.FullBags = 4; }
-                    if (numberInHousehold >= 9) { delivery.FullBags = 5; }
-                    // Half Bags:
-                    if (numberInHousehold <= 4) { delivery.HalfBags = 1; }
-                    if (numberInHousehold >= 5 && numberInHousehold <= 8) { delivery.HalfBags = 2; }
-                    if (numberInHousehold >= 9) { delivery.HalfBags = 3; }
-                    // Kid Snacks:
-                    delivery.KidSnacks = AppRoutines.GetNumberOfKids2_17(clientId);
-
-                    delivery.FirstDelivery = db.Deliveries.Count(d => d.ClientId == clientId) == 0;
-
-                    if (!openDeliveryIds.Contains(delivery.ClientId + " " + delivery.DateDelivered))
-                    {
-                        db.Deliveries.Add(delivery);
-                    }
+                    db.Deliveries.Add(delivery);
                 }
                 db.SaveChanges();
             }
             return RedirectToAction("Index", "Deliveries");
         }
-
+    
         public ActionResult GroupToExcel(int nameId)
         {
             var view = GetGroupReportView(nameId);
