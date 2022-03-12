@@ -7,7 +7,6 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
-using Microsoft.AspNet.Identity.EntityFramework;
 using System.Collections.Generic;
 using System;
 using System.Net.Mail;

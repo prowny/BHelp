@@ -26,7 +26,7 @@ namespace BHelp.Controllers
 
         // GET: Create Volunteer Hours Entry
         [AllowAnonymous]
-        public ActionResult Create(DateTime? hoursDate, string userId, string a_mCat) // hoursDate will be non-null if a new date is requested by the view
+        public ActionResult Create(DateTime? hoursDate, string userId, string a_mCat, string fCat) // hoursDate will be non-null if a new date is requested by the view
         {
             if (Session["CurrentUserId"] == null) // set to logged-in user
             { Session["CurrentUserId"] = User.Identity.GetUserId(); }
@@ -98,11 +98,19 @@ namespace BHelp.Controllers
             {
                 view.A_MCategory = null;
             }
-            else
+            else // check for "F" selected
             {
-                view.A_MCategory = a_mCat;
-                view.Category = a_mCat;
-                view.CategoryList = HoursRoutines.SetSelectedItem(view.CategoryList, a_mCat);
+                if (fCat == "F")
+                {
+                    view.A_MCategory = null;
+                    view.Category = "F";
+                }
+                else
+                {
+                    view.A_MCategory = a_mCat;
+                    view.Category = a_mCat;
+                    view.CategoryList = HoursRoutines.SetSelectedItem(view.CategoryList, a_mCat);
+                }
             }
 
             if (_isIndividual) // get hours for individual only

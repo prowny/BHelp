@@ -39,10 +39,6 @@ namespace BHelp
             List<SelectListItem> subCatList = new List<SelectListItem>();
             var selListItem = new SelectListItem() { Value = "(none)", Text = @"(none)" };
             subCatList.Add(selListItem);
-
-            if (usr.VolunteerCategory == "M" || usr.VolunteerCategory == "A")
-            { return subCatList; }
-
             selListItem = new SelectListItem() { Value = "Bagger", Text = @"Bagger" };
             subCatList.Add(selListItem);
             selListItem = new SelectListItem() { Value = "Bagger Supervisor", Text = @"Bagger Supervisor" };

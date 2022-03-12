@@ -43,10 +43,13 @@
                         @Html.TextBoxFor(m => m.CategoryName,
                             new { @readonly = true, style = "width: 85px" })
                     </td>
-                    <td>
-                        @Html.TextBoxFor(m => m.SubcategoryName,
-                            new { @readonly = true, style = "width: 130px" })
-                    </td>
+                    @if (Model.Category != "A" && Model.Category != "M")
+                    {
+                        <td>
+                            @Html.TextBoxFor(m => m.SubcategoryName,
+                                new { @readonly = true, style = "width: 130px" })
+                        </td>
+                    }
                 </tr>
             </table>
         } @*if IsIndividual*@
@@ -285,7 +288,8 @@
             else
             {
                 var linkF = '@Url.Action("Create", "VolunteerHours",
-                                new {a_mCat = "" })';
+                                new {a_mCat = "", fCat = "-1" })';
+                _cat = "F";
                 linkF = linkF.replace("-1", _cat);
                 window.location.href = linkF;
             }
