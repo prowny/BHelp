@@ -87,9 +87,9 @@ namespace BHelp.Controllers
             AppRoutines.GetZipCodesSelectList();
             return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
-        public ActionResult CopySnapshotDataToDelivery()
+        public ActionResult GetLatestDeliveries()
         {
-            Utilities.CopySnapshotDataToDelivery();
+            Utilities.GetLatestDeliveries();
             return RedirectToAction("Index", "Home");
         }
         public ActionResult SetFirstDeliveries()

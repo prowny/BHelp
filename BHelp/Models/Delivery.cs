@@ -87,11 +87,7 @@ namespace BHelp.Models
 
         [NotMapped]
         public int NumberOfKids2_17 { get; set; }
-
         
-
-        
-
         [NotMapped]
         public string SelectedStatus { get; set; }
 
@@ -115,5 +111,8 @@ namespace BHelp.Models
 
         [NotMapped]
        public string ReturnURL { get; set; }
+
+       [NotMapped]
+       public List<Client> Clients { get; set; }
     }
 }
