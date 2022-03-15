@@ -27,7 +27,7 @@ namespace BHelp.Controllers
                 .Where(d =>  d.Status == 0)
                 .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip).ToList();
 
-            var dups = from x in listDeliveries
+            var duplicateClientIds = from x in listDeliveries
                        group x by x.ClientId into g
                        let count = g.Count()
                        select new { Count = count, Id = g.First().ClientId };
@@ -91,7 +91,7 @@ namespace BHelp.Controllers
                          dateDelivered = delivery.DateDelivered.Value;
                     }
                     var since1 = new DateTime(dateDelivered.Year, dateDelivered.Month, 1);
-                    DateTime thrudate = dateDelivered.AddDays(-1);
+                    var thrudate = dateDelivered.AddDays(-1);
                     deliveryView.GiftCardsThisMonth = GetGiftCardsSince(client.Id, since1, thrudate );
 
                     if (delivery.DateDelivered != null)
@@ -105,19 +105,23 @@ namespace BHelp.Controllers
                     if (deliveryView.DateDelivered < deliveryView.NextDeliveryEligibleDate)
                         deliveryView.EligiibilityRulesException = true;
 
-                    
-                    foreach (var dup in dups)
-                    {
-                        if (dup.Id == deliveryView.ClientId && dup.Count > 1)
+                    // ReSharper disable once PossibleMultipleEnumeration
+                    var clientIds = duplicateClientIds.ToList();
+                    if (duplicateClientIds != null)
+                        foreach (var dup in clientIds)
                         {
-                            deliveryView.EligiibilityRulesException = true;
+                            if (dup.Id == deliveryView.ClientId && dup.Count > 1)
+                            {
+                                deliveryView.EligiibilityRulesException = true;
+                            }
                         }
-                    }
+
                     if (deliveryView.GiftCards > 0)
                     {
                         deliveryView.NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate
                             (deliveryView.ClientId, deliveryView.DateLastGiftCard);
-                        if (deliveryView.DateDelivered < deliveryView.NextGiftCardEligibleDate)
+                        if (deliveryView.DateDelivered < deliveryView.NextGiftCardEligibleDate
+                            || deliveryView.GiftCards > deliveryView.GiftCardsEligible)
                             deliveryView.EligiibilityRulesException = true;
                     }
 
@@ -545,6 +549,11 @@ namespace BHelp.Controllers
             private OpenDeliveryViewModel LoadSelectedDeliveriesIntoView(OpenDeliveryViewModel view,
                 List<Delivery> selectedDeliveries, string btnCheckAll)
             {
+                var duplicateClientIds = from x in selectedDeliveries 
+                    group x by x.ClientId into g
+                    let count = g.Count()
+                    select new { Count = count, Id = g.First().ClientId };
+
                 foreach (var del in selectedDeliveries)
                 {
                     del.IsChecked = btnCheckAll != null;
@@ -560,12 +569,25 @@ namespace BHelp.Controllers
                         (del.ClientId, DateTime.Today);
                     if (del.DateDelivered < nextDeliveryEligibleDate)
                         del.EligiibilityRulesException = true;
+
+                    // ReSharper disable once PossibleMultipleEnumeration
+                    var clientIds = duplicateClientIds.ToList();
+                    foreach (var dup in clientIds)
+                    {
+                        if (dup.Id == del.ClientId && dup.Count > 1)
+                        {
+                            del.EligiibilityRulesException = true;
+                        }
+                    }
+                    
                     if (del.GiftCards > 0)
                     {
                         var dateLastGiftCard = AppRoutines.GetDateLastGiftCard(del.ClientId);
                         var nextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate
                             (del.ClientId, dateLastGiftCard);
-                        if (del.DateDelivered < nextGiftCardEligibleDate)
+                        var dt = del.DateDelivered ?? DateTime.Now;
+                        var giftCardsEligible = AppRoutines.GetGiftCardsEligible(del.ClientId, dt);
+                        if (del.DateDelivered < nextGiftCardEligibleDate || del.GiftCards > giftCardsEligible)
                             del.EligiibilityRulesException = true;
                     }
 
@@ -576,6 +598,7 @@ namespace BHelp.Controllers
 
                     view.SelectedDeliveriesList.Add(del);
                 }
+
                 view.DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>;
                 TempData.Keep("DriversSelectList");
                 view.ODSelectList = TempData["ODSelectList"] as List<SelectListItem>;
@@ -847,72 +870,72 @@ namespace BHelp.Controllers
                                 "DateDelivered,ODNotes,DriverNotes,GiftCardsEligible,DriverId," +
                                 "DeliveryDate,ODId,DeliveryDateODId,ReturnURL,SelectedStatus,Zip")] DeliveryViewModel delivery)
             {
-            // DriverId and DeliveryDateODId are used in Edit dropdowns and return a
-            // text value of '0' when 'nobody yet' is selected:
-            if (delivery.DriverId == "0") delivery.DriverId = null;
-            if (delivery.DeliveryDateODId == "0") delivery.DeliveryDateODId = null;
-            if (ModelState.IsValid)
-            {
-                var updateData  = db.Deliveries.Find(delivery.Id);
-
-                if (updateData != null)
+                // DriverId and DeliveryDateODId are used in Edit dropdowns and return a
+                // text value of '0' when 'nobody yet' is selected:
+                if (delivery.DriverId == "0") delivery.DriverId = null;
+                if (delivery.DeliveryDateODId == "0") delivery.DeliveryDateODId = null;
+                if (ModelState.IsValid)
                 {
-                    Client client = db.Clients.Find(updateData.ClientId);
-                    if (client != null) updateData.Zip = client.Zip;
-                    updateData.DateDelivered = delivery.LogDate;
-                    updateData.LogDate = delivery.LogDate;
-                    updateData.FullBags = delivery.FullBags;
-                    updateData.HalfBags = delivery.HalfBags;
-                    updateData.KidSnacks = delivery.KidSnacks;
-                    updateData.GiftCards = delivery.GiftCards;
-                    updateData.GiftCardsEligible = delivery.GiftCardsEligible;
-                    updateData.ODNotes = delivery.ODNotes;
-                    updateData.DriverId = updateData.DriverId == "0" ? null : delivery.DriverId;
-                    updateData.ODId = delivery.ODId;
-                    updateData.DeliveryDateODId = delivery.DeliveryDateODId;
-                    updateData.DriverNotes = delivery.DriverNotes;
-                    updateData.DateDelivered = delivery.DateDelivered;
-                    updateData.Zip = delivery.Zip;
-                    switch (delivery.SelectedStatus)
-                    {
-                        case "Open":
-                            updateData.Status = 0;
-                            break;
-                        case "Delivered":
-                            updateData.Status = 1;
-                            break;
-                        case "Undelivered":
-                            updateData.Status = 2;
-                            break;
-                    }
+                    var updateData  = db.Deliveries.Find(delivery.Id);
 
-                    if (updateData.Status == 1 && updateData.FullBags == 0 && updateData.HalfBags == 0
-                        && updateData.KidSnacks == 0 && updateData.GiftCards == 0)
-                    {  // Cannot save delivery as completed with zero products: 
-                        return RedirectToAction("AdviseCannotSave", new { _id = delivery.Id });
-                    }
-                    db.Entry(updateData).State = EntityState.Modified;
-                    db.SaveChanges();
-                }
-                if(delivery.ReturnURL.Contains("CallLogIndividual"))
-                {
                     if (updateData != null)
-                        return RedirectToAction("CallLogIndividual", new {clientId = updateData.ClientId});
+                    {
+                        Client client = db.Clients.Find(updateData.ClientId);
+                        if (client != null) updateData.Zip = client.Zip;
+                        updateData.DateDelivered = delivery.LogDate;
+                        updateData.LogDate = delivery.LogDate;
+                        updateData.FullBags = delivery.FullBags;
+                        updateData.HalfBags = delivery.HalfBags;
+                        updateData.KidSnacks = delivery.KidSnacks;
+                        updateData.GiftCards = delivery.GiftCards;
+                        updateData.GiftCardsEligible = delivery.GiftCardsEligible;
+                        updateData.ODNotes = delivery.ODNotes;
+                        updateData.DriverId = updateData.DriverId == "0" ? null : delivery.DriverId;
+                        updateData.ODId = delivery.ODId;
+                        updateData.DeliveryDateODId = delivery.DeliveryDateODId;
+                        updateData.DriverNotes = delivery.DriverNotes;
+                        updateData.DateDelivered = delivery.DateDelivered;
+                        updateData.Zip = delivery.Zip;
+                        switch (delivery.SelectedStatus)
+                        {
+                            case "Open":
+                                updateData.Status = 0;
+                                break;
+                            case "Delivered":
+                                updateData.Status = 1;
+                                break;
+                            case "Undelivered":
+                                updateData.Status = 2;
+                                break;
+                        }
+
+                        if (updateData.Status == 1 && updateData.FullBags == 0 && updateData.HalfBags == 0
+                            && updateData.KidSnacks == 0 && updateData.GiftCards == 0)
+                        {  // Cannot save delivery as completed with zero products: 
+                            return RedirectToAction("AdviseCannotSave", new { _id = delivery.Id });
+                        }
+                        db.Entry(updateData).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                    if(delivery.ReturnURL.Contains("CallLogIndividual"))
+                    {
+                        if (updateData != null)
+                            return RedirectToAction("CallLogIndividual", new {clientId = updateData.ClientId});
+                    }
+
+                    if (delivery.ReturnURL.Contains("CallLogByLogDate"))
+                    { return RedirectToAction("CallLogByLogDate", 
+                        new{startDate = Session["CallLogStartDate"], endDate = Session["CallLogEndDate"]}); }
+
+                    if (delivery.ReturnURL.Contains("CallLogByDateDelivered"))
+                    { return RedirectToAction("CallLogByDateDelivered"); }
+
+                    if (delivery.ReturnURL.Contains("UpdateHousehold"))
+                    { return RedirectToAction("Index", "OD"); }
+
+                    return RedirectToAction("Index");
                 }
-
-                if (delivery.ReturnURL.Contains("CallLogByLogDate"))
-                { return RedirectToAction("CallLogByLogDate", 
-                    new{startDate = Session["CallLogStartDate"], endDate = Session["CallLogEndDate"]}); }
-
-                if (delivery.ReturnURL.Contains("CallLogByDateDelivered"))
-                { return RedirectToAction("CallLogByDateDelivered"); }
-
-                if (delivery.ReturnURL.Contains("UpdateHousehold"))
-                { return RedirectToAction("Index", "OD"); }
-
-                return RedirectToAction("Index");
-            }
-            return View(delivery);
+                return View(delivery);
             }
         
             // GET: Deliveries/Delete/5
@@ -1967,7 +1990,7 @@ namespace BHelp.Controllers
                     view.HoursTotal[2, 0] = "Food Program";
                     view.HoursTotal[2, 1] = totalFPeople.ToString();
                     view.HoursTotal[2, 2] = totalFHours.ToString("#.00");
-                view.ShowHoursTotals = true;
+                    view.ShowHoursTotals = true;
                 }
                 
                 return view;

@@ -546,6 +546,35 @@ namespace BHelp.Controllers
             }
             return strResult;
         }
+
+        public ActionResult ActiveClientsLatestDeliveries()
+        {
+            var delRecs = db.Deliveries
+                .Where(s => s.Status == 1)
+                .GroupBy(d => d.ClientId)
+                .Select(g => g.OrderBy(d => d.DateDelivered)
+                    .FirstOrDefault())
+                .OrderBy(d => d.DateDelivered).ToList();
+
+            var view = new List<DeliveryViewModel>();
+            foreach (var rec in delRecs)
+            {
+                var dt = rec.DateDelivered ?? DateTime.Now; 
+                DeliveryViewModel del = new DeliveryViewModel()
+                {
+                    ClientId = rec.ClientId,
+                    DateDeliveredString  = dt.ToString("MM/dd/yyyy"),
+                    LastName = rec.LastName,
+                    FirstName =rec.FirstName,
+                    City =rec.City,
+                    StreetNumber = rec.StreetNumber,
+                    StreetName =rec.StreetName,
+                    Zip =rec.Zip 
+                };
+                view.Add(del);
+            }
+            return View(view);
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

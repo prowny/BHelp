@@ -8,6 +8,7 @@ using LumenWorks.Framework.IO.Csv;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
+using System.Web.Services.Protocols;
 using BHelp.ViewModels;
 using DataTable = System.Data.DataTable;
 
@@ -363,66 +364,49 @@ namespace BHelp
         public static void GetLatestDeliveries()
         {
             var db = new BHelpContext();
-
-            //var recs = db.Deliveries.Include("Clients");
-            //var delList = new List<DeliveryViewModel>();
-           
-
-            var delRecs = db.Deliveries.Include("Clients")
+            
+            var clientRecIds = db.Clients.Where( a => a.Active )
+                .Select( i => i.Id).ToList();
+            
+            var delRecs = db.Deliveries
+                //.Include(c => c.Clients)
                 .Where(s => s.Status == 1)
                 .GroupBy(d => d.ClientId)
                 .Select(g => g.OrderBy(d => d.DateDelivered)
                     .FirstOrDefault())
                 .OrderBy(d => d.DateDelivered).ToList();
 
-            var delList = new List<DeliveryViewModel>();
-            //foreach(var del in delRecs)
-            //{
-            //    var client = db.Clients.Find(del.ClientId);
-            //    if (client != null)
-            //    {
-            //        var delView = new DeliveryViewModel
-            //        {
-            //            DateLastDelivery = del.DateDelivered, 
-            //            Client = client
-            //        };
-            //        delList .Add(delView);
-            //    }
-            //}
+            var delList = new List<Delivery>();
+            foreach (Delivery del in delRecs)
+            {
+                if (clientRecIds.Contains(del.ClientId))
+                {
+                    delList.Add(del);
+                }
+            }
 
+            var delRecClientIds = db.Deliveries
+                .Where(s => s.Status == 1)
+                .GroupBy(d => d.ClientId)
+                .Select(g => g.OrderBy(d => d.DateDelivered)
+                    .FirstOrDefault())
+                .Select(i => i.ClientId).ToList();
 
-            //.Join( db.Clients, c => c.ClientId, 
-            //    d => d.Id,
-            //    (c, d) => 
-            //    new{lastName = c.LastName, firstName = c.FirstName, delDate = c.DateDelivered})
-            //.ToList();
+            var clientsWithDeliveries = new List<Client>();
+            var clientsWithNoDeliveries = new List<Client>();
+            foreach (var client in db.Clients)
+            {
+                if (delRecClientIds.Contains(client.Id))
+                {
+                    clientsWithDeliveries.Add(client);
+                }
+                else
+                {
+                    clientsWithNoDeliveries.Add(client);
+                }
+            }
 
-            //delRecs = null;
-            //var sql = "select * from Clients "
-            //          + "inner join Deliveries "
-            //          + "on Clients.Id = Deliveries.ClientId "
-            //          + "AND Deliveries.Id =("
-            //          + "select top 1 subDeliveries.ClientId "
-            //          + "FROM Deliveries subDeliveries "
-            //          + "WHERE subDeliveries.ClientId = Clients.Id "
-            //          + "order by subDeliveries.DateDelivered DESC)";
-            //var result = db.Database.SqlQuery<string>(sql).ToList();
-
-            //var recs = db.Deliveries.GroupBy(i => i.ClientId)
-            //    .Select(d => d.OrderByDescending(c => c.DateDelivered)
-            //        .FirstOrDefault()).ToList;
-
-            //var sql =
-            //             //"select c.LastName, c.FirstName, c.Id, latest_deliveries.DateDelivered" +
-            //             //" from(select ClientId, MAX(DateDelivered) as DateDelivered from Deliveries d" +
-            //             //" Group By ClientId) as latest_deliveries inner join Clients c on" +
-            //             //" c.Id = latest_deliveries.ClientId order by latest_deliveries.DateDelivered";
-            //             "select latest_deliveries.DateDelivered" +
-            //             " from(select ClientId, MAX(DateDelivered) as DateDelivered from Deliveries d" +
-            //             " Group By ClientId) as latest_deliveries inner join Clients c on" +
-            //             " c.Id = latest_deliveries.ClientId order by latest_deliveries.DateDelivered";
-            //var result = db.Database.SqlQuery<string>(sql).ToList();
-            //sql = "";
+            var dummy = "";
         }
     }
 }

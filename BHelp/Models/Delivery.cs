@@ -53,7 +53,7 @@ namespace BHelp.Models
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime? DateDelivered { get; set; }
 
-        //public Boolean Completed { get; set; }  // NOT USED 01/01/2002
+        //public Boolean Completed { get; set; }  // NOT USED 01/01/2022
         public string ODNotes { get; set; }
 
         [DataType(DataType.MultilineText)]
