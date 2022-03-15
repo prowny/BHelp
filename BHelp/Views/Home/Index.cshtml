@@ -140,6 +140,8 @@
         <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br />
         <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br />
         <a href="http://www.bethesdahelp.org" target="_blank">Go To Bethesda Help Website</a><br />
+        <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
+        <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["vmPassword"])</span>
         @if (Model.ShowEveryoneDocumentsMenu)
         {
             <a href="@Url.Action("ViewDocumentCategory", "Documents", new { menuCat = "Everyone" })">Documents</a><br />

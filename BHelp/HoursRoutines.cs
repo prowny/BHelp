@@ -51,6 +51,8 @@ namespace BHelp
             subCatList.Add(selListItem);
             selListItem = new SelectListItem() { Value = "OD", Text = @"OD" };
             subCatList.Add(selListItem);
+            selListItem = new SelectListItem() { Value = "Scheduler", Text = @"Scheduler" };
+            subCatList.Add(selListItem);
             return subCatList;
         }
         public static string GetCategoryName(string catName)
