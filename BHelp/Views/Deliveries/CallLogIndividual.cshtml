@@ -27,14 +27,10 @@
                     <td>
                         @Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByIndividualToCSV", new { allData = false })&nbsp;&nbsp;
                         &nbsp; &nbsp;@Html.ActionLink("Download to CSV File (ALL data)", "CallLogByIndividualToCSV", new { allData = true })
-                    </td>
-                </tr>
-             }
-                <tr>
-                    <td>
                         &nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
                     </td>
                 </tr>
+             }
           </table>
      </div>
     <table>

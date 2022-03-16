@@ -12,13 +12,13 @@
     <tr>
         <td><b>Active Clients Latest Deliveries</b></td>
         <td>&nbsp;by oldest date first (@Model.Count)</td>
-        <td>@Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu", "Deliveries")</td>
-        <td>@Html.ActionLink("Return to Dashboard", "Index", "Home")</td>
+        <td>&nbsp;@Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu", "Deliveries")</td>
+        <td>&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home")</td>
     </tr>
 </table>
 <table>
     <tr>
-        <td><b>Date</b></td>
+        <td><b>Delivery Date</b></td>
         <td><b>Last Name</b></td>
         <td><b>First Name</b></td>
         <td><b>Address</b></td>
@@ -27,7 +27,7 @@
     @for(int i = 0; i < Model.Count; i++ )
     {
         <tr>
-            <td>@Model[i].DateDeliveredString</td>
+            <td style="text-align: center">@Model[i].DateDeliveredString</td>
             <td>@Model[i].LastName</td>
             <td>@Model[i].FirstName</td>
             <td>@Model[i].StreetNumber&nbsp;@Model[i].StreetName&nbsp;

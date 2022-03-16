@@ -90,7 +90,11 @@ namespace BHelp.Models
 
         [NotMapped]
         public string ClientNameAddress { get; set; }
+
         [NotMapped]
         public string NameAddressToolTip { get; set; }    // for open delivery filtering
+
+        [NotMapped]
+        public string ReturnURL { get; set; }
     }
 }

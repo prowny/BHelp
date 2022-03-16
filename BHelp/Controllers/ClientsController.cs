@@ -181,6 +181,10 @@ namespace BHelp.Controllers
                     break;
                 }
             }
+            if (Request.UrlReferrer != null)
+            {
+                client.ReturnURL = Request.UrlReferrer.ToString();
+            }
             return View(client);
         }
 
@@ -188,7 +192,7 @@ namespace BHelp.Controllers
         [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Active,FirstName,LastName,Age," +
-                           "StreetNumber,StreetName,City,Zip,Phone,Notes")] Client client)
+                           "StreetNumber,StreetName,City,Zip,Phone,Notes,ReturnURL")] Client client)
         {
             if (ModelState.IsValid)
             {
@@ -202,6 +206,10 @@ namespace BHelp.Controllers
                 client.DateOfBirth=DateTime.Today.AddYears(-client.Age);
                 db.Entry(client).State = EntityState.Modified;
                 db.SaveChanges();
+                if (client.ReturnURL.Contains("LatestDeliveries"))
+                {
+                    return RedirectToAction("ActiveClientsLatestDeliveries");
+                }
                 return RedirectToAction("Index");
             }
             return View(client);
@@ -549,28 +557,42 @@ namespace BHelp.Controllers
 
         public ActionResult ActiveClientsLatestDeliveries()
         {
-            var delRecs = db.Deliveries
-                .Where(s => s.Status == 1)
-                .GroupBy(d => d.ClientId)
-                .Select(g => g.OrderBy(d => d.DateDelivered)
-                    .FirstOrDefault())
-                .OrderBy(d => d.DateDelivered).ToList();
+            var query = from c in db.Clients
+                from d in db.Deliveries
+                    .Where(e => e.ClientId == c.Id && e.Status == 1 && c.Active)
+                    .OrderBy(f => f.DateDelivered).Take(1)
+                select new
+                {
+                    d.DateDelivered,
+                    c.Id, c.LastName, c.FirstName, c.StreetNumber,
+                    c.StreetName, c.City, c.Zip
+                };
+            var delRecs = query
+                .OrderBy(d => d.DateDelivered);
 
             var view = new List<DeliveryViewModel>();
+
             foreach (var rec in delRecs)
             {
+                string retUrl = null;
+                if (Request.UrlReferrer != null)
+                {
+                    retUrl = Request.UrlReferrer.ToString();
+                }
                 var dt = rec.DateDelivered ?? DateTime.Now; 
                 DeliveryViewModel del = new DeliveryViewModel()
                 {
-                    ClientId = rec.ClientId,
+                    ClientId = rec.Id,
                     DateDeliveredString  = dt.ToString("MM/dd/yyyy"),
                     LastName = rec.LastName,
                     FirstName =rec.FirstName,
                     City =rec.City,
                     StreetNumber = rec.StreetNumber,
                     StreetName =rec.StreetName,
-                    Zip =rec.Zip 
+                    Zip =rec.Zip,
+                    ReturnURL =retUrl
                 };
+                
                 view.Add(del);
             }
             return View(view);
