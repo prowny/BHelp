@@ -566,7 +566,7 @@ namespace BHelp.Controllers
             var query = from c in db.Clients
                 from d in db.Deliveries
                     .Where(e => e.ClientId == c.Id && e.Status == 1 && c.Active)
-                    .OrderBy(f => f.DateDelivered).Take(1)
+                    .OrderByDescending( f => f.DateDelivered).Take(1)
                 select new
                 {
                     d.DateDelivered,
