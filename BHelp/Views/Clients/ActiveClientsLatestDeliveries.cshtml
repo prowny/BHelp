@@ -40,9 +40,9 @@
 </table>
 <br/>
 <div>
-    @*@Html.ActionLink("Download to CSV File", "QORKReportToCSV", new { endingDate = Model.EndDateString }, null)
-    <br />*@
-    @Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu", "Deliveries", new { }, null)
+    @Html.ActionLink("Download to CSV File", "ActiveClientsLatestDeliveriesToCSV", "Clients")
+    <br />
+    @Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu", "Deliveries")
     <br />
     @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
 </div>

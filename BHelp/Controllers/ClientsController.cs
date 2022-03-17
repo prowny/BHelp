@@ -557,6 +557,12 @@ namespace BHelp.Controllers
 
         public ActionResult ActiveClientsLatestDeliveries()
         {
+            var view = GetLatestDeliveriesViewModel();
+            return View(view);
+        }
+
+        private List<DeliveryViewModel> GetLatestDeliveriesViewModel()
+        {
             var query = from c in db.Clients
                 from d in db.Deliveries
                     .Where(e => e.ClientId == c.Id && e.Status == 1 && c.Active)
@@ -564,39 +570,72 @@ namespace BHelp.Controllers
                 select new
                 {
                     d.DateDelivered,
-                    c.Id, c.LastName, c.FirstName, c.StreetNumber,
-                    c.StreetName, c.City, c.Zip
+                    c.Id,
+                    c.LastName,
+                    c.FirstName,
+                    c.StreetNumber,
+                    c.StreetName,
+                    c.City,
+                    c.Zip
                 };
             var delRecs = query
                 .OrderBy(d => d.DateDelivered);
 
             var view = new List<DeliveryViewModel>();
-
             foreach (var rec in delRecs)
             {
-                string retUrl = null;
-                if (Request.UrlReferrer != null)
-                {
-                    retUrl = Request.UrlReferrer.ToString();
-                }
-                var dt = rec.DateDelivered ?? DateTime.Now; 
+                var dt = rec.DateDelivered ?? DateTime.Now;
                 DeliveryViewModel del = new DeliveryViewModel()
                 {
                     ClientId = rec.Id,
-                    DateDeliveredString  = dt.ToString("MM/dd/yyyy"),
+                    DateDeliveredString = dt.ToString("MM/dd/yyyy"),
                     LastName = rec.LastName,
-                    FirstName =rec.FirstName,
-                    City =rec.City,
+                    FirstName = rec.FirstName,
+                    City = rec.City,
                     StreetNumber = rec.StreetNumber,
-                    StreetName =rec.StreetName,
-                    Zip =rec.Zip,
-                    ReturnURL =retUrl
+                    StreetName = rec.StreetName,
+                    Zip = rec.Zip,
+                    ReturnURL = "LatestDeliveries" 
                 };
-                
                 view.Add(del);
             }
-            return View(view);
+            return view;
         }
+
+        public ActionResult ActiveClientsLatestDeliveriesToCSV()
+        {
+            var view = GetLatestDeliveriesViewModel();
+            var sb = new StringBuilder();
+            sb.Append("Active Clients Latest Deliveries" + ',');
+            sb.Append(DateTime.Today.ToShortDateString() + ',');
+            sb.AppendLine();
+
+            sb.Append("Delivery Date,Last Name,First Name,Street #,Street Name,City,Zip");
+            sb.AppendLine();
+
+            for (var i = 0; i < view.Count; i++)
+            {
+                var dt = (DateTime?)view[i].DateDelivered ?? DateTime.Today;
+                sb.Append(dt.ToString("MM/dd/yyyy") + ",");
+                sb.Append(view[i].LastName + "," + view[i].FirstName + ",");
+                sb.Append(view[i].StreetNumber + ",");
+                sb.Append(view[i].StreetName.Replace(",", ";") + ",");
+                sb.Append(view[i].City + "," + view[i].Zip);
+                sb.AppendLine();
+            }
+
+            var response = System.Web.HttpContext.Current.Response;
+            response.BufferOutput = true;
+            response.Clear();
+            response.ClearHeaders();
+            response.ContentEncoding = Encoding.Unicode;
+            response.AddHeader("content-disposition", "attachment;filename=LatestDeliveries" + DateTime.Today.ToShortDateString() + ".csv");
+            response.ContentType = "text/plain";
+            response.Write(sb.ToString());
+            response.End();
+            return null;
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
