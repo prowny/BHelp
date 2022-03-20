@@ -310,7 +310,7 @@ namespace BHelp.Controllers
         public ActionResult ClientListToExcel()
         {
             var view = GetClientViewModel();
-            int columns = 22;
+            int columns = 22; 
             var curMonth = DateTime.Now.ToString("MMMM");
             var curYear = DateTime.Now.Year.ToString();
             XLWorkbook workbook = new XLWorkbook();
@@ -398,8 +398,7 @@ namespace BHelp.Controllers
                     ws.Cell(activeRow, j).Style.Alignment.WrapText = true;
                 }
             }
-
-            //ws.Columns().AdjustToContents();
+            
             MemoryStream ms = new MemoryStream();
             workbook.SaveAs(ms);
             ms.Position = 0;
@@ -411,7 +410,7 @@ namespace BHelp.Controllers
         private static ClientViewModel GetClientViewModel()
         {
             var cvm = new ClientViewModel { ReportTitle  = "BH Food Client List" };
-            var columns = 22;
+            var columns = 22;  // ! add one for seniors names/ages?
 
             using (var db = new BHelpContext())
             {
@@ -433,14 +432,14 @@ namespace BHelp.Controllers
                     cvm.ClientStrings[i, 7] = cli.City;
                     cvm.ClientStrings[i, 8] = cli.Zip;
                     cvm.ClientStrings[i, 9] = cli.Phone;
-                    var familyList = db.FamilyMembers
+                    var familyList = db.FamilyMembers  // Add HH to familyList
                         .Where(f => f.ClientId == cli.Id).ToList();
                     cvm.ClientStrings[i, 10] = GetChildrenCount(familyList);
                     cvm.ClientStrings[i, 11] = GetAdultCount(familyList);
                     cvm.ClientStrings[i, 12] = GetSeniorCount(age, familyList); // Age of Head of Household
                     cvm.ClientStrings[i, 13] = GetAdultNamesAges(cli.Id, familyList);
                     cvm.ClientStrings[i, 14] = GetKidsNamesAges(familyList);
-                    var numberInHousehold = familyList.Count + 1;
+                    var numberInHousehold = familyList.Count;
                     cvm.ClientStrings[i, 15] = numberInHousehold.ToString();
                     cvm.ClientStrings[i, 16] = cli.Notes;
                     var lastDD = AppRoutines.GetLastDeliveryDate(cli.Id);
@@ -491,11 +490,11 @@ namespace BHelp.Controllers
 
         private static string GetAdultCount(List<FamilyMember> familyList)
         {
-            var result = 1; // Add Head of Househol to Adults count
+            var result = 1; // Add Head of Household to Adults count
             foreach (var mbr in familyList)
             {
                 var age = AppRoutines.GetAge(mbr.DateOfBirth);
-                if (age > 17)
+                if (age > 17 && age < 60)
                 { result++; }
             }
             return result.ToString();

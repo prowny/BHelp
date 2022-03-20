@@ -48,14 +48,15 @@ namespace BHelp.ViewModels
 
         public IEnumerable<SelectListItem> ZipCodes { get; set; }
 
-        //public string FullName
-        //{
-        //    get { return string.Format("{0} {1}", FirstName, LastName); }
-        //}
+        public Client client { get; set; }
+        public List<FamilyMember> family { get; set; }
+
         public List<FamilyMember> FamilyMembers { get; set; }
         
-        public IEnumerable<SelectListItem> HouseholdMembers { get; set; }
-        
+        public List<Delivery> ClientDeliveries { get; set; }
+
+        public List<ClientViewModel> ClientViewModels { get; set; }
+
         public string SearchString { get; set; }
         public string StreetToolTip { get; set; }
         public string CityToolTip { get; set; }

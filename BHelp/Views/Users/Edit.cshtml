@@ -126,7 +126,6 @@
 
         <div class="form-group">
             @Html.LabelFor(m => m.VolunteerCategory)
-            <span style="color: darkmagenta"> &nbsp;A = Administration, M = Management, F = Food Program</span>
             <div class="col-md-10">
                 @Html.DropDownListFor(m => m.VolunteerCategory,
                     new SelectList(Model.VolunteerCategories, "Value", "Text"))

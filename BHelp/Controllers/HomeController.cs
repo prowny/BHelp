@@ -143,9 +143,16 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Developer")]
         public ActionResult MaintainDocuments()
         {
-
             return null;
         }
+
+        [Authorize(Roles = "Administrator,Developer")]
+        public ActionResult GetClientListModel()
+        {
+            var cvm = Utilities.GetClientListModel();
+            return RedirectToAction("Index", "Home");
+        }
+
     }
 }
 

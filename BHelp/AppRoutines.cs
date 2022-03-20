@@ -120,8 +120,9 @@ namespace BHelp
             {
                 var dt = DateTime.MinValue;
                 var db = new BHelpContext();
-                var delivery = db.Deliveries.Where(i => i.ClientId == clientId && i.GiftCards > 0
-                                                                               && i.Status == 1).OrderByDescending(d => d.DateDelivered).FirstOrDefault();
+                var delivery = db.Deliveries.Where(i => i.ClientId == clientId
+                                    && i.GiftCards > 0 && i.Status == 1)
+                    .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
                 if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
                 return dt;
             }

@@ -6,12 +6,8 @@ using System.IO;
 using BHelp.Models;
 using LumenWorks.Framework.IO.Csv;
 using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Core.Common.CommandTrees;
 using System.Linq;
-using System.Web.Services.Protocols;
 using BHelp.ViewModels;
-using DocumentFormat.OpenXml.Drawing.Charts;
 using DataTable = System.Data.DataTable;
 
 namespace BHelp
@@ -365,11 +361,11 @@ namespace BHelp
 
         public static void GetLatestDeliveries()
         {
-            var db = new BHelpContext();
-            var result = (from pi in db.Clients 
-                join pu in db.Deliveries  on pi.Id equals pu.ClientId  into tpu
-                from t in tpu.OrderByDescending( c => c.DateDelivered).Take(1)
-                select new { pi.Id , pi.LastName, t.DateDelivered}).ToList();
+            //var db = new BHelpContext();
+            //var result = (from pi in db.Clients 
+            //    join pu in db.Deliveries  on pi.Id equals pu.ClientId  into tpu
+            //    from t in tpu.OrderByDescending( c => c.DateDelivered).Take(1)
+            //    select new { pi.Id , pi.LastName, t.DateDelivered}).ToList();
 
             //var sql = "select c.Id, c.LastName,c.FirstName, COUNT(d.Id) as total "
             //          + "from Clients as c left join Deliveries as d on c.Id = d.ClientId "
@@ -426,28 +422,330 @@ namespace BHelp
             //    }
             //}
 
-            var deliveryClientIds = db.Deliveries
-                .Where(s => s.Status == 1)
-                .GroupBy(d => d.ClientId)
-                .Select(g => g.OrderBy(d => d.DateDelivered)
-                    .FirstOrDefault())
-                .Select(i => i.ClientId).ToList();
+            //var deliveryClientIds = db.Deliveries
+            //    .Where(s => s.Status == 1)
+            //    .GroupBy(d => d.ClientId)
+            //    .Select(g => g.OrderBy(d => d.DateDelivered)
+            //        .FirstOrDefault())
+            //    .Select(i => i.ClientId).ToList();
 
-            var clientsWithDeliveries = new List<Client>();
-            var clientsWithNoDeliveries = new List<Client>();
-            foreach (var client in db.Clients)
+            //var clientsWithDeliveries = new List<Client>();
+            //var clientsWithNoDeliveries = new List<Client>();
+            //foreach (var client in db.Clients)
+            //{
+            //    if (deliveryClientIds.Contains(client.Id))
+            //    {
+            //        clientsWithDeliveries.Add(client);
+            //    }
+            //    else
+            //    {
+            //        clientsWithNoDeliveries.Add(client);
+            //    }
+            //}
+
+            //var dummy = "";
+        }
+
+        public static ClientViewModel GetClientListModel()
+        {
+            var cvm = new ClientViewModel { ReportTitle = "BH Food Client List" };
+            var columns = 22;
+
+            var db = new BHelpContext();
+            var clientList = db.Clients.OrderBy(c => c.LastName)
+                .ThenBy(c => c.FirstName).ToList();
+            var familyList = db.FamilyMembers.ToList();
+            var deliveryList = db.Deliveries.ToList();
+
+            cvm.ClientStrings = new string[clientList.Count, columns + 1];
+
+            for (var i = 0; i < clientList.Count; i++)
             {
-                if (deliveryClientIds.Contains(client.Id))
-                {
-                    clientsWithDeliveries.Add(client);
-                }
+                var cli = clientList[i];
+                cvm.Id = cli.Id;
+                cvm.ClientStrings[i, 1] = cli.Active.ToString();
+                cvm.ClientStrings[i, 2] = cli.LastName;
+                cvm.ClientStrings[i, 3] = cli.FirstName;
+                var age = AppRoutines.GetAge(cli.DateOfBirth);
+                cvm.ClientStrings[i, 4] = age.ToString();
+                cvm.ClientStrings[i, 5] = cli.StreetNumber;
+                cvm.ClientStrings[i, 6] = cli.StreetName;
+                cvm.ClientStrings[i, 7] = cli.City;
+                cvm.ClientStrings[i, 8] = cli.Zip;
+                cvm.ClientStrings[i, 9] = cli.Phone;
+                var family = familyList
+                    .Where(f => f.ClientId == cli.Id).ToList();
+                var hH = new FamilyMember()  // add HeadOfHousehold:
+                    {FirstName = cli.FirstName, LastName = cli.LastName };
+                family.Add(hH);
+                cvm.ClientStrings[i, 10] = GetChildrenCount(family);
+                cvm.ClientStrings[i, 11] = GetAdultCount(family);
+                cvm.ClientStrings[i, 12] = GetSeniorCount(family);
+                cvm.ClientStrings[i, 13] = GetAdultNamesAges(family);
+                cvm.ClientStrings[i, 14] = GetChildrenNamesAges(family);
+                cvm.ClientStrings[i, 14] = GetSeniorNamesAges(family);  // !!! added row
+                cvm.ClientStrings[i, 15] = familyList.Count.ToString();
+                cvm.ClientStrings[i, 16] = cli.Notes;
+                var deliverySubList = deliveryList
+                    .Where(d => d.ClientId == cli.Id && d.Status == 1
+                      && d.DateDelivered != null).ToList();
+                var lastDD = GetLastDeliveryDate(deliverySubList);
+                if (lastDD.Year < 2000)
+                { cvm.ClientStrings[i, 17] = " - - "; }
                 else
+                { cvm.ClientStrings[i, 17] = lastDD.ToShortDateString(); }
+
+                var lastGC = GetDateLastGiftCard(deliverySubList);
+                if (lastGC.Year < 2000)
+                { cvm.ClientStrings[i, 18] = " - - "; }
+                else
+                { cvm.ClientStrings[i, 18] = lastGC.ToShortDateString(); }
+
+                var nextEDD = GetNextEligibleDeliveryDate(deliverySubList);
+                if (nextEDD.Year < 2000)
+                { cvm.ClientStrings[i, 19] = " (now)"; }
+                else
+                { cvm.ClientStrings[i, 19] = nextEDD.ToShortDateString(); }
+
+                var nextGCED= GetNextGiftCardEligibleDate(family,deliverySubList );
+                if (nextGCED.Year < 2000)
+                { cvm.ClientStrings[i, 20] = " (now)"; }
+                else
+                { cvm.ClientStrings[i, 20] = nextGCED.ToShortDateString(); }
+
+                cvm.ClientStrings[i, 21] = "1"; // AppRoutines.GetDeliveriesCountThisMonth(cli.Id, DateTime.Now).ToString();
+                cvm.ClientStrings[i, 22] = cli.Id.ToString();
+
+            }
+
+            //var clientModels = new List<ClientViewModel>();
+            //foreach (var rec in clientList)
+            //{
+            //    var family = familyList
+            //        .Where(f => f.ClientId == rec.Id && f.Active)
+            //        .OrderByDescending( f => f.Age).ToList();
+            //    var deliveries = deliveryList
+            //        .Where(d => d.ClientId == rec.Id && d.Status == 1)
+            //        .OrderByDescending(d => d.DateDelivered).ToList();
+                
+            //    var newRec = new ClientViewModel()
+            //    {
+            //        Id =rec. Id,
+            //        Active = rec.Active, 
+            //        LastName = rec.LastName,
+            //        FirstName = rec.FirstName
+            //    };
+            //    clientModels.Add(newRec);
+            //}
+
+            return null;
+        }
+
+        private static string GetChildrenCount( List<FamilyMember> family)
+        {
+            var result = 0; // No Head of Household in Children count
+            foreach (var mbr in family)
+            {
+                var age = AppRoutines.GetAge(mbr.DateOfBirth);
+                if (age <= 17)
+                { result++; }
+            }
+            return result.ToString();
+        }
+
+        private static string GetAdultCount(List<FamilyMember> family)
+        {
+            var result = 0;
+            foreach (var mbr in family)
+            {
+                var age = AppRoutines.GetAge(mbr.DateOfBirth);
+                if (age > 17 && age < 60)
+                { result++; }
+            }
+            return result.ToString();
+        }
+
+        private static string GetSeniorCount( List<FamilyMember> family)
+        {
+            var result = 0;
+            foreach (var mbr in family)
+            {
+                var age = AppRoutines.GetAge(mbr.DateOfBirth);
+                if (age >= 60)
+                { result++; }
+            }
+            return result.ToString();
+        }
+
+        private static string GetAdultNamesAges(List<FamilyMember> family)
+        {
+            var strResult = "";
+            foreach (var mbr in family)
+            {
+                var age = AppRoutines.GetAge(mbr.DateOfBirth);
+                if (age >= 18)
                 {
-                    clientsWithNoDeliveries.Add(client);
+                    strResult += "; " + mbr.FirstName + " " + mbr.LastName + "/";
+                    strResult += AppRoutines.GetAge(mbr.DateOfBirth).ToString();
+                }
+            }
+            return strResult;
+        }
+
+        private static string GetSeniorNamesAges(List<FamilyMember> family)
+        {
+            var strResult = "";
+            foreach (var mbr in family)
+            {
+                var age = AppRoutines.GetAge(mbr.DateOfBirth);
+                if (age >= 60)
+                {
+                    strResult += "; " + mbr.FirstName + " " + mbr.LastName + "/";
+                    strResult += AppRoutines.GetAge(mbr.DateOfBirth).ToString();
+                }
+            }
+            return strResult;
+        }
+
+        private static string GetChildrenNamesAges(List<FamilyMember> family)
+        {
+            var strResult = "";
+            foreach (var mbr in family)
+            {
+                var age = AppRoutines.GetAge(mbr.DateOfBirth);
+                if (age <= 17)
+                {
+                    if (strResult.Length != 0)
+                    { strResult += "; "; }
+                    strResult += mbr.FirstName + " " + mbr.LastName + "/";
+                    strResult += AppRoutines.GetAge(mbr.DateOfBirth).ToString();
+                }
+            }
+            return strResult;
+        }
+
+        private static DateTime GetLastDeliveryDate(List<Delivery> deliverySubList)
+        {
+            var dt = DateTime.MinValue;
+            var delivery = deliverySubList.OrderByDescending(d => d.DateDelivered).FirstOrDefault();
+            if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
+            return dt;
+        }
+
+        private static DateTime GetNextEligibleDeliveryDate(List<Delivery> deliverySubList)
+        {
+            var deliveriesThisMonth = GetDeliveriesCountThisMonth(deliverySubList);
+            var lastDeliveryDate = GetLastDeliveryDate(deliverySubList);
+            DateTime nextEligibleDate;
+            if (lastDeliveryDate == DateTime.MinValue)
+            {
+                nextEligibleDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            }
+            else
+            {
+                nextEligibleDate = lastDeliveryDate.AddDays(7);
+            }
+
+            if (deliveriesThisMonth >= 3)    // if already 3 this month, no more
+            {
+                nextEligibleDate = lastDeliveryDate.AddMonths(1);
+                nextEligibleDate = new DateTime(nextEligibleDate.Year,
+                    nextEligibleDate.Month, 1); // move it to 1st of next month, unless less than 7 days
+                if (nextEligibleDate < lastDeliveryDate.AddDays(7))
+                {
+                    nextEligibleDate = lastDeliveryDate.AddDays(7);
                 }
             }
 
-            var dummy = "";
+            return nextEligibleDate;
+        }
+
+        private static int GetDeliveriesCountThisMonth(List<Delivery> deliverySubList)
+        {
+            var dt = DateTime.Today;
+            var startDate = new DateTime(dt.Year, dt.Month, 1);
+            var endDate = new DateTime(dt.Year, dt.Month, DateTime.DaysInMonth(dt.Year, dt.Month));
+            
+            var dtm = deliverySubList.Count(i => i.DateDelivered >= startDate
+                                                 && i.DateDelivered <= endDate);
+            return dtm;
+        }
+
+        private static DateTime GetDateLastGiftCard(List<Delivery> deliverySubList)
+        {
+            var delList = deliverySubList.Where(d => d.DateDelivered < DateTime.Today
+                             && d.GiftCards > 0).OrderByDescending(d => d.DateDelivered).ToList();
+            if (delList.Count != 0)
+            {
+                var delivery = delList[0];
+                if (delivery.DateDelivered.HasValue)
+                {
+                    return (DateTime)delivery.DateDelivered;
+                }
+            }
+            return DateTime.MinValue;
+        }
+
+        private static DateTime GetNextGiftCardEligibleDate(List<FamilyMember> family, List<Delivery> deliverySubList)
+        {
+            // GIFT CARDS ELIGIBLE:
+            // 1 per household of 3 or fewer; 1 per household per calendar month max
+            // 2 per household of 4 or more; 2 per household per calendar month max;
+            var monthlyEligible = 0;
+            var numberInHousehold =family.Count;
+            var totalThisMonth = GetAllGiftCardsThisMonth(deliverySubList );
+            if (numberInHousehold <= 3)   // 1 per household of 3 or fewer
+            {
+                monthlyEligible = 1;
+                if (monthlyEligible + totalThisMonth > 1) monthlyEligible = 0;
+            }
+            if (numberInHousehold >= 4)    // 2 per household of 4 or more
+            {
+                monthlyEligible = 2;
+                if (monthlyEligible + totalThisMonth > 2) monthlyEligible = 0;
+            }
+
+            var lastGiftCardDate = GetDateLastGiftCard(deliverySubList);
+            var nextEligibleGiftCardDate = lastGiftCardDate.AddDays(7);
+            if (monthlyEligible == 0)   // move eligibility to 1st of next month
+            {
+                nextEligibleGiftCardDate = nextEligibleGiftCardDate.AddMonths(1);
+                nextEligibleGiftCardDate = new DateTime(nextEligibleGiftCardDate.Year,
+                    nextEligibleGiftCardDate.Month, 1); // move it to next month
+            }
+
+            if (lastGiftCardDate == DateTime.MinValue) { lastGiftCardDate = DateTime.Today.AddMonths(-1); }
+            var succeedingMonthDate = lastGiftCardDate.AddMonths(1);
+            var firstOfSucceedingMonth = new DateTime(succeedingMonthDate.Year, succeedingMonthDate.Month, 1);
+            if (lastGiftCardDate < firstOfSucceedingMonth)
+            {
+                nextEligibleGiftCardDate = firstOfSucceedingMonth;
+            }
+
+            return nextEligibleGiftCardDate;
+        }
+
+        private static int GetAllGiftCardsThisMonth(List<Delivery> deliverySubList)
+            {
+                var giftCardCount = 0;
+                var delList = GetAllDeliveriesThisMonth(deliverySubList);
+                foreach (var del in delList)
+                {
+                    var cards = Convert.ToInt32(del.GiftCards);
+                    giftCardCount += cards;
+                }
+                return giftCardCount;
+            }
+
+            private static List<Delivery> GetAllDeliveriesThisMonth(List<Delivery> deliverySubList)
+            {
+                var dt = DateTime.Today;
+                var startDate = new DateTime(dt.Year, dt.Month, 1);
+                var endDate = new DateTime(dt.Year, dt.Month, DateTime.DaysInMonth(dt.Year, dt.Month));
+                return deliverySubList.Where(i => i.DateDelivered >= startDate
+                                                      && i.DateDelivered <= endDate).ToList();
+            }
+           
         }
     }
-}
+
