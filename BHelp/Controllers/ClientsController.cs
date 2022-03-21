@@ -614,8 +614,7 @@ namespace BHelp.Controllers
 
             for (var i = 0; i < view.Count; i++)
             {
-                var dt = (DateTime?)view[i].DateDelivered ?? DateTime.Today;
-                sb.Append(dt.ToString("MM/dd/yyyy") + ",");
+                sb.Append(view [i].DateDeliveredString + ",");
                 sb.Append(view[i].LastName + "," + view[i].FirstName + ",");
                 sb.Append(view[i].StreetNumber + ",");
                 sb.Append(view[i].StreetName.Replace(",", ";") + ",");
