@@ -250,8 +250,9 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult ClientListToCSV()
         {
-            var view = GetClientViewModel();
-            int columns = 22;
+            //var view = GetClientViewModel();
+            var view = Utilities.GetAllClientsListModel();
+            const int columns = 22;
             var curMonth = DateTime.Now.ToString("MMMM");
             var curYear = DateTime.Now.Year.ToString();
 
@@ -278,7 +279,6 @@ namespace BHelp.Controllers
                         view.ClientStrings[i,col]= Regex.Replace(view.ClientStrings[i, col], @"\t|\n|\r", "");
                         if (view.ClientStrings[i, col].Contains(","))
                         {
-                            //sb.Append("\"" + view.ClientStrings[i, col] + "\"" + ",");
                             sb.Append(view.ClientStrings[i, col].Replace(",", ";") + ",");
                         }
                         else

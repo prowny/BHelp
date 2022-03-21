@@ -149,7 +149,7 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Developer")]
         public ActionResult GetClientListModel()
         {
-            var cvm = Utilities.GetClientListModel();
+            var cvm = Utilities.GetAllClientsListModel();
             return RedirectToAction("Index", "Home");
         }
 
