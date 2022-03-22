@@ -145,14 +145,7 @@ namespace BHelp.Controllers
         {
             return null;
         }
-
-        [Authorize(Roles = "Administrator,Developer")]
-        public ActionResult GetClientListModel()
-        {
-            var cvm = Utilities.GetAllClientsListModel();
-            return RedirectToAction("Index", "Home");
-        }
-
+        
     }
 }
 

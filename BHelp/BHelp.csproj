@@ -246,6 +246,7 @@
     <Compile Include="App_Start\Startup.Auth.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="ClientRoutines.cs" />
     <Compile Include="Controllers\AccountController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

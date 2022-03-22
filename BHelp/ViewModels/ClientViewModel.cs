@@ -53,10 +53,6 @@ namespace BHelp.ViewModels
 
         public List<FamilyMember> FamilyMembers { get; set; }
         
-        public List<Delivery> ClientDeliveries { get; set; }
-
-        public List<ClientViewModel> ClientViewModels { get; set; }
-
         public string SearchString { get; set; }
         public string StreetToolTip { get; set; }
         public string CityToolTip { get; set; }
