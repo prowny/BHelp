@@ -11,7 +11,7 @@ using BHelp.Models;
 using BHelp.ViewModels;
 using Castle.Core.Internal;
 using ClosedXML.Excel;
-using Microsoft .AspNet.Identity;
+using Microsoft.AspNet.Identity;
 
 namespace BHelp
 {
@@ -1137,6 +1137,37 @@ namespace BHelp
                     }
                 }
                 return distinctDeliveryDatesOdList;
+            }
+
+            public static List<UserRoleViewModel> UsersInRolesLookup()
+            {
+                var db = new BHelpContext();
+                var report = new UsersInRolesReportViewModel { Report = new List<List<string[]>>() };
+                List<string[]> headerLines = new List<string[]>
+                {
+                    new[] { DateTime.Today.ToShortDateString(), "", "", "", "", "Volunteer Roles and Start / End Dates" }
+                };
+                report.Report.Add(headerLines);
+
+                var rolesList = db.Roles.OrderBy(r => r.Name).ToList();
+                var sql = "SELECT UserId FROM AspNetUserRoles";
+                var userIds = db.Database.SqlQuery<string>(sql).ToList();
+                sql = "SELECT RoleId FROM AspNetUserRoles";
+                var roleIds = db.Database.SqlQuery<string>(sql).ToList();
+                var roleLookup = new List<UserRoleViewModel>();
+                for (int i = 0; i < userIds.Count; i++)
+                {
+                    string rName = rolesList.Where(r => r.Id == roleIds[i])
+                        .Select(r => new { r.Name }).Single().ToString();
+                    var uRVM = new UserRoleViewModel
+                    {
+                        UserId = userIds[i],
+                        RoleId = roleIds[i],
+                        RoleName = rName
+                    };
+                    roleLookup.Add(uRVM);
+                }
+                return roleLookup;
             }
     }
 }

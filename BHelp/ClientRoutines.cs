@@ -7,10 +7,12 @@ using BHelp.ViewModels;
 
 namespace BHelp
 {
-    public class ClientRoutines
+    public static class ClientRoutines
     {
         public static ClientViewModel GetAllClientsListModel()
         {
+            // Get Clients, Family, and Delieries in 3 single database queries
+            // with no further hits to the database
             var view = new ClientViewModel { ReportTitle = "BH Client List" };
             const int columns = 23;
 

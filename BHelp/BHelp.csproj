@@ -246,7 +246,9 @@
     <Compile Include="App_Start\Startup.Auth.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="ClientRoutines.cs" />
+    <Compile Include="ClientRoutines.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Controllers\AccountController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -358,7 +360,9 @@
     </Compile>
     <Compile Include="Models\VolunteerHours.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Utilities.cs" />
+    <Compile Include="Utilities.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="ViewModels\AccountViewModels.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -393,6 +397,7 @@
     <Compile Include="Controllers\DeliveriesController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="ViewModels\UserRoleViewModel.cs" />
     <Compile Include="ViewModels\VoicemailPasswordViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

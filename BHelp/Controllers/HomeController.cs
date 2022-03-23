@@ -92,14 +92,9 @@ namespace BHelp.Controllers
             Utilities.GetLatestDeliveries();
             return RedirectToAction("Index", "Home");
         }
-        public ActionResult SetFirstDeliveries()
+        public ActionResult UsersInRolesLookup()
         {
-            Utilities.SetFirstDeliveries();
-            return RedirectToAction("Index", "Home");
-        }
-        public ActionResult SetStatusFlags()
-        {
-            Utilities.SetStatusFlags();
+            AppRoutines.UsersInRolesLookup();
             return RedirectToAction("Index", "Home");
         }
 
