@@ -862,8 +862,14 @@ namespace BHelp.Controllers
                 return View(view);
             }
 
-            // POST: Deliveries/Edit/5
-            [HttpPost,Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
+            public ActionResult AdviseODIdRequired(int _id)
+            {  // (because Delivery Date OD not selected.)
+                var view = new DeliveryViewModel { Id = _id };
+                return View(view);
+            }
+
+        // POST: Deliveries/Edit/5
+        [HttpPost,Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
             [ValidateAntiForgeryToken]
             public ActionResult Edit(
                 [Bind(Include = "Id,ClientId,LogDate,Notes,FullBags,HalfBags,KidSnacks,GiftCards," +
@@ -873,8 +879,12 @@ namespace BHelp.Controllers
                 // DriverId and DeliveryDateODId are used in Edit dropdowns and return a
                 // text value of '0' when 'nobody yet' is selected:
                 if (delivery.DriverId == "0") delivery.DriverId = null;
-                if (delivery.DeliveryDateODId == "0") delivery.DeliveryDateODId = null;
-                if (ModelState.IsValid)
+                //if (delivery.DeliveryDateODId == "0") delivery.DeliveryDateODId = null;
+                if (delivery.DeliveryDateODId == "0")
+                {  // Reminder error - ODId required: 
+                    return RedirectToAction("AdviseODIdRequired", new { _id = delivery.Id });
+                }
+            if (ModelState.IsValid)
                 {
                     var updateData  = db.Deliveries.Find(delivery.Id);
 

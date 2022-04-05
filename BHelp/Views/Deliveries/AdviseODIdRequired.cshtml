@@ -1,0 +1,21 @@
+﻿@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AdviseODIdRequired</title>
+</head>
+<body>
+    @using (Html.BeginForm("Edit", "Deliveries", FormMethod.Post))
+    {
+        <div>
+            <span style="color: red">
+                <b>Please enter the Delivery Date OD!</b>
+            </span>
+            <br />
+            @Html.ActionLink(" Return to Edit", "Edit", new{ id = Model.Id})
+        </div>
+    }
+</body>
+</html>
