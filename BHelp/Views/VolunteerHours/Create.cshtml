@@ -7,16 +7,29 @@
     <meta name="viewport" content="width=device-width" />
     <title>Create</title>
     <style>
-        #Hours {width: 45px;}
-        #Minutes {width: 30px;}
-        #PeopleCount {width: 30px;}
-        #btnSubmit {background-color: blue;color: white}
+        #Hours {
+            width: 45px;
+        }
+
+        #Minutes {
+            width: 30px;
+        }
+
+        #PeopleCount {
+            width: 30px;
+        }
+
+        #btnSubmit {
+            background-color: blue;
+            color: white
+        }
     </style>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
     <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
 </head>
 <body>
 @using (Html.BeginForm("Create", "VolunteerHours", FormMethod.Post))

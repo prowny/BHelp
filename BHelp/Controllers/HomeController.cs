@@ -92,12 +92,7 @@ namespace BHelp.Controllers
             Utilities.GetLatestDeliveries();
             return RedirectToAction("Index", "Home");
         }
-        public ActionResult UsersInRolesLookup()
-        {
-            AppRoutines.UsersInRolesLookup();
-            return RedirectToAction("Index", "Home");
-        }
-
+       
         // GET: Reset Voicemail Password/Edit
         [Authorize(Roles = "Administrator,Developer")]
         public ActionResult ResetVoicemailPassword()

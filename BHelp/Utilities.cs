@@ -8,7 +8,7 @@ using BHelp.ViewModels;
 namespace BHelp
 {
     public static class Utilities
-    {
+    { 
         public static void GetLatestDeliveries()
         {
             //var db = new BHelpContext();

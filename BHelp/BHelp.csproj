@@ -259,6 +259,7 @@
     <Compile Include="Controllers\DriverController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Controllers\DriverScheduleController.cs" />
     <Compile Include="Controllers\FamilyMembersController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -370,6 +371,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="ViewModels\DocumentsViewModel.cs" />
+    <Compile Include="ViewModels\DriverScheduleViewModel.cs" />
     <Compile Include="ViewModels\GroupMemberViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -473,6 +475,7 @@
     <Content Include="Images\BHelp.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Images\BHLogo.ico" />
     <Content Include="Images\PDF10.png" />
     <Content Include="Images\save-button.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -620,6 +623,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Deliveries\AdviseODIdRequired.cshtml" />
+    <Content Include="Views\DriverSchedule\Index.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
@@ -846,6 +850,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

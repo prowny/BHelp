@@ -1,0 +1,51 @@
+﻿@model BHelp.ViewModels.DriverScheduleViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <style >
+        #schedule { border-collapse: collapse; border:thin solid black}
+        .top {width: 175px;border-right: thin solid black; }
+    </style>
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+</head>
+<body>
+<div>
+    <table>
+        <tr>
+            <td><b>Bethesda Help Drivers Schedule - @Model.MonthName&nbsp;@Model.Year</b></td>
+            <td>@Html.ActionLink(" Previous Month", "PreviousMonth", new { month = Model.Month, year = Model .Year })</td>
+            <td>@Html.ActionLink(" Next Month", "NextMonth", new { month = Model.Month, year = Model.Year })</td>
+        </tr>
+    </table>
+  
+</div>
+<div>
+    <table Id="schedule">
+        <tr>
+            <th class="top">MONDAY</th>
+            <th class="top">TUESDAY</th>
+            <th class="top">WEDNESDAY</th>
+            <th class="top">THURSDAY</th>
+            <th class="top">FRIDAY</th>
+        </tr>
+        @for (var i = 1; i < 6; i++)
+        {
+            <tr>
+                @for (var j = 1; j < 6; j++)
+                {
+                    <td style="border: thin solid black"></td>
+                }
+            </tr>
+        }
+    </table>
+</div>
+<br/>
+<div id="ReturnToDashboard">
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
+</body>
+</html>

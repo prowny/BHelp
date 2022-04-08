@@ -10,7 +10,7 @@
         p.indent {padding-left: 1em}
         div {padding-left: 10px}
     </style>
-    <link rel="icon" href="~/images/bhelp.ico" type="image/x-icon" />
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
 </head>
 <body>
     <div>
@@ -29,8 +29,8 @@
     {
 <div>
     <strong>Developer Menu</strong><br />
-    <a href="@Url.Action("GetLatestDeliveries", "Home")">GetLatestDeliveries</a><br />
-    <a href="@Url.Action("UsersInRolesLookup", "Home")">UsersInRolesLookup</a><br />
+    @*<a href="@Url.Action("GetLatestDeliveries", "Home")">GetLatestDeliveries</a><br />*@
+    <a href="@Url.Action("Index", "DriverSchedule")">Driver Schedule</a><br />
 </div>
         <br />
     }
