@@ -23,5 +23,7 @@ namespace BHelp.ViewModels
         public int Month { get; set; }
         public string MonthName { get; set; }
         public int Year { get; set; }
+        public IEnumerable<DriverScheduleViewModel> DriversSchedule { get; set; }
+        public DateTime [,] Boxes { get; set; }
     }
 }

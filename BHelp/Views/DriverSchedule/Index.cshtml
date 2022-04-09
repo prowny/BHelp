@@ -32,12 +32,17 @@
             <th class="top">THURSDAY</th>
             <th class="top">FRIDAY</th>
         </tr>
-        @for (var i = 1; i < 6; i++)
+        @for (var i = 1; i < 7; i++)
         {
             <tr>
                 @for (var j = 1; j < 6; j++)
                 {
-                    <td style="border: thin solid black"></td>
+                    <td style="border: thin solid black">
+                        @if (Model.Boxes[i, j] != DateTime.MinValue)
+                        {
+                            <b>@Html.Label(Model.Boxes[i,j].Day.ToString("0" ))</b>
+                        }
+                    </td>
                 }
             </tr>
         }
