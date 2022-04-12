@@ -1169,5 +1169,13 @@ namespace BHelp
                 }
                 return roleLookup;
             }
+
+            public static string GetRoleId(string name)
+            {
+            var sqlString = "SELECT Id FROM AspNetRoles WHERE Name = '" + name + "'";
+            var context = new BHelpContext();
+            var roleId = context.Database.SqlQuery<string>(sqlString).FirstOrDefault();
+            return roleId;
+            }
     }
 }

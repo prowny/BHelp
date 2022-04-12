@@ -2,13 +2,33 @@
 using BHelp.DataAccessLayer;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.AccessControl;
 using BHelp.ViewModels;
 
 namespace BHelp
 {
     public static class Utilities
-    { 
+    {
+        public static int test()
+        {
+            var a = 0;
+            var b = 0;
+            for (var i = 1; i < 26; i++)
+            {
+                if (i < 6) {  a = 1;  b = i; }
+                if (i > 5 && i < 11) {  a = 2;  b = i - 5; }
+                if (i > 10 && i < 16) { a = 3;  b = i - 10; }
+                if(i > 15 && i < 21) { a = 4;  b = i - 15; }
+                if (i > 20) { a = 5;  b = i - 20; }
+             }
+            var z = 5 / 5 + 1 ;
+            var x = (5 % 5);
+            var y = 20 / 5;
+            
+            return 1;
+        }
         public static void GetLatestDeliveries()
         {
             //var db = new BHelpContext();

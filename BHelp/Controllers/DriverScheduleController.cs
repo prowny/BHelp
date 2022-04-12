@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
+using BHelp.DataAccessLayer;
 using BHelp.ViewModels;
 using Org.BouncyCastle.Utilities;
 
@@ -28,29 +31,57 @@ namespace BHelp.Controllers
             }
 
             var startDt = GetFirstWeekDay(view.Month, view.Year);
+            var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth( view.Year ,view.Month));
             var startDayOfWk = (int)startDt.DayOfWeek;
-            view.Boxes = new DateTime[7, 6];
-            for (var i = 1; i < 7; i++)
+            view.BoxDay = new DateTime[6, 6];
+            var driverList = GetDriverIdSelectList();
+            view.BoxDDL = new object[6, 6, 3];  // row, col, ddl1/ddl2
+            view.BoxDDLDriverId = new string[6, 6, 3];
+            view.BoxIndexDriverId = new string[51];
+            view.BoxNote = new string[26];
+            for (var i = 1; i < 6; i++)
             {
-                for (int j = 1; j < 6; j++)
+                for (var j = 1; j < 6; j++)
                 {
                     if (i == 1)
                     {
                         if (j < startDayOfWk) continue;
-                        view.Boxes[i, j] = startDt.AddDays(5 - startDayOfWk);
+                        view.BoxDay[i, j] = startDt.AddDays(j - startDayOfWk);
+                        view.BoxDDL[i, j, 1] = driverList; view.BoxDDLDriverId[i, j, 1] = "0";
+                        var idx = j + 5 * (i - 1);
+                        view.BoxIndexDriverId[idx] = "0";
+                        view.BoxDDL[i, j, 2] = driverList; view.BoxDDLDriverId[i, j, 2] = "0";
+                        view.BoxIndexDriverId[idx * 2] = "0";
+                        view.BoxNote[idx] = "";
                         continue;
                     }
 
-                    if (view.Boxes[i - 1, j] == DateTime.MinValue)
+                    if (view.BoxDay[i - 1, j] == DateTime.MinValue)
                     {
-                        view.Boxes[i, j] = startDt.AddDays(7 + j - startDayOfWk);
+                        view.BoxDay[i, j] = startDt.AddDays(7 + j - startDayOfWk);
+                        view.BoxDDL[i, j, 1] = driverList; view.BoxDDLDriverId[i, j, 1] = "0";
+                        var idx = j + 5 * (i - 1);
+                        view.BoxIndexDriverId[idx] = "0";
+                        view.BoxDDL[i, j, 2] = driverList; view.BoxDDLDriverId[i, j, 2] = "0";
+                        view.BoxIndexDriverId[idx * 2] = "0";
+                        view.BoxNote[idx] = "";
                     }
                     else
                     {
-                        view.Boxes[i, j] =view .Boxes [i - 1, j].AddDays(7);
+                        if (view.BoxDay[i - 1, j].AddDays(7) <= endDate)
+                        {
+                            view.BoxDay[i, j] = view.BoxDay[i - 1, j].AddDays(7);
+                            view.BoxDDL[i, j, 1] = driverList; view.BoxDDLDriverId[i, j, 1] = "0";
+                            var idx = j + 5 * (i - 1);
+                            view.BoxIndexDriverId[idx] = "0";
+                            view.BoxDDL[i, j, 2] = driverList; view.BoxDDLDriverId[i, j, 2] = "0";
+                            view.BoxIndexDriverId[idx* 2] = "0";
+                            view.BoxNote[idx] = "";
+                        }
                     }
                 }
-            } 
+            }
+            
             return View(view);
         }
 
@@ -87,22 +118,43 @@ namespace BHelp.Controllers
             return dt;
         }
 
-        //private static DateTime GetBoxDate(int i, int j, DateTime startDt)
-        //{
-        //    var startDayOfWk = (int)startDt.DayOfWeek;
-        //    DateTime dt = DateTime.MinValue; // default
-        //    // Boxes are 1-5; 6-10; 11-15; 16-20; 21-25; 26-31.
-        //    if (i == 1) // 1st row, j = 1-5
-        //    {
-        //        if (j < startDayOfWk) return dt;
-        //        return startDt.AddDays(5 - startDayOfWk);
-        //    }
+        private List<SelectListItem> GetDriverIdSelectList()
+        {
+            if (Session["DriverSelectList"] == null)
+            {
+                var driverList = new List<SelectListItem>();
+                var _db = new BHelpContext();
+                var userList = _db.Users.OrderBy(u => u.LastName).ToList();
+                //var rolesList = _db.Roles.OrderBy(r => r.Name).ToList();
+                var roleLookup = AppRoutines.UsersInRolesLookup();
+                var driverRoleId = AppRoutines.GetRoleId("Driver");
+                driverList.Add(new SelectListItem()
+                {
+                    Text = @"--select--",
+                    Value = "0"
+                });
+                foreach (var user in userList)
+                {
+                    if(roleLookup .Any(r => r.UserId  == user.Id && r.RoleId == driverRoleId))
+                    {
+                        driverList.Add(new SelectListItem()
+                        { 
+                            Text = user.FirstName + @" " + user.LastName,
+                            Value = user.Id,
+                            Selected = false
+                        });
+                    };
+                }
+                Session["DriverSelectList"] = driverList;
+                return driverList;
+            }
+            return (List<SelectListItem>)Session["DriverSelectList"];
+        }
 
-        //    if (i == 2) // 2nd row, j = 6-10
-        //    {
-        //        return startDt.AddDays(10 - startDayOfWk);
-        //    }
-        //    return dt;
-        //}
+        public ActionResult Test()
+        { 
+            Utilities.test();
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
