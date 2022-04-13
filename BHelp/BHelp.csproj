@@ -623,7 +623,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Deliveries\AdviseODIdRequired.cshtml" />
-    <Content Include="Views\DriverSchedule\Index.cshtml" />
+    <Content Include="Views\DriverSchedule\Edit.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>

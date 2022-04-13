@@ -849,7 +849,7 @@ namespace BHelp
                     var client = db.Clients.Find(del.ClientId);
                     if (del.DateDelivered != null) odv.OpenDeliveries[i, 1] = del.DateDelivered.Value.ToShortDateString();
                 
-                    if (del.DeliveryDateODId != null)
+                    if (del.DeliveryDateODId != null && del.DeliveryDateODId != "0" )
                     {
                         var usr = db.Users.Find(del.DeliveryDateODId);
                         del.DeliveryDateODName = usr.FullName + " " + usr.PhoneNumber;

@@ -11,7 +11,7 @@ namespace BHelp.Controllers
     public class DriverScheduleController : Controller
     {
         // GET: DriverSchedule
-        public ActionResult Index()
+        public ActionResult Edit()
         {
             var view = new DriverScheduleViewModel();
             if (Session["DriverScheduleMonthYear"] == null)
@@ -85,72 +85,77 @@ namespace BHelp.Controllers
             return View(view);
         }
 
-        public ActionResult PreviousMonth(int month, int year)
-        {
-            month = month - 1;
-            if (month < 1)
-            {
-                month = 12;
-                year = year - 1;
-            }
-            Session["DriverScheduleMonthYear"] = month.ToString("00") + year;
-            return RedirectToAction( "Index");
+        // POST: DriverSchedule/Edit
+        [HttpPost, Authorize(Roles = "Developer,Administrator,Staff,Scheduler")]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(DriverScheduleViewModel schedule)
+
+        { var x = schedule.BoxNote[5];
+            return null;
         }
 
+        public ActionResult PreviousMonth(int month, int year)
+            {
+                month = month - 1;
+                if (month < 1)
+                {
+                    month = 12;
+                    year = year - 1;
+                }
+                Session["DriverScheduleMonthYear"] = month.ToString("00") + year;
+                return RedirectToAction("Edit");
+            }
         public ActionResult NextMonth(int month, int year)
         {
             month = month + 1;
-            if (month >12)
+            if (month > 12)
             {
                 month = 1;
                 year = year + 1;
             }
             Session["DriverScheduleMonthYear"] = month.ToString("00") + year;
-            return RedirectToAction("Index");
+            return RedirectToAction("Edit");
         }
-
         private static DateTime GetFirstWeekDay(int month, int year)
-        {
-            DateTime dt = new DateTime(year, month, 1);
-            var dayOfWeek = (int) dt.DayOfWeek;
-            if (dayOfWeek == 0) dt = dt.AddDays(1); // change from Sun to Mon 
-            if (dayOfWeek == 6) dt = dt.AddDays(2); // change from Sat to Mon
-            return dt;
-        }
-
+    {
+        DateTime dt = new DateTime(year, month, 1);
+        var dayOfWeek = (int) dt.DayOfWeek;
+        if (dayOfWeek == 0) dt = dt.AddDays(1); // change from Sun to Mon 
+        if (dayOfWeek == 6) dt = dt.AddDays(2); // change from Sat to Mon
+        return dt;
+    }
         private List<SelectListItem> GetDriverIdSelectList()
+    {
+        if (Session["DriverSelectList"] == null)
         {
-            if (Session["DriverSelectList"] == null)
+            var driverList = new List<SelectListItem>();
+            var _db = new BHelpContext();
+            var userList = _db.Users.OrderBy(u => u.LastName).ToList();
+            //var rolesList = _db.Roles.OrderBy(r => r.Name).ToList();
+            var roleLookup = AppRoutines.UsersInRolesLookup();
+            var driverRoleId = AppRoutines.GetRoleId("Driver");
+            driverList.Add(new SelectListItem()
             {
-                var driverList = new List<SelectListItem>();
-                var _db = new BHelpContext();
-                var userList = _db.Users.OrderBy(u => u.LastName).ToList();
-                //var rolesList = _db.Roles.OrderBy(r => r.Name).ToList();
-                var roleLookup = AppRoutines.UsersInRolesLookup();
-                var driverRoleId = AppRoutines.GetRoleId("Driver");
-                driverList.Add(new SelectListItem()
+                Text = @"--select--",
+                Value = "0"
+            });
+            foreach (var user in userList)
+            {
+                if(roleLookup .Any(r => r.UserId  == user.Id && r.RoleId == driverRoleId))
                 {
-                    Text = @"--select--",
-                    Value = "0"
-                });
-                foreach (var user in userList)
-                {
-                    if(roleLookup .Any(r => r.UserId  == user.Id && r.RoleId == driverRoleId))
-                    {
-                        driverList.Add(new SelectListItem()
-                        { 
-                            Text = user.FirstName + @" " + user.LastName,
-                            Value = user.Id,
-                            Selected = false
-                        });
-                    };
-                }
-                Session["DriverSelectList"] = driverList;
-                return driverList;
+                    driverList.Add(new SelectListItem()
+                    { 
+                        Text = user.FirstName + @" " + user.LastName,
+                        Value = user.Id,
+                        Selected = false
+                    });
+                };
             }
-            return (List<SelectListItem>)Session["DriverSelectList"];
+            Session["DriverSelectList"] = driverList;
+            return driverList;
         }
-
+        return (List<SelectListItem>)Session["DriverSelectList"];
+    }
         public ActionResult Test()
         { 
             Utilities.test();
