@@ -1,8 +1,9 @@
-﻿using System.Linq;
+﻿using System.Web;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.ViewModels;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace BHelp.Controllers
 {
@@ -15,8 +16,10 @@ namespace BHelp.Controllers
         [AllowAnonymous]
         public ActionResult Edit()
         {
-            var userId = User.Identity.GetUserId();
-            var user = (from u in _db.Users where u.Id == userId select u).Single();
+            var user = System.Web.HttpContext.Current.GetOwinContext()
+                .GetUserManager<ApplicationUserManager>()
+                .FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
+            if (user == null) return RedirectToAction("Logout", "Home");
             var model = new UpdateMyProfileViewModel()
             {
                 Id = user.Id,
@@ -37,7 +40,7 @@ namespace BHelp.Controllers
                 if (model.State == state.Value)
                 {
                     state.Selected = true;
-                    continue;
+                    break;
                 }
             }
             return View(model);

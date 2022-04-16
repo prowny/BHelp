@@ -1,4 +1,20 @@
-﻿function UpdateCallLogDate(callLogDate) {
+﻿function Test() {
+    var postData = { values: window.DriversSchedules };
+
+    window.$.ajax({
+        type: "POST",
+        url: "/DriverSchedule/SaveList",
+        data: postData,
+        success: function (data) {
+            alert(data.Result);
+        },
+        dataType: "json",
+        traditional: true
+    });
+}
+
+
+function UpdateCallLogDate(callLogDate) {
     window.$.ajax({
         url: '/OD/Index',
         data: { callLogDate: callLogDate },
@@ -183,7 +199,7 @@ function AddGroupMember() {
         type: "GET",
         cache: false,
         dataType: "json",
-        data: { gpId: gpId, clientId: mbrId },
+        data: { gpId: gpId, clientId: window.mbrId },
         success: function(result) {
             window.$("#selectMembersDDL").empty();
             window.$("#selectClientDDL").empty();

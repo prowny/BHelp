@@ -92,7 +92,7 @@ namespace BHelp.Controllers
                     Title =doc.Title,
                     MenuCategory=doc.MenuCategory,
                     FileName = postedFile.FileName,
-                    OrginatorId = User.Identity.GetUserId(),
+                    OriginatorId = User.Identity.GetUserId(),
                     FileContent = fileData.ToArray()  
                 };
                 db.Documents.Add(newDoc);

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
 using Castle.Core.Internal;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace BHelp.Controllers
 {
@@ -28,6 +30,11 @@ namespace BHelp.Controllers
         [AllowAnonymous]
         public ActionResult Create(DateTime? hoursDate, string userId, string a_mCat, string fCat) // hoursDate will be non-null if a new date is requested by the view
         {
+            var user = System.Web.HttpContext.Current.GetOwinContext()
+                .GetUserManager<ApplicationUserManager>()
+                .FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
+            if (user == null) return RedirectToAction("Logout", "Home");
+
             if (Session["CurrentUserId"] == null) // set to logged-in user
             { Session["CurrentUserId"] = User.Identity.GetUserId(); }
 

@@ -337,6 +337,10 @@
     <Compile Include="Migrations\202203071945131_AddZipCode.Designer.cs">
       <DependentUpon>202203071945131_AddZipCode.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202204152205425_ChangeOriginatorIdSpelling.cs" />
+    <Compile Include="Migrations\202204152205425_ChangeOriginatorIdSpelling.Designer.cs">
+      <DependentUpon>202204152205425_ChangeOriginatorIdSpelling.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -833,6 +837,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202203071945131_AddZipCode.resx">
       <DependentUpon>202203071945131_AddZipCode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202204152205425_ChangeOriginatorIdSpelling.resx">
+      <DependentUpon>202204152205425_ChangeOriginatorIdSpelling.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -311,7 +311,11 @@ namespace BHelp.Controllers
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
-            //return code == null ? View("Error") : View();
+            var user = System.Web.HttpContext.Current.GetOwinContext()
+                .GetUserManager<ApplicationUserManager>()
+                .FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
+            if (user == null) return RedirectToAction("Logout", "Home");
+           
             // this is Reset MY password
             ResetPasswordViewModel viewModel = new ResetPasswordViewModel
             {

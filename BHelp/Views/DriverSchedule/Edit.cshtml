@@ -1,95 +1,166 @@
-﻿@using System.Collections
-@model BHelp.ViewModels.DriverScheduleViewModel
+﻿@using System.Web.Mvc.Html
+@using Org.BouncyCastle.Utilities
+@model List<BHelp.ViewModels.DriverScheduleViewModel>
 @{ Layout = null; }
 <!DOCTYPE html>
 
 <html>
 
 <head>
-    <meta name="viewport" content="width=device-width"/>
-    <title>Index</title>
-    <style >
-        #schedule { border-collapse: collapse; border: thin solid black}
-        .top {width: 175px;border-right: thin solid black; }
-        #SaveButton {background-color: blue;color: white}
+    <meta name="viewport" content="width=device-width" />
+    <title>Edit</title>
+    <style>
+        #schedule {
+            border-collapse: collapse;
+            border: thin solid black
+        }
+
+        .top {
+            width: 175px;
+            border-right: thin solid black;
+        }
+
+        #SaveButton {
+            background-color: blue;
+            color: white
+        }
     </style>
-    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon"/>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
 </head>
 <body>
-    @using (Html.BeginForm("Edit", "DriverSchedule", FormMethod.Post))
-    {
-        @Html.AntiForgeryToken()
-        <div>
-            <table>
-                <tr>
-                    <td><b>Bethesda Help Drivers Schedule - @Model.MonthName&nbsp;@Model.Year</b></td>
-                    <td>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        @Html.ActionLink(" Previous Month", "PreviousMonth", new { month = Model.Month, year = Model.Year })
-                    </td>
-                    <td>&nbsp;&nbsp;@Html.ActionLink(" Next Month", "NextMonth", new { month = Model.Month, year = Model.Year })</td>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home")</td>
-                </tr>
-            </table>
-        </div>
-        <div>
-            <table Id="schedule">
-                <tr>
-                    <th class="top">MONDAY</th>
-                    <th class="top">TUESDAY</th>
-                    <th class="top">WEDNESDAY</th>
-                    <th class="top">THURSDAY</th>
-                    <th class="top">FRIDAY</th>
-                </tr>
-                @for (var i = 1; i < 6; i++)
-                {
-                    <tr>
-                        @for (var j = 1; j < 6; j++)
-                        {
-                            <td style="border: thin solid black">
-                                @if (Model.BoxDay[i, j] != DateTime.MinValue)
-                                {
-                                    var idx = j + 5 * (i - 1);
-                                    <b>@Html.Label(Model.BoxDay[i, j].Day.ToString("0"))</b>
-                                    <span style="font-size: x-small">&nbsp;@Html.Label("Driver")</span>
-                                    @Html.DropDownListFor(m =>
-                                        m.BoxIndexDriverId[idx],
-                                        new SelectList((IEnumerable)Model.BoxDDL[i, j, 1],
-                                            "Value", "Text"),
-                                         new { @class = "form-control" })
-                                    @Html.ValidationMessageFor(m => m.BoxIndexDriverId[idx], "", new { @class = "text-danger" })
-
-                                    <span style="font-size: x-small">
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        @Html.Label("BackupDriver")
-                                    </span>
-                                    @Html.DropDownListFor(m =>
-                                        m.BoxIndexDriverId[idx * 2],
-                                        new SelectList((IEnumerable)Model.BoxDDL[i, j, 2],
-                                            "Value", "Text"))
-
-                                    <span style="font-size: x-small">
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        @Html.Label("Notes")
-                                    </span>
-                                    @Html.TextAreaFor(t => t.BoxNote[idx])
-                                }
-                            </td>
-                        }
-                    </tr>
-                }
-            </table>
-        </div>
-        <br />
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
-            </div>
-        </div>
-    }
-    <br />
+@using (Html.BeginForm("Edit", "DriverSchedule", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
     <div>
-        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+        <table>
+            <tr>
+                @{ var DateData = @Session["DriverScheduleMonthYear"].ToString(); }
+                @{ var month = Convert.ToInt32(DateData.Substring(0, 2)); }
+                @{ var year = Convert.ToInt32(DateData.Substring(2, 4)); }
+                @{ var tempDate = new DateTime(year, month, 1); }
+                @{ var monthName = Strings.ToUpperCase(tempDate.ToString("MMMM")); }
+                <td><b>Bethesda Help Drivers Schedule - @monthName&nbsp;@year</b></td>
+                <td>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    @Html.ActionLink(" Previous Month", "PreviousMonth", new { @month, @year })
+                </td>
+                <td>&nbsp;&nbsp;@Html.ActionLink(" Next Month", "NextMonth", new { @month, @year })</td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home")</td>
+            </tr>
+        </table>
     </div>
+    <div>
+        <table Id="schedule">
+            <tr>
+                <th class="top">MONDAY</th>
+                <th class="top">TUESDAY</th>
+                <th class="top">WEDNESDAY</th>
+                <th class="top">THURSDAY</th>
+                <th class="top">FRIDAY</th>
+            </tr>
+
+            @*@for (var i = 1; i < 6; i++)
+        {
+            <tr>
+                @for (var j = 1; j < 6; j++)
+                {
+                    <td style="border: thin solid black">
+                        @if (Model.BoxDay[i, j] != DateTime.MinValue)
+                        {
+                            var idx = j + 5 * (i - 1);
+                            <b>@Html.Label(Model.BoxDay[i, j].Day.ToString("0"))</b>
+                            <span style="font-size: x-small">&nbsp;@Html.Label("Driver")</span>
+                            @Html.DropDownListFor(m =>
+                                m.BoxIndexDriverId[idx],
+                                new SelectList((IEnumerable)Model.BoxDDL[i, j, 1],
+                                    "Value", "Text"),
+                                 new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.BoxIndexDriverId[idx], "", new { @class = "text-danger" })
+
+                            <span style="font-size: x-small">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                @Html.Label("BackupDriver")
+                            </span>
+                            @Html.DropDownListFor(m =>
+                                m.BoxIndexDriverId[idx * 2],
+                                new SelectList((IEnumerable)Model.BoxDDL[i, j, 2],
+                                    "Value", "Text"))
+
+                            <span style="font-size: x-small">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                @Html.Label("Notes")
+                            </span>
+                            @Html.TextAreaFor(t => t.BoxNote[idx])
+                        }
+                    </td>
+                }
+            </tr>
+        }*@
+                
+            @{var i = 0;}
+            @for (var row = 1; row < 6; row++)
+            {
+                <tr>
+                    @for (var col = 1; col < 6; col++)
+                    {
+                        i++;
+                    <td style="border: thin solid black">
+                        @if (Model[i].Date > DateTime.MinValue)
+                        {
+                            <b>@Html.Label(Model[i].DayString)</b>
+                            <span style="font-size: x-small">&nbsp;@Html.Label("Driver")</span>
+                            @Html.HiddenFor(m => m[i].DriverId);
+                            @Html.DropDownListFor(m =>
+                                Model[i].DriverId,
+                                new SelectList(Model[i].DriverList, "Value", "Text"),
+                                new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m[i].DriverId,
+                                "", new { @class = "text-danger" })
+                            <span style="font-size: x-small">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                @Html.Label("BackupDriver")
+                            </span>
+                            @Html.DropDownListFor(m =>
+                                Model[i].BackupDriverId,
+                                new SelectList(Model[i].BackupDriverList, "Value", "Text"),
+                                new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m[i].BackupDriverId,
+                                "", new { @class = "text-danger" })
+                            <span style="font-size: x-small">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                @Html.Label("Notes")
+                            </span>
+                            @Html.TextAreaFor(m => m[i].Note);
+                        }
+                    </td>
+                    }
+                </tr>
+            }
+        </table>
+    </div>
+    <br />
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
+        </div>
+    </div>
+}
+<br />
+<div>
+    <a href="#" id="Test"><span>Test</span></a><br />
+
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
 </body>
 </html>
+<script type="text/javascript">
+    $("#Test").click(function () {
+        var text = window.$("#DriversSchedule").val();
+        Test(text);
+    });
+</script>

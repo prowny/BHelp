@@ -19,7 +19,7 @@ namespace BHelp.Controllers
                 view.Month = DateTime.Today.Month;
                 view.Year = DateTime.Today.Year;
                 view.MonthName = Strings.ToUpperCase(DateTime.Today.ToString("MMMM"));
-                Session["DriverScheduleMonthYear"] = view.Month.ToString("00") + view.Year;
+                Session["DriverScheduleMonthYear"] = view.Month.ToString("00") + view.Year + view.MonthName;
             }
             else
             {
@@ -27,15 +27,17 @@ namespace BHelp.Controllers
                 view.Month = Convert.ToInt32(x.Substring(0, 2));
                 view.Year = Convert.ToInt32(x.Substring(2, 4));
                 var tempDate = new DateTime(view.Year, view.Month, 1);
+                ;
                 view.MonthName = Strings.ToUpperCase(tempDate.ToString("MMMM"));
             }
 
             var startDt = GetFirstWeekDay(view.Month, view.Year);
-            var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth( view.Year ,view.Month));
+            var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
             var startDayOfWk = (int)startDt.DayOfWeek;
+
             view.BoxDay = new DateTime[6, 6];
             var driverList = GetDriverIdSelectList();
-            view.BoxDDL = new object[6, 6, 3];  // row, col, ddl1/ddl2
+            view.BoxDDL = new object[6, 6, 3]; // row, col, ddl1/ddl2
             view.BoxDDLDriverId = new string[6, 6, 3];
             view.BoxIndexDriverId = new string[51];
             view.BoxNote = new string[26];
@@ -47,10 +49,12 @@ namespace BHelp.Controllers
                     {
                         if (j < startDayOfWk) continue;
                         view.BoxDay[i, j] = startDt.AddDays(j - startDayOfWk);
-                        view.BoxDDL[i, j, 1] = driverList; view.BoxDDLDriverId[i, j, 1] = "0";
+                        view.BoxDDL[i, j, 1] = driverList;
+                        view.BoxDDLDriverId[i, j, 1] = "0";
                         var idx = j + 5 * (i - 1);
                         view.BoxIndexDriverId[idx] = "0";
-                        view.BoxDDL[i, j, 2] = driverList; view.BoxDDLDriverId[i, j, 2] = "0";
+                        view.BoxDDL[i, j, 2] = driverList;
+                        view.BoxDDLDriverId[i, j, 2] = "0";
                         view.BoxIndexDriverId[idx * 2] = "0";
                         view.BoxNote[idx] = "";
                         continue;
@@ -59,10 +63,12 @@ namespace BHelp.Controllers
                     if (view.BoxDay[i - 1, j] == DateTime.MinValue)
                     {
                         view.BoxDay[i, j] = startDt.AddDays(7 + j - startDayOfWk);
-                        view.BoxDDL[i, j, 1] = driverList; view.BoxDDLDriverId[i, j, 1] = "0";
+                        view.BoxDDL[i, j, 1] = driverList;
+                        view.BoxDDLDriverId[i, j, 1] = "0";
                         var idx = j + 5 * (i - 1);
                         view.BoxIndexDriverId[idx] = "0";
-                        view.BoxDDL[i, j, 2] = driverList; view.BoxDDLDriverId[i, j, 2] = "0";
+                        view.BoxDDL[i, j, 2] = driverList;
+                        view.BoxDDLDriverId[i, j, 2] = "0";
                         view.BoxIndexDriverId[idx * 2] = "0";
                         view.BoxNote[idx] = "";
                     }
@@ -71,27 +77,81 @@ namespace BHelp.Controllers
                         if (view.BoxDay[i - 1, j].AddDays(7) <= endDate)
                         {
                             view.BoxDay[i, j] = view.BoxDay[i - 1, j].AddDays(7);
-                            view.BoxDDL[i, j, 1] = driverList; view.BoxDDLDriverId[i, j, 1] = "0";
+                            view.BoxDDL[i, j, 1] = driverList;
+                            view.BoxDDLDriverId[i, j, 1] = "0";
                             var idx = j + 5 * (i - 1);
                             view.BoxIndexDriverId[idx] = "0";
-                            view.BoxDDL[i, j, 2] = driverList; view.BoxDDLDriverId[i, j, 2] = "0";
-                            view.BoxIndexDriverId[idx* 2] = "0";
+                            view.BoxDDL[i, j, 2] = driverList;
+                            view.BoxDDLDriverId[i, j, 2] = "0";
+                            view.BoxIndexDriverId[idx * 2] = "0";
                             view.BoxNote[idx] = "";
                         }
                     }
                 }
             }
-            
-            return View(view);
+
+            var schedules = new List<DriverScheduleViewModel>();
+            var dt = DateTime.MinValue;
+            var skip = false;
+            for (var i = 0; i < 27; i++)
+            {
+                if (i >= startDayOfWk)
+                {
+                    if (skip == false)
+                    {
+                        dt = startDt;
+                        skip = true;
+                    }
+                }
+
+                var schedule = new DriverScheduleViewModel
+                {
+                    Id = i,
+                    Date = dt,
+                    DriverId = "0",
+                    BackupDriverId = "0",
+                    Note = "",
+                    DriverList = driverList,
+                    BackupDriverList = driverList,
+                    MonthName = view.MonthName
+                };
+                if (dt > DateTime.MinValue)
+                {
+                    schedule.DayString = dt.Day.ToString("0");
+                }
+
+                schedules.Add(schedule);
+                if (dt > DateTime.MinValue)
+                {
+                    dt = dt.AddDays(1);
+                    if ((int)dt.DayOfWeek == 6)
+                    {
+                        dt = dt.AddDays(2);
+                    }
+
+                    if (dt > endDate) dt = DateTime.MinValue;
+                }
+            }
+
+            return View(schedules);
         }
 
         // POST: DriverSchedule/Edit
         [HttpPost, Authorize(Roles = "Developer,Administrator,Staff,Scheduler")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(DriverScheduleViewModel schedule)
+        {
+            if (ModelState.IsValid)
+            {
+                var x = schedule.BoxNote[5];
+            }
 
-        { var x = schedule.BoxNote[5];
             return null;
+        }
+
+        public JsonResult SaveList(List<DriverScheduleViewModel> values)
+        {
+            return Json(new { Result = $"First item in list: '{values[0]}'" });
         }
 
         public ActionResult PreviousMonth(int month, int year)
