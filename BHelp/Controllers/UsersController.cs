@@ -47,7 +47,7 @@ namespace BHelp.Controllers
             user.VolunteerSubcategories = HoursRoutines.GetHoursSubcategoriesSelectList(user);
             foreach (var subCat in user.VolunteerSubcategories)
             {
-                if (user.VolunteerSubcategory == subCat .Value) subCat.Selected = true;
+                if (user.VolunteerSubcategory == subCat.Value) subCat.Selected = true;
             }
 
             user.States = AppRoutines.GetStatesSelectList();

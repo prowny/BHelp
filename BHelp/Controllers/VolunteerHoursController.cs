@@ -205,6 +205,22 @@ namespace BHelp.Controllers
             + "Date,Hours,Minutes,PeopleCount,IsIndividual")] VolunteerHoursViewModel model)
         {
             if (!ModelState.IsValid) return RedirectToAction("Index", "Home");
+            
+            if (model.IsIndividual)
+            {
+                var view = (VolunteerHoursViewModel)TempData["IndividualViewModel"];
+                model.UserId = view.UserId;
+                model.Category = view.Category;
+                model.Subcategory = view.Subcategory;
+                model.PeopleCount = view.PeopleCount;
+                // Check for invalid Food Service/(none) pair or (none)/(none) pair
+                if (model.Category == "F" && model.Subcategory == "(none)"
+                    || (model.Category == "(none)" && model.Subcategory == "(none)"))
+                {
+                    TempData["SubmitError"] = "Invalid Category/Subcategory setup. Contact Administrator.";
+                    return RedirectToAction("Create", new { userId = model.UserId });
+                }
+            }
 
             if (model.Hours == 0 && model.Minutes == 0)
             {
@@ -216,15 +232,6 @@ namespace BHelp.Controllers
             {
                 TempData["SubmitError"] = "Select Food Program Subcategory!";
                 return RedirectToAction("Create");
-            }
-            
-            if (model.IsIndividual)
-            {
-                var view = (VolunteerHoursViewModel)TempData["IndividualViewModel"];
-                model.UserId = view.UserId;
-                model.Category = view.Category;
-                model.Subcategory = view.Subcategory;
-                model.PeopleCount = view.PeopleCount;
             }
             // Look for duplicate record:
             var oldRec = db.VolunteerHours

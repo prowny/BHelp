@@ -29,7 +29,7 @@ namespace BHelp
             var selListItem = new SelectListItem() { Value = "F", Text = @"Food Program" };
             getHoursCategories.Add(selListItem);    // Food Program
             selListItem = new SelectListItem() { Value = "A", Text = @"Administration" };
-            getHoursCategories.Add(selListItem);    // Administration
+            getHoursCategories.Add(selListItem);     // Administration 
             selListItem = new SelectListItem() { Value = "M", Text = @"Management" };
             getHoursCategories.Add(selListItem);     // Management
             return getHoursCategories;
