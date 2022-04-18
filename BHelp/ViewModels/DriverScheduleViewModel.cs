@@ -13,10 +13,11 @@ namespace BHelp.ViewModels
             //BoxDDLDriverId = new string[6, 6, 3];
             //BoxIndexDriverId = new string[51];
             //BoxNote = new string[26];
-            Date = new DateTime();
-            DriversSchedule = new List<DriverScheduleViewModel>();
+            //Date = new DateTime();
+            //DriversSchedule = new List<DriverScheduleViewModel>();
         }
         public int Id { get; set; }
+        
         public DateTime Date { get; set; }
         public string DayString { get; set; }
 

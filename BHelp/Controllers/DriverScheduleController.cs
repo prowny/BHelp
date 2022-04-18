@@ -11,7 +11,7 @@ namespace BHelp.Controllers
     public class DriverScheduleController : Controller
     {
         // GET: DriverSchedule
-        public ActionResult Edit()
+        public ActionResult Edit( DateTime? boxDate)
         {
             var view = new DriverScheduleViewModel();
             if (Session["DriverScheduleMonthYear"] == null)
@@ -26,15 +26,25 @@ namespace BHelp.Controllers
                 var x = Session["DriverScheduleMonthYear"].ToString();
                 view.Month = Convert.ToInt32(x.Substring(0, 2));
                 view.Year = Convert.ToInt32(x.Substring(2, 4));
-                var tempDate = new DateTime(view.Year, view.Month, 1);
-                ;
-                view.MonthName = Strings.ToUpperCase(tempDate.ToString("MMMM"));
+                if (boxDate != null)
+                {
+                    var _day = (boxDate.GetValueOrDefault()).Day;
+                    var tempDate = new DateTime(view.Year, view.Month, _day);
+                    view.MonthName = Strings.ToUpperCase(tempDate.ToString("MMMM"));
+                    view.Date = tempDate;
+                }
+                else
+                {
+                    var tempDate = new DateTime(view.Year, view.Month, 1);
+                    view.MonthName = Strings.ToUpperCase(tempDate.ToString("MMMM"));
+                    view.Date = tempDate;
+                }
             }
-
+            
             var startDt = GetFirstWeekDay(view.Month, view.Year);
             var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
             var startDayOfWk = (int)startDt.DayOfWeek;
-
+            
             view.BoxDay = new DateTime[6, 6];
             var driverList = GetDriverIdSelectList();
             view.BoxDDL = new object[6, 6, 3]; // row, col, ddl1/ddl2
@@ -133,7 +143,7 @@ namespace BHelp.Controllers
                 }
             }
 
-            return View(schedules);
+            return View(view);
         }
 
         // POST: DriverSchedule/Edit
