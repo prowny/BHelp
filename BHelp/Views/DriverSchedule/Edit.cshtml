@@ -1,11 +1,11 @@
 ﻿@model BHelp.ViewModels.DriverScheduleViewModel
+@using System.Collections
 @using System.Web.Mvc.Html
 @using Org.BouncyCastle.Utilities
 @{ Layout = null; }
 <!DOCTYPE html>
 
 <html>
-
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Edit</title>
@@ -41,16 +41,39 @@
             <table>
                 <tr>
                     <td>Date:</td>
+                    <td>Driver:</td>
+                    <td>Backup Driver:</td>
+                    <td>Notes:</td>
+                </tr>
+                <tr>
                     <td>
-                        @Html.TextBox("Date", @Model.Date,"{0:MM/dd/yyyy}",
+                        @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
                             new { @class = "form-control", id = "BoxDate", style = "width: 75px;" })
                         <span style="color: darkmagenta">&#8592;Click to change</span> @*Html left-arrow*@
                     </td>
                     <td>
-                        <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
+                        @Html.DropDownListFor(m => m.DriverId,
+                            new SelectList((IEnumerable)Model.DriverList,
+                                "Value", "Text"),
+                            new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.DriverId, "", new { @class = "text-danger" })
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(m => m.BackupDriverId,
+                            new SelectList((IEnumerable)Model.BackupDriverList,
+                                "Value", "Text"),
+                            new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.BackupDriverId, "", new { @class = "text-danger" })
+                    </td>
+                    <td>
+                        @Html.TextAreaFor(t => t.Note)
+                    </td>
+                    <td>
+                        <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
                     </td>
                 </tr>
             </table>
+            <hr />
         </div>
         <div>
             <table>

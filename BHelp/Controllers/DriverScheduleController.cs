@@ -44,9 +44,11 @@ namespace BHelp.Controllers
             var startDt = GetFirstWeekDay(view.Month, view.Year);
             var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
             var startDayOfWk = (int)startDt.DayOfWeek;
-            
-            view.BoxDay = new DateTime[6, 6];
+
             var driverList = GetDriverIdSelectList();
+            view.DriverList = driverList;
+            view.BackupDriverList = driverList;
+            view.BoxDay = new DateTime[6, 6];
             view.BoxDDL = new object[6, 6, 3]; // row, col, ddl1/ddl2
             view.BoxDDLDriverId = new string[6, 6, 3];
             view.BoxIndexDriverId = new string[51];
