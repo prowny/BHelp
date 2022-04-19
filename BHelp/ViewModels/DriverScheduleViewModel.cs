@@ -26,6 +26,7 @@ namespace BHelp.ViewModels
 
         [StringLength(128)]
         public string BackupDriverId { get; set; }
+
         [DataType(DataType.MultilineText)]
         public string Note { get; set; }
         public int Month { get; set; }

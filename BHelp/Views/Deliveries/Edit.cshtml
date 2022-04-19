@@ -26,6 +26,8 @@
             <input type="hidden" name="HistoryStartDate" value="@Model.HistoryStartDate" />
             <input type="hidden" name="HistoryEndDate" value="@Model.HistoryEndDate" />
             <input type="hidden" name="GiftCardsEligible" value="@Model.GiftCardsEligible" />
+            <input type="hidden" name="ClientNameAddress" value="@Model.ClientNameAddress" />
+            <input type="hidden" name="Phone" value="@Model.Phone" />
             @Html.AntiForgeryToken()
             <h4>Edit Delivery</h4>
             <hr /> // horizontal line
@@ -41,7 +43,7 @@
                 </table>
                 <span>
                     <b>Client:</b>&nbsp;@Html.Label(Model.ClientNameAddress)&nbsp;
-                    <b>Phone:</b>&nbsp;@Html.Label(Model.Client.Phone)&nbsp;
+                    <b>Phone:</b>&nbsp;@Html.Label(Model.Phone)&nbsp;
                 </span>
                 <b>Permanent Notes:</b>&nbsp;@Html.TextBoxFor(n => n.Notes,
  new

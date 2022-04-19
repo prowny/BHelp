@@ -39,12 +39,12 @@
         @Html.AntiForgeryToken()
         <div>
             <table>
-                <tr>
+                <!--<tr>
                     <td>Date:</td>
                     <td>Driver:</td>
-                    <td>Backup Driver:</td>
-                    <td>Notes:</td>
-                </tr>
+                    <td>Backup Driver:</td>-->
+                    @*<td>Notes:</td>*@
+                <!--</tr>-->
                 <tr>
                     <td>
                         @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
@@ -65,14 +65,13 @@
                             new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.BackupDriverId, "", new { @class = "text-danger" })
                     </td>
-                    <td>
-                        @Html.TextAreaFor(t => t.Note)
-                    </td>
-                    <td>
-                        <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
-                    </td>
                 </tr>
             </table>
+            <span>
+                @Html.TextAreaFor(t => t.Note)
+                @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
+                <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
+            </span>
             <hr />
         </div>
         <div>
@@ -201,6 +200,7 @@
 <script type="text/javascript">
     $(function () {
         window.$("#BoxDate").datepicker({
+            readOnly: true,
             beforeShowDay: window.$.datepicker.noWeekends
         });
     });

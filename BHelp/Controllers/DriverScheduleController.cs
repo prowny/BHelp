@@ -155,7 +155,7 @@ namespace BHelp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var x = schedule.BoxNote[5];
+                var x = schedule.Note;
             }
 
             return null;
