@@ -355,6 +355,7 @@
     <Compile Include="Models\Delivery.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Models\DriverSchedule.cs" />
     <Compile Include="Models\FamilyMember.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

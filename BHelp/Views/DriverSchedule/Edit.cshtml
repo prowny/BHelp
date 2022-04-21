@@ -1,6 +1,5 @@
-﻿@model BHelp.ViewModels.DriverScheduleViewModel
-@using System.Collections
-@using System.Web.Mvc.Html
+﻿@using System.Web.Mvc.Html
+@model BHelp.ViewModels.DriverScheduleViewModel
 @using Org.BouncyCastle.Utilities
 @{ Layout = null; }
 <!DOCTYPE html>
@@ -18,6 +17,10 @@
         .top {
             width: 175px;
             border-right: thin solid black;
+        }
+
+        .edit {
+            width: 160px;
         }
 
         #SaveButton {
@@ -39,50 +42,57 @@
         @Html.AntiForgeryToken()
         <div>
             <table>
-                <!--<tr>
-                    <td>Date:</td>
-                    <td>Driver:</td>
-                    <td>Backup Driver:</td>-->
-                    @*<td>Notes:</td>*@
-                <!--</tr>-->
                 <tr>
-                    <td>
-                        @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
-                            new { @class = "form-control", id = "BoxDate", style = "width: 75px;" })
-                        <span style="color: darkmagenta">&#8592;Click to change</span> @*Html left-arrow*@
+                    <td><b>BHelp Driver Schedule</b></td>
+                    <td style="text-align: center">Date:</td>
+                    <td style="text-align: center">Driver:</td>
+                    <td style="text-align: center">Backup Driver:</td>
+                    <td style="text-align: center">Notes:</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center" class="edit">Enter / Edit data here:</td>
+                    <td class="edit" style ="text-align: center ">
+                        @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
+                            new { id = "BoxDate", style = "width: 75px;" })
                     </td>
                     <td>
                         @Html.DropDownListFor(m => m.DriverId,
-                            new SelectList((IEnumerable)Model.DriverList,
+                            new SelectList(Model.DriverList,
                                 "Value", "Text"),
                             new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.DriverId, "", new { @class = "text-danger" })
                     </td>
                     <td>
                         @Html.DropDownListFor(m => m.BackupDriverId,
-                            new SelectList((IEnumerable)Model.BackupDriverList,
+                            new SelectList(Model.BackupDriverList,
                                 "Value", "Text"),
                             new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.BackupDriverId, "", new { @class = "text-danger" })
                     </td>
+                    <td>
+                        @Html.TextAreaFor(t => t.Note)
+                        @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;
+                        <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
+                    </td>
                 </tr>
             </table>
             <span>
-                @Html.TextAreaFor(t => t.Note)
-                @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
-                <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
+
             </span>
             <hr />
         </div>
         <div>
             <table>
                 <tr>
-                    @{ var DateData = @Session["DriverScheduleMonthYear"].ToString(); }
-                    @{ var month = Convert.ToInt32(DateData.Substring(0, 2)); }
-                    @{ var year = Convert.ToInt32(DateData.Substring(2, 4)); }
+                    @{ var DateData = @Session["DriverScheduleDateData"].ToString(); }
+                    @{ var month = Convert.ToInt32(DateData.Substring(2, 2)); }
+                    @{ var year = Convert.ToInt32(DateData.Substring(4, 4)); }
                     @{ var tempDate = new DateTime(year, month, 1); }
                     @{ var monthName = Strings.ToUpperCase(tempDate.ToString("MMMM")); }
-                    <td><b>Bethesda Help Drivers Schedule - @monthName&nbsp;@year</b></td>
+                    <td><b>Bethesda Help Drivers Schedule - </b><span style="color: red"><b>@monthName&nbsp;@year</b></span> </td>
                     <td>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         @Html.ActionLink(" Previous Month", "PreviousMonth", new { @month, @year })
@@ -101,84 +111,49 @@
                     <th class="top">THURSDAY</th>
                     <th class="top">FRIDAY</th>
                 </tr>
-
-                @*@for (var i = 1; i < 6; i++)
+                
+        @{var i = 0;}
+        @for (var row = 1; row < 6; row++)
+        {
+            <tr>
+                @for (var col = 1; col < 6; col++)
+                {
+                    i++;
+                <td style="border: thin solid black">
+                    @if (Model.DriversSchedule[i].Date > DateTime.MinValue)
                     {
-                        <tr>
-                            @for (var j = 1; j < 6; j++)
-                            {
-                                <td style="border: thin solid black">
-                                    @if (Model.BoxDay[i, j] != DateTime.MinValue)
-                                    {
-                                        var idx = j + 5 * (i - 1);
-                                        <b>@Html.Label(Model.BoxDay[i, j].Day.ToString("0"))</b>
-                                        <span style="font-size: x-small">&nbsp;@Html.Label("Driver")</span>
-                                        @Html.DropDownListFor(m =>
-                                            m.BoxIndexDriverId[idx],
-                                            new SelectList((IEnumerable)Model.BoxDDL[i, j, 1],
-                                                "Value", "Text"),
-                                             new { @class = "form-control" })
-                                        @Html.ValidationMessageFor(m => m.BoxIndexDriverId[idx], "", new { @class = "text-danger" })
+                        <b>@Html.Label(Model.DriversSchedule[i].DayString)</b>
+                        if (Model.DriversSchedule[i].DriverName != null)
+                        {
+                            <span style="font-size: x-small">
+                                &nbsp;
+                                @Html.Label("Driver")
+                            </span>
+                            @Html.Label(Model.DriversSchedule[i].DriverName)
+                        }
 
-                                        <span style="font-size: x-small">
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            @Html.Label("BackupDriver")
-                                        </span>
-                                        @Html.DropDownListFor(m =>
-                                            m.BoxIndexDriverId[idx * 2],
-                                            new SelectList((IEnumerable)Model.BoxDDL[i, j, 2],
-                                                "Value", "Text"))
+                        if (Model.DriversSchedule[i].BackupDriverName != null)
+                        {
+                            <span style="font-size: x-small">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                @Html.Label("BackupDriver")
+                            </span>
+                            @Html.Label(Model.DriversSchedule[i].BackupDriverName)
+                        }
 
-                                        <span style="font-size: x-small">
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            @Html.Label("Notes")
-                                        </span>
-                                        @Html.TextAreaFor(t => t.BoxNote[idx])
-                                    }
-                                </td>
-                            }
-                        </tr>
-                    }*@
-
-                @*@{var i = 0;}
-                    @for (var row = 1; row < 6; row++)
-                    {
-                        <tr>
-                            @for (var col = 1; col < 6; col++)
-                            {
-                                i++;
-                                <td style="border: thin solid black">
-                                    @if (Model[i].Date > DateTime.MinValue)
-                                    {
-                                        <b>@Html.Label(Model[i].DayString)</b>
-                                        <span style="font-size: x-small">&nbsp;@Html.Label("Driver")</span>
-                                        @Html.HiddenFor(m => m[i].DriverId);
-                                        @Html.DropDownListFor(m =>
-                                            Model[i].DriverId,
-                                            new SelectList(Model[i].DriverList, "Value", "Text"),
-                                            new { @class = "form-control" })
-                                        @Html.ValidationMessageFor(m => m[i].DriverId,
-                                            "", new { @class = "text-danger" })
-                                        <span style="font-size: x-small">
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            @Html.Label("BackupDriver")
-                                        </span>
-                                        @Html.DropDownListFor(m =>
-                                            Model[i].BackupDriverId,
-                                            new SelectList(Model[i].BackupDriverList, "Value", "Text"),
-                                            new { @class = "form-control" })
-                                        @Html.ValidationMessageFor(m => m[i].BackupDriverId,
-                                            "", new { @class = "text-danger" })
-                                        <span style="font-size: x-small">
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            @Html.Label("Notes")
-                                        </span>
-                                        @Html.TextAreaFor(m => m[i].Note);
-                                    }
-                                </td>
-                            }
-                        </tr>
-                    }*@
+                        if (Model.DriversSchedule[i].Note != null)
+                        {
+                            <span style="font-size: x-small">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                @Html.Label("Notes")
+                            </span>
+                            @Html.Label(Model.DriversSchedule[i].Note);
+                        }
+                    }
+                </td>
+                }
+            </tr>
+        }
             </table>
         </div>
         <br />
@@ -190,8 +165,6 @@
     }
     <br />
     <div>
-        <a href="#" id="Test"><span>Test</span></a><br />
-
         @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
     </div>
 </body>
@@ -200,7 +173,6 @@
 <script type="text/javascript">
     $(function () {
         window.$("#BoxDate").datepicker({
-            readOnly: true,
             beforeShowDay: window.$.datepicker.noWeekends
         });
     });

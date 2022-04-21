@@ -14,31 +14,38 @@ namespace BHelp.Controllers
         public ActionResult Edit( DateTime? boxDate)
         {
             var view = new DriverScheduleViewModel();
-            if (Session["DriverScheduleMonthYear"] == null)
+            if (Session["DriverScheduleDateData"] == null)
             {
                 view.Month = DateTime.Today.Month;
                 view.Year = DateTime.Today.Year;
-                view.MonthName = Strings.ToUpperCase(DateTime.Today.ToString("MMMM"));
-                Session["DriverScheduleMonthYear"] = view.Month.ToString("00") + view.Year + view.MonthName;
+                view.Date = new DateTime(view.Year, view.Month, 1);
+                Session["DriverScheduleDateData"] = "01" + view.Month.ToString("00") + view.Year;
             }
-            else
+            else  // returning to DriverSchedule
             {
-                var x = Session["DriverScheduleMonthYear"].ToString();
-                view.Month = Convert.ToInt32(x.Substring(0, 2));
-                view.Year = Convert.ToInt32(x.Substring(2, 4));
-                if (boxDate != null)
+                if (boxDate == null)
                 {
-                    var _day = (boxDate.GetValueOrDefault()).Day;
-                    var tempDate = new DateTime(view.Year, view.Month, _day);
-                    view.MonthName = Strings.ToUpperCase(tempDate.ToString("MMMM"));
-                    view.Date = tempDate;
-                }
-                else
-                {
+                    view.Month = DateTime.Today.Month;
+                    view.Year = DateTime.Today.Year;
                     var tempDate = new DateTime(view.Year, view.Month, 1);
-                    view.MonthName = Strings.ToUpperCase(tempDate.ToString("MMMM"));
                     view.Date = tempDate;
+                    Session["DriverScheduleDateData"] = view.Date.Day.ToString("00") + view.Month.ToString("00") + view.Year;
                 }
+                else  // boxDate has value
+                {
+                    //var _day = (boxDate.GetValueOrDefault()).Day;
+                    //view.MonthName = Strings.ToUpperCase(tempDate.ToString("MMMM"));
+                    view.Date = (DateTime)boxDate;
+                    view.Month = view.Date.Month;
+                    view.Year = view.Date.Year;
+                    Session["DriverScheduleDateData"] = view.Date.Day.ToString("00") + view.Month.ToString("00") + view.Year;
+                }
+                //var scd = Session["DriverScheduleDateData"].ToString();
+                //view.Month = Convert.ToInt32(scd.Substring(2, 2));
+                //view.Year = Convert.ToInt32(scd.Substring(4, 4));
+                //var scdDay = Convert.ToInt32(scd.Substring(0, 2));
+                //view.Date = new DateTime(view.Year, view.Month, scdDay);
+                //Session["DriverScheduleDateData"] = scdDay.ToString("00") + view.Month.ToString("00") + view.Year;
             }
             
             var startDt = GetFirstWeekDay(view.Month, view.Year);
@@ -122,7 +129,7 @@ namespace BHelp.Controllers
                     Date = dt,
                     DriverId = "0",
                     BackupDriverId = "0",
-                    Note = "",
+                    //Note = "THis isa multiline note xxxxxxxxxxxx",
                     DriverList = driverList,
                     BackupDriverList = driverList,
                     MonthName = view.MonthName
@@ -131,7 +138,6 @@ namespace BHelp.Controllers
                 {
                     schedule.DayString = dt.Day.ToString("0");
                 }
-
                 schedules.Add(schedule);
                 if (dt > DateTime.MinValue)
                 {
@@ -144,6 +150,8 @@ namespace BHelp.Controllers
                     if (dt > endDate) dt = DateTime.MinValue;
                 }
             }
+
+            view.DriversSchedule = schedules;
 
             return View(view);
         }
@@ -158,7 +166,7 @@ namespace BHelp.Controllers
                 var x = schedule.Note;
             }
 
-            return null;
+            return RedirectToAction( "Edit");
         }
 
         public JsonResult SaveList(List<DriverScheduleViewModel> values)
@@ -174,8 +182,8 @@ namespace BHelp.Controllers
                     month = 12;
                     year = year - 1;
                 }
-                Session["DriverScheduleMonthYear"] = month.ToString("00") + year;
-                return RedirectToAction("Edit");
+                var _boxDate = GetFirstWeekDay(month, year);
+                return RedirectToAction("Edit", new{boxDate = _boxDate });
             }
         public ActionResult NextMonth(int month, int year)
         {
@@ -185,8 +193,8 @@ namespace BHelp.Controllers
                 month = 1;
                 year = year + 1;
             }
-            Session["DriverScheduleMonthYear"] = month.ToString("00") + year;
-            return RedirectToAction("Edit");
+            var _boxDate = GetFirstWeekDay(month, year);
+            return RedirectToAction("Edit", new { boxDate = _boxDate });
         }
         private static DateTime GetFirstWeekDay(int month, int year)
     {
