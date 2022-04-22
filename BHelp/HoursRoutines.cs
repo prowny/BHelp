@@ -53,6 +53,8 @@ namespace BHelp
             subCatList.Add(selListItem);
             selListItem = new SelectListItem() { Value = "Scheduler", Text = @"Scheduler" };
             subCatList.Add(selListItem);
+            selListItem = new SelectListItem() { Value = "Trainer", Text = @"Trainer" };
+            subCatList.Add(selListItem);
             return subCatList;
         }
         public static string GetCategoryName(string catName)
@@ -115,7 +117,9 @@ namespace BHelp
                 new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Driver",PeopleCount =0,TotalHours = 0},
                 new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Food Staff",PeopleCount =0,TotalHours = 0},
                 new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Food Staff Supervisor",PeopleCount =0,TotalHours = 0},
-                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "OD",PeopleCount =0,TotalHours = 0}
+                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "OD",PeopleCount =0,TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Scheduler",PeopleCount =0,TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Trainer",PeopleCount =0,TotalHours = 0}
             };
    
             foreach (var view in sortedList)

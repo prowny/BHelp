@@ -134,7 +134,7 @@
     <br />
 
     <div>
-        @if (!(User.IsInRole("OfficerOfTheDay") && !User.IsInRole("Administrator") && !User.IsInRole("Staff")))
+        @if (!(User.IsInRole("OfficerOfTheDay") && !User.IsInRole("Administrator") && !User.IsInRole("Staff")) || User.IsInRole("Trainer"))
         {
             <a href="@Url.Action("Create", "VolunteerHours")">Enter Volunteer Hours</a>
             <br />
