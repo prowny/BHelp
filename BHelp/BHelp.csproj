@@ -341,6 +341,10 @@
     <Compile Include="Migrations\202204152205425_ChangeOriginatorIdSpelling.Designer.cs">
       <DependentUpon>202204152205425_ChangeOriginatorIdSpelling.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202204211907460_AddDriverScheules.cs" />
+    <Compile Include="Migrations\202204211907460_AddDriverScheules.Designer.cs">
+      <DependentUpon>202204211907460_AddDriverScheules.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -841,6 +845,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202204152205425_ChangeOriginatorIdSpelling.resx">
       <DependentUpon>202204152205425_ChangeOriginatorIdSpelling.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202204211907460_AddDriverScheules.resx">
+      <DependentUpon>202204211907460_AddDriverScheules.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,5 @@
 ﻿@using System.Web.Mvc.Html
 @model BHelp.ViewModels.DriverScheduleViewModel
-@using Org.BouncyCastle.Utilities
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -87,17 +86,16 @@
         <div>
             <table>
                 <tr>
-                    @{ var DateData = @Session["DriverScheduleDateData"].ToString(); }
-                    @{ var month = Convert.ToInt32(DateData.Substring(2, 2)); }
-                    @{ var year = Convert.ToInt32(DateData.Substring(4, 4)); }
-                    @{ var tempDate = new DateTime(year, month, 1); }
-                    @{ var monthName = Strings.ToUpperCase(tempDate.ToString("MMMM")); }
-                    <td><b>Bethesda Help Drivers Schedule - </b><span style="color: red"><b>@monthName&nbsp;@year</b></span> </td>
+                    <td><b>Bethesda Help Drivers Schedule - </b><span style="color: red">
+                        <b>@Model.MonthName&nbsp;@Model.Year</b>
+                    </span> </td>
                     <td>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        @Html.ActionLink(" Previous Month", "PreviousMonth", new { @month, @year })
+                        @Html.ActionLink(" Previous Month", "PreviousMonth",
+                            new { @Model.Month, @Model.Year })
                     </td>
-                    <td>&nbsp;&nbsp;@Html.ActionLink(" Next Month", "NextMonth", new { @month, @year })</td>
+                    <td>&nbsp;&nbsp;@Html.ActionLink(" Next Month", "NextMonth", 
+                                        new { @Model.Month, @Model.Year })</td>
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home")</td>
                 </tr>
             </table>

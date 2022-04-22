@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
+using BHelp.Models;
 using BHelp.ViewModels;
+using DocumentFormat.OpenXml.Vml.Spreadsheet;
 using Org.BouncyCastle.Utilities;
 
 namespace BHelp.Controllers
@@ -13,6 +16,7 @@ namespace BHelp.Controllers
         // GET: DriverSchedule
         public ActionResult Edit( DateTime? boxDate)
         {
+            var db = new BHelpContext(); 
             var view = new DriverScheduleViewModel();
             if (Session["DriverScheduleDateData"] == null)
             {
@@ -29,32 +33,46 @@ namespace BHelp.Controllers
                     view.Year = DateTime.Today.Year;
                     var tempDate = new DateTime(view.Year, view.Month, 1);
                     view.Date = tempDate;
+                    view.MonthName = Strings.ToUpperCase(tempDate.ToString("MMMM"));
                     Session["DriverScheduleDateData"] = view.Date.Day.ToString("00") + view.Month.ToString("00") + view.Year;
                 }
                 else  // boxDate has value
                 {
-                    //var _day = (boxDate.GetValueOrDefault()).Day;
-                    //view.MonthName = Strings.ToUpperCase(tempDate.ToString("MMMM"));
+                    var _day = boxDate.GetValueOrDefault().Day;
+                    var _month= boxDate.GetValueOrDefault().Month;
+                    var _year = boxDate.GetValueOrDefault().Year;  
+                    var tempDate = new DateTime(_year,_month, _day);
+                    view.MonthName = Strings.ToUpperCase(tempDate.ToString("MMMM"));
                     view.Date = (DateTime)boxDate;
                     view.Month = view.Date.Month;
                     view.Year = view.Date.Year;
                     Session["DriverScheduleDateData"] = view.Date.Day.ToString("00") + view.Month.ToString("00") + view.Year;
                 }
-                //var scd = Session["DriverScheduleDateData"].ToString();
-                //view.Month = Convert.ToInt32(scd.Substring(2, 2));
-                //view.Year = Convert.ToInt32(scd.Substring(4, 4));
-                //var scdDay = Convert.ToInt32(scd.Substring(0, 2));
-                //view.Date = new DateTime(view.Year, view.Month, scdDay);
-                //Session["DriverScheduleDateData"] = scdDay.ToString("00") + view.Month.ToString("00") + view.Year;
             }
             
             var startDt = GetFirstWeekDay(view.Month, view.Year);
             var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
             var startDayOfWk = (int)startDt.DayOfWeek;
-
+            if (Session["DriverList"] == null)
+            {
+                Session["DriverList"] = GetDriverIdSelectList();
+            }
             var driverList = GetDriverIdSelectList();
-            view.DriverList = driverList;
-            view.BackupDriverList = driverList;
+
+            // Check for existing record
+            var existngRec = db.DriverSchedules.First(r => r.Date == view.Date);
+            if (existngRec != null)
+            {
+                view.DriverList = SetSelectedDriver( driverList, existngRec.DriverId);
+                view.BackupDriverList = SetSelectedDriver( driverList, existngRec.BackupDriverId);
+                view.Note = existngRec.Note;
+            }
+            else
+            {
+                view.DriverList = (List<SelectListItem>)Session["DriverList"]; 
+                view.BackupDriverList = (List<SelectListItem>)Session["DriverList"]; 
+            }
+           
             view.BoxDay = new DateTime[6, 6];
             view.BoxDDL = new object[6, 6, 3]; // row, col, ddl1/ddl2
             view.BoxDDLDriverId = new string[6, 6, 3];
@@ -68,11 +86,11 @@ namespace BHelp.Controllers
                     {
                         if (j < startDayOfWk) continue;
                         view.BoxDay[i, j] = startDt.AddDays(j - startDayOfWk);
-                        view.BoxDDL[i, j, 1] = driverList;
+                        //view.BoxDDL[i, j, 1] = driverList;
                         view.BoxDDLDriverId[i, j, 1] = "0";
                         var idx = j + 5 * (i - 1);
                         view.BoxIndexDriverId[idx] = "0";
-                        view.BoxDDL[i, j, 2] = driverList;
+                        //view.BoxDDL[i, j, 2] = driverList;
                         view.BoxDDLDriverId[i, j, 2] = "0";
                         view.BoxIndexDriverId[idx * 2] = "0";
                         view.BoxNote[idx] = "";
@@ -82,11 +100,11 @@ namespace BHelp.Controllers
                     if (view.BoxDay[i - 1, j] == DateTime.MinValue)
                     {
                         view.BoxDay[i, j] = startDt.AddDays(7 + j - startDayOfWk);
-                        view.BoxDDL[i, j, 1] = driverList;
+                        //view.BoxDDL[i, j, 1] = driverList;
                         view.BoxDDLDriverId[i, j, 1] = "0";
                         var idx = j + 5 * (i - 1);
                         view.BoxIndexDriverId[idx] = "0";
-                        view.BoxDDL[i, j, 2] = driverList;
+                        //view.BoxDDL[i, j, 2] = driverList;
                         view.BoxDDLDriverId[i, j, 2] = "0";
                         view.BoxIndexDriverId[idx * 2] = "0";
                         view.BoxNote[idx] = "";
@@ -96,11 +114,11 @@ namespace BHelp.Controllers
                         if (view.BoxDay[i - 1, j].AddDays(7) <= endDate)
                         {
                             view.BoxDay[i, j] = view.BoxDay[i - 1, j].AddDays(7);
-                            view.BoxDDL[i, j, 1] = driverList;
+                            //view.BoxDDL[i, j, 1] = driverList;
                             view.BoxDDLDriverId[i, j, 1] = "0";
                             var idx = j + 5 * (i - 1);
                             view.BoxIndexDriverId[idx] = "0";
-                            view.BoxDDL[i, j, 2] = driverList;
+                            //view.BoxDDL[i, j, 2] = driverList;
                             view.BoxDDLDriverId[i, j, 2] = "0";
                             view.BoxIndexDriverId[idx * 2] = "0";
                             view.BoxNote[idx] = "";
@@ -129,9 +147,8 @@ namespace BHelp.Controllers
                     Date = dt,
                     DriverId = "0",
                     BackupDriverId = "0",
-                    //Note = "THis isa multiline note xxxxxxxxxxxx",
-                    DriverList = driverList,
-                    BackupDriverList = driverList,
+                    //DriverList = driverList,
+                    //BackupDriverList = driverList,
                     MonthName = view.MonthName
                 };
                 if (dt > DateTime.MinValue)
@@ -163,10 +180,37 @@ namespace BHelp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var x = schedule.Note;
+                var db = new BHelpContext();
+                // Check if date exists & update
+                var rec = db.DriverSchedules
+                    .First(d => d.Date == schedule.Date);
+                if (rec != null)
+                { // Update record
+                    rec.DriverId = schedule.DriverId;
+                    rec.BackupDriverId = schedule.BackupDriverId;
+                    rec.Note = schedule.Note;
+                    db.Entry(typeof(DriverSchedule)).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Edit", new { boxDate = schedule.Date });
+                }
+              
+                 // Add new record
+                var newRec = new DriverSchedule
+                {
+                    Date = schedule.Date,
+                    DriverId = schedule.DriverId,
+                    BackupDriverId = schedule.BackupDriverId,
+                    Note = schedule.Note
+                };
+                newRec.Note = newRec.Note;
+                db.DriverSchedules.Add(newRec);
+                db.SaveChanges();
+                return RedirectToAction("Edit", new{boxDate =newRec.Date });
             }
-
-            return RedirectToAction( "Edit");
+            else
+            {
+                return RedirectToAction("Edit");
+            }
         }
 
         public JsonResult SaveList(List<DriverScheduleViewModel> values)
@@ -205,37 +249,63 @@ namespace BHelp.Controllers
         return dt;
     }
         private List<SelectListItem> GetDriverIdSelectList()
-    {
-        if (Session["DriverSelectList"] == null)
         {
-            var driverList = new List<SelectListItem>();
-            var _db = new BHelpContext();
-            var userList = _db.Users.OrderBy(u => u.LastName).ToList();
-            //var rolesList = _db.Roles.OrderBy(r => r.Name).ToList();
-            var roleLookup = AppRoutines.UsersInRolesLookup();
-            var driverRoleId = AppRoutines.GetRoleId("Driver");
-            driverList.Add(new SelectListItem()
+            if (Session["DriverSelectList"] == null)
             {
-                Text = @"--select--",
-                Value = "0"
-            });
-            foreach (var user in userList)
-            {
-                if(roleLookup .Any(r => r.UserId  == user.Id && r.RoleId == driverRoleId))
+                var driverList = new List<SelectListItem>();
+                var _db = new BHelpContext();
+                var userList = _db.Users.OrderBy(u => u.LastName).ToList();
+                //var rolesList = _db.Roles.OrderBy(r => r.Name).ToList();
+                var roleLookup = AppRoutines.UsersInRolesLookup();
+                var driverRoleId = AppRoutines.GetRoleId("Driver");
+                driverList.Add(new SelectListItem()
                 {
-                    driverList.Add(new SelectListItem()
-                    { 
-                        Text = user.FirstName + @" " + user.LastName,
-                        Value = user.Id,
-                        Selected = false
-                    });
-                };
+                    Text = @"--select--",
+                    Value = "0"
+                });
+                foreach (var user in userList)
+                {
+                    if(roleLookup .Any(r => r.UserId  == user.Id && r.RoleId == driverRoleId))
+                    {
+                        driverList.Add(new SelectListItem()
+                        { 
+                            Text = user.FirstName + @" " + user.LastName,
+                            Value = user.Id,
+                            Selected = false
+                        });
+                    };
+                }
+                Session["DriverSelectList"] = driverList;
+                return driverList;
             }
-            Session["DriverSelectList"] = driverList;
-            return driverList;
+            return (List<SelectListItem>)Session["DriverSelectList"];
         }
-        return (List<SelectListItem>)Session["DriverSelectList"];
-    }
+
+        private List<SelectListItem> SetSelectedDriver(List<SelectListItem> driverList, string driverId)
+        {
+            var newSelectList = new List<SelectListItem>();
+            foreach (SelectListItem item in driverList)
+            {
+                var sel = new SelectListItem()
+                {
+                    Text = item.Text,
+                    Value = item.Value,
+                    Selected = false
+                };
+                newSelectList.Add(sel);
+            }
+            
+            foreach (SelectListItem driver in newSelectList)
+            {
+                if (driver.Value == driverId)
+                {
+                    driver.Selected = true;
+                    break;
+                }
+            }
+            return newSelectList;
+        }
+
         public ActionResult Test()
         { 
             Utilities.test();
