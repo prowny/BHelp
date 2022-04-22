@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using DataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace BHelp.Models
 {
@@ -17,5 +19,9 @@ namespace BHelp.Models
 
         [DataType(DataType.MultilineText)]
         public string Note { get; set; }
+
+        [NotMapped] public string DriverName { get; set; }
+
+        [NotMapped] public string BackupDriverName { get; set; }
     }
 }

@@ -14,7 +14,7 @@
         }
 
         .top {
-            width: 175px;
+            width: 185px;
             border-right: thin solid black;
         }
 
@@ -49,7 +49,7 @@
                     <td style="text-align: center">Notes:</td>
                 </tr>
                 <tr>
-                    <td style="text-align: center" class="edit">Enter / Edit data here:</td>
+                    <td style="text-align: right" class="edit">Enter/Edit data here:</td>
                     <td class="edit" style ="text-align: center ">
                         @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
                             new { id = "BoxDate", style = "width: 75px;" })
@@ -57,7 +57,7 @@
                     <td>
                         @Html.DropDownListFor(m => m.DriverId,
                             new SelectList(Model.DriverList,
-                                "Value", "Text"),
+                                "Value", "Text", Model.DriverId),
                             new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.DriverId, "", new { @class = "text-danger" })
                     </td>
@@ -117,35 +117,40 @@
                 @for (var col = 1; col < 6; col++)
                 {
                     i++;
-                <td style="border: thin solid black">
+                <td style="border: thin solid black;vertical-align:top">
                     @if (Model.DriversSchedule[i].Date > DateTime.MinValue)
                     {
                         <b>@Html.Label(Model.DriversSchedule[i].DayString)</b>
-                        if (Model.DriversSchedule[i].DriverName != null)
-                        {
-                            <span style="font-size: x-small">
-                                &nbsp;
-                                @Html.Label("Driver")
-                            </span>
-                            @Html.Label(Model.DriversSchedule[i].DriverName)
-                        }
-
-                        if (Model.DriversSchedule[i].BackupDriverName != null)
+                        if (Model.BoxDriverName[i] != null)
                         {
                             <span style="font-size: x-small">
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                @Html.Label("BackupDriver")
+                                @Html.Label("Driver")
                             </span>
-                            @Html.Label(Model.DriversSchedule[i].BackupDriverName)
+                            <br/>
+                            @Html.Label(Model.BoxDriverName[i])
                         }
 
-                        if (Model.DriversSchedule[i].Note != null)
+                        if (Model.BoxBackupDriverName[i] != null)
                         {
+                            <br/>
+                            <span style="font-size: x-small">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                @Html.Label("Backup Driver")
+                            </span>
+                            <br/>
+                            @Html.Label(Model.BoxBackupDriverName[i])
+                        }
+
+                        if (Model.BoxNote[i] != null)
+                        {
+                            <br/>
                             <span style="font-size: x-small">
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 @Html.Label("Notes")
                             </span>
-                            @Html.Label(Model.DriversSchedule[i].Note);
+                            <br/>
+                            @Html.Label(Model.BoxNote[i]);
                         }
                     }
                 </td>

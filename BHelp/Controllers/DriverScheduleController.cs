@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
-using DocumentFormat.OpenXml.Vml.Spreadsheet;
 using Org.BouncyCastle.Utilities;
 
 namespace BHelp.Controllers
@@ -60,11 +58,13 @@ namespace BHelp.Controllers
             var driverList = GetDriverIdSelectList();
 
             // Check for existing record
-            var existngRec = db.DriverSchedules.First(r => r.Date == view.Date);
+            var existngRec = db.DriverSchedules.FirstOrDefault( r => r.Date == view.Date);
             if (existngRec != null)
             {
-                view.DriverList = SetSelectedDriver( driverList, existngRec.DriverId);
-                view.BackupDriverList = SetSelectedDriver( driverList, existngRec.BackupDriverId);
+                view.DriverList = driverList; 
+                view.DriverId = existngRec.DriverId;
+                view.BackupDriverList = driverList; 
+                view.BackupDriverId = existngRec.BackupDriverId;
                 view.Note = existngRec.Note;
             }
             else
@@ -72,12 +72,16 @@ namespace BHelp.Controllers
                 view.DriverList = (List<SelectListItem>)Session["DriverList"]; 
                 view.BackupDriverList = (List<SelectListItem>)Session["DriverList"]; 
             }
-           
+            
             view.BoxDay = new DateTime[6, 6];
-            view.BoxDDL = new object[6, 6, 3]; // row, col, ddl1/ddl2
-            view.BoxDDLDriverId = new string[6, 6, 3];
-            view.BoxIndexDriverId = new string[51];
+            view.BoxDriverName = new string[26];
+            view.BoxBackupDriverName = new string[26];
             view.BoxNote = new string[26];
+
+            // Get all driver records for this month
+            var monthlyList = GetMonthlyList(view.Month, view.Year);
+            var dummy = monthlyList;
+
             for (var i = 1; i < 6; i++)
             {
                 for (var j = 1; j < 6; j++)
@@ -86,42 +90,48 @@ namespace BHelp.Controllers
                     {
                         if (j < startDayOfWk) continue;
                         view.BoxDay[i, j] = startDt.AddDays(j - startDayOfWk);
-                        //view.BoxDDL[i, j, 1] = driverList;
-                        view.BoxDDLDriverId[i, j, 1] = "0";
-                        var idx = j + 5 * (i - 1);
-                        view.BoxIndexDriverId[idx] = "0";
-                        //view.BoxDDL[i, j, 2] = driverList;
-                        view.BoxDDLDriverId[i, j, 2] = "0";
-                        view.BoxIndexDriverId[idx * 2] = "0";
-                        view.BoxNote[idx] = "";
+                        var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
+                        if (mIdx >= 0)  // mIdx = -1 if match not found
+                        {
+                            var dIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].DriverId);
+                            var bdIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].BackupDriverId);
+                            var idx = j + 5 * (i - 1);
+                            if(dIdx >= 0) view.BoxDriverName[idx] = driverList[dIdx].Text;
+                            if(bdIdx >= 0) view.BoxBackupDriverName[idx] = driverList[bdIdx].Text;
+                            view.BoxNote[idx] = monthlyList[mIdx].Note;
+                        }
                         continue;
                     }
 
                     if (view.BoxDay[i - 1, j] == DateTime.MinValue)
                     {
                         view.BoxDay[i, j] = startDt.AddDays(7 + j - startDayOfWk);
-                        //view.BoxDDL[i, j, 1] = driverList;
-                        view.BoxDDLDriverId[i, j, 1] = "0";
-                        var idx = j + 5 * (i - 1);
-                        view.BoxIndexDriverId[idx] = "0";
-                        //view.BoxDDL[i, j, 2] = driverList;
-                        view.BoxDDLDriverId[i, j, 2] = "0";
-                        view.BoxIndexDriverId[idx * 2] = "0";
-                        view.BoxNote[idx] = "";
+                        var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
+                        if (mIdx >= 0)  // mIdx = -1 if match not found
+                        {
+                            var dIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].DriverId);
+                            var bdIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].BackupDriverId);
+                            var idx = j + 5 * (i - 1);
+                            if (dIdx >= 0) view.BoxDriverName[idx] = driverList[dIdx].Text;
+                            if (bdIdx >= 0) view.BoxBackupDriverName[idx] = driverList[bdIdx].Text;
+                            view.BoxNote[idx] = monthlyList[mIdx].Note;
+                        }
                     }
                     else
                     {
                         if (view.BoxDay[i - 1, j].AddDays(7) <= endDate)
                         {
                             view.BoxDay[i, j] = view.BoxDay[i - 1, j].AddDays(7);
-                            //view.BoxDDL[i, j, 1] = driverList;
-                            view.BoxDDLDriverId[i, j, 1] = "0";
-                            var idx = j + 5 * (i - 1);
-                            view.BoxIndexDriverId[idx] = "0";
-                            //view.BoxDDL[i, j, 2] = driverList;
-                            view.BoxDDLDriverId[i, j, 2] = "0";
-                            view.BoxIndexDriverId[idx * 2] = "0";
-                            view.BoxNote[idx] = "";
+                            var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
+                            if (mIdx >= 0)  // mIdx = -1 if match not found
+                            {
+                                var dIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].DriverId);
+                                var bdIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].BackupDriverId);
+                                var idx = j + 5 * (i - 1);
+                                if (dIdx >= 0) view.BoxDriverName[idx] = driverList[dIdx].Text;
+                                if (bdIdx >= 0) view.BoxBackupDriverName[idx] = driverList[bdIdx].Text;
+                                view.BoxNote[idx] = monthlyList[mIdx].Note;
+                            }
                         }
                     }
                 }
@@ -147,8 +157,6 @@ namespace BHelp.Controllers
                     Date = dt,
                     DriverId = "0",
                     BackupDriverId = "0",
-                    //DriverList = driverList,
-                    //BackupDriverList = driverList,
                     MonthName = view.MonthName
                 };
                 if (dt > DateTime.MinValue)
@@ -183,18 +191,22 @@ namespace BHelp.Controllers
                 var db = new BHelpContext();
                 // Check if date exists & update
                 var rec = db.DriverSchedules
-                    .First(d => d.Date == schedule.Date);
+                    .FirstOrDefault( d => d.Date == schedule.Date);
                 if (rec != null)
                 { // Update record
+                    if (schedule.DriverId == "0") schedule.DriverId = null;
                     rec.DriverId = schedule.DriverId;
+                    if (schedule.BackupDriverId == "0") schedule.BackupDriverId = null;
                     rec.BackupDriverId = schedule.BackupDriverId;
+                    
                     rec.Note = schedule.Note;
-                    db.Entry(typeof(DriverSchedule)).State = EntityState.Modified;
                     db.SaveChanges();
                     return RedirectToAction("Edit", new { boxDate = schedule.Date });
                 }
-              
-                 // Add new record
+
+                // Add new record
+                if (schedule.DriverId == "0") schedule.DriverId = null;
+                if (schedule.BackupDriverId == "0") schedule.BackupDriverId = null;
                 var newRec = new DriverSchedule
                 {
                     Date = schedule.Date,
@@ -281,31 +293,14 @@ namespace BHelp.Controllers
             return (List<SelectListItem>)Session["DriverSelectList"];
         }
 
-        private List<SelectListItem> SetSelectedDriver(List<SelectListItem> driverList, string driverId)
+        private static List<DriverSchedule> GetMonthlyList(int month, int year)
         {
-            var newSelectList = new List<SelectListItem>();
-            foreach (SelectListItem item in driverList)
-            {
-                var sel = new SelectListItem()
-                {
-                    Text = item.Text,
-                    Value = item.Value,
-                    Selected = false
-                };
-                newSelectList.Add(sel);
-            }
-            
-            foreach (SelectListItem driver in newSelectList)
-            {
-                if (driver.Value == driverId)
-                {
-                    driver.Selected = true;
-                    break;
-                }
-            }
-            return newSelectList;
+            var start =new DateTime(year, month, 1);
+            var end = new DateTime(year, month, DateTime.DaysInMonth(year, month));
+            var db = new BHelpContext();
+            return db.DriverSchedules
+                .Where(d => d.Date >= start && d.Date <= end).ToList();
         }
-
         public ActionResult Test()
         { 
             Utilities.test();
