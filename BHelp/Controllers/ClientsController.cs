@@ -45,6 +45,8 @@ namespace BHelp.Controllers
                     Zip = client.Zip,
                     Phone = client.Phone,
                     PhoneToolTip = client.Phone.Replace(" ", "\u00a0"),
+                    Email = client.Email,
+                    EmailToolTip = client.Email.Replace(" ", "\u00a0"),
                     Notes = client.Notes,
                     // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
                     NotesToolTip = client.Notes.Replace(" ", "\u00a0")
@@ -58,6 +60,9 @@ namespace BHelp.Controllers
                 s = household.Phone; // For display, abbreviate to 12 characters:           
                 s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
                 household.Phone = s;
+                s = household.Email; // For display, abbreviate to 12 characters:           
+                s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                household.Email = s;
                 s = household.Notes; // For display, abbreviate to 12 characters:           
                 s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
                 household.Notes = s;
@@ -107,7 +112,7 @@ namespace BHelp.Controllers
         [HttpPost,Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Age,StreetNumber,"
-                              + "StreetName,City,Zip,Phone,Notes,FamilyMembers,"
+                              + "StreetName,City,Zip,Phone,Email,Notes,FamilyMembers,"
                               + "ReturnURL" )] ClientViewModel client)
         {
             if (ModelState.IsValid)
@@ -121,6 +126,7 @@ namespace BHelp.Controllers
                     StreetNumber = client.StreetNumber,
                     StreetName = client.StreetName,
                     Phone = client.Phone + "",
+                    Email = client .Email + "",
                     City = client.City,
                     Zip = client.Zip,
                     Notes = client.Notes + ""
@@ -192,7 +198,7 @@ namespace BHelp.Controllers
         [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Active,FirstName,LastName,Age," +
-                           "StreetNumber,StreetName,City,Zip,Phone,Notes,ReturnURL")] Client client)
+                           "StreetNumber,StreetName,City,Zip,Phone,Email,Notes,ReturnURL")] Client client)
         {
             if (ModelState.IsValid)
             {
@@ -202,6 +208,7 @@ namespace BHelp.Controllers
                 if (client.StreetName == null) { client.StreetName = ""; }
                 if (client.City == null) { client.City = ""; }
                 if (client.Phone == null) { client.Phone = ""; }
+                if (client.Email == null) { client.Email = ""; }
                 if (client.Notes == null) { client.Notes = ""; }
                 client.DateOfBirth=DateTime.Today.AddYears(-client.Age);
                 db.Entry(client).State = EntityState.Modified;
@@ -250,9 +257,8 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult ClientListToCSV()
         {
-            //var view = GetClientViewModel();
             var view = ClientRoutines.GetAllClientsListModel();
-            const int columns = 23;
+            const int columns = 24;
             var curMonth = DateTime.Now.ToString("MMMM");
             var curYear = DateTime.Now.Year.ToString();
 
@@ -262,7 +268,7 @@ namespace BHelp.Controllers
             sb.AppendLine();
 
             sb.Append("Active,Last Name,First Name,Age,Street #,Street Name,City,Zip,");
-            sb.Append("Phone,Children,Adults,Seniors,Children Names/Ages,Adults Names/Ages,");
+            sb.Append("Phone,Email,Children,Adults,Seniors,Children Names/Ages,Adults Names/Ages,");
             sb.Append("Seniors Names/Ages,# In HH,Notes,Date Last Delivery,Date Last Gift Card,");
             sb.Append("Next Eligeble for Food on,Next Eligible for Gift Card(s) on,");
             sb.Append("# Deliveries " + curMonth + " " + curYear + ",");
@@ -291,6 +297,7 @@ namespace BHelp.Controllers
                         sb.Append(view.ClientStrings[i, col] + ",");
                     }
                 }
+                
                 sb.AppendLine();
             }
 
@@ -309,9 +316,8 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult ClientListToExcel()
         {
-            //var view = GetClientViewModel();
             var view = ClientRoutines.GetAllClientsListModel();
-            const int columns = 23; 
+            const int columns = 24; 
             var curMonth = DateTime.Now.ToString("MMMM");
             var curYear = DateTime.Now.Year.ToString();
             XLWorkbook workbook = new XLWorkbook();
@@ -322,16 +328,17 @@ namespace BHelp.Controllers
             ws.Cell(activeRow, 1).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
             ws.Range(ws.Cell(activeRow, 1), ws.Cell(activeRow, 3)).Merge();
             
-            ws.Cell(activeRow, 10).SetValue("#");
             ws.Cell(activeRow, 11).SetValue("#");
             ws.Cell(activeRow, 12).SetValue("#");
-            ws.Cell(activeRow, 16).SetValue("#");
-            ws.Cell(activeRow, 18).SetValue("Date");
-            ws.Cell(activeRow, 19).SetValue("Date");
-            ws.Cell(activeRow, 20).SetValue("Next");
+            ws.Cell(activeRow, 13).SetValue("#");
+
+            ws.Cell(activeRow, 17).SetValue("#");
+           
+            ws.Cell(activeRow, 20).SetValue("Date");
             ws.Cell(activeRow, 21).SetValue("Next");
-            ws.Cell(activeRow, 22).SetValue("Deliveies");
-            ws.Cell(activeRow, 23).SetValue("Internal");
+            ws.Cell(activeRow, 22).SetValue("Next");
+            ws.Cell(activeRow, 23).SetValue("Deliveries");
+            ws.Cell(activeRow, 24).SetValue("Internal");
             for (var i = 10; i < columns + 1; i++)
             {
                 ws.Cell(activeRow, i).Style.Font.Bold = true;
@@ -357,34 +364,36 @@ namespace BHelp.Controllers
             ws.Cell(activeRow, 8).SetValue("Zip");
             ws.Columns("9").Width = 13;
             ws.Cell(activeRow, 9).SetValue("Phone");
-            ws.Columns("10").Width = 3;
-            ws.Cell(activeRow, 10).SetValue("C");
+            ws.Columns("10").Width = 13;
+            ws.Cell(activeRow, 10).SetValue("Email");
             ws.Columns("11").Width = 3;
-            ws.Cell(activeRow, 11).SetValue("A");
+            ws.Cell(activeRow, 11).SetValue("C");
             ws.Columns("12").Width = 3;
-            ws.Cell(activeRow, 12).SetValue("S");
-            ws.Columns("13").Width = 20;
-            ws.Cell(activeRow, 13).SetValue("Children Names/Ages");
+            ws.Cell(activeRow, 12).SetValue("A");
+            ws.Columns("13").Width = 3;
+            ws.Cell(activeRow, 13).SetValue("S");
             ws.Columns("14").Width = 20;
-            ws.Cell(activeRow, 14).SetValue("Adults Names/Ages");
+            ws.Cell(activeRow, 14).SetValue("Children Names/Ages");
             ws.Columns("15").Width = 20;
-            ws.Cell(activeRow, 15).SetValue("Seniors Names/Ages");
-            ws.Columns("16").Width = 3;
-            ws.Cell(activeRow, 16).SetValue("HH");
-            ws.Columns("17").Width = 20;
-            ws.Cell(activeRow, 17).SetValue("Notes");
-            ws.Columns("18").Width =13;
-            ws.Cell(activeRow, 18).SetValue("Date Last Delivery");
-            ws.Columns("19").Width = 13;
-            ws.Cell(activeRow, 19).SetValue("Last Gift Card");
+            ws.Cell(activeRow, 15).SetValue("Adults Names/Ages");
+            ws.Columns("16").Width = 20;
+            ws.Cell(activeRow, 16).SetValue("Seniors Names/Ages");
+            ws.Columns("17").Width = 3;
+            ws.Cell(activeRow, 17).SetValue("HH");
+            ws.Columns("18").Width = 20;
+            ws.Cell(activeRow, 18).SetValue("Notes");
+            ws.Columns("19").Width =13;
+            ws.Cell(activeRow, 19).SetValue("Date Last Delivery");
             ws.Columns("20").Width = 13;
-            ws.Cell(activeRow, 20).SetValue("Eligible for Food on");
+            ws.Cell(activeRow, 20).SetValue("Last Gift Card");
             ws.Columns("21").Width = 13;
-            ws.Cell(activeRow, 21).SetValue("Eligible for Gift Card(s) on");
+            ws.Cell(activeRow, 21).SetValue("Eligible for Food on");
             ws.Columns("22").Width = 13;
-            ws.Cell(activeRow, 22).SetValue(curMonth + " " + curYear );
-            ws.Columns("23").Width = 7;
-            ws.Cell(activeRow, 23).SetValue("ClientID");
+            ws.Cell(activeRow, 22).SetValue("Eligible for Gift Card(s) on");
+            ws.Columns("23").Width = 13;
+            ws.Cell(activeRow, 23).SetValue(curMonth + " " + curYear );
+            ws.Columns("24").Width = 7;
+            ws.Cell(activeRow, 24).SetValue("ClientID");
 
             for (var i = 1; i < columns + 1; i++)
             {
@@ -410,154 +419,7 @@ namespace BHelp.Controllers
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 { FileDownloadName = fileName + ".xlsx" };
         }
-
-        //private static ClientViewModel GetClientViewModel()
-        //{
-        //    var cvm = new ClientViewModel { ReportTitle  = "BH Client List " + DateTime.Today.ToShortDateString() };
-        //    var columns = 22;  // ! add one for seniors names/ages?
-
-        //    using (var db = new BHelpContext())
-        //    {
-        //        var clientList  = new List<Client>(db.Clients )
-        //            .OrderBy(d => d.LastName).ToList();
-        //        cvm.ClientCount = clientList.Count;
-        //        cvm.ClientStrings = new string[clientList.Count, columns + 1];
-        //        var i = 0;
-        //        foreach (var cli in clientList)
-        //        {
-        //            cvm.Id = cli.Id;
-        //            cvm.ClientStrings[i, 1] = cli.Active.ToString();
-        //            cvm.ClientStrings[i, 2] = cli.LastName;
-        //            cvm.ClientStrings[i, 3] = cli.FirstName;
-        //            var age = AppRoutines.GetAge(cli.DateOfBirth);
-        //            cvm.ClientStrings[i, 4] = age.ToString();
-        //            cvm.ClientStrings[i, 5] = cli.StreetNumber;
-        //            cvm.ClientStrings[i, 6] = cli.StreetName;
-        //            cvm.ClientStrings[i, 7] = cli.City;
-        //            cvm.ClientStrings[i, 8] = cli.Zip;
-        //            cvm.ClientStrings[i, 9] = cli.Phone;
-        //            var familyList = db.FamilyMembers  // Add HH to familyList
-        //                .Where(f => f.ClientId == cli.Id).ToList();
-        //            cvm.ClientStrings[i, 10] = GetChildrenCount(familyList);
-        //            cvm.ClientStrings[i, 11] = GetAdultCount(familyList);
-        //            cvm.ClientStrings[i, 12] = GetSeniorCount(age, familyList); // Age of Head of Household
-        //            cvm.ClientStrings[i, 13] = GetAdultNamesAges(cli.Id, familyList);
-        //            cvm.ClientStrings[i, 14] = GetKidsNamesAges(familyList);
-        //            var numberInHousehold = familyList.Count;
-        //            cvm.ClientStrings[i, 15] = numberInHousehold.ToString();
-        //            cvm.ClientStrings[i, 16] = cli.Notes;
-        //            var lastDD = AppRoutines.GetLastDeliveryDate(cli.Id);
-        //            if (lastDD.Year < 2000)
-        //            { cvm.ClientStrings[i, 17] = " - - "; }
-        //            else
-        //            { cvm.ClientStrings[i, 17] = lastDD.ToShortDateString(); }
-
-        //            var lastGC = AppRoutines.GetDateLastGiftCard(cli.Id);
-        //            if (lastGC.Year < 2000)
-        //            { cvm.ClientStrings[i, 18] = " - - "; }
-        //            else
-        //            { cvm.ClientStrings[i, 18] = lastGC.ToShortDateString(); }
-
-        //            var nextEDD = AppRoutines.GetNextEligibleDeliveryDate(cli.Id, DateTime.Now);
-        //            if (nextEDD.Year < 2000)
-        //            { cvm.ClientStrings[i, 19] =" (now)"; }
-        //            else
-        //            { cvm.ClientStrings[i, 19] = nextEDD.ToShortDateString(); }
-
-        //            var nextGCED = AppRoutines.GetNextGiftCardEligibleDate(cli.Id, DateTime.Now);
-        //            if (nextGCED.Year < 2000)
-        //            { cvm.ClientStrings[i, 20] = " (now)"; }
-        //            else
-        //            { cvm.ClientStrings[i, 20] = nextGCED.ToShortDateString(); }
-
-        //            cvm.ClientStrings[i, 21] = AppRoutines.GetDeliveriesCountThisMonth(cli.Id, DateTime.Now).ToString();
-                    
-        //            cvm.ClientStrings[i,22] = cli.Id.ToString();
-               
-        //            i++;
-        //        }
-        //        return cvm;
-        //    }
-        //}
-
-        //private static string GetChildrenCount(List<FamilyMember> familyList)
-        //{
-        //    var result = 0; // No Head of Household in Children count
-        //    foreach (var mbr in familyList)
-        //    {
-        //        var age = AppRoutines.GetAge(mbr.DateOfBirth);
-        //        if (age <= 17)
-        //        { result++; }
-        //    }
-        //    return result.ToString();
-        //}
-
-        //private static string GetAdultCount(List<FamilyMember> familyList)
-        //{
-        //    var result = 1; // Add Head of Household to Adults count
-        //    foreach (var mbr in familyList)
-        //    {
-        //        var age = AppRoutines.GetAge(mbr.DateOfBirth);
-        //        if (age > 17 && age < 60)
-        //        { result++; }
-        //    }
-        //    return result.ToString();
-        //}
-
-        //private static string GetSeniorCount(int ageOfHeadOfHousehold, List<FamilyMember> familyList)
-        ////{
-        ////    var result = 0;
-        ////    if (ageOfHeadOfHousehold >= 60) { result = 1;}
-        ////    foreach (var mbr in familyList)
-        ////    {
-        ////        var age = AppRoutines.GetAge(mbr.DateOfBirth);
-        ////        if (age >= 60)
-        ////        { result++; }
-        ////    }
-        ////    return result.ToString();
-        ////}
-
-        //private static string GetAdultNamesAges(int clientId, List<FamilyMember> familyList)
-        //{
-        //    var strResult = "";
-        //    using (var db = new BHelpContext())
-        //    { var client = db.Clients.Find(clientId);
-        //        if (client != null)
-        //        {
-        //            strResult = client.FirstName + " " + client.LastName + "/";
-        //            strResult += AppRoutines.GetAge(client.DateOfBirth).ToString();
-        //        }
-        //    }
-            
-        //    foreach (var mbr in familyList)
-        //    {
-        //        var age = AppRoutines.GetAge(mbr.DateOfBirth);
-        //        if (age >= 18)
-        //        {
-        //            strResult += ", " + mbr.FirstName + " " + mbr.LastName + "/";
-        //            strResult += AppRoutines.GetAge(mbr.DateOfBirth).ToString();
-        //        }
-        //    }
-        //    return strResult;
-        //}
-
-        //private static string GetKidsNamesAges(List<FamilyMember> familyList)
-        //{
-        //    var strResult = "";
-        //    foreach (var mbr in familyList)
-        //    {
-        //        var age = AppRoutines.GetAge(mbr.DateOfBirth);
-        //        if (age <= 17)
-        //        {
-        //            if (strResult.Length != 0)
-        //            { strResult += ", "; }
-        //            strResult += mbr.FirstName + " " + mbr.LastName + "/";
-        //            strResult += AppRoutines.GetAge(mbr.DateOfBirth).ToString();
-        //        }
-        //    }
-        //    return strResult;
-        //}
-
+        
         public ActionResult ActiveClientsLatestDeliveries()
         {
             var view = GetLatestDeliveriesViewModel();

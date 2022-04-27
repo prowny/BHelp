@@ -78,9 +78,6 @@
                     </td>
                 </tr>
             </table>
-            <span>
-
-            </span>
             <hr />
         </div>
         <div>
@@ -117,10 +114,8 @@
                 @for (var col = 1; col < 6; col++)
                 {
                     i++;
-                <td style="border: thin solid black;vertical-align:top">
-                    @if (Model.DriversSchedule[i].Date > DateTime.MinValue)
-                    {
-                        <b>@Html.Label(Model.DriversSchedule[i].DayString)</b>
+                    <td style="border: thin solid black;vertical-align:top">
+                    @if (Model.DriversSchedule[i].Date > DateTime.MinValue) { <b>@Html.Label(Model.DriversSchedule[i].DayString)</b>
                         if (Model.BoxDriverName[i] != null)
                         {
                             <span style="font-size: x-small">
@@ -150,7 +145,7 @@
                                 @Html.Label("Notes")
                             </span>
                             <br/>
-                            @Html.Label(Model.BoxNote[i]);
+                            @Model.BoxNote[i];  @*Html.Label will not display if it contains a period*@
                         }
                     }
                 </td>
@@ -167,9 +162,11 @@
         </div>
     }
     <br />
-    <div>
-        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
-    </div>
+<div>
+    @Html.ActionLink("Download to Excel File", "DriverScheduleToExcel", "DriverSchedule")
+    <br/>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
 </body>
 </html>
 
@@ -189,6 +186,13 @@
             link = link.replace("-1", _boxDate);
             window.location.href = link;
         });
+    });
+</script>
+
+<script >
+    $("#schedule td").click(function() {
+        var celltext = (this).text();  
+        Test(celltext);
     });
 </script>
 

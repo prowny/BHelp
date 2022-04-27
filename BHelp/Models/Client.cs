@@ -39,6 +39,7 @@ namespace BHelp.Models
         [DisplayName("Zip Code")]
         public string Zip { get; set; }
 
+        public string Email { get; set; }
         public string Phone { get; set; }
 
         [DataType(DataType.MultilineText)]

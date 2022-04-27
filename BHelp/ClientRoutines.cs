@@ -14,7 +14,7 @@ namespace BHelp
             // Get Clients, Family, and Delieries in 3 single database queries
             // with no further hits to the database
             var view = new ClientViewModel { ReportTitle = "BH Client List" };
-            const int columns = 23;
+            const int columns = 24;
 
             var db = new BHelpContext();
             var clientList = db.Clients.OrderBy(c => c.LastName)
@@ -38,64 +38,66 @@ namespace BHelp
                 view.ClientStrings[i, 7] = cli.City;
                 view.ClientStrings[i, 8] = cli.Zip;
                 view.ClientStrings[i, 9] = cli.Phone;
+                view.ClientStrings[i, 10] = cli.Email;
+
                 var family = familyList
                     .Where(f => f.ClientId == cli.Id).ToList();
                 var hH = new FamilyMember() // add HeadOfHousehold:
                 { FirstName = cli.FirstName, LastName = cli.LastName, DateOfBirth = cli.DateOfBirth };
                 family.Add(hH);
-                view.ClientStrings[i, 10] = GetChildrenCount(family);
-                view.ClientStrings[i, 11] = GetAdultCount(family);
-                view.ClientStrings[i, 12] = GetSeniorCount(family);
-                view.ClientStrings[i, 13] = GetChildrenNamesAges(family);
-                view.ClientStrings[i, 14] = GetAdultNamesAges(family);
-                view.ClientStrings[i, 15] = GetSeniorNamesAges(family); // !!! added row
+                view.ClientStrings[i, 11] = GetChildrenCount(family);
+                view.ClientStrings[i, 12] = GetAdultCount(family);
+                view.ClientStrings[i, 13] = GetSeniorCount(family);
+                view.ClientStrings[i, 14] = GetChildrenNamesAges(family);
+                view.ClientStrings[i, 15] = GetAdultNamesAges(family);
+                view.ClientStrings[i, 16] = GetSeniorNamesAges(family); // !!! added row
 
-                view.ClientStrings[i, 16] = family.Count.ToString();
-                view.ClientStrings[i, 17] = cli.Notes;
+                view.ClientStrings[i, 17] = family.Count.ToString();
+                view.ClientStrings[i, 18] = cli.Notes;
                 var deliverySubList = deliveryList
                     .Where(d => d.ClientId == cli.Id && d.Status == 1
                                                      && d.DateDelivered != null).ToList();
                 var lastDD = GetLastDeliveryDate(deliverySubList);
                 if (lastDD.Year < 2000)
                 {
-                    view.ClientStrings[i, 18] = " - - ";
+                    view.ClientStrings[i, 19] = " - - ";
                 }
                 else
                 {
-                    view.ClientStrings[i, 18] = lastDD.ToString("MM/dd/yyyy");
+                    view.ClientStrings[i, 19] = lastDD.ToString("MM/dd/yyyy");
                 }
 
                 var lastGC = GetDateLastGiftCard(deliverySubList);
                 if (lastGC.Year < 2000)
                 {
-                    view.ClientStrings[i, 19] = " - - ";
+                    view.ClientStrings[i, 20] = " - - ";
                 }
                 else
                 {
-                    view.ClientStrings[i, 19] = lastGC.ToString("MM/dd/yyyy");
+                    view.ClientStrings[i, 20] = lastGC.ToString("MM/dd/yyyy");
                 }
 
                 var nextEDD = GetNextEligibleDeliveryDate(deliverySubList);
                 if (nextEDD.Year < 2000)
                 {
-                    view.ClientStrings[i, 20] = " (now)";
+                    view.ClientStrings[i, 21] = " (now)";
                 }
                 else
                 {
-                    view.ClientStrings[i, 20] = nextEDD.ToString("MM/dd/yyyy");
+                    view.ClientStrings[i, 21] = nextEDD.ToString("MM/dd/yyyy");
                 }
 
                 var nextGCED = GetNextGiftCardEligibleDate(family, deliverySubList);
                 if (nextGCED.Year < 2000)
                 {
-                    view.ClientStrings[i, 21] = " (now)";
+                    view.ClientStrings[i, 22] = " (now)";
                 }
                 else
                 {
-                    view.ClientStrings[i, 21] = nextGCED.ToString("MM/dd/yyyy");
+                    view.ClientStrings[i, 22] = nextGCED.ToString("MM/dd/yyyy");
                 }
-                view.ClientStrings[i, 22] = GetDeliveriesCountThisMonth(deliverySubList).ToString();
-                view.ClientStrings[i, 23] = cli.Id.ToString();
+                view.ClientStrings[i, 23] = GetDeliveriesCountThisMonth(deliverySubList).ToString();
+                view.ClientStrings[i, 24] = cli.Id.ToString();
             }
 
             return view;

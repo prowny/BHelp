@@ -345,6 +345,10 @@
     <Compile Include="Migrations\202204211907460_AddDriverScheules.Designer.cs">
       <DependentUpon>202204211907460_AddDriverScheules.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202204252140315_AddClientEmail.cs" />
+    <Compile Include="Migrations\202204252140315_AddClientEmail.Designer.cs">
+      <DependentUpon>202204252140315_AddClientEmail.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -848,6 +852,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202204211907460_AddDriverScheules.resx">
       <DependentUpon>202204211907460_AddDriverScheules.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202204252140315_AddClientEmail.resx">
+      <DependentUpon>202204252140315_AddClientEmail.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

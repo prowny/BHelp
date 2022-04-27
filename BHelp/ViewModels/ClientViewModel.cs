@@ -41,6 +41,7 @@ namespace BHelp.ViewModels
         public string Zip { get; set; }
 
         public string Phone { get; set; }
+        public string Email { get; set; }
 
         [DisplayName("Permanent Notes")]
         [DataType(DataType.MultilineText)]
@@ -57,6 +58,7 @@ namespace BHelp.ViewModels
         public string StreetToolTip { get; set; }
         public string CityToolTip { get; set; }
         public string PhoneToolTip { get; set; }
+        public string EmailToolTip { get; set; }
         public string NotesToolTip { get; set; }  // Household/Client notes
         public string ReportTitle { get; set; }
         public string[,] ClientStrings { get; set; }

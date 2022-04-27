@@ -1,5 +1,5 @@
 ﻿function Test() {
-    var postData = { values: window.DriversSchedules };
+    var postData = { celltext };
 
     window.$.ajax({
         type: "POST",
