@@ -15,10 +15,18 @@ namespace BHelp.Controllers
     public class DriverScheduleController : Controller
     {
         // GET: DriverSchedule
+        [AllowAnonymous]
         public ActionResult Edit( DateTime? boxDate)
         {
             var db = new BHelpContext(); 
             var view = new DriverScheduleViewModel();
+
+            if (User.IsInAnyRoles("Developer", "Scheduler", "Administrator"))
+            {
+                view.AllowEdit = true;
+                view.CurrentDate =DateTime.Today;
+            }
+           
             if (Session["DriverScheduleDateData"] == null)
             {
                 view.Month = DateTime.Today.Month;

@@ -39,47 +39,54 @@
     @using (Html.BeginForm("Edit", "DriverSchedule", FormMethod.Post))
     {
         @Html.AntiForgeryToken()
-        <div>
-            <table>
-                <tr>
-                    <td><b>BHelp Driver Schedule</b></td>
-                    <td style="text-align: center">Date:</td>
-                    <td style="text-align: center">Driver:</td>
-                    <td style="text-align: center">Backup Driver:</td>
-                    <td style="text-align: center">Notes:</td>
-                </tr>
-                <tr>
-                    <td style="text-align: right" class="edit">Enter/Edit data here:</td>
-                    <td class="edit" style ="text-align: center ">
-                        @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
-                            new { id = "BoxDate", style = "width: 75px;" })
-                    </td>
-                    <td>
-                        @Html.DropDownListFor(m => m.DriverId,
-                            new SelectList(Model.DriverList,
-                                "Value", "Text", Model.DriverId),
-                            new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.DriverId, "", new { @class = "text-danger" })
-                    </td>
-                    <td>
-                        @Html.DropDownListFor(m => m.BackupDriverId,
-                            new SelectList(Model.BackupDriverList,
-                                "Value", "Text"),
-                            new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.BackupDriverId, "", new { @class = "text-danger" })
-                    </td>
-                    <td>
-                        @Html.TextAreaFor(t => t.Note)
-                        @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
-                    </td>
-                    <td>
-                        &nbsp;&nbsp;
-                        <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
-                    </td>
-                </tr>
-            </table>
-            <hr />
-        </div>
+        if (Model.AllowEdit)
+        {
+            <div id="CurrentDate">
+                @Html.TextBoxFor(m =>
+                    m.CurrentDate, new {id = "curDate"})
+            </div>
+            <div id="EditSection">
+                <table>
+                    <tr>
+                        <td><b>BHelp Driver Schedule</b></td>
+                        <td style="text-align: center">Date:</td>
+                        <td style="text-align: center">Driver:</td>
+                        <td style="text-align: center">Backup Driver:</td>
+                        <td style="text-align: center">Notes:</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right" class="edit">Enter/Edit data here:</td>
+                        <td class="edit" style="text-align: center">
+                            @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
+                                new { id = "BoxDate", style = "width: 75px;" })
+                        </td>
+                        <td>
+                            @Html.DropDownListFor(m => m.DriverId,
+                                new SelectList(Model.DriverList,
+                                    "Value", "Text", Model.DriverId),
+                                new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.DriverId, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            @Html.DropDownListFor(m => m.BackupDriverId,
+                                new SelectList(Model.BackupDriverList,
+                                    "Value", "Text"),
+                                new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.BackupDriverId, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            @Html.TextAreaFor(t => t.Note)
+                            @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            &nbsp;&nbsp;
+                            <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
+                        </td>
+                    </tr>
+                </table>
+                <hr/>
+            </div>
+        }
         <div>
             <table>
                 <tr>
@@ -170,10 +177,22 @@
 </body>
 </html>
 
+<script type='text/javascript'>
+    $(document).ready(function () {
+        window.$("#CurrentDate").hide();   /*for datapicker set mindate*/
+    });
+</script>
 <script type="text/javascript">
     $(function () {
+        //var cdt = window.moment(window.$("#curDate").val()).format("MM/DD/YYYY");
+        //cdt = cdt.split("/");
+        //var cdt = new Date();
+        //var currentDate = new Date(cdt[1] + "/" + cdt[0] + "/" + cdt[2]);
+        //var currentDate = new Date(cdt.getYear(), cdt.getMonth , 18);
+        //var setMinDate = currentDate; //new Date(currentDate.getYear, currentDate.getMonth(), currentDate.getDay());
+       // var setMinDate = new Date(2022, 4, 19);
         window.$("#BoxDate").datepicker({
-            beforeShowDay: window.$.datepicker.noWeekends
+           beforeShowDay: window.$.datepicker.noWeekends
         });
     });
 </script>

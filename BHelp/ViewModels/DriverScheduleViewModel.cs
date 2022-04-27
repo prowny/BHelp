@@ -36,6 +36,7 @@ namespace BHelp.ViewModels
 
         [DataType(DataType.MultilineText)]
         public string[] BoxNote { get; set; }
-        
-    }
+        public bool AllowEdit { get; set; }
+        public DateTime CurrentDate { get; set; }  // to set mindate in datepicker
+        }
 }

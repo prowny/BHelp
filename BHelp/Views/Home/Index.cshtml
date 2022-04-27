@@ -27,15 +27,15 @@
 
     @if (User.IsInRole("Developer"))
     {
-<div>
-    <strong>Developer Menu</strong><br />
-    @*<a href="@Url.Action("Test", "DriverSchedule")">Test</a><br />*@
-    <a href="@Url.Action("Edit", "DriverSchedule")">Driver Schedule</a><br />
-</div>
+        <div>
+            <strong>Developer Menu</strong><br />
+            @*<a href="@Url.Action("Test", "DriverSchedule")">Test</a><br />*@
+            <a href="@Url.Action("Edit", "DriverSchedule")">Driver Schedule</a><br />
+        </div>
         <br />
     }
 
-    @if (User.IsInRole("Administrator") || User.IsInRole("Developer"))
+    @if (User.IsInAnyRoles("Administrator","Developer"))
     {
         <div>
             <strong>Administrator Menu</strong><br />
@@ -52,7 +52,7 @@
         </div>
     }
 
-    @if (User.IsInRole("Staff") || User.IsInRole("Administrator"))
+    @if (User.IsInAnyRoles("Developer","Staff","Administrator"))
     {
         <div>
             <strong>Staff Menu</strong><br />
@@ -72,7 +72,7 @@
         </div>
     }
 
-    @if (User.IsInRole("Reports") || User.IsInRole("Developer") || User.IsInRole("Administrator"))
+    @if (User.IsInAnyRoles("Reports","Developer","Administrator"))
     {
         <div>
             <strong>Reports Menu</strong><br />
@@ -85,7 +85,7 @@
         <br />
     }
 
-    @if (User.IsInRole("PantryCoordinator") || User.IsInRole("Developer") || User.IsInRole("Administrator"))
+    @if (User.IsInAnyRoles("PantryCoordinator","Developer","Administrator"))
     {
         <div>
             <strong>Pantry Coordinator Menu</strong><br />
@@ -95,16 +95,26 @@
                 <a href="@Url.Action("ViewDocumentCategory", "Documents", new {menuCat="PantryCoordinator"})">View Pantry Coordinator Documents</a><br />
             }
         </div>
-
         <br />
     }
 
-    @if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("Staff") || User.IsInRole("Staff") || User.IsInRole("Administrator"))
+@if (User.IsInAnyRoles("Developer","Scheduler","Administrator"))
+{
+    <div>
+        <strong>Scheduler Menu</strong><br />
+        <a href="@Url.Action("Edit", "DriverSchedule")">Maintain Driver Schedules</a><br />
+    </div>
+    <br />
+}    
+
+
+@if (User.IsInAnyRoles("Developer","OfficerOfTheDay","Staff","Administrator"))
     {
         <div>
             <strong>Officer of the Day Menu</strong><br />
             <a href="@Url.Action("Index", "OD")">Call Log - OD Section</a><br />
             <a href="@Url.Action("Index", "Deliveries")">Maintain Open Deliveries</a><br />
+            <a href="@Url.Action("Edit", "DriverSchedule")">View Driver Schedule</a><br />
             <a href="@Url.Action("CallLogMenu", "Deliveries")">View Call Log History</a><br />
             @if (Model.ShowODDocumentsMenu)
             {
@@ -117,7 +127,7 @@
         <br />
     }
 
-    @if (User.IsInRole("Driver") || User.IsInRole("Staff") || User.IsInRole("Administrator"))
+    @if (User.IsInAnyRoles("Developer","Driver","Staff","Administrator"))
     {
         <div>
             <strong>Driver Menu</strong><br />
