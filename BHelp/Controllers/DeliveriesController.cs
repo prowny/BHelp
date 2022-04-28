@@ -148,6 +148,8 @@ namespace BHelp.Controllers
                     deliveryView.Zip = client.Zip;
                     deliveryView.Phone = client.Phone;
                     deliveryView.PhoneToolTip = client.Phone.Replace(" ", "\u00a0");
+                    deliveryView.Email = client.Email;
+                    deliveryView.EmailToolTip = client.Email.Replace(" ", "\u00a0");
                     string s;
                     if (client.Notes != null)
                     {
@@ -185,6 +187,9 @@ namespace BHelp.Controllers
                     s = deliveryView.Phone; // For display, abbreviate to 12 characters:           
                     s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
                     deliveryView.Phone = s;
+                    s = deliveryView.Email; // For display, abbreviate to 15 characters:           
+                    s = s.Length <= 15 ? s : s.Substring(0, 15) + "...";
+                    deliveryView.Email = s;
                     listDeliveryViewModels.Add(deliveryView);
                 }
             }
@@ -841,6 +846,7 @@ namespace BHelp.Controllers
                                                   + " " + client.StreetNumber + " " + client.StreetName + " " +
                                                   client.Zip;
                     viewModel.Phone = client.Phone;
+                    viewModel.Email = client.Email;
                     viewModel.Notes = client.Notes;
                     viewModel.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
                     viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);

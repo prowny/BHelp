@@ -39,6 +39,8 @@ namespace BHelp.ViewModels
 
         public string Phone { get; set; }
 
+        public string Email { get; set; }
+
         [DisplayName("Permanent Notes")]
         [DataType(DataType.MultilineText)]
         public string Notes { get; set; }

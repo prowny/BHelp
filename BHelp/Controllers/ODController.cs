@@ -178,6 +178,7 @@ namespace BHelp.Controllers
                 cli.Zip = household.Zip;
                 cli.Notes = household.Notes + "";
                 cli.Phone = household.Phone + "";
+                cli.Email = household.Email + "";
 
                 foreach (var member in household.FamilyMembers)
                 {
@@ -281,6 +282,7 @@ namespace BHelp.Controllers
                 City = client.City,
                 Zip = client.Zip,
                 Phone = client.Phone,
+                Email =client.Email,
                 Notes = client.Notes,
                 FamilyMembers = AppRoutines.GetFamilyMembers(client.Id),
                 ZipCodes = AppRoutines.GetZipCodesSelectList(),

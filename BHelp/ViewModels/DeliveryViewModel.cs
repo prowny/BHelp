@@ -85,9 +85,11 @@ namespace BHelp.ViewModels
         public string City { get; set; }
         public string Zip { get; set; }
         public string Phone { get; set; }
+        public string Email { get; set; }
         public string StreetToolTip { get; set; }
         public string CityToolTip { get; set; }
         public string PhoneToolTip { get; set; }
+        public string EmailToolTip { get; set; }
         public string NotesToolTip { get; set; }  // Household/Client notes
         public string ODNotesToolTip { get; set; }  // OD notes
         public string DriverNotesToolTip { get; set; }  // Driver notes

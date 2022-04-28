@@ -44,32 +44,14 @@
                 <span>
                     <b>Client:</b>&nbsp;@Html.Label(Model.ClientNameAddress)&nbsp;
                     <b>Phone:</b>&nbsp;@Html.Label(Model.Phone)&nbsp;
+                    <b>Email:</b>&nbsp;@Model.Email
                 </span>
                 <b>Permanent Notes:</b>&nbsp;@Html.TextBoxFor(n => n.Notes,
- new
-      {
-          @readonly = "readonly",
-  style = "width: 90px",
-          title = Model.NotesToolTip
-      })
+ new{@readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip })
             </div>
             <span>
                 <b>Family:</b>&nbsp;
                 @if (Model.SnapshotFamily != null)
-                {
-                    @Html.DropDownListFor(model => model.SnapshotFamily,
-                        new SelectList(Model.SnapshotFamily, "Value",
-                            "Text"), new { @class = "form-control" });
-                }
-                <b>Prior Delivery:</b>
-                @if (Model.DatePriorDelivery != DateTime.MinValue)
-                {
-                    if (Model.DateLastDelivery != null)
-                    {
-                        @Html.Label(Model.DatePriorDelivery.ToShortDateString())
-                    }
-                }
-                else
                 {
                     @Html.Label("(none)")
                 }
