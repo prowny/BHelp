@@ -274,6 +274,7 @@
     <Compile Include="Controllers\ODController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Controllers\ODScheduleController.cs" />
     <Compile Include="Controllers\ResetAnyPasswordController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -297,57 +298,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="HoursRoutines.cs" />
-    <Compile Include="Migrations\202112281608060_AddGroups.cs" />
-    <Compile Include="Migrations\202112281608060_AddGroups.Designer.cs">
-      <DependentUpon>202112281608060_AddGroups.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202201121840490_RemoveUnusedDeliveryColumns.cs" />
-    <Compile Include="Migrations\202201121840490_RemoveUnusedDeliveryColumns.Designer.cs">
-      <DependentUpon>202201121840490_RemoveUnusedDeliveryColumns.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202201131651041_AddVolunteerHours.cs" />
-    <Compile Include="Migrations\202201131651041_AddVolunteerHours.Designer.cs">
-      <DependentUpon>202201131651041_AddVolunteerHours.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202201131701484_AddVolunteerHoursTable.cs" />
-    <Compile Include="Migrations\202201131701484_AddVolunteerHoursTable.Designer.cs">
-      <DependentUpon>202201131701484_AddVolunteerHoursTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202201221548121_ChangeNameWeekEndingDateToDate.cs" />
-    <Compile Include="Migrations\202201221548121_ChangeNameWeekEndingDateToDate.Designer.cs">
-      <DependentUpon>202201221548121_ChangeNameWeekEndingDateToDate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202202151413480_AddPeopleCount.cs" />
-    <Compile Include="Migrations\202202151413480_AddPeopleCount.Designer.cs">
-      <DependentUpon>202202151413480_AddPeopleCount.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202202191951321_AddDocuments.cs" />
-    <Compile Include="Migrations\202202191951321_AddDocuments.Designer.cs">
-      <DependentUpon>202202191951321_AddDocuments.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202202192121514_AddDocumentsFileContent.cs" />
-    <Compile Include="Migrations\202202192121514_AddDocumentsFileContent.Designer.cs">
-      <DependentUpon>202202192121514_AddDocumentsFileContent.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202203071810442_AddAddress-Phone2.cs" />
-    <Compile Include="Migrations\202203071810442_AddAddress-Phone2.Designer.cs">
-      <DependentUpon>202203071810442_AddAddress-Phone2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202203071945131_AddZipCode.cs" />
-    <Compile Include="Migrations\202203071945131_AddZipCode.Designer.cs">
-      <DependentUpon>202203071945131_AddZipCode.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202204152205425_ChangeOriginatorIdSpelling.cs" />
-    <Compile Include="Migrations\202204152205425_ChangeOriginatorIdSpelling.Designer.cs">
-      <DependentUpon>202204152205425_ChangeOriginatorIdSpelling.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202204211907460_AddDriverScheules.cs" />
-    <Compile Include="Migrations\202204211907460_AddDriverScheules.Designer.cs">
-      <DependentUpon>202204211907460_AddDriverScheules.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202204252140315_AddClientEmail.cs" />
-    <Compile Include="Migrations\202204252140315_AddClientEmail.Designer.cs">
-      <DependentUpon>202204252140315_AddClientEmail.cs</DependentUpon>
+    <Compile Include="Migrations\202204281735597_AddODSchedule.cs" />
+    <Compile Include="Migrations\202204281735597_AddODSchedule.Designer.cs">
+      <DependentUpon>202204281735597_AddODSchedule.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs">
@@ -356,6 +309,7 @@
     <Compile Include="Models\ApplicationUser.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Models\ODSchedule.cs" />
     <Compile Include="Models\Document.cs" />
     <Compile Include="Models\Client.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -396,6 +350,7 @@
     <Compile Include="ViewModels\GroupNameViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="ViewModels\ODScheduleViewModel.cs" />
     <Compile Include="ViewModels\OpenDeliveryViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -642,6 +597,7 @@
     </Content>
     <Content Include="Views\Deliveries\AdviseODIdRequired.cshtml" />
     <Content Include="Views\DriverSchedule\Edit.cshtml" />
+    <Content Include="Views\ODSchedule\Edit.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
@@ -821,48 +777,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202112281608060_AddGroups.resx">
-      <DependentUpon>202112281608060_AddGroups.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202201121840490_RemoveUnusedDeliveryColumns.resx">
-      <DependentUpon>202201121840490_RemoveUnusedDeliveryColumns.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202201131651041_AddVolunteerHours.resx">
-      <DependentUpon>202201131651041_AddVolunteerHours.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202201131701484_AddVolunteerHoursTable.resx">
-      <DependentUpon>202201131701484_AddVolunteerHoursTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202201221548121_ChangeNameWeekEndingDateToDate.resx">
-      <DependentUpon>202201221548121_ChangeNameWeekEndingDateToDate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202202151413480_AddPeopleCount.resx">
-      <DependentUpon>202202151413480_AddPeopleCount.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202202191951321_AddDocuments.resx">
-      <DependentUpon>202202191951321_AddDocuments.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202202192121514_AddDocumentsFileContent.resx">
-      <DependentUpon>202202192121514_AddDocumentsFileContent.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202203071810442_AddAddress-Phone2.resx">
-      <DependentUpon>202203071810442_AddAddress-Phone2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202203071945131_AddZipCode.resx">
-      <DependentUpon>202203071945131_AddZipCode.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202204152205425_ChangeOriginatorIdSpelling.resx">
-      <DependentUpon>202204152205425_ChangeOriginatorIdSpelling.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202204211907460_AddDriverScheules.resx">
-      <DependentUpon>202204211907460_AddDriverScheules.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202204252140315_AddClientEmail.resx">
-      <DependentUpon>202204252140315_AddClientEmail.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Content\bootstrap.min.css.map" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
@@ -879,6 +793,11 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202204281735597_AddODSchedule.resx">
+      <DependentUpon>202204281735597_AddODSchedule.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

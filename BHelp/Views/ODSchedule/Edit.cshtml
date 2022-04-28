@@ -1,0 +1,194 @@
+﻿@using System.Web.Mvc.Html
+@model BHelp.ViewModels.ODScheduleViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Edit</title>
+    <style>
+        #schedule {
+            border-collapse: collapse;
+            border: thin solid black
+        }
+
+        .top {
+            width: 185px;
+            border-right: thin solid black;
+        }
+
+        .edit {
+            width: 160px;
+        }
+
+        #SaveButton {
+            background-color: blue;
+            color: white
+        }
+    </style>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+</head>
+<body>
+    @using (Html.BeginForm("Edit", "ODSchedule", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        if (Model.AllowEdit)
+        {
+            <div id="EditSection">
+                <table>
+                    <tr>
+                        <td><b>BHelp OD Schedule</b></td>
+                        <td style="text-align: center">Date:</td>
+                        <td style="text-align: center">OD:</td>
+                        <td style="text-align: center">Notes:</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right" class="edit">Enter/Edit data here:</td>
+                        <td class="edit" style="text-align: center">
+                            @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
+                                new { id = "BoxDate", style = "width: 75px;" })
+                        </td>
+                        <td>
+                            @Html.DropDownListFor(m => m.ODId ,
+                                new SelectList(Model.ODList ,
+                                    "Value", "Text", Model.ODId),
+                                new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.ODId, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            @Html.TextAreaFor(t => t.Note)
+                            @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            &nbsp;&nbsp;
+                            <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
+                        </td>
+                    </tr>
+                </table>
+                <hr />
+            </div>
+        }
+        <div>
+            <table>
+                <tr>
+                    <td>
+                        <b>Bethesda Help Officer of the Day Schedule - </b><span style="color: red">
+                            <b>@Model.MonthName&nbsp;@Model.Year</b>
+                        </span>
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        @Html.ActionLink(" Previous Month", "PreviousMonth",
+                            new { @Model.Month, @Model.Year })
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;@Html.ActionLink(" Next Month", "NextMonth",
+                            new { @Model.Month, @Model.Year })
+                    </td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home")</td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <table Id="schedule">
+                <tr>
+                    <th class="top">MONDAY</th>
+                    <th class="top">TUESDAY</th>
+                    <th class="top">WEDNESDAY</th>
+                    <th class="top">THURSDAY</th>
+                    <th class="top">FRIDAY</th>
+                </tr>
+
+                @{var i = 0;}
+                @for (var row = 1; row < 6; row++)
+                {
+                    <tr>
+                        @for (var col = 1; col < 6; col++)
+                        {
+                            i++;
+                            <td style="border: thin solid black;vertical-align:top">
+                                @if (Model.ODsSchedule[i].Date > DateTime.MinValue)
+                                {<b>@Html.Label(Model.ODsSchedule[i].DayString)</b>
+                                
+                                if (Model.BoxODName[i] != null)
+                                {
+                                    <br />
+                                    @Html.Label(Model.BoxODName[i])
+                                }
+
+                                if (Model.BoxODPhone[i] != null)
+                                {
+                                    <br />
+                                    @Html.Label(Model.BoxODPhone[i])
+                                }
+
+                                if (Model.BoxODPhone2[i] != null)
+                                {
+                                    <br />
+                                    @Html.Label(Model.BoxODPhone2[i])
+                                }
+
+                                if (Model.BoxODEmail[i] != null)
+                                {
+                                    <br />
+                                    @Model.BoxODEmail[i]
+                                }
+
+                                 if (Model.BoxNote[i] != null)
+                                {
+                                    <br />
+                                    <span style="font-size: x-small">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        @Html.Label("Notes")
+                                    </span>
+                                    <br />
+                                    @Model.BoxNote[i] @*Html.Label will not display if it contains a period*@
+                                }
+                            }
+                            </td>
+                        }
+                    </tr>
+                }
+            </table>
+        </div>
+        <br />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+
+            </div>
+        </div>
+    }
+    <br />
+    <div>
+        @Html.ActionLink("Download to Excel File", "ODScheduleToExcel", "ODSchedule")
+        <br />
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    $(function () {
+        window.$("#BoxDate").datepicker({
+           beforeShowDay: window.$.datepicker.noWeekends
+        });
+    });
+</script>
+<script type="text/javascript">
+    window.$(function () {
+        window.$('#BoxDate').change(function () {
+            var _boxDate = window.$(this).val();
+            var link = '@Url.Action("Edit", "ODSchedule",
+                           new { boxDate = "-1" })';
+            link = link.replace("-1", _boxDate);
+            window.location.href = link;
+        });
+    });
+</script>

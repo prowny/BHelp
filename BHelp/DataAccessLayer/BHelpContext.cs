@@ -31,8 +31,10 @@ namespace BHelp.DataAccessLayer
 
         public DbSet<VolunteerHours> VolunteerHours { get; set; }
 
-        public System.Data.Entity.DbSet<BHelp.Models.Document> Documents { get; set; }
+        public DbSet<Document> Documents { get; set; }
 
-        public DbSet<DriverSchedule> DriverSchedules { get; set; } 
+        public DbSet<DriverSchedule> DriverSchedules { get; set; }
+
+        public DbSet<ODSchedule> ODSchedules { get; set; }
     }
 }

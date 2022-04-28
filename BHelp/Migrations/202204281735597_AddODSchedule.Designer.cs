@@ -7,13 +7,13 @@ namespace BHelp.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class ChangeNameWeekEndingDateToDate : IMigrationMetadata
+    public sealed partial class AddODSchedule : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(ChangeNameWeekEndingDateToDate));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(AddODSchedule));
         
         string IMigrationMetadata.Id
         {
-            get { return "202201221548121_ChangeNameWeekEndingDateToDate"; }
+            get { return "202204281735597_AddODSchedule"; }
         }
         
         string IMigrationMetadata.Source
