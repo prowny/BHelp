@@ -101,30 +101,32 @@
 
 @if (User.IsInAnyRoles("Developer","Scheduler","Administrator"))
 {
-    <div>
-        <strong>Scheduler Menu</strong><br />
-        <a href="@Url.Action("Edit", "DriverSchedule")">Maintain Driver Schedules</a><br />
-    </div>
+<div>
+    <strong>Scheduler Menu</strong><br />
+    <a href="@Url.Action("Edit", "DriverSchedule")">Maintain Driver Schedules</a><br />
+    <a href="@Url.Action("Edit", "ODSchedule")">Maintain OD Schedules</a><br />
+</div>
     <br />
 }    
 
 
 @if (User.IsInAnyRoles("Developer","OfficerOfTheDay","Staff","Administrator"))
     {
-        <div>
-            <strong>Officer of the Day Menu</strong><br />
-            <a href="@Url.Action("Index", "OD")">Call Log - OD Section</a><br />
-            <a href="@Url.Action("Index", "Deliveries")">Maintain Open Deliveries</a><br />
-            <a href="@Url.Action("Edit", "DriverSchedule")">View Driver Schedules</a><br />
-            <a href="@Url.Action("CallLogMenu", "Deliveries")">View Call Log History</a><br />
-            @if (Model.ShowODDocumentsMenu)
-            {
-                <a href="@Url.Action("ViewDocumentCategory", "Documents", new{menuCat="OfficerOfTheDay"})">View OD Documents</a><br />
-            }
-            <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
-            <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["vmPassword"])</span><br />
-            <a href="http://www.bethesdahelp.org/need-help/service-area" target="_blank">Go To Service Area Map</a><br />
-        </div>
+<div>
+    <strong>Officer of the Day Menu</strong><br />
+    <a href="@Url.Action("Index", "OD")">Call Log - OD Section</a><br />
+    <a href="@Url.Action("Index", "Deliveries")">Maintain Open Deliveries</a><br />
+    <a href="@Url.Action("Edit", "ODSchedule")">View OD Schedules</a><br />
+    <a href="@Url.Action("Edit", "DriverSchedule")">View Driver Schedules</a><br />
+    <a href="@Url.Action("CallLogMenu", "Deliveries")">View Call Log History</a><br />
+    @if (Model.ShowODDocumentsMenu)
+    {
+        <a href="@Url.Action("ViewDocumentCategory", "Documents", new{menuCat="OfficerOfTheDay"})">View OD Documents</a><br />
+    }
+    <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
+    <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["vmPassword"])</span><br />
+    <a href="http://www.bethesdahelp.org/need-help/service-area" target="_blank">Go To Service Area Map</a><br />
+</div>
         <br />
     }
 

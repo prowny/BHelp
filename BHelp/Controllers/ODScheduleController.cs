@@ -443,7 +443,21 @@ namespace BHelp.Controllers
                             boxContents += Environment.NewLine + "OD:";
                             boxContents += Environment.NewLine + BoxODName[idx];
                         }
-                        
+
+                        if (BoxODPhone[idx] != null)
+                        {
+                            boxContents += Environment.NewLine + BoxODPhone[idx];
+                        }
+                        if (BoxODPhone2[idx] != null)
+                        {
+                            boxContents += Environment.NewLine + BoxODPhone2[idx];
+                        }
+
+                        if (BoxODEmail[idx] != null)
+                        {
+                            boxContents += Environment.NewLine + BoxODEmail[idx];
+                        }
+
                         if (BoxNote[idx] != null)
                         {
                             boxContents += Environment.NewLine + "Notes:";

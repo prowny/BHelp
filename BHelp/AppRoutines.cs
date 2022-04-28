@@ -37,7 +37,8 @@ namespace BHelp
                 var delivery = new Delivery
                 {
                     ODId = System.Web.HttpContext.Current.User.Identity.GetUserId(),
-                    //DeliveryDateODId not specified
+                    //DeliveryDateODId specified 04-28-2022
+                    DeliveryDateODId = GetODIdForDate(delDate),
                     ClientId = clientId,
                     LogDate = DateTime.Today,
                     FirstName = client.FirstName,
@@ -333,6 +334,14 @@ namespace BHelp
                 // calendar, we must subtract a year here.
                 int years = (DateTime.MinValue + span).Year - 1;
                 return years;
+            }
+
+            private static string GetODIdForDate(DateTime delDate)
+            {
+                var db = new BHelpContext();
+                var rec = db.ODSchedules.FirstOrDefault(d => d.Date == delDate);
+                if (rec != null) return rec.ODId;
+                return null;
             }
             public static string GetNamesAgesOfAllInHousehold(int clientId)
             {
