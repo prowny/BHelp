@@ -53,7 +53,7 @@
                         <td style="text-align: right" class="edit">Enter/Edit data here:</td>
                         <td class="edit" style="text-align: center">
                             @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
-                                new { id = "BoxDate", style = "width: 75px;" })
+                                new { id = "BoxDate", style = "width: 75px; background-color: yellow; text-align:center" })
                         </td>
                         <td>
                             @Html.DropDownListFor(m => m.ODId ,
@@ -109,60 +109,60 @@
                 @{var i = 0;}
                 @for (var row = 1; row < 6; row++)
                 {
-                    <tr>
-                        @for (var col = 1; col < 6; col++)
+                <tr>
+                    @for (var col = 1; col < 6; col++)
+                    {
+                        i++;
+                        var bgcolor = "white"; 
+                        if (Model.ODsSchedule[i].Date == Model.Date)
                         {
-                            i++;
-                            <td style="border: thin solid black;vertical-align:top">
-                                @if (Model.ODsSchedule[i].Date > DateTime.MinValue)
-                                {<b>@Html.Label(Model.ODsSchedule[i].DayString)</b>
-                                
-                                if (Model.BoxODName[i] != null)
-                                {
-                                    <br />
-                                    @Html.Label(Model.BoxODName[i])
-                                }
-
-                                if (Model.BoxODPhone[i] != null)
-                                {
-                                    <br />
-                                    @Html.Label(Model.BoxODPhone[i])
-                                }
-
-                                if (Model.BoxODPhone2[i] != null)
-                                {
-                                    <br />
-                                    @Html.Label(Model.BoxODPhone2[i])
-                                }
-
-                                if (Model.BoxODEmail[i] != null)
-                                {
-                                    <br />
-                                    @Model.BoxODEmail[i]
-                                }
-
-                                 if (Model.BoxNote[i] != null)
-                                {
-                                    <br />
-                                    <span style="font-size: x-small">
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        @Html.Label("Notes")
-                                    </span>
-                                    <br />
-                                    @Model.BoxNote[i] @*Html.Label will not display if it contains a period*@
-                                }
-                            }
-                            </td>
+                            bgcolor = "yellow";
                         }
-                    </tr>
+                    <td style="border: thin solid black; vertical-align: top; background-color: @bgcolor">
+                        @if (Model.ODsSchedule[i].Date > DateTime.MinValue)
+                        {
+                            <b>@Html.Label(Model.ODsSchedule[i].DayString)</b>
+                        }
+
+                        @if (Model.BoxODName[i] != null)
+                        {
+                            <br />
+                            @Html.Label(Model.BoxODName[i])
+                        }
+
+                        @if (Model.BoxODPhone[i] != null)
+                        {
+                            <br />
+                            @Html.Label(Model.BoxODPhone[i])
+                        }
+
+                        @if (Model.BoxODPhone2[i] != null)
+                        {
+                            <br />
+                            @Html.Label(Model.BoxODPhone2[i])
+                        }
+
+                        @if (Model.BoxODEmail[i] != null)
+                        {
+                            <br />
+                            @Model.BoxODEmail[i] @*Html labels won't display periods*@
+                        }
+
+                        @if (Model.BoxNote[i] != null)
+                        {
+                            <br />
+                            <span style="font-size: x-small">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                @Html.Label("Notes")
+                            </span>
+                            <br />
+                            @Model.BoxNote[i] @*Html labels won't display periods*@
+                        }
+                    </td>
+                    }
+                </tr>
                 }
             </table>
-        </div>
-        <br />
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-
-            </div>
         </div>
     }
     <br />

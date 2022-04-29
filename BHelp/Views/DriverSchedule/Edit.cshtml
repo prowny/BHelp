@@ -58,7 +58,7 @@
                         <td style="text-align: right" class="edit">Enter/Edit data here:</td>
                         <td class="edit" style="text-align: center">
                             @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
-                                new { id = "BoxDate", style = "width: 75px;" })
+                                new { id = "BoxDate", style = "width: 75px; background-color: yellow; text-align:center" })
                         </td>
                         <td>
                             @Html.DropDownListFor(m => m.DriverId,
@@ -121,40 +121,46 @@
                 @for (var col = 1; col < 6; col++)
                 {
                     i++;
-                    <td style="border: thin solid black;vertical-align:top">
-                    @if (Model.DriversSchedule[i].Date > DateTime.MinValue) { <b>@Html.Label(Model.DriversSchedule[i].DayString)</b>
-                        if (Model.BoxDriverName[i] != null)
-                        {
-                            <span style="font-size: x-small">
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                @Html.Label("Driver")
-                            </span>
-                            <br/>
-                            @Html.Label(Model.BoxDriverName[i])
-                        }
-
-                        if (Model.BoxBackupDriverName[i] != null)
-                        {
-                            <br/>
-                            <span style="font-size: x-small">
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                @Html.Label("Backup Driver")
-                            </span>
-                            <br/>
-                            @Html.Label(Model.BoxBackupDriverName[i])
-                        }
-
-                        if (Model.BoxNote[i] != null)
-                        {
-                            <br/>
-                            <span style="font-size: x-small">
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                @Html.Label("Notes")
-                            </span>
-                            <br/>
-                            @Model.BoxNote[i];  @*Html.Label will not display if it contains a period*@
-                        }
+                    var bgcolor = "white"; 
+                    if (Model.DriversSchedule[i].Date == Model.Date)
+                    {
+                        bgcolor = "yellow";
                     }
+                <td style="border: thin solid black; vertical-align: top; background-color: @bgcolor">
+                    @if (Model.DriversSchedule[i].Date > DateTime.MinValue)
+                    {<b>@Html.Label(Model.DriversSchedule[i].DayString)</b>
+                    if (Model.BoxDriverName[i] != null)
+                    {
+                        <span style="font-size: x-small">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            @Html.Label("Driver")
+                        </span>
+                        <br />
+                        @Html.Label(Model.BoxDriverName[i])
+                    }
+
+                    if (Model.BoxBackupDriverName[i] != null)
+                    {
+                        <br />
+                        <span style="font-size: x-small">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            @Html.Label("Backup Driver")
+                        </span>
+                        <br />
+                        @Html.Label(Model.BoxBackupDriverName[i])
+                    }
+
+                    if (Model.BoxNote[i] != null)
+                    {
+                        <br />
+                        <span style="font-size: x-small">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            @Html.Label("Notes")
+                        </span>
+                        <br />
+                        @Model.BoxNote[i]; @*Html.Label will not display if it contains a period*@
+                    }
+                }
                 </td>
                 }
             </tr>

@@ -32,7 +32,7 @@ namespace BHelp.ViewModels
 
         [DataType(DataType.MultilineText)]
         public string[] BoxNote { get; set; }
-
+        
         public bool AllowEdit { get; set; }
     }
 }

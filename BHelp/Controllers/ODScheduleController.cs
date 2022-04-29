@@ -20,11 +20,6 @@ namespace BHelp.Controllers
         {
             var db = new BHelpContext();
             var view = new ODScheduleViewModel();
-           
-            if (User.IsInAnyRoles("Developer", "Scheduler", "Administrator"))
-            {
-                view.AllowEdit = true;
-            }
 
             if (Session["ODScheduleDateData"] == null)
             {
@@ -57,6 +52,13 @@ namespace BHelp.Controllers
                     view.Year = view.Date.Year;
                     Session["ODScheduleDateData"] = view.Date.Day.ToString("00") + view.Month.ToString("00") + view.Year;
                 }
+            }
+
+            var cutOffDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            //if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer","Administrator"))
+            if (view.Date >= cutOffDate)
+            {
+                view.AllowEdit = true;
             }
 
             var startDt = GetFirstWeekDay(view.Month, view.Year);
@@ -283,7 +285,7 @@ namespace BHelp.Controllers
                 var odDataList = new List<ApplicationUser>();
                 odList.Add(new SelectListItem()
                 {
-                    Text = @"--select--",
+                    Text = @"(nobody yet)",
                     Value = "0"
                 });
                 odDataList.Add(new ApplicationUser()

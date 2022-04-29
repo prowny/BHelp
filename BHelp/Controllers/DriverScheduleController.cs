@@ -20,13 +20,8 @@ namespace BHelp.Controllers
         {
             var db = new BHelpContext(); 
             var view = new DriverScheduleViewModel();
-
-            if (User.IsInAnyRoles("Developer", "Scheduler", "Administrator"))
-            {
-                view.AllowEdit = true;
-                view.CurrentDate =DateTime.Today;
-            }
-           
+            view.CurrentDate = DateTime.Today;
+            
             if (Session["DriverScheduleDateData"] == null)
             {
                 view.Month = DateTime.Today.Month;
@@ -59,7 +54,13 @@ namespace BHelp.Controllers
                     Session["DriverScheduleDateData"] = view.Date.Day.ToString("00") + view.Month.ToString("00") + view.Year;
                 }
             }
-            
+
+            var cutOffDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            //if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer","Administrator"))
+            if (view.Date >= cutOffDate)
+            {
+                view.AllowEdit = true;
+            }
             var startDt = GetFirstWeekDay(view.Month, view.Year);
             var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
             var startDayOfWk = (int)startDt.DayOfWeek;
@@ -284,7 +285,7 @@ namespace BHelp.Controllers
                 var driverRoleId = AppRoutines.GetRoleId("Driver");
                 driverList.Add(new SelectListItem()
                 {
-                    Text = @"--select--",
+                    Text = @"(nobody yet)",
                     Value = "0"
                 });
                 foreach (var user in userList)
