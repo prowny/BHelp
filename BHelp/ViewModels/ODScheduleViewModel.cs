@@ -29,10 +29,14 @@ namespace BHelp.ViewModels
         public string[] BoxODPhone { get; set; }
         public string[] BoxODPhone2 { get; set; }
         public string[] BoxODEmail { get; set; }
+        public bool[] BoxODConfirmed { get; set; }
 
         [DataType(DataType.MultilineText)]
         public string[] BoxNote { get; set; }
         
         public bool AllowEdit { get; set; }
+        public bool ODConfirmed { get; set; }
+        public string CurrentUserId { get; set; }
+        public string ODName { get; set; }
     }
 }

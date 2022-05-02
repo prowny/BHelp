@@ -7,6 +7,7 @@ using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
 using ClosedXML.Excel;
+using Microsoft.AspNet.Identity;
 using Org.BouncyCastle.Utilities;
 
 namespace BHelp.Controllers
@@ -16,28 +17,37 @@ namespace BHelp.Controllers
     {
         // GET: ODSchedule
         [AllowAnonymous]
-        public ActionResult Edit(DateTime? boxDate)
+        public ActionResult Edit(DateTime? boxDate, string odId)
         {
             var db = new BHelpContext();
-            var view = new ODScheduleViewModel();
+           
+            var view = new ODScheduleViewModel { CurrentUserId = User.Identity .GetUserId() };
 
             if (Session["ODScheduleDateData"] == null)
             {
                 view.Month = DateTime.Today.Month;
                 view.Year = DateTime.Today.Year;
-                view.Date = new DateTime(view.Year, view.Month, 1);
+                view.Date = GetFirstWeekdayDate(view.Month, view.Year);
                 view.MonthName = Strings.ToUpperCase(view.Date.ToString("MMMM"));
                 Session["ODScheduleDateData"] = "01" + view.Month.ToString("00") + view.Year;
             }
             else  // returning to ODSchedule
             {
+                // Returning with OD change:
+                if (odId != null)
+                {
+                    var dateData = Session["ODScheduleDateData"].ToString();
+                    var day = Convert.ToInt32(dateData.Substring(0, 2));
+                    var month = Convert.ToInt32(dateData.Substring(2, 2));
+                    var year = Convert.ToInt32(dateData.Substring(4, 4));
+                    boxDate = new DateTime(year, month,day);
+                }
                 if (boxDate == null)
                 {
                     view.Month = DateTime.Today.Month;
                     view.Year = DateTime.Today.Year;
-                    var tempDate = new DateTime(view.Year, view.Month, 1);
-                    view.Date = tempDate;
-                    view.MonthName = Strings.ToUpperCase(tempDate.ToString("MMMM"));
+                    view.Date = GetFirstWeekdayDate(view.Month, view.Year);
+                    view.MonthName = Strings.ToUpperCase(view.Date.ToString("MMMM"));
                     Session["ODScheduleDateData"] = view.Date.Day.ToString("00") + view.Month.ToString("00") + view.Year;
                 }
                 else  // boxDate has value
@@ -61,7 +71,7 @@ namespace BHelp.Controllers
                 view.AllowEdit = true;
             }
 
-            var startDt = GetFirstWeekDay(view.Month, view.Year);
+            var startDt = GetFirstWeekdayDate(view.Month, view.Year);
             var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
             var startDayOfWk = (int)startDt.DayOfWeek;
             if (Session["ODList"] == null)
@@ -69,15 +79,24 @@ namespace BHelp.Controllers
                 Session["ODList"] = GetODIdSelectList();  // also gets ODDataList
             }
 
+            // Check for new OD id
+            if (odId != null)
+            {
+                view.ODId = odId;
+            }
+
             var odList = (List<SelectListItem>)Session["ODList"];  //GetODIdSelectList();
             var odDataList = (List<ApplicationUser>)Session["ODDataList"];
-            // Check for existing record
+            // Check for existing record 
             var existngRec = db.ODSchedules.FirstOrDefault(r => r.Date == view.Date);
             if (existngRec != null)
             {
                 view.ODList = odList;
                 view.ODId = existngRec.ODId;
-                view.Note = existngRec.Note;
+                view.ODConfirmed = existngRec.ODConfirmed;
+                view.Note = (existngRec.Note);
+                var odIdx = odList.FindIndex(d => d.Value == existngRec.ODId);
+                if(odIdx > 0) view.ODName = odDataList[odIdx].FullName;
             }
             else
             {
@@ -90,6 +109,7 @@ namespace BHelp.Controllers
             view.BoxODPhone2 = new string[26];
             view.BoxODEmail = new string[26];
             view.BoxNote = new string[26];
+            view.BoxODConfirmed = new bool[26];
 
             // Get all OD records for this month
             var monthlyList = GetMonthlyList(view.Month, view.Year);
@@ -116,6 +136,7 @@ namespace BHelp.Controllers
                                 if (odDataList[odIdx].Email != null) view.BoxODEmail[idx] = odDataList[odIdx].Email;
                             }
                             view.BoxNote[idx] = monthlyList[mIdx].Note;
+                            view.BoxODConfirmed[idx] = monthlyList[mIdx].ODConfirmed;
                         }
                         continue;
                     }
@@ -135,6 +156,7 @@ namespace BHelp.Controllers
                                 if (odDataList[odIdx].Email != null) view.BoxODEmail[idx] = odDataList[odIdx].Email;
                             }
                             view.BoxNote[idx] = monthlyList[mIdx].Note;
+                            view.BoxODConfirmed[idx] = monthlyList[mIdx].ODConfirmed;
                         }
                     }
                     else
@@ -154,6 +176,7 @@ namespace BHelp.Controllers
                                     if (odDataList[odIdx].Email != null) view.BoxODEmail[idx] = odDataList[odIdx].Email;
                                 }
                                 view.BoxNote[idx] = monthlyList[mIdx].Note;
+                                view.BoxODConfirmed[idx] = monthlyList[mIdx].ODConfirmed;
                             }
                         }
                     }
@@ -179,6 +202,7 @@ namespace BHelp.Controllers
                     Id = i,
                     Date = dt,
                     ODId = "0",
+                    ODConfirmed = false,
                     MonthName = view.MonthName
                 };
                 if (dt > DateTime.MinValue)
@@ -219,6 +243,7 @@ namespace BHelp.Controllers
                     if (schedule.ODId  == "0") schedule.ODId  = null;
                     rec.ODId  = schedule.ODId;
                     rec.Note = schedule.Note;
+                    rec.ODConfirmed = schedule.ODConfirmed;
                     db.SaveChanges();
                     return RedirectToAction("Edit", new { boxDate = schedule.Date });
                 }
@@ -229,7 +254,8 @@ namespace BHelp.Controllers
                 {
                     Date = schedule.Date,
                     ODId = schedule.ODId,
-                    Note = schedule.Note
+                    Note = schedule.Note,
+                    ODConfirmed = schedule.ODConfirmed  
                 };
                 db.ODSchedules.Add(newRec);
                 db.SaveChanges();
@@ -249,7 +275,7 @@ namespace BHelp.Controllers
                 month = 12;
                 year = year - 1;
             }
-            var _boxDate = GetFirstWeekDay(month, year);
+            var _boxDate = GetFirstWeekdayDate(month, year);
             return RedirectToAction("Edit", new { boxDate = _boxDate });
         }
         public ActionResult NextMonth(int month, int year)
@@ -260,11 +286,11 @@ namespace BHelp.Controllers
                 month = 1;
                 year = year + 1;
             }
-            var _boxDate = GetFirstWeekDay(month, year);
+            var _boxDate = GetFirstWeekdayDate(month, year);
             return RedirectToAction("Edit", new { boxDate = _boxDate });
         }
 
-        private static DateTime GetFirstWeekDay(int month, int year)
+        private static DateTime GetFirstWeekdayDate(int month, int year)
         {
             DateTime dt = new DateTime(year, month, 1);
             var dayOfWeek = (int)dt.DayOfWeek;

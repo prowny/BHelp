@@ -302,6 +302,10 @@
     <Compile Include="Migrations\202204281735597_AddODSchedule.Designer.cs">
       <DependentUpon>202204281735597_AddODSchedule.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202205011728320_AddODConfirmed.cs" />
+    <Compile Include="Migrations\202205011728320_AddODConfirmed.Designer.cs">
+      <DependentUpon>202205011728320_AddODConfirmed.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -797,6 +801,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202204281735597_AddODSchedule.resx">
       <DependentUpon>202204281735597_AddODSchedule.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202205011728320_AddODConfirmed.resx">
+      <DependentUpon>202205011728320_AddODConfirmed.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

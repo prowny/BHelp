@@ -17,6 +17,6 @@ namespace BHelp.Models
         [DataType(DataType.MultilineText)]
         public string Note { get; set; }
 
-        [NotMapped] public string ODName { get; set; }
+        public bool ODConfirmed { get; set; }
     }
 }
