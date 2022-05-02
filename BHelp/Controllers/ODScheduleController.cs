@@ -71,6 +71,10 @@ namespace BHelp.Controllers
                 view.AllowEdit = true;
             }
 
+            if (User.IsInAnyRoles("Scheduler", "Developer", "Administrator"))
+            {
+                view.IsScheduler = true;
+            }
             var startDt = GetFirstWeekdayDate(view.Month, view.Year);
             var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
             var startDayOfWk = (int)startDt.DayOfWeek;
@@ -88,14 +92,18 @@ namespace BHelp.Controllers
             var odList = (List<SelectListItem>)Session["ODList"];  //GetODIdSelectList();
             var odDataList = (List<ApplicationUser>)Session["ODDataList"];
             // Check for existing record 
-            var existngRec = db.ODSchedules.FirstOrDefault(r => r.Date == view.Date);
-            if (existngRec != null)
+            var existingRec = db.ODSchedules.FirstOrDefault(r => r.Date == view.Date);
+            if (existingRec != null)
             {
                 view.ODList = odList;
-                view.ODId = existngRec.ODId;
-                view.ODConfirmed = existngRec.ODConfirmed;
-                view.Note = (existngRec.Note);
-                var odIdx = odList.FindIndex(d => d.Value == existngRec.ODId);
+                view.ODId = existingRec.ODId;
+                view.ODConfirmed = existingRec.ODConfirmed;
+                if (!existingRec.ODConfirmed && odId != null) // replace OD
+                {
+                    view.ODId = odId;
+                }
+                view.Note = (existingRec.Note);
+                var odIdx = odList.FindIndex(d => d.Value == existingRec.ODId);
                 if(odIdx > 0) view.ODName = odDataList[odIdx].FullName;
             }
             else

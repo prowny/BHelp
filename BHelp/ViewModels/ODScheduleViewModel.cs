@@ -34,9 +34,10 @@ namespace BHelp.ViewModels
         [DataType(DataType.MultilineText)]
         public string[] BoxNote { get; set; }
         
-        public bool AllowEdit { get; set; }
+        public bool AllowEdit { get; set; }  // for view-only users
         public bool ODConfirmed { get; set; }
         public string CurrentUserId { get; set; }
         public string ODName { get; set; }
+        public bool IsScheduler { get; set; } // can update everything
     }
 }

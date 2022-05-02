@@ -43,14 +43,15 @@
         {
             <div id="EditSection">
                 <table>
-                    <tr>
+                    <tr id ="HeaderRow">
                         <td><b>BHelp OD Schedule</b></td>
                         <td style="text-align: center">Date:</td>
                         <td style="text-align: center">OD:</td>
                         <td style="text-align: center">Confirm:</td>
                         <td style="text-align: center">Notes:</td>
                     </tr>
-                    <tr>
+
+                    <tr id ="EditRow">
                         <td style="text-align: right" class="edit">Enter/Edit data here:</td>
 
                         <td class="edit" style="text-align: center; width: 75px">
@@ -58,42 +59,44 @@
                                 new { id = "BoxDate", style = "width: 75px; background-color: yellow; text-align:center" })
                         </td>
 
+                        @*=============== Another user has it locked ===============*@
                         @if (Model.ODConfirmed && Model.CurrentUserId != Model.ODId)
                         {
                             <td>
                                 @Html.TextBoxFor(m => m.ODName, new { style = "background: lightgray", @readonly = "readonly" })
-
                             </td>
                             <td style="text-align: center">
                                 @Html.CheckBoxFor(m => m.ODConfirmed, new { @disabled = "disabled" })
                             </td>
                         }
-                        else
+                        else /*========= User may change OD =============*/
                         {
                             <td>
                                 @Html.DropDownListFor(m => m.ODId,
                                     new SelectList(Model.ODList, "Value", "Text", Model.ODId),
                                     new { id = "ODddl" })
-                                @*@Html.ValidationMessageFor(m => m.ODId, "", new { @class = "text-danger" })*@
+                                @Html.ValidationMessageFor(m => m.ODId, "", new { @class = "text-danger" })
                             </td>
-                            if (Model.ODId != null)
+                            if (Model.ODId != null) /*====== Can update confirmed if self ========*/
                             {
-                                <td style="text-align: center">
-                                    @Html.CheckBoxFor(m => m.ODConfirmed)
-                                    @*@Html.ValidationMessageFor(m => m.ODConfirmed, "", new { @class = "text-danger" })*@
-                                </td>
-                            }
-                            else
-                            {
-                                <td style="text-align: center">
-                                    @Html.CheckBoxFor(m => m.ODConfirmed, new { @disabled = "disabled" })
-                                </td>
+                                if (Model.ODId == Model.CurrentUserId)
+                                {
+                                    <td style="text-align: center">
+                                        @Html.CheckBoxFor(m => m.ODConfirmed)
+                                        @Html.ValidationMessageFor(m => m.ODConfirmed, "", new { @class = "text-danger" })
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td style="text-align: center">
+                                        @Html.CheckBoxFor(m => m.ODConfirmed, new { @disabled = "disabled" })
+                                    </td>
+                                }
                             }
                         }
-
                         <td>
                             @Html.TextAreaFor(t => t.Note)
-                            @*@Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })*@
+                            @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
                         </td>
                         <td>
                             &nbsp;&nbsp;
@@ -103,7 +106,8 @@
                 </table>
                 <hr />
             </div>
-        }
+        } // end of AllowEdit && NOT Scheduler 
+
         <div>
             <table>
                 <tr>
