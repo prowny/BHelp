@@ -21,7 +21,7 @@ namespace BHelp.Controllers
         {
             var db = new BHelpContext();
            
-            var view = new ODScheduleViewModel { CurrentUserId = User.Identity .GetUserId() };
+            var view = new ODScheduleViewModel { CurrentUserId = User.Identity.GetUserId() };
 
             if (Session["ODScheduleDateData"] == null)
             {
@@ -65,8 +65,7 @@ namespace BHelp.Controllers
             }
 
             var cutOffDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            //if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer","Administrator"))
-            if (view.Date >= cutOffDate)
+            if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer","Administrator"))
             {
                 view.AllowEdit = true;
             }
@@ -80,36 +79,35 @@ namespace BHelp.Controllers
             var startDayOfWk = (int)startDt.DayOfWeek;
             if (Session["ODList"] == null)
             {
-                Session["ODList"] = GetODIdSelectList();  // also gets ODDataList
-            }
-
-            // Check for new OD id
-            if (odId != null)
-            {
-                view.ODId = odId;
+                Session["ODList"] = GetODIdSelectList();  // also gets ODDataList, NonSchedulerODSelectList 
             }
 
             var odList = (List<SelectListItem>)Session["ODList"];  //GetODIdSelectList();
             var odDataList = (List<ApplicationUser>)Session["ODDataList"];
-            // Check for existing record 
-            var existingRec = db.ODSchedules.FirstOrDefault(r => r.Date == view.Date);
-            if (existingRec != null)
+            if (view.IsScheduler)
             {
                 view.ODList = odList;
-                view.ODId = existingRec.ODId;
-                view.ODConfirmed = existingRec.ODConfirmed;
-                if (!existingRec.ODConfirmed && odId != null) // replace OD
-                {
-                    view.ODId = odId;
-                }
-                view.Note = (existingRec.Note);
-                var odIdx = odList.FindIndex(d => d.Value == existingRec.ODId);
-                if(odIdx > 0) view.ODName = odDataList[odIdx].FullName;
             }
             else
             {
-                view.ODList  = (List<SelectListItem>)Session["ODList"];
+                view.ODList = (List<SelectListItem>)Session["NonSchedulerODSelectList"];
             }
+            // Check for existing record with ODId
+            var existingRec = db.ODSchedules.FirstOrDefault(r => r.Date == view.Date);
+            if (existingRec != null)
+            {
+                if (existingRec.ODId != null)
+                {
+                    view.ODId = existingRec.ODId;
+                    view.OldODId = existingRec.ODId; 
+                    view.Note = existingRec.Note;
+                    var odIdx = odList.FindIndex(d => d.Value == view.ODId);
+                    if (odIdx > 0) view.ODName = odDataList[odIdx].FullName;
+                }
+            }
+            
+            // Check for new OD id - returning from view having clicked the OD dropdownlist.
+            if (odId != null) view.ODId = odId;
 
             view.BoxDay = new DateTime[6, 6];
             view.BoxODName = new string[26];
@@ -236,8 +234,7 @@ namespace BHelp.Controllers
         }
 
         // POST: DriverSchedule/Edit
-        [HttpPost, Authorize(Roles = "Developer,Administrator,Staff,Scheduler")]
-        [ValidateAntiForgeryToken]
+        [HttpPost,AllowAnonymous,ValidateAntiForgeryToken]
         public ActionResult Edit(ODScheduleViewModel schedule)
         {
             if (ModelState.IsValid)
@@ -249,9 +246,8 @@ namespace BHelp.Controllers
                 if (rec != null)
                 { // Update record
                     if (schedule.ODId  == "0") schedule.ODId  = null;
-                    rec.ODId  = schedule.ODId;
+                    rec.ODId = schedule.ODId;
                     rec.Note = schedule.Note;
-                    rec.ODConfirmed = schedule.ODConfirmed;
                     db.SaveChanges();
                     return RedirectToAction("Edit", new { boxDate = schedule.Date });
                 }
@@ -262,8 +258,7 @@ namespace BHelp.Controllers
                 {
                     Date = schedule.Date,
                     ODId = schedule.ODId,
-                    Note = schedule.Note,
-                    ODConfirmed = schedule.ODConfirmed  
+                    Note = schedule.Note
                 };
                 db.ODSchedules.Add(newRec);
                 db.SaveChanges();
@@ -341,6 +336,32 @@ namespace BHelp.Controllers
                 }
                 Session["ODSelectList"] = odList;
                 Session["ODDataList"] = odDataList;
+
+                if (!User.IsInAnyRoles("Scheduler", "Developer", "Administrator")) // is NOT Scheduler
+                {
+                    var nonSchedulerODSelectList = new List<SelectListItem>
+                    {
+                        new SelectListItem()
+                        {
+                            Text = @"(nobody yet)",
+                            Value = "0"
+                        }
+                    };
+                    var currentUserId = User.Identity.GetUserId();
+                    // get user's record from odDataList
+                    var userData = odDataList.FirstOrDefault(i => i.Id == currentUserId);
+                    if (userData != null)
+                    {
+                        var userDataSelectItem = new SelectListItem()
+                        {
+                            Text = userData.FullName,
+                            Value = currentUserId
+                        };
+                        nonSchedulerODSelectList.Add(userDataSelectItem);
+                    }
+                    Session["NonSchedulerODSelectList"] = nonSchedulerODSelectList;
+                }
+
                 return odList;
             }
 

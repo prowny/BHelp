@@ -38,6 +38,7 @@ namespace BHelp.ViewModels
         public bool ODConfirmed { get; set; }
         public string CurrentUserId { get; set; }
         public string ODName { get; set; }
+        public string OldODId { get; set; }
         public bool IsScheduler { get; set; } // can update everything
     }
 }

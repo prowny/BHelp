@@ -8,24 +8,10 @@
     <meta name="viewport" content="width=device-width" />
     <title>Edit</title>
     <style>
-        #schedule {
-            border-collapse: collapse;
-            border: thin solid black
-        }
-
-        .top {
-            width: 185px;
-            border-right: thin solid black;
-        }
-
-        .edit {
-            width: 160px;
-        }
-
-        #SaveButton {
-            background-color: blue;
-            color: white
-        }
+        #schedule {border-collapse: collapse;border: thin solid black}
+        .top {width: 185px;border-right: thin solid black;}
+        .edit {width: 160px;}
+        #SaveButton {background-color: blue;color: white}
     </style>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
@@ -39,19 +25,23 @@
     @using (Html.BeginForm("Edit", "ODSchedule", FormMethod.Post))
     {
         @Html.AntiForgeryToken()
-        if (Model.AllowEdit)
+        @Html.HiddenFor(m => m.CurrentUserId)
+        @Html.HiddenFor(m => m.AllowEdit)
+        @Html.HiddenFor(m => m.IsScheduler)
+
+        /*========== Regular Non-Scheduler users Edit Section ==================*/
+        if (Model.AllowEdit && !Model.IsScheduler)  /* NOT Scheduler */
         {
             <div id="EditSection">
                 <table>
-                    <tr id ="HeaderRow">
+                    <tr id="HeaderRow">
                         <td><b>BHelp OD Schedule</b></td>
                         <td style="text-align: center">Date:</td>
                         <td style="text-align: center">OD:</td>
-                        <td style="text-align: center">Confirm:</td>
                         <td style="text-align: center">Notes:</td>
                     </tr>
 
-                    <tr id ="EditRow">
+                    <tr id="EditRow">
                         <td style="text-align: right" class="edit">Enter/Edit data here:</td>
 
                         <td class="edit" style="text-align: center; width: 75px">
@@ -60,16 +50,24 @@
                         </td>
 
                         @*=============== Another user has it locked ===============*@
-                        @if (Model.ODConfirmed && Model.CurrentUserId != Model.ODId)
+                        @if (Model.OldODId != null && Model.OldODId != Model.CurrentUserId)
                         {
                             <td>
-                                @Html.TextBoxFor(m => m.ODName, new { style = "background: lightgray", @readonly = "readonly" })
+                                @Html.TextBoxFor(m => m.ODName, 
+                                    new { style = "background: lightgray", @readonly = "readonly" })
                             </td>
-                            <td style="text-align: center">
+                            @*<td style="text-align: center">
                                 @Html.CheckBoxFor(m => m.ODConfirmed, new { @disabled = "disabled" })
+                            </td>*@
+                            <td>
+                                @Html.TextAreaFor(t => t.Note,
+                                    new {style = "background: lightgray", @readonly = "readonly" })
+                                @Html.ValidationMessageFor(m => m.Note,
+                                    "", new { @class = "text-danger" })
                             </td>
+                            /* no save button */
                         }
-                        else /*========= User may change OD =============*/
+                        else /*========= User may change =============*/
                         {
                             <td>
                                 @Html.DropDownListFor(m => m.ODId,
@@ -77,23 +75,45 @@
                                     new { id = "ODddl" })
                                 @Html.ValidationMessageFor(m => m.ODId, "", new { @class = "text-danger" })
                             </td>
-                            if (Model.ODId != null) /*====== Can update confirmed if self ========*/
-                            {
-                                if (Model.ODId == Model.CurrentUserId)
-                                {
-                                    <td style="text-align: center">
-                                        @Html.CheckBoxFor(m => m.ODConfirmed)
-                                        @Html.ValidationMessageFor(m => m.ODConfirmed, "", new { @class = "text-danger" })
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td style="text-align: center">
-                                        @Html.CheckBoxFor(m => m.ODConfirmed, new { @disabled = "disabled" })
-                                    </td>
-                                }
-                            }
+                            <td>
+                                @Html.TextAreaFor(t => t.Note)
+                                @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
+                            </td>
+                            <td>
+                                &nbsp;&nbsp;
+                                <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
+                            </td>
                         }
+                    </tr>
+                </table>
+                <hr />
+            </div>
+        }  /*end of AllowEdit && NOT Scheduler */
+
+        /*================= Admin / Scheduler Edit Section =======================*/
+        if (Model.IsScheduler)
+        {
+            <div id="EditSection">
+                <table>
+                    <tr id="HeaderRow">
+                        <td><b>BHelp OD Schedule</b></td>
+                        <td style="text-align: center">Date:</td>
+                        <td style="text-align: center">OD:</td>
+                        <td style="text-align: center">Notes:</td>
+                    </tr>
+
+                    <tr id="EditRow">
+                        <td style="text-align: right" class="edit">Enter/Edit data here:</td>
+                        <td class="edit" style="text-align: center; width: 75px">
+                            @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
+                                new { id = "BoxDate", style = "width: 75px; background-color: yellow; text-align:center" })
+                        </td>
+                        <td>
+                            @Html.DropDownListFor(m => m.ODId,
+                                new SelectList(Model.ODList, "Value", "Text", Model.ODId),
+                                new { id = "ODddl2" })
+                            @Html.ValidationMessageFor(m => m.ODId, "", new { @class = "text-danger" })
+                        </td>
                         <td>
                             @Html.TextAreaFor(t => t.Note)
                             @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
@@ -106,8 +126,9 @@
                 </table>
                 <hr />
             </div>
-        } // end of AllowEdit && NOT Scheduler 
+        } /*========= End of Admin / Scheduler Edit Section ========*/
 
+        /*======================== Calendar Section ========================*/
         <div>
             <table>
                 <tr>
@@ -123,7 +144,7 @@
                     </td>
                     <td>
                         &nbsp;&nbsp;@Html.ActionLink(" Next Month", "NextMonth",
-                            new { @Model.Month, @Model.Year })
+    new { @Model.Month, @Model.Year })
                     </td>
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home")</td>
                 </tr>
@@ -142,58 +163,69 @@
                 @{var i = 0;}
                 @for (var row = 1; row < 6; row++)
                 {
-                <tr>
-                    @for (var col = 1; col < 6; col++)
-                    {
-                        i++;
-                        var bgcolor = "white"; 
-                        if (Model.ODsSchedule[i].Date == Model.Date)
+                    <tr>
+                        @for (var col = 1; col < 6; col++)
                         {
-                            bgcolor = "yellow";
-                        }
-                    <td style="border: thin solid black; vertical-align: top; background-color: @bgcolor">
-                        @if (Model.ODsSchedule[i].Date > DateTime.MinValue)
-                        {
-                            <b>@Html.Label(Model.ODsSchedule[i].DayString)</b>
-                        }
+                            i++;
+                            var bgcolor = "white";
+                            if (Model.ODsSchedule[i].Date == Model.Date)
+                            {
+                                bgcolor = "yellow";
+                            }
+                            <td style="border: thin solid black; vertical-align: top; background-color: @bgcolor">
+                                @if (Model.ODsSchedule[i].Date > DateTime.MinValue)
+                                {
+                                    <b>@Html.Label(Model.ODsSchedule[i].DayString)</b>
+                                    if (Model.AllowEdit)
+                                    {
+                                        if (!Model.IsScheduler && Model.ODsSchedule[i].Date >= DateTime.Today)
+                                        {
+                                            <span style="font-size: x-small">
+                                                @Html.ActionLink("Edit", "Edit",
+                                                    new { boxDate = Model.ODsSchedule[i].Date })
+                                            </span>
+                                        }
+                                    }
+                                }
 
-                        @if (Model.BoxODName[i] != null)
-                        {
-                            <br />
-                            @Html.Label(Model.BoxODName[i])
-                        }
+                                @if (Model.BoxODName[i] != null)
+                                {
+                                    <br />
+                                    @Html.Label(Model.BoxODName[i])
+                                }
 
-                        @if (Model.BoxODPhone[i] != null)
-                        {
-                            <br />
-                            @Html.Label(Model.BoxODPhone[i])
-                        }
+                                @if (Model.BoxODPhone[i] != null)
+                                {
+                                    <br />
+                                    @Html.Label(Model.BoxODPhone[i])
+                                }
 
-                        @if (Model.BoxODPhone2[i] != null)
-                        {
-                            <br />
-                            @Html.Label(Model.BoxODPhone2[i])
-                        }
+                                @if (Model.BoxODPhone2[i] != null)
+                                {
+                                    <br />
+                                    @Html.Label(Model.BoxODPhone2[i])
+                                }
 
-                        @if (Model.BoxODEmail[i] != null)
-                        {
-                            <br />
-                            @Model.BoxODEmail[i] @*Html labels won't display periods*@
-                        }
+                                @if (Model.BoxODEmail[i] != null)
+                                {
+                                    <br />
+                                    <!--@Model.BoxODEmail[i]--> @*Html labels won't display periods*@
+                                    <a href="mailto:@Model.BoxODEmail[i])?Subject=BHELP%20Food%20%20Program">@Model.BoxODEmail[i]</a>
+                                }
 
-                        @if (Model.BoxNote[i] != null)
-                        {
-                            <br />
-                            <span style="font-size: x-small">
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                @Html.Label("Notes")
-                            </span>
-                            <br />
-                            @Model.BoxNote[i] @*Html labels won't display periods*@
+                                @if (Model.BoxNote[i] != null)
+                                {
+                                    <br />
+                                    <span style="font-size: x-small">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        @Html.Label("Notes")
+                                    </span>
+                                    <br />
+                                    @Model.BoxNote[i] @*Html labels won't display periods*@
+                                }
+                            </td>
                         }
-                    </td>
-                    }
-                </tr>
+                    </tr>
                 }
             </table>
         </div>
@@ -230,6 +262,17 @@
         window.$('#ODddl').change(function () {
             var _odId = window.$(this).val();
             var link = '@Url.Action("Edit", "ODSchedule", 
+                            new { odId = "-1" })';
+            link = link.replace("-1", _odId);
+            window.location.href = link;
+        });
+    });
+</script>
+<script>
+    window.$(function () {
+        window.$('#ODddl2').change(function () {
+            var _odId = window.$(this).val();
+            var link = '@Url.Action("Edit", "ODSchedule",
                             new { odId = "-1" })';
             link = link.replace("-1", _odId);
             window.location.href = link;
