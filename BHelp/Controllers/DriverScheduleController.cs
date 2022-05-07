@@ -7,6 +7,7 @@ using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
 using ClosedXML.Excel;
+using Microsoft.AspNet.Identity;
 using Org.BouncyCastle.Utilities;
 
 namespace BHelp.Controllers
@@ -19,8 +20,7 @@ namespace BHelp.Controllers
         public ActionResult Edit( DateTime? boxDate)
         {
             var db = new BHelpContext(); 
-            var view = new DriverScheduleViewModel();
-            view.CurrentDate = DateTime.Today;
+            var view = new DriverScheduleViewModel() { CurrentUserId = User.Identity.GetUserId() }; ;
             
             if (Session["DriverScheduleDateData"] == null)
             {
@@ -36,9 +36,8 @@ namespace BHelp.Controllers
                 {
                     view.Month = DateTime.Today.Month;
                     view.Year = DateTime.Today.Year;
-                    var tempDate = new DateTime(view.Year, view.Month, 1);
-                    view.Date = tempDate;
-                    view.MonthName = Strings.ToUpperCase(tempDate.ToString("MMMM"));
+                    view.Date = AppRoutines.GetFirstWeekdayDate(view.Month, view.Year);
+                    view.MonthName = Strings.ToUpperCase(view.Date.ToString("MMMM"));
                     Session["DriverScheduleDateData"] = view.Date.Day.ToString("00") + view.Month.ToString("00") + view.Year;
                 }
                 else  // boxDate has value
@@ -56,8 +55,8 @@ namespace BHelp.Controllers
             }
 
             var cutOffDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            //if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer","Administrator"))
-            if (view.Date >= cutOffDate)
+            if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer","Administrator"))
+            //if (view.Date >= cutOffDate)
             {
                 view.AllowEdit = true;
             }

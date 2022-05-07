@@ -27,7 +27,7 @@ namespace BHelp.Controllers
             {
                 view.Month = DateTime.Today.Month;
                 view.Year = DateTime.Today.Year;
-                view.Date = GetFirstWeekdayDate(view.Month, view.Year);
+                view.Date = AppRoutines.GetFirstWeekdayDate(view.Month, view.Year);
                 view.MonthName = Strings.ToUpperCase(view.Date.ToString("MMMM"));
                 Session["ODScheduleDateData"] = "01" + view.Month.ToString("00") + view.Year;
             }
@@ -46,7 +46,7 @@ namespace BHelp.Controllers
                 {
                     view.Month = DateTime.Today.Month;
                     view.Year = DateTime.Today.Year;
-                    view.Date = GetFirstWeekdayDate(view.Month, view.Year);
+                    view.Date = AppRoutines.GetFirstWeekdayDate(view.Month, view.Year);
                     view.MonthName = Strings.ToUpperCase(view.Date.ToString("MMMM"));
                     Session["ODScheduleDateData"] = view.Date.Day.ToString("00") + view.Month.ToString("00") + view.Year;
                 }
@@ -74,7 +74,7 @@ namespace BHelp.Controllers
             {
                 view.IsScheduler = true;
             }
-            var startDt = GetFirstWeekdayDate(view.Month, view.Year);
+            var startDt = AppRoutines.GetFirstWeekdayDate(view.Month, view.Year);
             var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
             var startDayOfWk = (int)startDt.DayOfWeek;
             if (Session["ODList"] == null)
@@ -279,7 +279,7 @@ namespace BHelp.Controllers
                 month = 12;
                 year = year - 1;
             }
-            var _boxDate = GetFirstWeekdayDate(month, year);
+            var _boxDate = AppRoutines.GetFirstWeekdayDate(month, year);
             return RedirectToAction("Edit", new { boxDate = _boxDate });
         }
         public ActionResult NextMonth(int month, int year)
@@ -290,17 +290,8 @@ namespace BHelp.Controllers
                 month = 1;
                 year = year + 1;
             }
-            var _boxDate = GetFirstWeekdayDate(month, year);
+            var _boxDate = AppRoutines.GetFirstWeekdayDate(month, year);
             return RedirectToAction("Edit", new { boxDate = _boxDate });
-        }
-
-        private static DateTime GetFirstWeekdayDate(int month, int year)
-        {
-            DateTime dt = new DateTime(year, month, 1);
-            var dayOfWeek = (int)dt.DayOfWeek;
-            if (dayOfWeek == 0) dt = dt.AddDays(1); // change from Sun to Mon 
-            if (dayOfWeek == 6) dt = dt.AddDays(2); // change from Sat to Mon
-            return dt;
         }
 
         private List<SelectListItem> GetODIdSelectList()

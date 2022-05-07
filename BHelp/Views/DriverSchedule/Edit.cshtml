@@ -8,24 +8,10 @@
     <meta name="viewport" content="width=device-width" />
     <title>Edit</title>
     <style>
-        #schedule {
-            border-collapse: collapse;
-            border: thin solid black
-        }
-
-        .top {
-            width: 185px;
-            border-right: thin solid black;
-        }
-
-        .edit {
-            width: 160px;
-        }
-
-        #SaveButton {
-            background-color: blue;
-            color: white
-        }
+        #schedule {border-collapse: collapse;border: thin solid black}
+        .top {width: 185px;border-right: thin solid black;}
+        .edit {width: 160px;}
+        #SaveButton {background-color: blue;color: white}
     </style>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
@@ -129,17 +115,17 @@
                 <td style="border: thin solid black; vertical-align: top; background-color: @bgcolor">
                     @if (Model.DriversSchedule[i].Date > DateTime.MinValue)
                     {<b>@Html.Label(Model.DriversSchedule[i].DayString)</b>
-                        <span style="font-size: x-small">
-                            @Html.ActionLink("Edit", "Edit",
-                                new { boxDate = Model.DriversSchedule[i].Date })
-                        </span>
-                        
+                    <span style="font-size: x-small">
+                        @Html.ActionLink("Edit", "Edit",
+                            new { boxDate = Model.DriversSchedule[i].Date })
+                    </span>
+
                     if (Model.BoxDriverName[i] != null)
                     {
-                <span style="font-size: x-small">
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    @Html.Label("Driver")
-                </span>
+                        <span style="font-size: x-small">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            @Html.Label("Driver")
+                        </span>
                         <br />
                         @Html.Label(Model.BoxDriverName[i])
                     }
@@ -163,7 +149,7 @@
                             @Html.Label("Notes")
                         </span>
                         <br />
-                        @Model.BoxNote[i]; @*Html.Label will not display if it contains a period*@
+                        @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine,"<br/>" )) @*Html.Label will not display if it contains a period*@
                     }
                 }
                 </td>

@@ -231,7 +231,8 @@
                                 <a href="mailto:@Uri.EscapeDataString(Model.BoxODEmail[i])
                                    ?Subject=@Uri.EscapeDataString(subject)
                                    &body=@Uri.EscapeDataString(body)">
-                                @Model.BoxODEmail[i] </a>
+                                    @Model.BoxODEmail[i]
+                                </a>
                             }
 
                             @if (Model.BoxNote[i] != null)
@@ -242,7 +243,7 @@
                                     @Html.Label("Notes")
                                 </span>
                                 <br />
-                                @Model.BoxNote[i]
+                                @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>"))
                             }
 
                         </td>

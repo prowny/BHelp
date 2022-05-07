@@ -38,5 +38,6 @@ namespace BHelp.ViewModels
         public string[] BoxNote { get; set; }
         public bool AllowEdit { get; set; }
         public DateTime CurrentDate { get; set; }  // to set mindate in datepicker
-        }
+        public string CurrentUserId { get; set; }
+    }
 }

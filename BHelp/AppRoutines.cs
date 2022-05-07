@@ -1186,5 +1186,14 @@ namespace BHelp
             var roleId = context.Database.SqlQuery<string>(sqlString).FirstOrDefault();
             return roleId;
             }
+
+            public static DateTime GetFirstWeekdayDate(int month, int year)
+            {
+                DateTime dt = new DateTime(year, month, 1);
+                var dayOfWeek = (int)dt.DayOfWeek;
+                if (dayOfWeek == 0) dt = dt.AddDays(1); // change from Sun to Mon 
+                if (dayOfWeek == 6) dt = dt.AddDays(2); // change from Sat to Mon
+                return dt;
+            }
     }
 }
