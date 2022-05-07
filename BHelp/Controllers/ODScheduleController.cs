@@ -66,11 +66,15 @@ namespace BHelp.Controllers
 
             if (User.IsInAnyRoles("OfficerOfTheDay","Scheduler", "Developer", "Administrator"))
             {
-                view.IsScheduler = true;
                 var cutOffDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
                 if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer", "Administrator"))
                 {
                     view.AllowEdit = true;
+                }
+
+                if (User.IsInAnyRoles("Scheduler", "Developer", "Administrator"))
+                {
+                    view.IsScheduler = true;
                 }
             }
 
