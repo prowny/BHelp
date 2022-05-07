@@ -26,7 +26,7 @@ namespace BHelp.Controllers
             {
                 view.Month = DateTime.Today.Month;
                 view.Year = DateTime.Today.Year;
-                view.Date = new DateTime(view.Year, view.Month, 1);
+                view.Date = AppRoutines.GetFirstWeekdayDate(view.Month, view.Year);
                 view.MonthName = Strings.ToUpperCase(view.Date.ToString("MMMM"));
                 Session["DriverScheduleDateData"] = "01" + view.Month.ToString("00") + view.Year;
             }

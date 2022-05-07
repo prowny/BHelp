@@ -55,7 +55,7 @@ namespace BHelp.Controllers
             List<SelectListItem> rolesList = new List<SelectListItem>();
             foreach (var role in userRoles)
             {
-                if (role.Name != "Deleloper")
+                if (role.Name != "Developer")
                 {
                     rolesList.Add(new SelectListItem() { Text = role.Name, Value = role.Id });
                 }
