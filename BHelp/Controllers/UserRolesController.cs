@@ -55,7 +55,10 @@ namespace BHelp.Controllers
             List<SelectListItem> rolesList = new List<SelectListItem>();
             foreach (var role in userRoles)
             {
-                rolesList.Add(new SelectListItem() { Text = role.Name, Value = role.Id });
+                if (role.Name != "Deleloper")
+                {
+                    rolesList.Add(new SelectListItem() { Text = role.Name, Value = role.Id });
+                }
             }
 
             var users = (from u in _db.Users.OrderBy(n => n.LastName) select u).ToList();

@@ -129,12 +129,17 @@
                 <td style="border: thin solid black; vertical-align: top; background-color: @bgcolor">
                     @if (Model.DriversSchedule[i].Date > DateTime.MinValue)
                     {<b>@Html.Label(Model.DriversSchedule[i].DayString)</b>
+                        <span style="font-size: x-small">
+                            @Html.ActionLink("Edit", "Edit",
+                                new { boxDate = Model.DriversSchedule[i].Date })
+                        </span>
+                        
                     if (Model.BoxDriverName[i] != null)
                     {
-                        <span style="font-size: x-small">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            @Html.Label("Driver")
-                        </span>
+                <span style="font-size: x-small">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    @Html.Label("Driver")
+                </span>
                         <br />
                         @Html.Label(Model.BoxDriverName[i])
                     }

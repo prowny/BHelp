@@ -100,10 +100,10 @@ namespace BHelp.Controllers
                 {
                     view.ODId = existingRec.ODId;
                     view.OldODId = existingRec.ODId; 
-                    view.Note = existingRec.Note;
                     var odIdx = odList.FindIndex(d => d.Value == view.ODId);
                     if (odIdx > 0) view.ODName = odDataList[odIdx].FullName;
                 }
+                view.Note = existingRec.Note;
             }
             
             // Check for new OD id - returning from view having clicked the OD dropdownlist.
@@ -209,7 +209,8 @@ namespace BHelp.Controllers
                     Date = dt,
                     ODId = "0",
                     ODConfirmed = false,
-                    MonthName = view.MonthName
+                    MonthName = view.MonthName,
+                    Note =view.Note 
                 };
                 if (dt > DateTime.MinValue)
                 {

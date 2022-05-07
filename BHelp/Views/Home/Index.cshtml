@@ -99,7 +99,7 @@
         <br />
     }
 
-@*@if (User.IsInAnyRoles("Developer","Scheduler","Administrator"))
+@if (User.IsInAnyRoles("Developer","Scheduler","Administrator"))
 {
 <div>
     <strong>Scheduler Menu</strong><br />
@@ -107,7 +107,7 @@
     <a href="@Url.Action("Edit", "ODSchedule")">Maintain OD Schedules</a><br />
 </div>
     <br />
-}*@    
+}    
 
 
 @if (User.IsInAnyRoles("Developer","OfficerOfTheDay","Staff","Administrator"))

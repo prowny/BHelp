@@ -1,28 +1,71 @@
 ﻿// Utilities used by developer //
 
+using System;
+using System.Linq;
+using BHelp.DataAccessLayer;
+using BHelp.Models;
+
 namespace BHelp
 {
     public static class Utilities
     {
-        public static int test()
+        public static void test()
         {
-            //var a = 0;
-            //var b = 0;
-            //for (var i = 1; i < 26; i++)
-            //{
-            //    if (i < 6) {  a = 1;  b = i; }
-            //    if (i > 5 && i < 11) {  a = 2;  b = i - 5; }
-            //    if (i > 10 && i < 16) { a = 3;  b = i - 10; }
-            //    if(i > 15 && i < 21) { a = 4;  b = i - 15; }
-            //    if (i > 20) { a = 5;  b = i - 20; }
-            // }
-            //var z = 5 / 5 + 1 ;
-            //var x = (5 % 5);
-            //var y = 20 / 5;
-            
-            return 1;
+            var db = new BHelpContext();
+            var startDt = new DateTime(2022, 01, 01);
+            var endDt = new DateTime(2022, 03, 01);
+            var recs = db.Deliveries.Where( d => d.DateDelivered >= startDt 
+                                                   && d.DateDelivered <= endDt 
+                                                   && d.DeliveryDateODId != null
+                                                   && d.Status == 1).ToList();
+            var result = recs.GroupBy(x => x.DateDelivered)
+                .Select(x => x.First()).ToList();
+            foreach (var del in result)
+            {
+                if (del.DateDelivered != null)
+                {
+                    var addODRec = new ODSchedule()
+                    {
+                        Date = (DateTime)del.DateDelivered,
+                        ODId = del.DeliveryDateODId
+                    };
+                    db.ODSchedules.Add(addODRec);
+                }
+            }
+
+            //db.SaveChanges();
+
+            recs = db.Deliveries.Where(d => d.DateDelivered >= startDt
+                                            && d.DateDelivered <= endDt
+                                            && d.DriverId != null
+                                            && d.Status == 1).ToList();
+            result = recs.GroupBy(x => x.DateDelivered)
+                .Select(x => x.First()).ToList();
+            foreach (var dlv in result)
+            {
+                if (dlv.DateDelivered != null)
+                {
+                    var addDrRec = new DriverSchedule()
+                    {
+                        Date = (DateTime)dlv.DateDelivered,
+                        DriverId = dlv.DriverId 
+                    };
+                db.DriverSchedules.Add(addDrRec);
+                }
+            }
+
+            //db.SaveChanges();
         }
-        public static void GetLatestDeliveries()
+
+
+        public class Profit
+        {
+            public string Text { get; set; }
+            public string Value { get; set; }
+        }
+
+    
+    public static void GetLatestDeliveries()
         {
             //var db = new BHelpContext();
             //var result = (from pi in db.Clients 

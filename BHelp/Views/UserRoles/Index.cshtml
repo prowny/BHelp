@@ -23,7 +23,7 @@
     <tr>
         <td><b>User Name: Name / Role</b></td>
         <td></td>
-        <td>Email (to notify user)</td>
+        @*<td>Email (to notify user)</td>*@
     </tr>
     @foreach (var item in Model.UserNameRoles)
     { 
@@ -32,7 +32,7 @@
                 @item.Name
             </td> 
             <td>
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })  |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
             </td>
             @*<td id="UserEmail">
                 @if (item.Name.Contains("Active"))
