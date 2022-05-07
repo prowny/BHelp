@@ -76,6 +76,10 @@ namespace BHelp.Controllers
                 {
                     view.IsScheduler = true;
                 }
+                else
+                {
+                    view.IsODOnly = true;
+                }
             }
 
             var startDt = AppRoutines.GetFirstWeekdayDate(view.Month, view.Year);
@@ -115,6 +119,7 @@ namespace BHelp.Controllers
 
             view.BoxDay = new DateTime[6, 6];
             view.BoxODName = new string[26];
+            view.BoxODId = new string[26];
             view.BoxODPhone = new string[26];
             view.BoxODPhone2 = new string[26];
             view.BoxODEmail = new string[26];
@@ -143,7 +148,7 @@ namespace BHelp.Controllers
                                 view.BoxODName[idx] = odList[odIdx].Text;
                                 if (odDataList[odIdx].PhoneNumber != null) view.BoxODPhone[idx] = odDataList[odIdx].PhoneNumber;
                                 if (odDataList[odIdx].PhoneNumber2 != null) view.BoxODPhone2[idx] = odDataList[odIdx].PhoneNumber2;
-                                if (odDataList[odIdx].Email != null) view.BoxODEmail[idx] = odDataList[odIdx].Email;
+                                if (odList[odIdx].Value != null) view.BoxODId[idx] = odList[odIdx].Value;
                             }
                             view.BoxNote[idx] = monthlyList[mIdx].Note;
                             view.BoxODConfirmed[idx] = monthlyList[mIdx].ODConfirmed;
@@ -164,6 +169,7 @@ namespace BHelp.Controllers
                                 if (odDataList[odIdx].PhoneNumber != null) view.BoxODPhone[idx] = odDataList[odIdx].PhoneNumber;
                                 if (odDataList[odIdx].PhoneNumber2 != null) view.BoxODPhone2[idx] = odDataList[odIdx].PhoneNumber2;
                                 if (odDataList[odIdx].Email != null) view.BoxODEmail[idx] = odDataList[odIdx].Email;
+                                if (odList[odIdx].Value != null) view.BoxODId[idx] = odList[odIdx].Value;
                             }
                             view.BoxNote[idx] = monthlyList[mIdx].Note;
                             view.BoxODConfirmed[idx] = monthlyList[mIdx].ODConfirmed;
@@ -184,6 +190,7 @@ namespace BHelp.Controllers
                                     if (odDataList[odIdx].PhoneNumber != null) view.BoxODPhone[idx] = odDataList[odIdx].PhoneNumber;
                                     if (odDataList[odIdx].PhoneNumber2 != null) view.BoxODPhone2[idx] = odDataList[odIdx].PhoneNumber2;
                                     if (odDataList[odIdx].Email != null) view.BoxODEmail[idx] = odDataList[odIdx].Email;
+                                    if (odList[odIdx].Value != null) view.BoxODId[idx] = odList[odIdx].Value;
                                 }
                                 view.BoxNote[idx] = monthlyList[mIdx].Note;
                                 view.BoxODConfirmed[idx] = monthlyList[mIdx].ODConfirmed;

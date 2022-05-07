@@ -43,14 +43,13 @@
                     <tr id="EditRow">
                         <td style="text-align: right" class="edit">Enter/Edit data here:</td>
 
-                        <td class="edit" style="text-align: center; width: 75px">
-                            @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
-                                new { id = "BoxDate", style = "width: 75px; background-color: yellow; text-align:center" })
-                        </td>
-
                         @*=============== Another user has it locked ===============*@
                         @if (Model.OldODId != null && Model.OldODId != Model.CurrentUserId)
                         {
+                            <td class="edit" style="text-align: center; width: 75px">
+                                @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
+                                    new { id = "BoxDate", style = "width: 75px;text-align:center" })
+                            </td>
                             <td>
                                 @Html.TextBoxFor(m => m.ODName,
                                     new { style = "background: lightgray", @readonly = "readonly" })
@@ -68,6 +67,10 @@
                         }
                         else if (!Model.IsScheduler && Model.Date < DateTime.Today)
                         {
+                            <td class="edit" style="text-align: center; width: 75px">
+                                @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
+                                    new { id = "BoxDate", style = "width: 75px;background:lightgray;text-align:center" })
+                            </td>
                             <td>
                                 @Html.TextBoxFor(m => m.ODName,
                                     new { style = "background: lightgray", @readonly = "readonly" })
@@ -85,6 +88,10 @@
                         }
                         else /*========= User may change =============*/
                         {
+                            <td class="edit" style="text-align: center; width: 75px">
+                                @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
+                                    new { id = "BoxDate", style = "width: 75px; background-color: yellow; text-align:center" })
+                            </td>
                             <td>
                                 @Html.DropDownListFor(m => m.ODId,
                                     new SelectList(Model.ODList, "Value", "Text", Model.ODId),
@@ -193,14 +200,29 @@
                             @if (Model.ODsSchedule[i].Date > DateTime.MinValue)
                             {
                                 <b>@Html.Label(Model.ODsSchedule[i].DayString)</b>
+
                                 if (Model.AllowEdit)
                                 {
-                                    if (Model.IsScheduler || Model.ODsSchedule[i].Date >= DateTime.Today)
+                                    if (Model.IsODOnly)
                                     {
-                                        <span style="font-size: x-small">
-                                            @Html.ActionLink("Edit", "Edit",
-                                                new { boxDate = Model.ODsSchedule[i].Date })
-                                        </span>
+                                        if (Model.ODsSchedule[i].Date >= DateTime.Today
+                                            && (Model.BoxODId[i] == Model.CurrentUserId || Model.BoxODId[i] == null))
+                                        {
+                                            <span style="font-size: x-small">
+                                                @Html.ActionLink("Edit", "Edit",
+                                                    new { boxDate = Model.ODsSchedule[i].Date })
+                                            </span>
+                                        }
+                                    }
+                                    else // NOT IsOdOnly
+                                    {
+                                        if (Model.IsScheduler || Model.ODsSchedule[i].Date >= DateTime.Today)
+                                        {
+                                            <span style="font-size: x-small">
+                                                @Html.ActionLink("Edit", "Edit",
+                                                    new { boxDate = Model.ODsSchedule[i].Date })
+                                            </span>
+                                        }
                                     }
                                 }
                             }

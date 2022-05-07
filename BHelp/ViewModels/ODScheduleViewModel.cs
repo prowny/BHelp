@@ -26,6 +26,7 @@ namespace BHelp.ViewModels
         public List<ODScheduleViewModel> ODsSchedule { get; set; }
         public DateTime[,] BoxDay { get; set; }  // Boxes refer to cells on calendar
         public string[] BoxODName { get; set; }
+        public string[] BoxODId { get; set; }
         public string[] BoxODPhone { get; set; }
         public string[] BoxODPhone2 { get; set; }
         public string[] BoxODEmail { get; set; }
@@ -40,5 +41,6 @@ namespace BHelp.ViewModels
         public string ODName { get; set; }
         public string OldODId { get; set; }
         public bool IsScheduler { get; set; } // can update everything
+        public bool IsODOnly { get; set; }  // is date-restricted.
     }
 }
