@@ -55,11 +55,15 @@ namespace BHelp.Controllers
             }
 
             var cutOffDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer","Administrator"))
-            //if (view.Date >= cutOffDate)
+            if (User.IsInAnyRoles("Scheduler","Developer", "Administrator"))
             {
-                view.AllowEdit = true;
+                if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer", "Administrator"))
+                    //if (view.Date >= cutOffDate)
+                {
+                    view.AllowEdit = true;
+                }
             }
+
             var startDt = GetFirstWeekDay(view.Month, view.Year);
             var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
             var startDayOfWk = (int)startDt.DayOfWeek;

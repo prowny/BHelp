@@ -64,16 +64,15 @@ namespace BHelp.Controllers
                 }
             }
 
-            var cutOffDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer","Administrator"))
+            if (User.IsInAnyRoles("OfficerOfTheDay","Scheduler", "Developer", "Administrator"))
             {
-                view.AllowEdit = true;
+                var cutOffDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer", "Administrator"))
+                {
+                    view.AllowEdit = true;
+                }
             }
 
-            if (User.IsInAnyRoles("Scheduler", "Developer", "Administrator"))
-            {
-                view.IsScheduler = true;
-            }
             var startDt = AppRoutines.GetFirstWeekdayDate(view.Month, view.Year);
             var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
             var startDayOfWk = (int)startDt.DayOfWeek;
