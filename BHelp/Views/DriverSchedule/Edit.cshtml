@@ -129,6 +129,29 @@
                         </span>
                         <br />
                         @Html.Label(Model.BoxDriverName[i])
+
+                        if (Model.BoxDriverPhone[i] != null)
+                        {
+                            <br />
+                            @Html.Label(Model.BoxDriverPhone[i])
+                        }
+
+                        if (Model.BoxDriverPhone2[i] != null)
+                        {
+                            <br />
+                            @Html.Label(Model.BoxDriverPhone2[i])
+                        }
+                        if (Model.BoxDriverEmail[i] != null)
+                        {
+                            var subject = "BHELP Food Program";
+                            var body = @Model.DriversSchedule[i].Date.ToLongDateString()
+                                       + " Driver: " + @Model.BoxDriverName[i];
+                            <a href="mailto:@Uri.EscapeDataString(Model.BoxDriverEmail[i])
+                                   ?Subject=@Uri.EscapeDataString(subject)
+                                   &body=@Uri.EscapeDataString(body)">
+                                @Model.BoxDriverEmail[i]
+                            </a>
+                        }
                     }
 
                     if (Model.BoxBackupDriverName[i] != null)
@@ -140,6 +163,29 @@
                         </span>
                         <br />
                         @Html.Label(Model.BoxBackupDriverName[i])
+
+                        if (Model.BoxBackupDriverPhone[i] != null)
+                        {
+                            <br />
+                            @Html.Label(Model.BoxBackupDriverPhone[i])
+                        }
+
+                        if (Model.BoxBackupDriverPhone2[i] != null)
+                        {
+                            <br />
+                            @Html.Label(Model.BoxBackupDriverPhone2[i])
+                        }
+                        if (Model.BoxBackupDriverEmail[i] != null)
+                        {
+                            var subject = "BHELP Food Program";
+                            var body = @Model.DriversSchedule[i].Date.ToLongDateString()
+                                       + " Backup Driver: " + @Model.BoxBackupDriverName[i];
+                            <a href="mailto:@Uri.EscapeDataString(Model.BoxBackupDriverEmail[i])
+                                   ?Subject=@Uri.EscapeDataString(subject)
+                                   &body=@Uri.EscapeDataString(body)">
+                                @Model.BoxBackupDriverEmail[i]
+                            </a>
+                        }
                     }
 
                     if (Model.BoxNote[i] != null)

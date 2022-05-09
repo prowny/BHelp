@@ -12,8 +12,9 @@ namespace BHelp.ViewModels
         public DateTime Date { get; set; }
 
         [StringLength(128)]
-        public string ODId { get; set; } 
-        
+        public string ODId { get; set; }
+        public string ODName { get; set; }
+
         [DataType(DataType.MultilineText)]
         public string Note { get; set; }
 
@@ -38,7 +39,7 @@ namespace BHelp.ViewModels
         public bool AllowEdit { get; set; }  // for view-only users
         public bool ODConfirmed { get; set; }
         public string CurrentUserId { get; set; }
-        public string ODName { get; set; }
+        
         public string OldODId { get; set; }
         public bool IsScheduler { get; set; } // can update everything
         public bool IsODOnly { get; set; }  // is date-restricted.

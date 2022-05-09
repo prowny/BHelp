@@ -68,6 +68,7 @@ namespace BHelp.Controllers
             {
                 var cutOffDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
                 if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer", "Administrator"))
+                    //if (view.Date >= cutOffDate)
                 {
                     view.AllowEdit = true;
                 }
@@ -100,7 +101,7 @@ namespace BHelp.Controllers
             {
                 view.ODList = (List<SelectListItem>)Session["NonSchedulerODSelectList"];
             }
-            // Check for existing record with ODId
+            // Check for existing record
             var existingRec = db.ODSchedules.FirstOrDefault(r => r.Date == view.Date);
             if (existingRec != null)
             {
@@ -311,11 +312,12 @@ namespace BHelp.Controllers
             if (Session["ODSelectList"] == null)
             {
                 var odList = new List<SelectListItem>();
+                var odDataList = new List<ApplicationUser>();
                 var _db = new BHelpContext();
                 var userList = _db.Users.OrderBy(u => u.LastName).ToList();
                 var roleLookup = AppRoutines.UsersInRolesLookup();
                 var odRoleId = AppRoutines.GetRoleId("OfficerOfTheDay");
-                var odDataList = new List<ApplicationUser>();
+                
                 odList.Add(new SelectListItem()
                 {
                     Text = @"(nobody yet)",
