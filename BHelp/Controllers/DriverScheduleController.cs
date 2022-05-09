@@ -92,6 +92,11 @@ namespace BHelp.Controllers
             view.BoxDay = new DateTime[6, 6];
             view.BoxDriverName = new string[26];
             view.BoxBackupDriverName = new string[26];
+            view.BoxDriverId = new string[26];
+            view.BoxDriverPhone = new string[26];
+            view.BoxDriverPhone2 = new string[26];
+            view.BoxDriverEmail = new string[26];
+            view.BoxDriverConfirmed = new bool[26];
             view.BoxNote = new string[26];
 
             // Get all driver records for this month

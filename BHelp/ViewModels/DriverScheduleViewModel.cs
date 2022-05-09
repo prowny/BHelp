@@ -33,10 +33,17 @@ namespace BHelp.ViewModels
         public DateTime[,] BoxDay { get; set; }
         public string[] BoxDriverName { get; set; }
         public string[] BoxBackupDriverName { get; set; }
+        public string[] BoxDriverId { get; set; }
+        public string[] BoxDriverPhone { get; set; }
+        public string[] BoxDriverPhone2 { get; set; }
+        public string[] BoxDriverEmail { get; set; }
+        public bool[] BoxDriverConfirmed { get; set; }
 
         [DataType(DataType.MultilineText)]
         public string[] BoxNote { get; set; }
+
         public bool AllowEdit { get; set; }
+        public bool DriverConfirmed { get; set; }
         public DateTime CurrentDate { get; set; }  // to set mindate in datepicker
         public string CurrentUserId { get; set; }
     }

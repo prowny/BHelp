@@ -64,7 +64,7 @@ namespace BHelp.Controllers
                 }
             }
 
-            if (User.IsInAnyRoles("OfficerOfTheDay","Scheduler", "Developer", "Administrator"))
+            if (User.IsInAnyRoles("Scheduler", "Developer", "Administrator"))
             {
                 var cutOffDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
                 if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer", "Administrator"))
@@ -148,6 +148,7 @@ namespace BHelp.Controllers
                                 view.BoxODName[idx] = odList[odIdx].Text;
                                 if (odDataList[odIdx].PhoneNumber != null) view.BoxODPhone[idx] = odDataList[odIdx].PhoneNumber;
                                 if (odDataList[odIdx].PhoneNumber2 != null) view.BoxODPhone2[idx] = odDataList[odIdx].PhoneNumber2;
+                                if (odDataList[odIdx].Email != null) view.BoxODEmail[idx] = odDataList[odIdx].Email;
                                 if (odList[odIdx].Value != null) view.BoxODId[idx] = odList[odIdx].Value;
                             }
                             view.BoxNote[idx] = monthlyList[mIdx].Note;
