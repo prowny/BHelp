@@ -135,7 +135,7 @@
 <div>
     <strong>Driver Menu</strong><br />
     <a href="@Url.Action("Index", "Driver")">Call Log - Driver Section</a><br />
-    @*<a href="@Url.Action("Edit", "DriverSchedule")">View Driver Schedules</a><br />*@
+    <a href="@Url.Action("Edit", "DriverSchedule")">View Driver Schedules</a><br />
     <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
     <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["vmPassword"])</span>
     @if (Model.ShowDriverDocumentsMenu)
