@@ -349,6 +349,7 @@ namespace BHelp.Controllers
     }
         private List<SelectListItem> GetDriverIdSelectList()
         {
+           
             if (Session["DriverSelectList"] == null)
             {
                 var driverList = new List<SelectListItem>();
@@ -360,7 +361,8 @@ namespace BHelp.Controllers
 
                 driverList.Add(new SelectListItem()
                 {
-                    Text = @"(nobody yet)",
+                    Text 
+                        = @"(nobody yet)",
                     Value = "0"
                 });
                 driverDataList.Add(new ApplicationUser()
@@ -400,6 +402,7 @@ namespace BHelp.Controllers
                     {
                         var userDataSelectItem = new SelectListItem()
                         {
+            
                             Text = userData.FullName,
                             Value = currentUserId
                         };
@@ -426,88 +429,90 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Developer,Administrator,Staff,Scheduler,Driver")]
         public ActionResult DriverScheduleToExcel()
         {
-            var dateData = Session["DriverScheduleDateData"].ToString();
-            var month = Convert.ToInt32(dateData.Substring(2, 2));
-            var year = Convert.ToInt32(dateData.Substring(4, 4));
-            var startDt = new DateTime(year, month, 1);
-            var endDate = new DateTime(year, month, DateTime.DaysInMonth(year, month));
-            var startDayOfWk = (int)startDt.DayOfWeek;
-            var monthlyList = GetMonthlyList(month, year);
-            var driverList = (List<SelectListItem>)Session["DriverList"];
-            var driverDataList  = (List<ApplicationUser>)Session["DriverDataList"];
-            var BoxDay = new DateTime[6, 6];
-            var BoxDriverName = new string[26];
-            var BoxDriverPhone = new string[26];
-            var BoxDriverPhone2 = new string[26];
-            var BoxDriverEmail = new string[26];
-            var BoxBackupDriverName = new string[26];
-            var BoxBackupDriverPhone = new string[26];
-            var BoxBackupDriverPhone2 = new string[26];
-            var BoxBackupDriverEmail = new string[26];
-            var BoxNote = new string[26];
+            var view = GetDriverScheduleViewModel();
 
-            for(var i = 1; i < 6; i++)
-            {
-                for (var j = 1; j < 6; j++)
-                {
-                    if (i == 1)
-                    {
-                        if (j < startDayOfWk) continue;
-                        BoxDay[i, j] = startDt.AddDays(j - startDayOfWk);
-                        var mIdx = monthlyList.FindIndex(d => d.Date == BoxDay[i, j]);
-                        if (mIdx >= 0)  // mIdx = -1 if match not found
-                        {
-                            var dIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].DriverId);
-                            var bdIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].BackupDriverId);
-                            var idx = j + 5 * (i - 1);
-                            if (dIdx >= 0)
-                            {
-                                BoxDriverName[idx] = driverList[dIdx].Text;
-                               
-                            }
-                            if (bdIdx >= 0) BoxBackupDriverName[idx] = driverList[bdIdx].Text;
-                            BoxNote[idx] = monthlyList[mIdx].Note;
-                        }
-                        continue;
-                    }
-                    if (BoxDay[i - 1, j] == DateTime.MinValue)
-                    {
-                        BoxDay[i, j] = startDt.AddDays(7 + j - startDayOfWk);
-                        var mIdx = monthlyList.FindIndex(d => d.Date == BoxDay[i, j]);
-                        if (mIdx >= 0)  // mIdx = -1 if match not found
-                        {
-                            var dIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].DriverId);
-                            var bdIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].BackupDriverId);
-                            var idx = j + 5 * (i - 1);
-                            if (dIdx >= 0) BoxDriverName[idx] = driverList[dIdx].Text;
-                            if (bdIdx >= 0) BoxBackupDriverName[idx] = driverList[bdIdx].Text;
-                            BoxNote[idx] = monthlyList[mIdx].Note;
-                        }
-                    }
-                    else
-                    {
-                        if (BoxDay[i - 1, j].AddDays(7) <= endDate)
-                        {
-                            BoxDay[i, j] = BoxDay[i - 1, j].AddDays(7);
-                            var mIdx = monthlyList.FindIndex(d => d.Date == BoxDay[i, j]);
-                            if (mIdx >= 0)  // mIdx = -1 if match not found
-                            {
-                                var dIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].DriverId);
-                                var bdIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].BackupDriverId);
-                                var idx = j + 5 * (i - 1);
-                                if (dIdx >= 0) BoxDriverName[idx] = driverList[dIdx].Text;
-                                if (bdIdx >= 0) BoxBackupDriverName[idx] = driverList[bdIdx].Text;
-                                BoxNote[idx] = monthlyList[mIdx].Note;
-                            }
-                        }
-                    }
-                }
-            }
+            //var dateData = Session["DriverScheduleDateData"].ToString();
+            //var month = Convert.ToInt32(dateData.Substring(2, 2));
+            //var year = Convert.ToInt32(dateData.Substring(4, 4));
+            //var startDt = new DateTime(year, month, 1);
+            //var endDate = new DateTime(year, month, DateTime.DaysInMonth(year, month));
+            //var startDayOfWk = (int)startDt.DayOfWeek;
+            //var monthlyList = GetMonthlyList(month, year);
+            //var driverList = (List<SelectListItem>)Session["DriverList"];
+            //var driverDataList  = (List<ApplicationUser>)Session["DriverDataList"];
+            //var BoxDay = new DateTime[6, 6];
+            //var BoxDriverName = new string[26];
+            //var BoxDriverPhone = new string[26];
+            //var BoxDriverPhone2 = new string[26];
+            //var BoxDriverEmail = new string[26];
+            //var BoxBackupDriverName = new string[26];
+            //var BoxBackupDriverPhone = new string[26];
+            //var BoxBackupDriverPhone2 = new string[26];
+            //var BoxBackupDriverEmail = new string[26];
+            //var BoxNote = new string[26];
+
+            //for(var i = 1; i < 6; i++)
+            //{
+            //    for (var j = 1; j < 6; j++)
+            //    {
+            //        if (i == 1)
+            //        {
+            //            if (j < startDayOfWk) continue;
+            //            BoxDay[i, j] = startDt.AddDays(j - startDayOfWk);
+            //            var mIdx = monthlyList.FindIndex(d => d.Date == BoxDay[i, j]);
+            //            if (mIdx >= 0)  // mIdx = -1 if match not found
+            //            {
+            //                var dIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].DriverId);
+            //                var bdIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].BackupDriverId);
+            //                var idx = j + 5 * (i - 1);
+            //                if (dIdx >= 0)
+            //                {
+            //                    BoxDriverName[idx] = driverList[dIdx].Text;
+
+            //                }
+            //                if (bdIdx >= 0) BoxBackupDriverName[idx] = driverList[bdIdx].Text;
+            //                BoxNote[idx] = monthlyList[mIdx].Note;
+            //            }
+            //            continue;
+            //        }
+            //        if (BoxDay[i - 1, j] == DateTime.MinValue)
+            //        {
+            //            BoxDay[i, j] = startDt.AddDays(7 + j - startDayOfWk);
+            //            var mIdx = monthlyList.FindIndex(d => d.Date == BoxDay[i, j]);
+            //            if (mIdx >= 0)  // mIdx = -1 if match not found
+            //            {
+            //                var dIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].DriverId);
+            //                var bdIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].BackupDriverId);
+            //                var idx = j + 5 * (i - 1);
+            //                if (dIdx >= 0) BoxDriverName[idx] = driverList[dIdx].Text;
+            //                if (bdIdx >= 0) BoxBackupDriverName[idx] = driverList[bdIdx].Text;
+            //                BoxNote[idx] = monthlyList[mIdx].Note;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            if (BoxDay[i - 1, j].AddDays(7) <= endDate)
+            //            {
+            //                BoxDay[i, j] = BoxDay[i - 1, j].AddDays(7);
+            //                var mIdx = monthlyList.FindIndex(d => d.Date == BoxDay[i, j]);
+            //                if (mIdx >= 0)  // mIdx = -1 if match not found
+            //                {
+            //                    var dIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].DriverId);
+            //                    var bdIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].BackupDriverId);
+            //                    var idx = j + 5 * (i - 1);
+            //                    if (dIdx >= 0) BoxDriverName[idx] = driverList[dIdx].Text;
+            //                    if (bdIdx >= 0) BoxBackupDriverName[idx] = driverList[bdIdx].Text;
+            //                    BoxNote[idx] = monthlyList[mIdx].Note;
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
 
             var workbook = new XLWorkbook();
             IXLWorksheet ws = workbook.Worksheets.Add("Driver Schedule");
 
-            var tempDate = new DateTime(year, month, 1);
+            var tempDate = new DateTime(view.Year, view.Month, 1);
             var monthName = tempDate.ToString("MMMM");
 
             int row = 1;
@@ -516,7 +521,7 @@ namespace BHelp.Controllers
             ws.Columns("3").Width = 20;
             ws.Columns("4").Width = 20;
             ws.Columns("5").Width = 20;
-            ws.Cell(row, 1).SetValue("BHelp Drivers Schedule - " + monthName + " " + year);
+            ws.Cell(row, 1).SetValue("BHelp Drivers Schedule - " + monthName + " " + view.Year);
 
             row++;
             ws.Cell(row, 1).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
@@ -535,26 +540,44 @@ namespace BHelp.Controllers
                 row++;
                 for (var j = 1; j < 6; j++)
                 {
-                    if (BoxDay[i, j] > DateTime.MinValue)
+                    if (view.BoxDay[i, j] > DateTime.MinValue)
                     {
-                        var boxContents = (BoxDay[i, j].Day.ToString("0"));
+                        var boxContents = (view.BoxDay[i, j].Day.ToString("0"));
                         var idx = j + 5 * (i - 1);
-                        if (BoxDriverName[idx] != null)
+                        if (view.BoxDriverName[idx] != null)
                         {
                             boxContents += Environment.NewLine + "Driver:";
-                            boxContents += Environment.NewLine + BoxDriverName[idx];
+                            boxContents += Environment.NewLine + view.BoxDriverName[idx];
                         }
 
-                        if (BoxBackupDriverName[idx] != null)
+                        if(view.BoxDriverPhone[idx] !=null) 
+                        {boxContents += Environment.NewLine + view.BoxDriverPhone[idx]; }
+
+                        if (view.BoxDriverPhone2[idx] != null)
+                        { boxContents += Environment.NewLine + view.BoxDriverPhone2[idx]; }
+
+                        if (view.BoxDriverEmail[idx] != null)
+                        { boxContents += Environment.NewLine + view.BoxDriverEmail[idx]; }
+
+                        if (view.BoxBackupDriverName[idx] != null)
                         {
                             boxContents += Environment.NewLine + "Backup Driver:";
-                            boxContents += Environment.NewLine + BoxBackupDriverName[idx];
+                            boxContents += Environment.NewLine + view.BoxBackupDriverName[idx];
                         }
 
-                        if (BoxNote[idx] != null)
+                        if (view.BoxBackupDriverPhone[idx] != null)
+                        { boxContents += Environment.NewLine + view.BoxBackupDriverPhone[idx]; }
+
+                        if (view.BoxBackupDriverPhone2[idx] != null)
+                        { boxContents += Environment.NewLine + view.BoxBackupDriverPhone2[idx]; }
+
+                        if (view.BoxBackupDriverEmail[idx] != null)
+                        { boxContents += Environment.NewLine + view.BoxBackupDriverEmail[idx]; }
+                        
+                        if (view.BoxNote[idx] != null)
                         {
                             boxContents += Environment.NewLine + "Notes:";
-                            boxContents += Environment.NewLine + BoxNote[idx];
+                            boxContents += Environment.NewLine + view.BoxNote[idx];
                         }
 
                         ws.Cell(row, j).Style.Alignment.SetVertical(XLAlignmentVerticalValues.Top);
@@ -574,6 +597,7 @@ namespace BHelp.Controllers
         {
             var view = new DriverScheduleViewModel()
             {
+                BoxDay = new DateTime[6, 6],
                 BoxDriverId = new string[26],
                 BoxDriverName = new string[26],
                 BoxDriverPhone = new string[26],
@@ -587,15 +611,15 @@ namespace BHelp.Controllers
                 BoxNote = new string[26]
             };
             var dateData = Session["DriverScheduleDateData"].ToString();
-            var month = Convert.ToInt32(dateData.Substring(2, 2));
-            var year = Convert.ToInt32(dateData.Substring(4, 4));
-            var startDt = new DateTime(year, month, 1);
-            var endDate = new DateTime(year, month, DateTime.DaysInMonth(year, month));
+            view.Month = Convert.ToInt32(dateData.Substring(2, 2));
+            view.Year = Convert.ToInt32(dateData.Substring(4, 4));
+            var startDt = new DateTime(view.Year, view.Month, 1);
+            var endDate = new DateTime(view.Year,view.Month, DateTime.DaysInMonth(view.Year, view.Month));
             var startDayOfWk = (int)startDt.DayOfWeek;
-            var monthlyList = GetMonthlyList(month, year);
+            var monthlyList = GetMonthlyList(view.Month, view.Year);
             var driverList = (List<SelectListItem>)Session["DriverList"];
             var driverDataList = (List<ApplicationUser>)Session["DriverDataList"];
-            var BoxDay = new DateTime[6, 6];
+            //var BoxDay = new DateTime[6, 6];
             for (var i = 1; i < 6; i++)
             {
                 for (var j = 1; j < 6; j++)
@@ -603,8 +627,8 @@ namespace BHelp.Controllers
                     if (i == 1)
                     {
                         if (j < startDayOfWk) continue;
-                        BoxDay[i, j] = startDt.AddDays(j - startDayOfWk);
-                        var mIdx = monthlyList.FindIndex(d => d.Date == BoxDay[i, j]);
+                        view.BoxDay[i, j] = startDt.AddDays(j - startDayOfWk);
+                        var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
                         if (mIdx >= 0)  // mIdx = -1 if match not found
                         {
                             var idx = j + 5 * (i - 1);
@@ -630,10 +654,10 @@ namespace BHelp.Controllers
                         }
                         continue;
                     }
-                    if (BoxDay[i - 1, j] == DateTime.MinValue)
+                    if (view.BoxDay[i - 1, j] == DateTime.MinValue)
                     {
-                        BoxDay[i, j] = startDt.AddDays(7 + j - startDayOfWk);
-                        var mIdx = monthlyList.FindIndex(d => d.Date == BoxDay[i, j]);
+                        view.BoxDay[i, j] = startDt.AddDays(7 + j - startDayOfWk);
+                        var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
                         if (mIdx >= 0)  // mIdx = -1 if match not found
                         {
                             var idx = j + 5 * (i - 1);
@@ -660,10 +684,10 @@ namespace BHelp.Controllers
                     }
                     else
                     {
-                        if (BoxDay[i - 1, j].AddDays(7) <= endDate)
+                        if (view.BoxDay[i - 1, j].AddDays(7) <= endDate)
                         {
-                            BoxDay[i, j] = BoxDay[i - 1, j].AddDays(7);
-                            var mIdx = monthlyList.FindIndex(d => d.Date == BoxDay[i, j]);
+                            view.BoxDay[i, j] = view.BoxDay[i - 1, j].AddDays(7);
+                            var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
                             if (mIdx >= 0)  // mIdx = -1 if match not found
                             {
                                 var idx = j + 5 * (i - 1);
