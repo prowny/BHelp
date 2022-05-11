@@ -1,4 +1,5 @@
 ﻿@using System.Web.Mvc.Html
+@using DocumentFormat.OpenXml.Vml.Presentation
 @model BHelp.ViewModels.DriverScheduleViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
@@ -76,9 +77,9 @@
         <div>
             <table>
                 <tr>
-                    <td><b>Bethesda Help Drivers Schedule - </b><span style="color: red">
+                    <td><b>Bethesda Help Drivers Schedule - </b><span style="color: red; font: bold">
                         <b>@Model.MonthName&nbsp;@Model.Year</b>
-                    </span> </td>
+                    </span> </td>d
                     <td>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         @Html.ActionLink(" Previous Month", "PreviousMonth",
@@ -115,13 +116,24 @@
                 <td style="border: thin solid black; vertical-align: top; background-color: @bgcolor">
                     @if (Model.DriversSchedule[i].Date > DateTime.MinValue)
                     {<b>@Html.Label(Model.DriversSchedule[i].DayString)</b>
-                        if (Model.AllowEdit)
-                        {
-                            <span style="font-size: x-small">
-                                @Html.ActionLink("Edit", "Edit",
-                                    new { boxDate = Model.DriversSchedule[i].Date })</span>
-                        }
-                    if (Model.BoxDriverName[i] != null)
+                    if (Model.AllowEdit)
+                    {
+                        <span style="font-size: x-small">
+                            @Html.ActionLink("Edit", "Edit",
+                                new { boxDate = Model.DriversSchedule[i].Date })
+                        </span>
+                    }
+                    if (Model.BoxDriverName[i] == null)
+                    {
+                        <span style="font-size: x-small">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            @Html.Label("Driver: ")
+                        </span>
+                        <span style="text-decoration-color: red">
+                            @Html.Label("TBD", new{style = "color: red"})
+                        </span>
+                    }
+                    else
                     {
                         <span style="font-size: x-small">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -154,7 +166,17 @@
                         }
                     }
 
-                    if (Model.BoxBackupDriverName[i] != null)
+                    if (Model.BoxBackupDriverName[i] == null)
+                    {
+                        <br />
+                        <span style="font-size: x-small">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            @Html.Label("Backup Driver: ")</span>
+                        <span style="text-decoration-color: red">
+                            @Html.Label("TBD", new{style = "color: red"})
+                        </span>
+                    }
+                    else
                     {
                         <br />
                         <span style="font-size: x-small">
@@ -196,7 +218,7 @@
                             @Html.Label("Notes")
                         </span>
                         <br />
-                        @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine,"<br/>" )) @*Html.Label will not display if it contains a period*@
+                        @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>")) @*Html.Label will not display if it contains a period*@
                     }
                 }
                 </td>
