@@ -28,10 +28,13 @@
         if (Model.AllowEdit)
         {
             <div id="CurrentDate">
+                @*== Div hidden by jscript below ==*@
                 @Html.TextBoxFor(m =>
-                    m.CurrentDate, new {id = "curDate"})
+                    m.CurrentDate, new { id = "curDate" })
             </div>
-            <div style ="background: lightgreen ">    @*EditSection"*@
+            @*===================== Edit Section ====================*@
+            <div style="background: lightgreen ">
+                @*EditSection"*@
                 <table>
                     <tr>
                         <td><b>Driver Schedule</b></td>
@@ -84,7 +87,7 @@
                         {
                             <td>
                                 &nbsp;&nbsp;
-                                <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
+                                <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
                             </td>
                         }
                     </tr>
@@ -93,18 +96,23 @@
             </div>
         }
         <div>
+            @*===================== Calendar Section =================*@
             <table>
                 <tr>
-                    <td><b>Bethesda Help Drivers Schedule - </b><span style="color: red; font: bold">
-                        <b>@Model.MonthName&nbsp;@Model.Year</b>
-                    </span> </td>
+                    <td>
+                        <b>Bethesda Help Drivers Schedule - </b><span style="color: red; font: bold">
+                            <b>@Model.MonthName&nbsp;@Model.Year</b>
+                        </span>
+                    </td>
                     <td>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         @Html.ActionLink(" Previous Month", "PreviousMonth",
                             new { @Model.Month, @Model.Year })
                     </td>
-                    <td>&nbsp;&nbsp;@Html.ActionLink(" Next Month", "NextMonth", 
-                                        new { @Model.Month, @Model.Year })</td>
+                    <td>
+                        &nbsp;&nbsp;@Html.ActionLink(" Next Month", "NextMonth",
+                            new { @Model.Month, @Model.Year })
+                    </td>
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home")</td>
                 </tr>
             </table>
@@ -118,143 +126,144 @@
                     <th class="top">THURSDAY</th>
                     <th class="top">FRIDAY</th>
                 </tr>
-                
-        @{var i = 0;}
-        @for (var row = 1; row < 6; row++)
-        {
-            <tr>
-                @for (var col = 1; col < 6; col++)
+
+                @{var i = 0;}
+                @for (var row = 1; row < 6; row++)
                 {
-                    i++;
-                    var bgcolor = "white"; 
-                    if (Model.DriversSchedule[i].Date == Model.Date && Model.AllowEdit)
-                    {
-                        bgcolor = "yellow";
-                    }
-                <td style="border: thin solid black; vertical-align: top; background-color: @bgcolor">
-                    @if (Model.DriversSchedule[i].Date > DateTime.MinValue)
-                    {<b>@Html.Label(Model.DriversSchedule[i].DayString)</b>
-                        if (Model.AllowEdit)
+                    <tr>
+                        @for (var col = 1; col < 6; col++)
                         {
-                            if (!Model.BoxHoliday[i])
+                            i++;
+                            var bgcolor = "white";
+                            if (Model.DriversSchedule[i].Date == Model.Date && Model.AllowEdit)
                             {
-                                <span style="font-size: x-small">
-                                    @Html.ActionLink("Edit", "Edit",
-                                        new { boxDate = Model.DriversSchedule[i].Date })
-                                </span>
+                                bgcolor = "yellow";
                             }
-                        }
-                    if (Model.BoxDriverName[i] == null)
-                    {
-                        if (!Model.BoxHoliday[i])
-                        {
-                            <span style="font-size: small">
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                @Html.Label("Driver: ")
-                            </span>
-                            <span style="text-decoration-color: red">
-                                @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
-                            </span>
-                        }
-                    }
-                    else
-                    {
-                        <span style="font-size: small">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            @Html.Label("Driver")
-                        </span>
-                        <br />
-                        @Html.Label(Model.BoxDriverName[i])
+                            <td style="border: thin solid black; vertical-align: top; background-color: @bgcolor">
+                                @if (Model.DriversSchedule[i].Date > DateTime.MinValue)
+                                {<b>@Html.Label(Model.DriversSchedule[i].DayString)</b>
+                                if (Model.AllowEdit)
+                                {
+                                    if (!Model.BoxHoliday[i])
+                                    {
+                                        <span style="font-size: small">
+                                            @Html.ActionLink("Edit", "Edit",
+                                                new { boxDate = Model.DriversSchedule[i].Date })
+                                        </span>
+                                    }
+                                }
+                                if (Model.BoxDriverName[i] == null)
+                                {
+                                    if (!Model.BoxHoliday[i])
+                                    {
+                                        <span style="font-size: small">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            @Html.Label("Driver: ")
+                                        </span>
+                                        <span style="text-decoration-color: red">
+                                            @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span style="font-size: small">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        @Html.Label("Driver")
+                                    </span>
+                                    <br />
+                                    @Html.Label(Model.BoxDriverName[i])
 
-                        if (Model.BoxDriverPhone[i] != null)
-                        {
-                            <br />
-                            @Html.Label(Model.BoxDriverPhone[i])
-                        }
+                                    if (Model.BoxDriverPhone[i] != null)
+                                    {
+                                        <br />
+                                        @Html.Label(Model.BoxDriverPhone[i])
+                                    }
 
-                        if (Model.BoxDriverPhone2[i] != null)
-                        {
-                            <br />
-                            @Html.Label(Model.BoxDriverPhone2[i])
-                        }
-                        if (Model.BoxDriverEmail[i] != null)
-                        {
-                            var subject = "BHELP Food Program";
-                            var body = @Model.DriversSchedule[i].Date.ToLongDateString()
-                                       + " Driver: " + @Model.BoxDriverName[i];
-                            <a href="mailto:@Uri.EscapeDataString(Model.BoxDriverEmail[i])
+                                    if (Model.BoxDriverPhone2[i] != null)
+                                    {
+                                        <br />
+                                        @Html.Label(Model.BoxDriverPhone2[i])
+                                    }
+                                    if (Model.BoxDriverEmail[i] != null)
+                                    {
+                                        var subject = "BHELP Food Program";
+                                        var body = @Model.DriversSchedule[i].Date.ToLongDateString()
+                                                   + " Driver: " + @Model.BoxDriverName[i];
+                                        <a href="mailto:@Uri.EscapeDataString(Model.BoxDriverEmail[i])
                                    ?Subject=@Uri.EscapeDataString(subject)
                                    &body=@Uri.EscapeDataString(body)">
-                                @Model.BoxDriverEmail[i]
-                            </a>
-                            }
-                        }
+                                            @Model.BoxDriverEmail[i]
+                                        </a>
+                                    }
+                                }
 
-                        if (Model.BoxBackupDriverName[i] == null)
-                        {
-                            if (!Model.BoxHoliday[i])
-                            {
-                                <br/>
-                                <span style="font-size: small">
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    @Html.Label("Backup Driver: ")</span>
-                                <span style="text-decoration-color: red">
-                                    @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
-                                </span>
-                            }
-                        }
-                    else
-                    {
-                        <br />
-                        <span style="font-size: small">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            @Html.Label("Backup Driver")
-                        </span>
-                        <br />
-                        @Html.Label(Model.BoxBackupDriverName[i])
+                                if (Model.BoxBackupDriverName[i] == null)
+                                {
+                                    if (!Model.BoxHoliday[i])
+                                    {
+                                        <br />
+                                        <span style="font-size: small">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            @Html.Label("Backup Driver: ")
+                                        </span>
+                                        <span style="text-decoration-color: red">
+                                            @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <br />
+                                    <span style="font-size: small">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        @Html.Label("Backup Driver")
+                                    </span>
+                                    <br />
+                                    @Html.Label(Model.BoxBackupDriverName[i])
 
-                        if (Model.BoxBackupDriverPhone[i] != null)
-                        {
-                            <br />
-                            @Html.Label(Model.BoxBackupDriverPhone[i])
-                        }
+                                    if (Model.BoxBackupDriverPhone[i] != null)
+                                    {
+                                        <br />
+                                        @Html.Label(Model.BoxBackupDriverPhone[i])
+                                    }
 
-                        if (Model.BoxBackupDriverPhone2[i] != null)
-                        {
-                            <br />
-                            @Html.Label(Model.BoxBackupDriverPhone2[i])
-                        }
-                        if (Model.BoxBackupDriverEmail[i] != null)
-                        {
-                            var subject = "BHELP Food Program";
-                            var body = @Model.DriversSchedule[i].Date.ToLongDateString()
-                                       + " Backup Driver: " + @Model.BoxBackupDriverName[i];
-                            <a href="mailto:@Uri.EscapeDataString(Model.BoxBackupDriverEmail[i])
+                                    if (Model.BoxBackupDriverPhone2[i] != null)
+                                    {
+                                        <br />
+                                        @Html.Label(Model.BoxBackupDriverPhone2[i])
+                                    }
+                                    if (Model.BoxBackupDriverEmail[i] != null)
+                                    {
+                                        var subject = "BHELP Food Program";
+                                        var body = @Model.DriversSchedule[i].Date.ToLongDateString()
+                                                   + " Backup Driver: " + @Model.BoxBackupDriverName[i];
+                                        <a href="mailto:@Uri.EscapeDataString(Model.BoxBackupDriverEmail[i])
                                    ?Subject=@Uri.EscapeDataString(subject)
                                    &body=@Uri.EscapeDataString(body)">
-                                @Model.BoxBackupDriverEmail[i]
-                            </a>
-                            }
-                        }
+                                            @Model.BoxBackupDriverEmail[i]
+                                        </a>
+                                    }
+                                }
 
-                        if (Model.BoxNote[i] != null)
-                        {
-                            if (!Model.BoxHoliday[i])
-                            {
-                                <br/>
-                                <span style="font-size: x-small">
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    @Html.Label("Notes")
-                                </span>
-                                <br/>
+                                if (Model.BoxNote[i] != null)
+                                {
+                                    if (!Model.BoxHoliday[i])
+                                    {
+                                        <br />
+                                        <span style="font-size: small">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            @Html.Label("Notes")
+                                        </span>
+                                        <br />
+                                    }
+                                    @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>")) @*Html.Label will not display if it contains a period*@
+                                }
                             }
-                            @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>")) @*Html.Label will not display if it contains a period*@
-                    }
+                            </td>
+                        }
+                    </tr>
                 }
-                </td>
-                }
-            </tr>
-        }
             </table>
         </div>
         <br />
@@ -265,11 +274,11 @@
         </div>
     }
     <br />
-<div>
-    @Html.ActionLink("Download to Excel File", "DriverScheduleToExcel", "DriverSchedule")
-    <br/>
-    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
-</div>
+    <div>
+        @Html.ActionLink("Download to Excel File", "DriverScheduleToExcel", "DriverSchedule")
+        <br />
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
 </body>
 </html>
 
