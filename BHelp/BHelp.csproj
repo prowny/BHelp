@@ -354,6 +354,7 @@
     <Compile Include="ViewModels\GroupNameViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="ViewModels\HolidayViewModel.cs" />
     <Compile Include="ViewModels\ODScheduleViewModel.cs" />
     <Compile Include="ViewModels\OpenDeliveryViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

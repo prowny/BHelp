@@ -1195,5 +1195,138 @@ namespace BHelp
                 if (dayOfWeek == 6) dt = dt.AddDays(2); // change from Sat to Mon
                 return dt;
             }
+
+            public static List<HolidayViewModel> GetFederalHolidays(int year)
+            {
+                var Holidays = new List<HolidayViewModel>();
+                var holiday = new HolidayViewModel()
+                {
+                    Date = AdjustForWeekendHoliday( new DateTime(year, 1, 1).Date) ,
+                    Name = "New Year's Day"
+                };
+                Holidays.Add(holiday);
+
+                var dtDay = (from day in Enumerable.Range(1, 31)
+                    where new DateTime(year, 1, day).DayOfWeek == DayOfWeek.Monday
+                    select day).ElementAt(2); // third Monday
+                holiday = new HolidayViewModel()
+                {
+                    Date = new DateTime(year, 2, dtDay),
+                    Name = "Martiin Luther King, Jr. Day"
+                };
+                Holidays.Add(holiday);
+
+                //    NOT OBSERVED AT BETHESDA HELP
+                // dtDay = (from day in Enumerable.Range(1, 29)
+                //    where new DateTime(year, 2, day).DayOfWeek == DayOfWeek.Monday
+                //    select day).ElementAt(2);  // thired Monday
+                //holiday = new HolidayViewModel()
+                //{
+                //    Date = new DateTime(year, 2, dtDay),
+                //    Name = "Presidents' Day"
+                //};
+                //Holidays.Add(holiday);
+
+
+            var dt = new DateTime(year, 5, 31);
+                var dayOfWeek = dt.DayOfWeek;
+                while (dayOfWeek != DayOfWeek.Monday)
+                {
+                    dt = dt.AddDays(-1);
+                    dayOfWeek = dt.DayOfWeek;
+                }
+                holiday = new HolidayViewModel()
+                {
+                    Date =dt.Date,
+                    Name = "Memorial Day"
+                };
+                Holidays.Add(holiday);
+
+                dt = AdjustForWeekendHoliday(new DateTime(year, 6, 19).Date);
+                holiday = new HolidayViewModel()
+                {
+                    Date = dt.Date,
+                    Name = "Juneteenth Day"
+                };
+                Holidays.Add(holiday);
+
+                dt = AdjustForWeekendHoliday(new DateTime(year, 7, 4).Date);
+                holiday = new HolidayViewModel()
+                {
+                    Date = dt.Date,
+                    Name = "Independence Day"
+                };
+                Holidays.Add(holiday);
+
+                dt = new DateTime(year, 9, 1);
+                dayOfWeek =dt.DayOfWeek;
+                while (dayOfWeek != DayOfWeek.Monday)
+                {
+                    dt = dt.AddDays(1);
+                    dayOfWeek = dt.DayOfWeek;
+                }
+                holiday = new HolidayViewModel()
+                {
+                    Date = dt.Date,
+                    Name = "Labor Day"
+                };
+                Holidays.Add(holiday);
+
+                dtDay = (from day in Enumerable.Range(1, 31)
+                where new DateTime(year, 10, day).DayOfWeek == DayOfWeek.Monday
+                select day).ElementAt(1);
+            holiday = new HolidayViewModel()
+            {
+                Date = new DateTime(year, 10, dtDay),
+                Name = "Columbus Day"
+            };
+            Holidays.Add(holiday);
+
+            dt = AdjustForWeekendHoliday(new DateTime(year, 11, 11).Date);
+            holiday = new HolidayViewModel()
+            {
+                Date = dt.Date,
+                Name = "Veterans Day"
+            };
+            Holidays.Add(holiday);
+
+
+            dtDay = (from day in Enumerable.Range(1, 30)
+                where new DateTime(year, 11, day).DayOfWeek == DayOfWeek.Thursday
+                select day).ElementAt(3);
+            holiday = new HolidayViewModel()
+            {
+                Date = new  DateTime(year, 11, dtDay),
+                Name = "Thanksgiving Day"
+            };
+            Holidays.Add(holiday);
+
+            dt = AdjustForWeekendHoliday(new DateTime(year, 12, 25).Date);
+            holiday = new HolidayViewModel()
+            {
+                Date = dt.Date,
+                Name = "Christmas Day"
+            };
+            Holidays.Add(holiday);
+
+            return Holidays;
+            }
+
+            private static DateTime AdjustForWeekendHoliday(DateTime holiday)
+            {
+                if (holiday.DayOfWeek == DayOfWeek.Saturday)
+                {
+                    return holiday.AddDays(-1);
+                }
+                else if (holiday.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    return holiday.AddDays(1);
+                }
+                else
+                {
+                    return holiday;
+                }
+            }
+
     }
 }

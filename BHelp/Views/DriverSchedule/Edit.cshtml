@@ -1,5 +1,4 @@
 ﻿@using System.Web.Mvc.Html
-@using DocumentFormat.OpenXml.Vml.Presentation
 @model BHelp.ViewModels.DriverScheduleViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
@@ -32,21 +31,12 @@
                 @Html.TextBoxFor(m =>
                     m.CurrentDate, new {id = "curDate"})
             </div>
-            <div id="EditSection">
+            <div style ="background: lightgreen ">    @*EditSection"*@
                 <table>
                     <tr>
-                        <td><b>BHelp Driver Schedule</b></td>
+                        <td><b>Driver Schedule</b></td>
                         <td style="text-align: center">Date:</td>
-                        <td style="text-align: center">Driver:</td>
-                        <td style="text-align: center">Backup Driver:</td>
-                        <td style="text-align: center">Notes:</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: right" class="edit">Enter/Edit data here:</td>
-                        <td class="edit" style="text-align: center">
-                            @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
-                                new { id = "BoxDate", style = "width: 75px; background-color: yellow; text-align:center" })
-                        </td>
+                        <td style="text-align: right">Driver:</td>
                         <td>
                             @Html.DropDownListFor(m => m.DriverId,
                                 new SelectList(Model.DriverList,
@@ -54,6 +44,23 @@
                                 new { @class = "form-control" })
                             @Html.ValidationMessageFor(m => m.DriverId, "", new { @class = "text-danger" })
                         </td>
+                        <td style="text-align: right">Group:</td>
+                        <td>
+                            @Html.DropDownListFor(m => m.GroupDriverId,
+                                new SelectList(Model.GroupList,
+                                    "Value", "Text"),
+                                new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.GroupDriverId, "", new { @class = "text-danger" })
+                        </td>
+                        <td style="text-align: center">Notes:</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center"><b>Edit Section</b></td>
+                        <td style="text-align: center">
+                            @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
+                                new { id = "BoxDate", style = "width: 75px; background-color: yellow; text-align:center" })
+                        </td>
+                        <td style="text-align: right">Backup:</td>
                         <td>
                             @Html.DropDownListFor(m => m.BackupDriverId,
                                 new SelectList(Model.BackupDriverList,
@@ -61,17 +68,28 @@
                                 new { @class = "form-control" })
                             @Html.ValidationMessageFor(m => m.BackupDriverId, "", new { @class = "text-danger" })
                         </td>
+                        <td style="text-align: right">GpDriver:</td>
                         <td>
-                            @Html.TextAreaFor(t => t.Note)
+                            @Html.DropDownListFor(m => m.GroupDriverId,
+                                new SelectList(Model.DriverList,
+                                    "Value", "Text"),
+                                new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.BackupDriverId, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            @Html.TextAreaFor(t => t.Note, new { style = "height: 12px" })
                             @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
                         </td>
-                        <td>
-                            &nbsp;&nbsp;
-                            <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
-                        </td>
+                        @if (!Model.IsHoliday)
+                        {
+                            <td>
+                                &nbsp;&nbsp;
+                                <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
+                            </td>
+                        }
                     </tr>
                 </table>
-                <hr/>
+                <hr />
             </div>
         }
         <div>
@@ -79,7 +97,7 @@
                 <tr>
                     <td><b>Bethesda Help Drivers Schedule - </b><span style="color: red; font: bold">
                         <b>@Model.MonthName&nbsp;@Model.Year</b>
-                    </span> </td>d
+                    </span> </td>
                     <td>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         @Html.ActionLink(" Previous Month", "PreviousMonth",
@@ -116,26 +134,32 @@
                 <td style="border: thin solid black; vertical-align: top; background-color: @bgcolor">
                     @if (Model.DriversSchedule[i].Date > DateTime.MinValue)
                     {<b>@Html.Label(Model.DriversSchedule[i].DayString)</b>
-                    if (Model.AllowEdit)
-                    {
-                        <span style="font-size: x-small">
-                            @Html.ActionLink("Edit", "Edit",
-                                new { boxDate = Model.DriversSchedule[i].Date })
-                        </span>
-                    }
+                        if (Model.AllowEdit)
+                        {
+                            if (!Model.BoxHoliday[i])
+                            {
+                                <span style="font-size: x-small">
+                                    @Html.ActionLink("Edit", "Edit",
+                                        new { boxDate = Model.DriversSchedule[i].Date })
+                                </span>
+                            }
+                        }
                     if (Model.BoxDriverName[i] == null)
                     {
-                        <span style="font-size: x-small">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            @Html.Label("Driver: ")
-                        </span>
-                        <span style="text-decoration-color: red">
-                            @Html.Label("TBD", new{style = "color: red"})
-                        </span>
+                        if (!Model.BoxHoliday[i])
+                        {
+                            <span style="font-size: small">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                @Html.Label("Driver: ")
+                            </span>
+                            <span style="text-decoration-color: red">
+                                @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
+                            </span>
+                        }
                     }
                     else
                     {
-                        <span style="font-size: x-small">
+                        <span style="font-size: small">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             @Html.Label("Driver")
                         </span>
@@ -163,23 +187,26 @@
                                    &body=@Uri.EscapeDataString(body)">
                                 @Model.BoxDriverEmail[i]
                             </a>
+                            }
                         }
-                    }
 
-                    if (Model.BoxBackupDriverName[i] == null)
-                    {
-                        <br />
-                        <span style="font-size: x-small">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            @Html.Label("Backup Driver: ")</span>
-                        <span style="text-decoration-color: red">
-                            @Html.Label("TBD", new{style = "color: red"})
-                        </span>
-                    }
+                        if (Model.BoxBackupDriverName[i] == null)
+                        {
+                            if (!Model.BoxHoliday[i])
+                            {
+                                <br/>
+                                <span style="font-size: small">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    @Html.Label("Backup Driver: ")</span>
+                                <span style="text-decoration-color: red">
+                                    @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
+                                </span>
+                            }
+                        }
                     else
                     {
                         <br />
-                        <span style="font-size: x-small">
+                        <span style="font-size: small">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             @Html.Label("Backup Driver")
                         </span>
@@ -207,18 +234,21 @@
                                    &body=@Uri.EscapeDataString(body)">
                                 @Model.BoxBackupDriverEmail[i]
                             </a>
+                            }
                         }
-                    }
 
-                    if (Model.BoxNote[i] != null)
-                    {
-                        <br />
-                        <span style="font-size: x-small">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            @Html.Label("Notes")
-                        </span>
-                        <br />
-                        @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>")) @*Html.Label will not display if it contains a period*@
+                        if (Model.BoxNote[i] != null)
+                        {
+                            if (!Model.BoxHoliday[i])
+                            {
+                                <br/>
+                                <span style="font-size: x-small">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    @Html.Label("Notes")
+                                </span>
+                                <br/>
+                            }
+                            @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>")) @*Html.Label will not display if it contains a period*@
                     }
                 }
                 </td>

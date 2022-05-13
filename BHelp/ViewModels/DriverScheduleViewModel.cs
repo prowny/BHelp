@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
-using BHelp.Models;
 
 namespace BHelp.ViewModels
 {
@@ -21,9 +20,18 @@ namespace BHelp.ViewModels
 
         public string BackupDriverName { get; set; }
 
+        public int GroupId { get; set; }
+        public string GroupName { get; set; }
+
+        [StringLength(128)]
+        public string GroupDriverId { get; set; }
+
+        public string GroupDriverName { get; set; }
+      
         [DataType(DataType.MultilineText)]
         public string Note { get; set; }
 
+        public bool IsHoliday { get; set; }
         public string DayString { get; set; }
         public int Month { get; set; }
         public string MonthName { get; set; }
@@ -32,8 +40,8 @@ namespace BHelp.ViewModels
         public List<SelectListItem> BackupDriverList { get; set; }
         public List<DriverScheduleViewModel> DriversSchedule { get; set; }
         public DateTime[,] BoxDay { get; set; }
+
         public string[] BoxDriverName { get; set; }
-       
         public string[] BoxDriverId { get; set; }
         public string[] BoxDriverPhone { get; set; }
         public string[] BoxDriverPhone2 { get; set; }
@@ -46,13 +54,26 @@ namespace BHelp.ViewModels
         public string[] BoxBackupDriverPhone2 { get; set; }
         public string[] BoxBackupDriverEmail { get; set; }
 
+        public int[] BoxGroupId { get; set; }
+        public string[] BoxGroupName { get; set; }
+
+        public string[] BoxGroupDriverId { get; set; }
+        public string[] BoxGroupDriverName { get; set; }
+        public string[] BoxGroupDriverPhone { get; set; }
+        public string[] BoxGroupDriverPhone2 { get; set; }
+        public string[] BoxGroupDriverEmail { get; set; }
+
         [DataType(DataType.MultilineText)]
         public string[] BoxNote { get; set; }
+
+        public bool[] BoxHoliday { get; set; }
+
         public bool IsDriverOnly { get; set; }
         public bool IsScheduler { get; set; }
         public bool AllowEdit { get; set; }
         public bool DriverConfirmed { get; set; }
         public DateTime CurrentDate { get; set; }  // to set mindate in datepicker
         public string CurrentUserId { get; set; }
+        public List <SelectListItem> GroupList { get; set; }
     }
 }
