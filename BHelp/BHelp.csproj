@@ -306,6 +306,14 @@
     <Compile Include="Migrations\202205011728320_AddODConfirmed.Designer.cs">
       <DependentUpon>202205011728320_AddODConfirmed.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202205131938304_AddGroupDriver.cs" />
+    <Compile Include="Migrations\202205131938304_AddGroupDriver.Designer.cs">
+      <DependentUpon>202205131938304_AddGroupDriver.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202205132035585_AddGroupDriverAgain.cs" />
+    <Compile Include="Migrations\202205132035585_AddGroupDriverAgain.Designer.cs">
+      <DependentUpon>202205132035585_AddGroupDriverAgain.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -805,6 +813,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202205011728320_AddODConfirmed.resx">
       <DependentUpon>202205011728320_AddODConfirmed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202205131938304_AddGroupDriver.resx">
+      <DependentUpon>202205131938304_AddGroupDriver.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202205132035585_AddGroupDriverAgain.resx">
+      <DependentUpon>202205132035585_AddGroupDriverAgain.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

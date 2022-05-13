@@ -17,7 +17,7 @@ namespace BHelp.Models
         [StringLength(128)]
         public string BackupDriverId { get; set; }
 
-        public int GroupId { get; set; }
+        public int? GroupId { get; set; }
 
         [StringLength(128)]
         public string GroupDriverId { get; set; }
