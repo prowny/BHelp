@@ -7,22 +7,10 @@
     <meta name="viewport" content="width=device-width" />
     <title>Create</title>
     <style>
-        #Hours {
-            width: 45px;
-        }
-
-        #Minutes {
-            width: 30px;
-        }
-
-        #PeopleCount {
-            width: 30px;
-        }
-
-        #btnSubmit {
-            background-color: blue;
-            color: white
-        }
+        #Hours {width: 45px;}
+        #Minutes {width: 30px;}
+        #PeopleCount {width: 30px;}
+        #btnSubmit {background-color: blue;color: white}
     </style>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
@@ -100,7 +88,7 @@
                     <td><b>for Date:</b></td>
                     <td>
                         @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
-                            new { id = "HoursDateIndividual", style = "width: 75px;" })
+                            new { id = "HoursDateIndividual", style = "width: 75px; text-align:center" })
                         <span style="color: darkmagenta">&#8592;Click to change.</span> @*Html left-arrow*@
                     </td>
                 </tr>
@@ -113,7 +101,7 @@
                 <tr>
                     <td>
                         @Html.TextBox("Date", @Model.Date, "{0:MM/dd/yyyy}",
-                            new { id = "HoursDateNonIndiividual", style = "width: 75px;" })
+                            new { id = "HoursDateNonIndiividual", style = "width: 75px; text-align:center" })
                         <span style="color: darkmagenta">&#8592;Click to change.</span> @*Html left-arrow*@
                     </td>
                 </tr>
@@ -214,19 +202,21 @@
 </html>
 
 <script type="text/javascript">
-   
     $(function () {
         /* DatePicker for Individual Users*/
         var setMinDate = 0;
         var dateToday = new Date();
         var dayToday = dateToday.getDay();
+        if (dayToday === 1) { setMinDate = -0; }
         if (dayToday === 2) { setMinDate = -1; } /* go back to previous Monday*/
         if (dayToday === 3) { setMinDate = -2; }
         if (dayToday === 4) { setMinDate = -3; }
         if (dayToday === 5) { setMinDate = -4; }
+        if (dayToday === 6) { setMinDate = -5; }
         if (dayToday === 0) { setMinDate = -6; }
         window.$("#HoursDateIndividual").datepicker({
-            maxDate: +0, minDate: setMinDate, beforeShowDay: window.$.datepicker.noWeekends });
+            maxDate: +0, minDate: setMinDate, beforeShowDay: window.$.datepicker.noWeekends
+        });
     });
 </script>
 
