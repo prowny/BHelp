@@ -246,18 +246,33 @@
                                 }
                             }
 
+                            if (Model.BoxGroupName[i] != null)
+                            {
+                                <br />
+                                <span style="font-size: small">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    @Html.Label("Group")
+                                </span>
+                                <br />
+                                @Html.Label(Model.BoxGroupName[i])
+                            }
+
+
                             if (Model.BoxGroupDriverName[i] == null)
                             {
                                 if (!Model.BoxHoliday[i])
                                 {
-                                    <br />
-                                    <span style="font-size: small">
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        @Html.Label("Group Driver: ")
-                                    </span>
-                                    <span style="text-decoration-color: red">
-                                        @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
-                                    </span>
+                                    if (Model.BoxGroupName[i] != null)
+                                    {
+                                        <br />
+                                        <span style="font-size: small">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            @Html.Label("Group Driver: ")
+                                        </span>
+                                        <span style="text-decoration-color: red">
+                                            @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
+                                        </span>
+                                    }
                                 }
                             }
                             else
@@ -300,7 +315,7 @@
                                 {
                                     <br />
                                     <span style="font-size: small">
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                         @Html.Label("Notes")
                                     </span>
                                     <br />

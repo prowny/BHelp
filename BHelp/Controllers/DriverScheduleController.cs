@@ -202,8 +202,14 @@ namespace BHelp.Controllers
                                 view.BoxBackupDriverPhone2[idx] = driverDataList[bdrIdx].PhoneNumber2;
                                 view.BoxBackupDriverEmail[idx] = driverDataList[bdrIdx].Email;
                             }
-                            
-                            //var grpIdx = monthlyList.FindIndex(g => g.)
+
+                            var grpId = monthlyList[mIdx].GroupId;
+                            if (grpId > 0)
+                            {
+                                var gpItem = view.GroupList.FirstOrDefault(g => g.Value == grpId.ToString());
+                                view.BoxGroupName[idx] = gpItem.Text;
+                                view.BoxGroupId[idx] = (int)grpId;
+                            }
 
                             var gpdrIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].GroupDriverId);
                             if (gpdrIdx >= 0)
@@ -252,6 +258,14 @@ namespace BHelp.Controllers
                                 view.BoxBackupDriverPhone[idx] = driverDataList[bdrIdx].PhoneNumber;
                                 view.BoxBackupDriverPhone2[idx] = driverDataList[bdrIdx].PhoneNumber2;
                                 view.BoxBackupDriverEmail[idx] = driverDataList[bdrIdx].Email;
+                            }
+
+                            var grpId = monthlyList[mIdx].GroupId;
+                            if (grpId > 0)
+                            {
+                                var gpItem = view.GroupList.FirstOrDefault(g => g.Value == grpId.ToString());
+                                view.BoxGroupName[idx] = gpItem.Text;
+                                view.BoxGroupId[idx] = (int)grpId;
                             }
 
                             var gpdrIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].GroupDriverId);
@@ -303,6 +317,14 @@ namespace BHelp.Controllers
                                     view.BoxBackupDriverEmail[idx] = driverDataList[bdrIdx].Email;
                                 }
 
+                                var grpId = monthlyList[mIdx].GroupId;
+                                if (grpId > 0)
+                                {
+                                    var gpItem = view.GroupList.FirstOrDefault(g => g.Value == grpId.ToString());
+                                    view.BoxGroupName[idx] = gpItem.Text;
+                                    view.BoxGroupId[idx] = (int)grpId;
+                                }
+                                
                                 var gpdrIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].GroupDriverId);
                                 if (gpdrIdx >= 0)
                                 {
@@ -385,6 +407,7 @@ namespace BHelp.Controllers
                     if (schedule.BackupDriverId == "0") schedule.BackupDriverId = null;
                     rec.BackupDriverId = schedule.BackupDriverId;
                     rec.GroupId = schedule.GroupId;
+                    if (schedule.GroupDriverId == "0") schedule.GroupDriverId = null;
                     rec.GroupDriverId = schedule.GroupDriverId; 
                     rec.Note = schedule.Note;
                     db.SaveChanges();
@@ -563,9 +586,9 @@ namespace BHelp.Controllers
                 {
                     if (view.BoxDay[i, j] > DateTime.MinValue)
                     {
+                        var idx = j + 5 * (i - 1);
                         var boxContents = (view.BoxDay[i, j].Day.ToString("0"));
                         boxContents += Environment.NewLine + "Driver:";
-                        var idx = j + 5 * (i - 1);
                         if (view.BoxDriverName[idx] == null)
                         {
                             boxContents +="TBD";
@@ -602,7 +625,23 @@ namespace BHelp.Controllers
 
                         if (view.BoxBackupDriverEmail[idx] != null)
                         { boxContents += Environment.NewLine + view.BoxBackupDriverEmail[idx]; }
-                        
+
+                        if (view.BoxGroupName[idx] != null)
+                        {
+                            boxContents += Environment.NewLine + "Group:";
+                            boxContents += Environment.NewLine + view.BoxGroupName[idx];
+                            if (view.BoxGroupDriverName[idx] == null)
+                            {
+                                boxContents += Environment.NewLine + "Group Driver: TBD";
+                            }
+                        }
+
+                        if (view.BoxGroupDriverName[idx] != null)
+                        {
+                            boxContents += Environment.NewLine + "Group Driver:";
+                            boxContents += Environment.NewLine + view.BoxGroupDriverName[idx];
+                        }
+
                         if (view.BoxNote[idx] != null)
                         {
                             boxContents += Environment.NewLine + "Notes:";
@@ -637,6 +676,11 @@ namespace BHelp.Controllers
                 BoxBackupDriverPhone = new string[26],
                 BoxBackupDriverPhone2 = new string[26],
                 BoxBackupDriverEmail = new string[26],
+                BoxGroupName = new string[26],
+                BoxGroupDriverName = new string[26],
+                BoxGroupDriverPhone = new string[26],
+                BoxGroupDriverPhone2 = new string[26],
+                BoxGroupDriverEmail = new string[26],
                 BoxNote = new string[26]
             };
             var dateData = Session["DriverScheduleDateData"].ToString();
@@ -648,7 +692,7 @@ namespace BHelp.Controllers
             var monthlyList = GetMonthlyList(view.Month, view.Year);
             var driverList = (List<SelectListItem>)Session["DriverList"];
             var driverDataList = (List<ApplicationUser>)Session["DriverDataList"];
-            //var BoxDay = new DateTime[6, 6];
+            view.GroupList = (List<SelectListItem>)(Session["GroupList"]);
             for (var i = 1; i < 6; i++)
             {
                 for (var j = 1; j < 6; j++)
@@ -677,6 +721,25 @@ namespace BHelp.Controllers
                                 view.BoxBackupDriverPhone[idx] = driverDataList[bdrIdx].PhoneNumber;
                                 view.BoxBackupDriverPhone2[idx] = driverDataList[bdrIdx].PhoneNumber2;
                                 view.BoxBackupDriverEmail[idx] = driverDataList[bdrIdx].Email;
+                            }
+
+                            var grpId = monthlyList[mIdx].GroupId;
+                            if (grpId > 0)
+                            {
+                                var gpItem = view.GroupList.FirstOrDefault(g => g.Value == grpId.ToString());
+                                if (gpItem != null)
+                                {
+                                    view.BoxGroupName[idx] = gpItem.Text;
+                                }
+                            } 
+
+                            var gpdrIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].GroupDriverId);
+                            if (gpdrIdx >= 0)
+                            {
+                                view.BoxGroupDriverName[idx] = driverList[gpdrIdx].Text;
+                                view.BoxGroupDriverPhone[idx] = driverDataList[gpdrIdx].PhoneNumber;
+                                view.BoxGroupDriverPhone2[idx] = driverDataList[gpdrIdx].PhoneNumber2;
+                                view.BoxGroupDriverEmail[idx] = driverDataList[gpdrIdx].Email;
                             }
 
                             view.BoxNote[idx] = monthlyList[mIdx].Note;
@@ -708,6 +771,25 @@ namespace BHelp.Controllers
                                 view.BoxBackupDriverEmail[idx] = driverDataList[bdrIdx].Email;
                             }
 
+                            var grpId = monthlyList[mIdx].GroupId;
+                            if (grpId > 0)
+                            {
+                                var gpItem = view.GroupList.FirstOrDefault(g => g.Value == grpId.ToString());
+                                if (gpItem != null)
+                                {
+                                    view.BoxGroupName[idx] = gpItem.Text;
+                                }
+                            }
+
+                            var gpdrIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].GroupDriverId);
+                            if (gpdrIdx >= 0)
+                            {
+                                view.BoxGroupDriverName[idx] = driverList[gpdrIdx].Text;
+                                view.BoxGroupDriverPhone[idx] = driverDataList[gpdrIdx].PhoneNumber;
+                                view.BoxGroupDriverPhone2[idx] = driverDataList[gpdrIdx].PhoneNumber2;
+                                view.BoxGroupDriverEmail[idx] = driverDataList[gpdrIdx].Email;
+                            }
+
                             view.BoxNote[idx] = monthlyList[mIdx].Note;
                         }
                     }
@@ -736,6 +818,25 @@ namespace BHelp.Controllers
                                     view.BoxBackupDriverPhone[idx] = driverDataList[bdrIdx].PhoneNumber;
                                     view.BoxBackupDriverPhone2[idx] = driverDataList[bdrIdx].PhoneNumber2;
                                     view.BoxBackupDriverEmail[idx] = driverDataList[bdrIdx].Email;
+                                }
+
+                                var grpId = monthlyList[mIdx].GroupId;
+                                if (grpId > 0)
+                                {
+                                    var gpItem = view.GroupList.FirstOrDefault(g => g.Value == grpId.ToString());
+                                    if (gpItem != null)
+                                    {
+                                        view.BoxGroupName[idx] = gpItem.Text;
+                                    }
+                                }
+
+                                var gpdrIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].GroupDriverId);
+                                if (gpdrIdx >= 0)
+                                {
+                                    view.BoxGroupDriverName[idx] = driverList[gpdrIdx].Text;
+                                    view.BoxGroupDriverPhone[idx] = driverDataList[gpdrIdx].PhoneNumber;
+                                    view.BoxGroupDriverPhone2[idx] = driverDataList[gpdrIdx].PhoneNumber2;
+                                    view.BoxGroupDriverEmail[idx] = driverDataList[gpdrIdx].Email;
                                 }
 
                                 view.BoxNote[idx] = monthlyList[mIdx].Note;
