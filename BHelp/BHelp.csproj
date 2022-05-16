@@ -259,6 +259,7 @@
     <Compile Include="Controllers\DriverController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Controllers\DriverEmailController.cs" />
     <Compile Include="Controllers\DriverScheduleController.cs" />
     <Compile Include="Controllers\FamilyMembersController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -353,6 +354,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="ViewModels\DocumentsViewModel.cs" />
+    <Compile Include="ViewModels\DriverEmailRecipient.cs" />
+    <Compile Include="ViewModels\DriverEmailViewModel.cs" />
     <Compile Include="ViewModels\DriverScheduleViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -611,6 +614,9 @@
     <Content Include="Views\Deliveries\AdviseODIdRequired.cshtml" />
     <Content Include="Views\DriverSchedule\Edit.cshtml" />
     <Content Include="Views\ODSchedule\Edit.cshtml" />
+    <Content Include="Views\DriverEmail\Index.cshtml" />
+    <Content Include="Views\DriverEmail\MonthlySchedule.cshtml" />
+    <Content Include="Views\DriverEmail\DriverEmailDisplay.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
@@ -821,6 +827,7 @@
       <DependentUpon>202205132035585_AddGroupDriverAgain.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

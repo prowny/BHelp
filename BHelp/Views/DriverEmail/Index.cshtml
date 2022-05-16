@@ -1,0 +1,25 @@
+﻿
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+<div>
+    <strong>Driver Schedule Email</strong>
+</div>
+<div>
+    @{ DateTime date = DateTime.Today.AddMonths(1);}
+    @{ string monthName = date.ToString("MMMM");}
+    @Html.ActionLink("Schedule For " + monthName, "DriverEmailDisplay"
+        , new { year = date.Year, month = date.Month})<br/>
+</div>
+<div>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home")
+</div>
+
+</body>
+</html>

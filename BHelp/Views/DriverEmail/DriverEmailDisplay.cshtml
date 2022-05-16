@@ -1,0 +1,24 @@
+﻿@model BHelp.ViewModels.DriverEmailViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>DriverEmailDisplay</title>
+</head>
+<body>
+<div>
+    @Model.EmailText
+</div>
+
+<div>
+    @Html.Raw(Model.HtmlContent)
+</div>
+
+<div>
+    <br/>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
+</body>
+</html>
