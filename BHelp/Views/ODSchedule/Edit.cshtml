@@ -192,7 +192,7 @@
                         {
                             i++;
                             var bgcolor = "white";
-                            if (Model.ODsSchedule[i].Date == Model.Date)
+                            if (Model.ODsSchedule[i].Date == Model.Date && Model.AllowEdit)
                             {
                                 bgcolor = "yellow";
                             }
@@ -208,66 +208,87 @@
                                         if (Model.ODsSchedule[i].Date >= DateTime.Today
                                             && (Model.BoxODId[i] == Model.CurrentUserId || Model.BoxODId[i] == null))
                                         {
-                                            <span style="font-size: x-small">
-                                                @Html.ActionLink("Edit", "Edit",
-                                                    new { boxDate = Model.ODsSchedule[i].Date })
-                                            </span>
+                                            if (!Model.BoxHoliday[i])
+                                            {
+                                                <span style="font-size: small">
+                                                    @Html.ActionLink("Edit", "Edit",
+                                                        new { boxDate = Model.ODsSchedule[i].Date })
+                                                </span>
+                                            }
                                         }
                                     }
                                     else // NOT IsOdOnly
                                     {
                                         if (Model.IsScheduler || Model.ODsSchedule[i].Date >= DateTime.Today)
                                         {
-                                            <span style="font-size: x-small">
-                                                @Html.ActionLink("Edit", "Edit",
-                                                    new { boxDate = Model.ODsSchedule[i].Date })
-                                            </span>
+                                            if (!Model.BoxHoliday[i])
+                                            {
+                                                <span style="font-size: small">
+                                                    @Html.ActionLink("Edit", "Edit",
+                                                        new { boxDate = Model.ODsSchedule[i].Date })
+                                                </span>
+                                            }
                                         }
                                     }
                                 }
-                            }
 
-                            @if (Model.BoxODName[i] != null)
-                            {
-                                <br />
-                                @Html.Label(Model.BoxODName[i])
-                            }
+                                if (Model.BoxODName[i] == null)
+                                {
+                                    if (!Model.BoxHoliday[i])
+                                    {
+                                        <span style="font-size: small">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            @Html.Label("Driver: ")
+                                        </span>
+                                        <span style="text-decoration-color: red">
+                                            @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <br/>
+                                    @Html.Label(Model.BoxODName[i])
+                                }
 
-                            @if (Model.BoxODPhone[i] != null)
-                            {
-                                <br />
-                                @Html.Label(Model.BoxODPhone[i])
-                            }
+                                if (Model.BoxODPhone[i] != null)
+                                {
+                                    <br/>
+                                    @Html.Label(Model.BoxODPhone[i])
+                                }
 
-                            @if (Model.BoxODPhone2[i] != null)
-                            {
-                                <br />
-                                @Html.Label(Model.BoxODPhone2[i])
-                            }
+                                if (Model.BoxODPhone2[i] != null)
+                                {
+                                    <br/>
+                                    @Html.Label(Model.BoxODPhone2[i])
+                                }
 
-                            @if (Model.BoxODEmail[i] != null)
-                            {
-                                var subject = "BHELP Food Program";
-                                var body = @Model.ODsSchedule[i].Date.ToLongDateString()
-                                           + " OD: " + @Model.BoxODName[i];
-                                <a href="mailto:@Uri.EscapeDataString(Model.BoxODEmail[i])
-                                   ?Subject=@Uri.EscapeDataString(subject)
-                                   &body=@Uri.EscapeDataString(body)">
-                                    @Model.BoxODEmail[i]
-                                </a>
-                            }
+                                if (Model.BoxODEmail[i] != null)
+                                {
+                                    var subject = "BHELP Food Program";
+                                    var body = @Model.ODsSchedule[i].Date.ToLongDateString()
+                                               + " OD: " + @Model.BoxODName[i];
+                                    <a href="mailto:@Uri.EscapeDataString(Model.BoxODEmail[i])
+                                       ?Subject=@Uri.EscapeDataString(subject)
+                                       &body=@Uri.EscapeDataString(body)">
+                                        @Model.BoxODEmail[i]
+                                    </a>
+                                }
 
-                            @if (Model.BoxNote[i] != null)
-                            {
-                                <br />
-                                <span>&nbsp; &nbsp;</span>
-                                <span style="font-size: x-small; color: blue">
-                                    @Html.Label("Notes")
-                                </span>
-                                <br />
-                                @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>"))
+                                if (Model.BoxNote[i] != null)
+                                {
+                                    if (!Model.BoxHoliday[i])
+                                    {
+                                        <br/>
+                                        <span style="font-size: small">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            @Html.Label("Notes")
+                                        </span>
+                                        <br/>
+                                    }
+                                    @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>"))
+                                }
                             }
-
                         </td>
                         }
                     </tr>

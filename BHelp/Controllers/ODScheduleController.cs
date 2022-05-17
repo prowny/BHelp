@@ -41,6 +41,7 @@ namespace BHelp.Controllers
                     var month = Convert.ToInt32(dateData.Substring(2, 2));
                     var year = Convert.ToInt32(dateData.Substring(4, 4));
                     boxDate = new DateTime(year, month,day);
+                    Session["ODScheduleDateData"] = "01" + view.Month.ToString("00") + view.Year;
                 }
                 if (boxDate == null)
                 {
@@ -60,7 +61,23 @@ namespace BHelp.Controllers
                     view.Date = (DateTime)boxDate;
                     view.Month = view.Date.Month;
                     view.Year = view.Date.Year;
+                    view.IsHoliday = AppRoutines.IsHoliday(view.Date, (List<HolidayViewModel>)Session["Holidays"]);
                     Session["ODScheduleDateData"] = view.Date.Day.ToString("00") + view.Month.ToString("00") + view.Year;
+                }
+            }
+
+            if (Session["Holidays"] == null)
+            { Session["Holidays"] = AppRoutines.GetFederalHolidays(DateTime.Today.Year); }
+            // check holidays for proper year:
+            var holidays = (List<HolidayViewModel>)Session["Holidays"];
+            var july4th = holidays.FirstOrDefault(h => h.Date.Month == 7
+                                                       && h.Date.Day == 4);
+            if (july4th != null)
+            {
+                if (july4th.Date.Year != view.Date.Year) // need to reloadholidays (year change)
+                {
+                    holidays = AppRoutines.GetFederalHolidays(view.Date.Year);
+                    Session["Holidays"] = holidays;
                 }
             }
 
@@ -125,11 +142,12 @@ namespace BHelp.Controllers
             view.BoxODPhone2 = new string[26];
             view.BoxODEmail = new string[26];
             view.BoxNote = new string[26];
+            
             view.BoxODConfirmed = new bool[26];
+            view.BoxHoliday = new bool[26];
 
             // Get all OD records for this month
             var monthlyList = GetMonthlyList(view.Month, view.Year);
-           // var dummy = monthlyList;
 
             for (var i = 1; i < 6; i++)
             {
@@ -140,6 +158,13 @@ namespace BHelp.Controllers
                     {
                         if (j < startDayOfWk) continue;
                         view.BoxDay[i, j] = startDt.AddDays(j - startDayOfWk);
+                        if (AppRoutines.IsHoliday(view.BoxDay[i, j], (List<HolidayViewModel>)Session["Holidays"]))
+                        {
+                            view.BoxHoliday[idx] = true;
+                            var holidayData = GetHolidayData(view.BoxDay[i, j]);
+                            view.BoxNote[idx] = holidayData.Name + Environment.NewLine
+                                                                 + "BH Closed";
+                        }
                         var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
                         if (mIdx >= 0) // mIdx = -1 if match not found
                         {
@@ -161,6 +186,13 @@ namespace BHelp.Controllers
                     if (view.BoxDay[i - 1, j] == DateTime.MinValue)
                     {
                         view.BoxDay[i, j] = startDt.AddDays(7 + j - startDayOfWk);
+                        if (AppRoutines.IsHoliday(view.BoxDay[i, j], (List<HolidayViewModel>)Session["Holidays"]))
+                        {
+                            view.BoxHoliday[idx] = true;
+                            var holidayData = GetHolidayData(view.BoxDay[i, j]);
+                            view.BoxNote[idx] = holidayData.Name + Environment.NewLine
+                                                                 + "BH Closed";
+                        }
                         var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
                         if (mIdx >= 0)  // mIdx = -1 if match not found
                         {
@@ -182,6 +214,13 @@ namespace BHelp.Controllers
                         if (view.BoxDay[i - 1, j].AddDays(7) <= endDate)
                         {
                             view.BoxDay[i, j] = view.BoxDay[i - 1, j].AddDays(7);
+                            if (AppRoutines.IsHoliday(view.BoxDay[i, j], (List<HolidayViewModel>)Session["Holidays"]))
+                            {
+                                view.BoxHoliday[idx] = true;
+                                var holidayData = GetHolidayData(view.BoxDay[i, j]);
+                                view.BoxNote[idx] = holidayData.Name + Environment.NewLine 
+                                                                     + "BH Closed";
+                            }
                             var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
                             if (mIdx >= 0)  // mIdx = -1 if match not found
                             {
@@ -539,6 +578,19 @@ namespace BHelp.Controllers
             ms.Position = 0;
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             { FileDownloadName = "BHelpODSchedule " + tempDate.ToString("MM") + "-" + tempDate.ToString("yyyy") + ".xlsx" };
+        }
+         private HolidayViewModel GetHolidayData(DateTime dt)
+        {
+            var holidays = (List<HolidayViewModel>)Session["Holidays"];
+            foreach (var holiday in holidays)
+            {
+                if (dt == holiday.Date)
+                {
+                    return holiday;
+                }
+            }
+
+            return null;
         }
     }
 }

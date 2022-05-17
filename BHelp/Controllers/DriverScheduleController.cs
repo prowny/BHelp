@@ -69,9 +69,8 @@ namespace BHelp.Controllers
                 }
             }
 
-            if (Session["Holidays"] == null)  // will also be updated in IsHoliday()
+            if (Session["Holidays"] == null)
             { Session["Holidays"] = AppRoutines.GetFederalHolidays(DateTime.Today.Year); }
-
             // check holidays for proper year:
             var holidays = (List<HolidayViewModel>)Session["Holidays"];
             var july4th = holidays.FirstOrDefault(h => h.Date.Month == 7
