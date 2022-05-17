@@ -1328,5 +1328,28 @@ namespace BHelp
                 }
             }
 
+            public static bool IsHoliday(DateTime dt, List<HolidayViewModel> holidays)
+            {
+                // check 4th of July for proper year:
+                var july4th = holidays.FirstOrDefault(j => j.Date.Month == 7
+                                                           && j.Date.Day == 4);
+                if (july4th != null)
+                {
+                    if (july4th.Date.Year != dt.Year) // need to reloadholidays (year change)
+                    {
+                       holidays = GetFederalHolidays(dt.Year);
+                    }
+                }
+
+                foreach (var hol in holidays)
+                {
+                    if (dt == hol.Date)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
     }
 }

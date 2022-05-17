@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 using BHelp.ViewModels;
 
 namespace BHelp.Controllers
@@ -14,9 +15,11 @@ namespace BHelp.Controllers
         public ActionResult DriverEmailDisplay(int year, int month)
         {
             //var db = new BHelpContext();
+            var _dt = new DateTime(year, month, 1);
             var email = new DriverEmailViewModel
             {
-                Title = "Email Drivers - "
+                Title = "Email Drivers",
+                MonthYear = _dt.ToString("MMMM") + " " + _dt.Year.ToString()
             };
         
             var text = "Dear Drivers,\n";

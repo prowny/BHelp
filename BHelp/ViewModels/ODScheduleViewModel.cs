@@ -18,6 +18,7 @@ namespace BHelp.ViewModels
         [DataType(DataType.MultilineText)]
         public string Note { get; set; }
 
+        public bool IsHoliday { get; set; }
         public string DayString { get; set; }
         public int Month { get; set; }
         public string MonthName { get; set; }
@@ -32,6 +33,7 @@ namespace BHelp.ViewModels
         public string[] BoxODPhone2 { get; set; }
         public string[] BoxODEmail { get; set; }
         public bool[] BoxODConfirmed { get; set; }
+        public bool[] BoxHoliday { get; set; }
 
         [DataType(DataType.MultilineText)]
         public string[] BoxNote { get; set; }

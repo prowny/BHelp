@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
-using BHelp.Models;
 
 namespace BHelp.ViewModels
 {
@@ -20,6 +19,8 @@ namespace BHelp.ViewModels
 
         public string Subject { get; set; }
         public List<DriverEmailRecipient>  Recipients { get; set; }
+       
+        public string MonthYear { get; set; }
 
     }
 }
