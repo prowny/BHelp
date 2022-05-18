@@ -418,7 +418,14 @@ namespace BHelp.Controllers
                     rec.DriverId = schedule.DriverId;
                     if (schedule.BackupDriverId == "0") schedule.BackupDriverId = null;
                     rec.BackupDriverId = schedule.BackupDriverId;
-                    rec.GroupId = schedule.GroupId;
+                    if (schedule.GroupName == null)
+                    {
+                        rec.GroupId = null;
+                    }
+                    else 
+                    {
+                        rec.GroupId = schedule.GroupId;
+                    }
                     if (schedule.GroupDriverId == "0") schedule.GroupDriverId = null;
                     rec.GroupDriverId = schedule.GroupDriverId; 
                     rec.Note = schedule.Note;

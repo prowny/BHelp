@@ -18,7 +18,21 @@ namespace BHelp.Controllers
         }
 
         public ActionResult DriverEmailDisplay(int year, int month)
-        { 
+        {
+            if (Session["Holidays"] == null)
+            { Session["Holidays"] = AppRoutines.GetFederalHolidays(DateTime.Today.Year); }
+            // check holidays for proper year:
+            var holidays = (List<HolidayViewModel>)Session["Holidays"];
+            var july4th = holidays.FirstOrDefault(h => h.Date.Month == 7
+                                                       && h.Date.Day == 4);
+            if (july4th != null)
+            {
+                if (july4th.Date.Year != year) // need to reloadholidays (year change)
+                {
+                    holidays = AppRoutines.GetFederalHolidays(year);
+                    Session["Holidays"] = holidays;
+                }
+            }
             if (Session["DriverList"] == null) Session["DriverList"] = GetDriverIdSelectList();
             if (Session["GroupList"] == null)
             {
@@ -99,14 +113,16 @@ namespace BHelp.Controllers
                 for (var col = 1; col < 6; col++)
                 {
                     var idx = col + 5 * (row - 1);
-                    content += "<td>";
+                    content += "<td style= " + qt + "vertical-align:top" + qt + ">";
                     if (view.BoxDay[row, col] > DateTime.MinValue)
                     {
                         content += (view.BoxDay[row, col].Day.ToString("0"));
 
-                        if (view.BoxHoliday[idx])
+                        if (AppRoutines.IsHoliday(view.BoxDay[row, col], (List<HolidayViewModel>)Session["Holidays"]))
                         {
-                            content += "<br />#nbsp;" + view.;
+                            var holidayData = GetHolidayData(view.BoxDay[row, col]);
+                            content += "<br />&nbsp;" + holidayData.Name + "<br />&nbsp;BH Closed";
+                            continue;
                         }
 
                         if (view.BoxDriverName[idx] != null)
@@ -429,6 +445,20 @@ namespace BHelp.Controllers
                 }
 
                 return driverList;
+            }
+
+            return null;
+        }
+
+        private HolidayViewModel GetHolidayData(DateTime dt)
+        {
+            var holidays = (List<HolidayViewModel>)Session["Holidays"];
+            foreach (var holiday in holidays)
+            {
+                if (dt == holiday.Date)
+                {
+                    return holiday;
+                }
             }
 
             return null;
