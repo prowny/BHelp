@@ -141,10 +141,13 @@
                             @Html.TextAreaFor(t => t.Note)
                             @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
                         </td>
-                        <td>
-                            &nbsp;&nbsp;
-                            <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
-                        </td>
+                        @if (!Model.IsHoliday)
+                        {
+                            <td>
+                                &nbsp;&nbsp;
+                                <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
+                            </td>
+                        }
                     </tr>
                 </table>
                 <hr />

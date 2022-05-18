@@ -698,9 +698,9 @@ namespace BHelp.Controllers
             var dateData = Session["DriverScheduleDateData"].ToString();
             view.Month = Convert.ToInt32(dateData.Substring(2, 2));
             view.Year = Convert.ToInt32(dateData.Substring(4, 4));
-            var startDt = new DateTime(view.Year, view.Month, 1);
+            var startDate = new DateTime(view.Year, view.Month, 1);
             var endDate = new DateTime(view.Year,view.Month, DateTime.DaysInMonth(view.Year, view.Month));
-            var startDayOfWk = (int)startDt.DayOfWeek;
+            var startDayOfWk = (int)startDate.DayOfWeek;
             var monthlyList = GetMonthlyList(view.Month, view.Year);
             var driverList = (List<SelectListItem>)Session["DriverList"];
             var driverDataList = (List<ApplicationUser>)Session["DriverDataList"];
@@ -712,7 +712,7 @@ namespace BHelp.Controllers
                     if (i == 1)
                     {
                         if (j < startDayOfWk) continue;
-                        view.BoxDay[i, j] = startDt.AddDays(j - startDayOfWk);
+                        view.BoxDay[i, j] = startDate.AddDays(j - startDayOfWk);
                         var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
                         if (mIdx >= 0)  // mIdx = -1 if match not found
                         {
@@ -760,7 +760,7 @@ namespace BHelp.Controllers
                     }
                     if (view.BoxDay[i - 1, j] == DateTime.MinValue)
                     {
-                        view.BoxDay[i, j] = startDt.AddDays(7 + j - startDayOfWk);
+                        view.BoxDay[i, j] = startDate.AddDays(7 + j - startDayOfWk);
                         var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
                         if (mIdx >= 0)  // mIdx = -1 if match not found
                         {

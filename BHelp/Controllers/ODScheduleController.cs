@@ -538,9 +538,14 @@ namespace BHelp.Controllers
                 {
                     if (BoxDay[i, j] > DateTime.MinValue)
                     {
-                        var boxContents = (BoxDay[i, j].Day.ToString("0"));
                         var idx = j + 5 * (i - 1);
-                        if (BoxODName[idx] != null)
+                        var boxContents = (BoxDay[i, j].Day.ToString("0"));
+
+                        if (BoxODName[idx] == null)
+                        {
+                            boxContents += Environment.NewLine + "OD: TBD";
+                        }
+                        else
                         {
                             boxContents += Environment.NewLine + "OD:";
                             boxContents += Environment.NewLine + BoxODName[idx];

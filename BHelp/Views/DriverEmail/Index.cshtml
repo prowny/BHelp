@@ -12,10 +12,16 @@
     <strong>Driver Schedule Email</strong>
 </div>
 <div>
-    @{ DateTime date = DateTime.Today.AddMonths(1);}
+    @{ DateTime date = DateTime.Today.AddMonths(0);}
     @{ string monthName = date.ToString("MMMM");}
     @Html.ActionLink("Schedule For " + monthName, "DriverEmailDisplay"
         , new { year = date.Year, month = date.Month})<br/>
+</div>
+<div>
+    @{ date = DateTime.Today.AddMonths(1);}
+    @{ monthName = date.ToString("MMMM");}
+    @Html.ActionLink("Schedule For " + monthName, "DriverEmailDisplay"
+        , new { year = date.Year, month = date.Month })<br />
 </div>
 <div>
     @Html.ActionLink("Return to Dashboard", "Index", "Home")
