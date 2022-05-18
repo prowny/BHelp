@@ -174,7 +174,7 @@
                                         @Html.Label("Driver")
                                     </span>
                                     <br />
-                                    @Html.Label(Model.BoxDriverName[i])
+                                    @Html.Raw(Model.BoxDriverName[i])
 
                                     if (Model.BoxDriverPhone[i] != null)
                                     {
@@ -222,7 +222,7 @@
                                         @Html.Label("Backup Driver")
                                     </span>
                                     <br />
-                                    @Html.Label(Model.BoxBackupDriverName[i])
+                                    @Html.Raw(Model.BoxBackupDriverName[i])
 
                                     if (Model.BoxBackupDriverPhone[i] != null)
                                     {
@@ -256,7 +256,7 @@
                                         @Html.Label("Group")
                                     </span>
                                     <br />
-                                    @Html.Label(Model.BoxGroupName[i])
+                                    @Html.Raw(Model.BoxGroupName[i])
                                 }
 
                                 if (Model.BoxGroupDriverName[i] == null)
@@ -284,7 +284,7 @@
                                         @Html.Label("Group Driver")
                                     </span>
                                     <br />
-                                    @Html.Label(Model.BoxGroupDriverName[i])
+                                    @Html.Raw(Model.BoxGroupDriverName[i])
 
                                     if (Model.BoxGroupDriverPhone[i] != null)
                                     {

@@ -220,7 +220,7 @@
                                             }
                                         }
                                     }
-                                    else // NOT IsOdOnly
+                                    else // NOT IsODOnly
                                     {
                                         if (Model.IsScheduler || Model.ODsSchedule[i].Date >= DateTime.Today)
                                         {
@@ -251,7 +251,7 @@
                                 else
                                 {
                                     <br/>
-                                    @Html.Label(Model.BoxODName[i])
+                                    @Html.Raw(Model.BoxODName[i])
                                 }
 
                                 if (Model.BoxODPhone[i] != null)
