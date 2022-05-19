@@ -310,19 +310,19 @@
                                     }
                                 }
 
-                                <!--if (Model.BoxNote[i] != null)
+                                if (Model.BoxNote[i] != null)
                                 {
-                                    if (!Model.BoxHoliday[i])
-                                    {
-                                        <br />
-                                        <span style="font-size: small">
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            @Html.Label("Notes")
-                                        </span>
-                                        <br />
-                                    }-->
-                                    @*@Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>")) Html.Label will not display if it contains a period*@
-                                <!--}-->
+                                        @*if (!Model.BoxHoliday[i])
+                                        {
+                                            <br />
+                                            <span style="font-size: small">
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                @Html.Label("Notes")
+                                            </span>
+                                            <br />
+                                        }*@
+                                    @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>")) 
+                                }
 
                         }
                         </td>

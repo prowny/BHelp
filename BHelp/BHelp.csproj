@@ -255,17 +255,27 @@
     <Compile Include="Controllers\ClientsController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Controllers\DocumentsController.cs" />
+    <Compile Include="Controllers\DocumentsController.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Controllers\DriverController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Controllers\DriverEmailController.cs" />
-    <Compile Include="Controllers\DriverScheduleController.cs" />
+    <Compile Include="Controllers\DriverEmailController.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Controllers\DriverScheduleController.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Controllers\FamilyMembersController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Controllers\GroupMembersController.cs" />
-    <Compile Include="Controllers\GroupNamesController.cs" />
+    <Compile Include="Controllers\GroupMembersController.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Controllers\GroupNamesController.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Controllers\HomeController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -275,7 +285,9 @@
     <Compile Include="Controllers\ODController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Controllers\ODScheduleController.cs" />
+    <Compile Include="Controllers\ODScheduleController.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Controllers\ResetAnyPasswordController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -612,8 +624,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Deliveries\AdviseODIdRequired.cshtml" />
-    <Content Include="Views\DriverSchedule\Edit.cshtml" />
-    <Content Include="Views\ODSchedule\Edit.cshtml" />
+    <Content Include="Views\DriverSchedule\Edit.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\ODSchedule\Edit.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Views\DriverEmail\Index.cshtml" />
     <Content Include="Views\DriverEmail\MonthlySchedule.cshtml" />
     <Content Include="Views\DriverEmail\DriverEmailDisplay.cshtml" />
