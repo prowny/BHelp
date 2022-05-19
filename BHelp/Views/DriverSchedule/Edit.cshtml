@@ -55,7 +55,7 @@
                                 new { @class = "form-control", @onchange = "submitForm();" })
                             @Html.ValidationMessageFor(m => m.GroupId, "", new { @class = "text-danger" })
                         </td>
-                        <td style="text-align: center">Notes:</td>
+                        @*<td style="text-align: center">Notes:</td>*@
                     </tr>
                     <tr>
                         <td style="text-align: center"><b>Edit Section</b></td>
@@ -79,7 +79,7 @@
                                 new { @class = "form-control", @onchange = "submitForm();" })
                             @Html.ValidationMessageFor(m => m.GroupDriverId, "", new { @class = "text-danger" })
                         </td>
-                        <td>
+                        @*<td>
                             @Html.TextAreaFor(t => t.Note, new { style = "height: 12px" })
                             @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
                         </td>
@@ -89,7 +89,7 @@
                                 &nbsp;&nbsp;
                                 <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
                             </td>
-                        }
+                        }*@
                     </tr>
                 </table>
                 <hr />
@@ -310,7 +310,7 @@
                                     }
                                 }
 
-                                if (Model.BoxNote[i] != null)
+                                <!--if (Model.BoxNote[i] != null)
                                 {
                                     if (!Model.BoxHoliday[i])
                                     {
@@ -320,9 +320,9 @@
                                             @Html.Label("Notes")
                                         </span>
                                         <br />
-                                    }
-                                    @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>")) @*Html.Label will not display if it contains a period*@
-                                }
+                                    }-->
+                                    @*@Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>")) Html.Label will not display if it contains a period*@
+                                <!--}-->
 
                         }
                         </td>
