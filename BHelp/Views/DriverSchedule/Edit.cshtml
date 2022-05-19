@@ -44,7 +44,7 @@
                             @Html.DropDownListFor(m => m.DriverId,
                                 new SelectList(Model.DriverList,
                                     "Value", "Text", Model.DriverId),
-                                new { @class = "form-control" })
+                                new { @class = "form-control", @onchange="submitForm();" })
                             @Html.ValidationMessageFor(m => m.DriverId, "", new { @class = "text-danger" })
                         </td>
                         <td style="text-align: right">Group:</td>
@@ -52,7 +52,7 @@
                             @Html.DropDownListFor(m => m.GroupId,
                                 new SelectList(Model.GroupList,
                                     "Value", "Text"),
-                                new { @class = "form-control" })
+                                new { @class = "form-control", @onchange = "submitForm();" })
                             @Html.ValidationMessageFor(m => m.GroupId, "", new { @class = "text-danger" })
                         </td>
                         <td style="text-align: center">Notes:</td>
@@ -68,7 +68,7 @@
                             @Html.DropDownListFor(m => m.BackupDriverId,
                                 new SelectList(Model.BackupDriverList,
                                     "Value", "Text"),
-                                new { @class = "form-control" })
+                                new { @class = "form-control", @onchange = "submitForm();" })
                             @Html.ValidationMessageFor(m => m.BackupDriverId, "", new { @class = "text-danger" })
                         </td>
                         <td style="text-align: right">GpDriver:</td>
@@ -76,7 +76,7 @@
                             @Html.DropDownListFor(m => m.GroupDriverId,
                                 new SelectList(Model.DriverList,
                                     "Value", "Text"),
-                                new { @class = "form-control" })
+                                new { @class = "form-control", @onchange = "submitForm();" })
                             @Html.ValidationMessageFor(m => m.GroupDriverId, "", new { @class = "text-danger" })
                         </td>
                         <td>
@@ -385,9 +385,9 @@
     });
 </script>
 
-<script type="text/javascript">
-    $("#Test").click(function () {
-        var text = window.$("#DriversSchedule").val();
-        Test(text);
-    });
+<script>
+    function submitForm()
+    {
+        window.$('form').submit();
+    }
 </script>

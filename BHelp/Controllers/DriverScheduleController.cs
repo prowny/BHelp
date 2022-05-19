@@ -418,7 +418,7 @@ namespace BHelp.Controllers
                     rec.DriverId = schedule.DriverId;
                     if (schedule.BackupDriverId == "0") schedule.BackupDriverId = null;
                     rec.BackupDriverId = schedule.BackupDriverId;
-                    if (schedule.GroupName == null)
+                    if (schedule.GroupId == 0)
                     {
                         rec.GroupId = null;
                     }
