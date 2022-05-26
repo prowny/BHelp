@@ -445,6 +445,7 @@ namespace BHelp.Controllers
             {
                 for (var j = 1; j < 6; j++)
                 {
+                    if (BoxDay[i, j] < startDt || BoxDay[i,j] > endDate) continue;
                     var idx = j + 5 * (i - 1);
                     if (i == 1)
                     {

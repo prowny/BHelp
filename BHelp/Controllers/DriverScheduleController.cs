@@ -341,8 +341,15 @@ namespace BHelp.Controllers
             var workbook = new XLWorkbook();
             IXLWorksheet ws = workbook.Worksheets.Add("Driver Schedule");
 
-            var tempDate = new DateTime(view.Year, view.Month, 1);
-            var monthName = Strings.ToUpperCase(tempDate.ToString("MMMM"));
+            var dateData = Session["DriverScheduleDateData"].ToString();
+            var month = Convert.ToInt32(dateData.Substring(2, 2));
+            var year = Convert.ToInt32(dateData.Substring(4, 4));
+            var date = new DateTime(year, month, Convert.ToInt32(dateData.Substring(0, 2)));
+            var monthName = Strings.ToUpperCase(view.Date.ToString("MMMM"));
+            var startDate = new DateTime(view.Year, view.Month, 1);
+            var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
+            //var tempDate = new DateTime(view.Year, view.Month, 1);
+            //var monthName = Strings.ToUpperCase(tempDate.ToString("MMMM"));
 
             int row = 1;
             ws.Columns("1").Width = 30;
@@ -369,6 +376,7 @@ namespace BHelp.Controllers
                 row++;
                 for (var j = 1; j < 6; j++)
                 {
+                    if (view.BoxDay[i, j] < startDate || view.BoxDay[i, j] > endDate) continue; 
                     if (view.BoxDay[i, j] > DateTime.MinValue)
                     {
                         var idx = j + 5 * (i - 1);
@@ -444,7 +452,7 @@ namespace BHelp.Controllers
             workbook.SaveAs(ms);
             ms.Position = 0;
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                { FileDownloadName = "BHDriverSchedule " + tempDate.ToString("MM") + "-" + tempDate.ToString("yyyy") + ".xlsx" };
+                { FileDownloadName = "BHDriverSchedule " + date.ToString("MM") + "-" + date.ToString("yyyy") + ".xlsx" };
         }
         private DriverScheduleViewModel GetDriverScheduleViewModel()
         {
