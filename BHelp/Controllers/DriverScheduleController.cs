@@ -20,7 +20,7 @@ namespace BHelp.Controllers
         public ActionResult Edit( DateTime? boxDate)
         {
             var db = new BHelpContext();
-            GetSessionLookupLists(boxDate);
+            GetSessionLookupLists(boxDate); // DriverList, GroupList, Holidays, DriverScheduleDateData
 
             var view = GetDriverScheduleViewModel();
            
@@ -555,7 +555,7 @@ namespace BHelp.Controllers
             return view;
         }
 
-        private void GetSessionLookupLists(DateTime? boxDate)
+        private void  GetSessionLookupLists(DateTime? boxDate)
         {
             // Get / Update Session Lookup Data
             if (Session["DriverList"] == null)
