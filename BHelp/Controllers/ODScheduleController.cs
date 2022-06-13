@@ -317,6 +317,17 @@ namespace BHelp.Controllers
                 };
                 db.ODSchedules.Add(newRec);
                 db.SaveChanges();
+
+                // update session variable:
+                var msAdd = (List<ODSchedule>)Session["MonthlyODSchedule"];
+                var newMsAdd = new ODSchedule()
+                {
+                    ODId  = schedule.ODId, 
+                    Date =schedule.Date 
+                };
+                msAdd.Add(newMsAdd);
+                Session["MonthlyODSchedule"] = msAdd;
+
                 return RedirectToAction("Edit", new { boxDate = newRec.Date });
             }
             else
