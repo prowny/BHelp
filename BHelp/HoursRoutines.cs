@@ -83,7 +83,7 @@ namespace BHelp
         }
         public static bool IsIndividual(string usrId)
         {
-            var db = new BHelpContext();
+            var db = new BHelpContext(); 
             var usr = db.Users.Find(usrId);
             bool isDeveloper = AppRoutines.UserIsInRole(usr.Id, "Developer");
             if (isDeveloper) return false;
@@ -91,6 +91,8 @@ namespace BHelp
             if (isAdministrator) return false;
             var isStaff = AppRoutines.UserIsInRole(usr.Id, "Staff");
             if (isStaff) return false;
+            var isAllowAnyEntry = AppRoutines.UserIsInRole(usr.Id, "AllowAnyHoursEntry");
+            if (isAllowAnyEntry) return false;
             return true;  // default unless in higher role
         }
         public static List<SelectListItem> SetSelectedItem( List<SelectListItem> list, string text)

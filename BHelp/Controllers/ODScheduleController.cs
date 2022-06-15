@@ -46,17 +46,14 @@ namespace BHelp.Controllers
                 {
                     var month = DateTime.Today.Month;
                     var year = DateTime.Today.Year;
-                    var day = AppRoutines.GetFirstWeekdayDate(month, year);
-                    //view.MonthName = Strings.ToUpperCase(view.Date.ToString("MMMM"));
-                    Session["ODScheduleDateData"] = day.ToString("00") + month.ToString("00") + year;
-                    //SetMonthlyList(DateTime.Today.Month, DateTime.Today.Year);
+                    var date = AppRoutines.GetFirstWeekdayDate(month, year);
+                    Session["ODScheduleDateData"] = date.Day.ToString("00") + month.ToString("00") + year;
                 }
                 else  // boxDate has value
                 {
                     var date = (DateTime)boxDate;
                     var month = date.Month;
                     var year = date.Year;
-                    //view.IsHoliday = AppRoutines.IsHoliday(_date, (List<HolidayViewModel>)Session["Holidays"]);
                     Session["ODScheduleDateData"] = date.Day.ToString("00") + month.ToString("00") + year;
                 }
             }
