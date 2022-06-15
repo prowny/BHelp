@@ -96,7 +96,7 @@ namespace BHelp.Controllers
                 PeopleCount = 1
             };
 
-            if (view.Category == "A" || view.Category == "M")
+            if ((view.Category == "A" || view.Category == "M") && view.IsIndividual )
             {
                 a_mCat = view.Category;
             }
@@ -105,8 +105,8 @@ namespace BHelp.Controllers
             {
                 view.A_MCategory = null;
             }
-            else // check for "F" selected
-            {
+            //else // check for "F" selected
+            //{
                 if (fCat == "F")
                 {
                     view.A_MCategory = null;
@@ -118,7 +118,7 @@ namespace BHelp.Controllers
                     view.Category = a_mCat;
                     view.CategoryList = HoursRoutines.SetSelectedItem(view.CategoryList, a_mCat);
                 }
-            }
+            //}
 
             if (_isIndividual) // get hours for individual only
             {

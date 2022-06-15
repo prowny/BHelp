@@ -29,7 +29,6 @@ namespace BHelp.Controllers
                 var day = AppRoutines.GetFirstWeekdayDate(month, year);
                 //view.MonthName = Strings.ToUpperCase(view.Date.ToString("MMMM"));
                 Session["ODScheduleDateData"] = day.Day.ToString("00") + month.ToString("00") + year;
-                //SetMonthlyList(DateTime.Today.Month, DateTime.Today.Year);
             }
             else  // returning to ODSchedule
             {
@@ -54,11 +53,6 @@ namespace BHelp.Controllers
                 }
                 else  // boxDate has value
                 {
-                    //var _day = boxDate.GetValueOrDefault().Day;
-                    //var _month = boxDate.GetValueOrDefault().Month;
-                    //var _year = boxDate.GetValueOrDefault().Year;
-                    //var tempDate = new DateTime(_year, _month, _day);
-                    //view.MonthName = Strings.ToUpperCase(tempDate.ToString("MMMM"));
                     var date = (DateTime)boxDate;
                     var month = date.Month;
                     var year = date.Year;
@@ -456,91 +450,12 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Developer,Administrator,Staff,Scheduler,OfficerOfTheDay")]
         public ActionResult ODScheduleToExcel()
         {
-            var dateData = Session["ODScheduleDateData"].ToString();
-            var month = Convert.ToInt32(dateData.Substring(2, 2));
-            var year = Convert.ToInt32(dateData.Substring(4, 4));
-            var startDt = new DateTime(year, month, 1);
-            var endDate = new DateTime(year, month, DateTime.DaysInMonth(year, month));
-            var startDayOfWk = (int)startDt.DayOfWeek;            
-            var monthlyList = (List<ODSchedule>)Session["MonthlyODSchedule"];
-            var odList = (List<SelectListItem>)Session["ODList"];
-            var odDataList = (List<ApplicationUser>)Session["ODDataList"];
-            var BoxDay = new DateTime[6, 6];
-            var BoxODName = new string[26];
-            var BoxODPhone = new string[26];
-            var BoxODPhone2 = new string[26];
-            var BoxODEmail = new string[26];
-            var BoxNote = new string[26];
-
-            for (var i = 1; i < 6; i++)
-            {
-                for (var j = 1; j < 6; j++)
-                {
-                    if (BoxDay[i, j] < startDt || BoxDay[i,j] > endDate) continue;
-                    var idx = j + 5 * (i - 1);
-                    if (i == 1)
-                    {
-                        if (j < startDayOfWk) continue;
-                        BoxDay[i, j] = startDt.AddDays(j - startDayOfWk);
-                        var mIdx = monthlyList.FindIndex(d => d.Date == BoxDay[i, j]);
-                        if (mIdx >= 0)  // mIdx = -1 if match not found
-                        {
-                            var odIdx = odList.FindIndex(d => d.Value == monthlyList[mIdx].ODId);
-                            if (odIdx >= 0)
-                            {
-                                BoxODName[idx] = odList[odIdx].Text;
-                                if (odDataList[odIdx].PhoneNumber != null) BoxODPhone[idx] = odDataList[odIdx].PhoneNumber;
-                                if (odDataList[odIdx].PhoneNumber2 != null) BoxODPhone2[idx] = odDataList[odIdx].PhoneNumber2;
-                                if (odDataList[odIdx].Email != null) BoxODEmail[idx] = odDataList[odIdx].Email;
-                            }
-                            BoxNote[idx] = monthlyList[mIdx].Note;
-                        }
-                        continue;
-                    }
-                    if (BoxDay[i - 1, j] == DateTime.MinValue)
-                    {
-                        BoxDay[i, j] = startDt.AddDays(7 + j - startDayOfWk);
-                        var mIdx = monthlyList.FindIndex(d => d.Date == BoxDay[i, j]);
-                        if (mIdx >= 0)  // mIdx = -1 if match not found
-                        {
-                            var odIdx = odList.FindIndex(d => d.Value == monthlyList[mIdx].ODId);
-                            if (odIdx >= 0)
-                            {
-                                BoxODName[idx] = odList[odIdx].Text;
-                                if (odDataList[odIdx].PhoneNumber != null) BoxODPhone[idx] = odDataList[odIdx].PhoneNumber;
-                                if (odDataList[odIdx].PhoneNumber2 != null) BoxODPhone2[idx] = odDataList[odIdx].PhoneNumber2;
-                                if (odDataList[odIdx].Email != null) BoxODEmail[idx] = odDataList[odIdx].Email;
-                            }
-                            BoxNote[idx] = monthlyList[mIdx].Note;
-                        }
-                    }
-                    else
-                    {
-                        if (BoxDay[i - 1, j].AddDays(7) <= endDate)
-                        {
-                            BoxDay[i, j] = BoxDay[i - 1, j].AddDays(7);
-                            var mIdx = monthlyList.FindIndex(d => d.Date == BoxDay[i, j]);
-                            if (mIdx >= 0)  // mIdx = -1 if match not found
-                            {
-                                var odIdx = odList.FindIndex(d => d.Value == monthlyList[mIdx].ODId);
-                                if (odIdx >= 0)
-                                {
-                                    BoxODName[idx] = odList[odIdx].Text;
-                                    if (odDataList[odIdx].PhoneNumber != null) BoxODPhone[idx] = odDataList[odIdx].PhoneNumber;
-                                    if (odDataList[odIdx].PhoneNumber2 != null) BoxODPhone2[idx] = odDataList[odIdx].PhoneNumber2;
-                                    if (odDataList[odIdx].Email != null) BoxODEmail[idx] = odDataList[odIdx].Email;
-                                }
-                                BoxNote[idx] = monthlyList[mIdx].Note;
-                            }
-                        }
-                    }
-                }
-            }
+            var view = GetODScheduleViewModel();
 
             var workbook = new XLWorkbook();
             IXLWorksheet ws = workbook.Worksheets.Add("OD Schedule");
 
-            var tempDate = new DateTime(year, month, 1);
+            var tempDate = new DateTime(view.Year, view.Month , 1);
             var monthName = tempDate.ToString("MMMM");
 
             int row = 1;
@@ -549,7 +464,7 @@ namespace BHelp.Controllers
             ws.Columns("3").Width = 20;
             ws.Columns("4").Width = 20;
             ws.Columns("5").Width = 20;
-            ws.Cell(row, 1).SetValue("BHelp OD Schedule - " + monthName + " " + year);
+            ws.Cell(row, 1).SetValue("BHelp OD Schedule - " + monthName + " " + view.Year);
 
             row++;
             ws.Cell(row, 1).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
@@ -568,39 +483,39 @@ namespace BHelp.Controllers
                 row++;
                 for (var j = 1; j < 6; j++)
                 {
-                    if (BoxDay[i, j] > DateTime.MinValue)
+                    if (view.BoxDay[i, j] > DateTime.MinValue)
                     {
                         var idx = j + 5 * (i - 1);
-                        var boxContents = (BoxDay[i, j].Day.ToString("0"));
+                        var boxContents = (view.BoxDay[i, j].Day.ToString("0"));
 
-                        if (BoxODName[idx] == null)
+                        if (view.BoxODName[idx] == null)
                         {
                             boxContents += Environment.NewLine + "OD: TBD";
                         }
                         else
                         {
                             boxContents += Environment.NewLine + "OD:";
-                            boxContents += Environment.NewLine + BoxODName[idx];
+                            boxContents += Environment.NewLine + view.BoxODName[idx];
                         }
 
-                        if (BoxODPhone[idx] != null)
+                        if (view.BoxODPhone[idx] != null)
                         {
-                            boxContents += Environment.NewLine + BoxODPhone[idx];
+                            boxContents += Environment.NewLine + view.BoxODPhone[idx];
                         }
-                        if (BoxODPhone2[idx] != null)
+                        if (view.BoxODPhone2[idx] != null)
                         {
-                            boxContents += Environment.NewLine + BoxODPhone2[idx];
-                        }
-
-                        if (BoxODEmail[idx] != null)
-                        {
-                            boxContents += Environment.NewLine + BoxODEmail[idx];
+                            boxContents += Environment.NewLine + view.BoxODPhone2[idx];
                         }
 
-                        if (BoxNote[idx] != null)
+                        if (view.BoxODEmail[idx] != null)
+                        {
+                            boxContents += Environment.NewLine + view.BoxODEmail[idx];
+                        }
+
+                        if (view.BoxNote[idx] != null)
                         {
                             boxContents += Environment.NewLine + "Notes:";
-                            boxContents += Environment.NewLine + BoxNote[idx];
+                            boxContents += Environment.NewLine + view.BoxNote[idx];
                         }
 
                         ws.Cell(row, j).Style.Alignment.SetVertical(XLAlignmentVerticalValues.Top);

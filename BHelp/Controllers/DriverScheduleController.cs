@@ -348,8 +348,6 @@ namespace BHelp.Controllers
             var monthName = Strings.ToUpperCase(view.Date.ToString("MMMM"));
             var startDate = new DateTime(view.Year, view.Month, 1);
             var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
-            //var tempDate = new DateTime(view.Year, view.Month, 1);
-            //var monthName = Strings.ToUpperCase(tempDate.ToString("MMMM"));
 
             int row = 1;
             ws.Columns("1").Width = 30;

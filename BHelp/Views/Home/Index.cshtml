@@ -150,8 +150,9 @@
 
 <div>
     @{ var AllowHours = false; }
-    @if (User.IsInRole("Driver") || User.IsInRole("Administrator") || User.IsInRole("Developer")){AllowHours = true;}
-    @if (!User.IsInRole("Administrator") && !User.IsInRole("Staff") || User.IsInRole("Trainer"))
+    @if (User.IsInRole("Driver") || User.IsInRole("Administrator") || User.IsInRole("Developer")
+        || User.IsInRole("Staff")){AllowHours = true;}
+    @if (!User.IsInRole("Administrator") && (!User.IsInRole("Staff") || User.IsInRole("Trainer")))
     {AllowHours = true;}
     @*@if (!(User.IsInRole("OfficerOfTheDay") && !User.IsInRole("Administrator") && !User.IsInRole("Staff")) || User.IsInRole("Trainer"))*@
     @if (AllowHours)
