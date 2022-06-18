@@ -91,9 +91,11 @@ namespace BHelp
             if (isAdministrator) return false;
             var isStaff = AppRoutines.UserIsInRole(usr.Id, "Staff");
             if (isStaff) return false;
-            var isAllowAnyEntry = AppRoutines.UserIsInRole(usr.Id, "AllowAnyHoursEntry");
-            if (isAllowAnyEntry) return false;
-            return true;  // default unless in higher role
+            var isNonFoodSeviceAdmin = AppRoutines.UserIsInRole(usr.Id, "NonFoodServiceAdministrationHours");
+            if (isNonFoodSeviceAdmin) return false;
+            var isNonFoodSeviceMgmnt = AppRoutines.UserIsInRole(usr.Id, "NonFoodServiceManagementHours");
+            if (isNonFoodSeviceMgmnt) return false;
+            return true;  // default unless in higher role       
         }
         public static List<SelectListItem> SetSelectedItem( List<SelectListItem> list, string text)
         {
