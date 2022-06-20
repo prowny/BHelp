@@ -193,6 +193,7 @@ namespace BHelp.Controllers
                 var msAdd = (List<DriverSchedule>)Session["MonthlySchedule"];
                 var newMsAdd = new DriverSchedule()
                 {
+                    Date = schedule.Date,
                     DriverId = schedule.DriverId,
                     BackupDriverId = schedule.BackupDriverId,
                     GroupId = schedule.GroupId,
@@ -202,7 +203,7 @@ namespace BHelp.Controllers
                 Session["MonthlySchedule"] = msAdd;
 
                 db.SaveChanges();
-                return RedirectToAction("Edit", new{boxDate =newRec.Date });
+                return RedirectToAction("Edit", new{boxDate = newRec.Date });
             }
             else
             {
