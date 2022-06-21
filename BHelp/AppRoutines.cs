@@ -1219,7 +1219,7 @@ namespace BHelp
                 //    NOT OBSERVED AT BETHESDA HELP
                 // dtDay = (from day in Enumerable.Range(1, 29)
                 //    where new DateTime(year, 2, day).DayOfWeek == DayOfWeek.Monday
-                //    select day).ElementAt(2);  // thired Monday
+                //    select day).ElementAt(2);  // third Monday
                 //holiday = new HolidayViewModel()
                 //{
                 //    Date = new DateTime(year, 2, dtDay),

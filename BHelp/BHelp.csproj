@@ -230,7 +230,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppRoutines.cs" />
+    <Compile Include="AppRoutines.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="App_Start\BundleConfig.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -310,7 +312,9 @@
       <DependentUpon>Global.asax</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="HoursRoutines.cs" />
+    <Compile Include="HoursRoutines.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Migrations\202204281735597_AddODSchedule.cs" />
     <Compile Include="Migrations\202204281735597_AddODSchedule.Designer.cs">
       <DependentUpon>202204281735597_AddODSchedule.cs</DependentUpon>
