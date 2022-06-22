@@ -30,6 +30,8 @@ namespace BHelp.ViewModels
         public List<VolunteerHoursViewModel> HoursList { get; set; }
         public List<VolunteerHoursTotalsViewModel> TotalsList { get; set; }
         public Boolean IsIndividual { get; set; }  // Individual sees only defaults (User, Cat, Subcat)
+        public Boolean IsNonFoodServiceAdministration { get; set; }
+        public Boolean IsNonFoodServiceManagement { get; set; }
         public string UserFullName { get; set; }
         public string OriginatorFullName { get; set; }
         public string HoursString { get; set; }

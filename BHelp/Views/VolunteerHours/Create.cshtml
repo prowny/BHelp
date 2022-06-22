@@ -31,7 +31,7 @@
     <hr>
     <span><i>Use this section to submit new hours:</i></span>
     <div id="SubmitHoursDiv">
-        @if (Model.IsIndividual)
+        @if (Model.IsIndividual && !Model.IsNonFoodServiceAdministration && @Model.IsNonFoodServiceManagement)
         { /* this section for individuals (no dropdown boxes) */
             <table>
                 <tr><td>Volunteer</td><td>Category</td><td>Subcategory</td></tr>
@@ -55,7 +55,7 @@
             </table>
         } @*if IsIndividual*@
 
-        @if (!Model.IsIndividual)
+        @if (!Model.IsIndividual && !Model.IsNonFoodServiceAdministration && !Model.IsNonFoodServiceManagement)
         { /* this section for non-individuals (ALL - with dropdown boxes) */
             <table>
                 <tr>
@@ -63,6 +63,31 @@
                         @Html.DropDownListFor(model => model.UserId,
                             new SelectList(Model.UserList, "Value", "Text"),
                             new { id = "UserDDL" })
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(m => m.Category,
+                            new SelectList(Model.CategoryList, "Value", "Text"),
+                            new { id = "CategoryDDL" })
+                    </td>
+                    @if (string.IsNullOrEmpty(Model.A_MCategory))
+                    {
+                        <td>
+                            @Html.DropDownListFor(m => m.Subcategory,
+                                new SelectList(Model.SubcategoryList, "Value", "Text"),
+                                new { id = "SubcategoryDDL" })
+                        </td>
+                    }
+                </tr>
+            </table>
+        }
+
+        @if (Model.IsNonFoodServiceAdministration || Model.IsNonFoodServiceManagement)
+        { /* this section for NonFoodService users (Self only - with category dropdown boxes) */
+            <table>
+                <tr>
+                    <td>
+                        @Html.TextBoxFor(m => m.VolunteerName,
+                            new { @readonly = true, style = "width: 140px" })
                     </td>
                     <td>
                         @Html.DropDownListFor(m => m.Category,
@@ -96,7 +121,7 @@
         }
 
         @if (!Model.IsIndividual)
-        { /* this section for individuals (HoursDateNonIndividual) */
+        { /* this section for NonIndividuals (HoursDateNonIndividual) */
             <table>
                 <tr>
                     <td>
@@ -131,7 +156,7 @@
                 }
             </tr>
         </table>
-    </div>
+    </div> @*Submit Hours Div*@
 
     <div id="SubmitDiv" class="col-md-offset-2 col-md-10">
         <input type="submit" value="Submit" class="btn btn-default" id="btnSubmit" />

@@ -43,6 +43,18 @@ namespace BHelp.Controllers
                 Session["IsIndividual"] = HoursRoutines.IsIndividual(User.Identity.GetUserId());
             }
 
+            if (Session["IsNonFoodServiceAdministration"] == null)
+            {
+                Session["IsNonFoodServiceAdministration"] =
+                    HoursRoutines.IsNonFoodServiceAdministration(User.Identity.GetUserId());
+            }
+
+            if (Session["IsNonFoodServiceManagement"] == null)
+            {
+                Session["IsNonFoodServiceManagement"] =
+                    HoursRoutines.IsNonFoodServiceManagement(User.Identity.GetUserId());
+            }
+
             if (Session["HoursUserId"] == null) // initially set to logged-in user
             { Session["HoursUserId"] = Session["CurrentUserId"]; }
             if (userId != null)
@@ -63,7 +75,8 @@ namespace BHelp.Controllers
             var catName = HoursRoutines.GetCategoryName(_hoursUser.VolunteerCategory) ?? "(none)";
             var subcatName = _hoursUser.VolunteerSubcategory ?? "(none)";
             bool _isIndividual = (bool)Session["IsIndividual"];
-
+            bool _isNonFoodServiceAdministration = (bool)Session["IsNonFoodServiceAdministration"];
+            bool _isNonFoodServiceManagement = (bool)Session["IsNonFoodServiceManagement"];
             var entryDate = (DateTime)Session["HoursDate"];
             var wkBegin = HoursRoutines.GetPreviousMonday(entryDate);
             var wkBeginString = wkBegin.ToString("MM/dd/yyyy");
@@ -90,8 +103,10 @@ namespace BHelp.Controllers
                 WeekEndingDateString = wkEndString,
                 SubmitError = submitError,
                 IsIndividual = _isIndividual,
+                IsNonFoodServiceAdministration = _isNonFoodServiceAdministration,
+                IsNonFoodServiceManagement = _isNonFoodServiceManagement,
                 HoursList = new List<VolunteerHoursViewModel>(),
-                CategoryList =HoursRoutines.GetHoursCategoriesSelectList(),
+                CategoryList =HoursRoutines.GetHoursCategoriesSelectList(_isNonFoodServiceAdministration, _isNonFoodServiceManagement),
                 SubcategoryList =HoursRoutines.GetHoursSubcategoriesSelectList(_hoursUser),
                 PeopleCount = 1
             };
@@ -105,23 +120,21 @@ namespace BHelp.Controllers
             {
                 view.A_MCategory = null;
             }
-            //else // check for "F" selected
-            //{
-                if (fCat == "F")
-                {
-                    view.A_MCategory = null;
-                    view.Category = "F";
-                }
-                else
-                {
-                    view.A_MCategory = a_mCat;
-                    view.Category = a_mCat;
-                    view.CategoryList = HoursRoutines.SetSelectedItem(view.CategoryList, a_mCat);
-                }
-            //}
 
-            if (_isIndividual) // get hours for individual only
+            if (fCat == "F")
             {
+                view.A_MCategory = null;
+                view.Category = "F";
+            }
+            else
+            {
+                view.A_MCategory = a_mCat;
+                view.Category = a_mCat;
+                view.CategoryList = HoursRoutines.SetSelectedItem(view.CategoryList, a_mCat);
+            }
+           
+            if (_isIndividual || _isNonFoodServiceAdministration || _isNonFoodServiceManagement)
+            {  // get hours for individual only
                 var recs = db.VolunteerHours
                     .Where(h => h.UserId == _hoursUser.Id
                                 && h.Date >= wkBegin && h.Date <= wkEnd).ToList();
@@ -214,12 +227,12 @@ namespace BHelp.Controllers
                 model.Subcategory = view.Subcategory;
                 model.PeopleCount = view.PeopleCount;
                 // Check for invalid Food Service/(none) pair or (none)/(none) pair
-                if (model.Category == "F" && model.Subcategory == "(none)"
-                    || (model.Category == "(none)" && model.Subcategory == "(none)"))
-                {
-                    TempData["SubmitError"] = "Invalid Category/Subcategory setup. Contact Administrator.";
-                    return RedirectToAction("Create", new { userId = model.UserId });
-                }
+                //if (model.Category == "F" && model.Subcategory == "(none)"
+                //    || (model.Category == "(none)" && model.Subcategory == "(none)"))
+                //{
+                //    TempData["SubmitError"] = "Invalid Category/Subcategory setup. Contact Administrator.";
+                //    return RedirectToAction("Create", new { userId = model.UserId });
+                //}
             }
 
             if (model.Hours == 0 && model.Minutes == 0)
@@ -277,6 +290,8 @@ namespace BHelp.Controllers
             var submitError = string.Empty;
             if (TempData["SubmitError"] != null) submitError = TempData["SubmitError"].ToString();
 
+            bool _isNonFoodServiceAdministration = (bool)Session["IsNonFoodServiceAdministration"];
+            bool _isNonFoodServiceManagement = (bool)Session["IsNonFoodServiceManagement"];
             var view = new VolunteerHoursViewModel
             {
                 Id = rec.Id, 
@@ -295,7 +310,7 @@ namespace BHelp.Controllers
                 Minutes = rec.Minutes,
                 MinutesString = rec.Minutes.ToString(),
                 PeopleCount = rec.PeopleCount,
-                CategoryList = HoursRoutines.GetHoursCategoriesSelectList(),
+                CategoryList = HoursRoutines.GetHoursCategoriesSelectList(_isNonFoodServiceAdministration, _isNonFoodServiceManagement),
                 SubcategoryList = HoursRoutines.GetHoursSubcategoriesSelectList(hoursUser),
                 SubmitError = submitError
             };
