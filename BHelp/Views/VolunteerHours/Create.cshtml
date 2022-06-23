@@ -24,6 +24,8 @@
 {
     <div id="HeaderDiv">
         @Html.Hidden("IsIndividual", Model.IsIndividual)
+        @Html.Hidden(".IsNonFoodServiceAdministration", Model.IsNonFoodServiceAdministration)
+        @Html.Hidden("IsNonFoodServiceManagement", Model.IsNonFoodServiceManagement)
         @Html.AntiForgeryToken()
         <span><b>Bethesda Help Enter Volunteer Hours</b></span>&nbsp;&nbsp;&nbsp;
         @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
@@ -31,7 +33,7 @@
     <hr>
     <span><i>Use this section to submit new hours:</i></span>
     <div id="SubmitHoursDiv">
-        @if (Model.IsIndividual && !Model.IsNonFoodServiceAdministration && @Model.IsNonFoodServiceManagement)
+        @if (Model.IsIndividual && !Model.IsNonFoodServiceAdministration && !Model.IsNonFoodServiceManagement)
         { /* this section for individuals (no dropdown boxes) */
             <table>
                 <tr><td>Volunteer</td><td>Category</td><td>Subcategory</td></tr>
@@ -92,16 +94,16 @@
                     <td>
                         @Html.DropDownListFor(m => m.Category,
                             new SelectList(Model.CategoryList, "Value", "Text"),
-                            new { id = "CategoryDDL" })
+                            new { id = "NFSCategoryDDL" })
                     </td>
-                    @if (string.IsNullOrEmpty(Model.A_MCategory))
-                    {
-                        <td>
-                            @Html.DropDownListFor(m => m.Subcategory,
-                                new SelectList(Model.SubcategoryList, "Value", "Text"),
-                                new { id = "SubcategoryDDL" })
-                        </td>
-                    }
+                @if (string.IsNullOrEmpty(Model.A_MCategory))
+                {
+                    <td>
+                        @Html.DropDownListFor(m => m.Subcategory,
+                            new SelectList(Model.SubcategoryList, "Value", "Text"),
+                            new { id = "NFSSubcategoryDDL" })
+                    </td>
+                }
                 </tr>
             </table>
         }
@@ -317,6 +319,27 @@
             {
                 var linkF = '@Url.Action("Create", "VolunteerHours",
                                 new {a_mCat = "", fCat = "-1" })';
+                _cat = "F";
+                linkF = linkF.replace("-1", _cat);
+                window.location.href = linkF;
+            }
+        });
+    });
+</script>
+<script>
+    window.$(function() {
+        window.$('#NFSCategoryDDL').change(function() {
+            var _cat = window.$(this).val();
+            if (_cat === "A" || _cat === "M") {
+                var link = '@Url.Action("Create", "VolunteerHours",
+                                new {a_mCat = "-1" })';
+                link = link.replace("-1", _cat);
+                window.location.href = link;
+            }
+            else
+            {
+                var linkF = '@Url.Action("Create", "VolunteerHours",
+                                 new {a_mCat = "", fCat = "-1" })';
                 _cat = "F";
                 linkF = linkF.replace("-1", _cat);
                 window.location.href = linkF;

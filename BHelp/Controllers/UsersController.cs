@@ -38,9 +38,7 @@ namespace BHelp.Controllers
                 return HttpNotFound();
             }
 
-            bool _isNonFoodServiceAdministration = HoursRoutines.IsNonFoodServiceAdministration( user.Id);
-            bool _isNonFoodServiceManagement = HoursRoutines.IsNonFoodServiceManagement(user.Id);
-            user.VolunteerCategories = HoursRoutines.GetHoursCategoriesSelectList(_isNonFoodServiceAdministration, _isNonFoodServiceManagement);
+            user.VolunteerCategories = HoursRoutines.GetHoursCategoriesSelectList(false, false);
             foreach (var cat in user.VolunteerCategories)
             {
                 if (user.VolunteerCategory == cat.Value) cat.Selected = true;

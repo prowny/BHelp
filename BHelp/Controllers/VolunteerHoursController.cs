@@ -215,7 +215,8 @@ namespace BHelp.Controllers
         //POST: Volunteer Hours Create 
         [HttpPost, AllowAnonymous]
                 public ActionResult Create([Bind(Include = "UserId,Category,Subcategory,"
-            + "Date,Hours,Minutes,PeopleCount,IsIndividual")] VolunteerHoursViewModel model)
+            + "Date,Hours,Minutes,PeopleCount,IsIndividual,IsNonFoodServiceAdministration,"
+            + "IsNonFoodServiceManagement")] VolunteerHoursViewModel model)
         {
             if (!ModelState.IsValid) return RedirectToAction("Index", "Home");
             
@@ -224,15 +225,21 @@ namespace BHelp.Controllers
                 var view = (VolunteerHoursViewModel)TempData["IndividualViewModel"];
                 model.UserId = view.UserId;
                 model.Category = view.Category;
-                model.Subcategory = view.Subcategory;
+                if (!model.IsNonFoodServiceAdministration && !model.IsNonFoodServiceManagement)
+                {
+                    model.Subcategory = view.Subcategory;
+                }
                 model.PeopleCount = view.PeopleCount;
-                // Check for invalid Food Service/(none) pair or (none)/(none) pair
-                //if (model.Category == "F" && model.Subcategory == "(none)"
-                //    || (model.Category == "(none)" && model.Subcategory == "(none)"))
-                //{
-                //    TempData["SubmitError"] = "Invalid Category/Subcategory setup. Contact Administrator.";
-                //    return RedirectToAction("Create", new { userId = model.UserId });
-                //}
+                if (!model.IsNonFoodServiceAdministration && ! model .IsNonFoodServiceManagement)
+                {
+                // Check for invalid Food Service/(none) pair or(none)/(none) pair
+                if (model.Category == "F" && model.Subcategory == "(none)"
+                    || (model.Category == "(none)" && model.Subcategory == "(none)"))
+                    {
+                        TempData["SubmitError"] = "Invalid Category/Subcategory setup. Contact Administrator.";
+                        return RedirectToAction("Create", new { userId = model.UserId });
+                    }
+                }
             }
 
             if (model.Hours == 0 && model.Minutes == 0)
