@@ -423,7 +423,7 @@ namespace BHelp.Controllers
             {
                 msg.From = new MailAddress("Admin@BethesdaHelpFd.org", "Administrator, BHelp");
                 msg.To.Add(new MailAddress(user.Email, user.FullName));
-                msg.Subject = "Healthy Food Every Day - Schedule";
+                msg.Subject = "BHELP - Credential";
                 msg.Body = plainTextContent;
                 msg.IsBodyHtml = false;
                 msg.Priority = MailPriority.Normal;
