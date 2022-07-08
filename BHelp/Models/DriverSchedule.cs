@@ -17,6 +17,9 @@ namespace BHelp.Models
         [StringLength(128)]
         public string BackupDriverId { get; set; }
 
+        [StringLength(128)]
+        public string BackupDriver2Id { get; set; }
+
         public int? GroupId { get; set; }
 
         [StringLength(128)]
@@ -28,6 +31,8 @@ namespace BHelp.Models
         [NotMapped] public string DriverName { get; set; }
 
         [NotMapped] public string BackupDriverName { get; set; }
+
+        [NotMapped] public string BackupDriver2Name { get; set; }
 
         [NotMapped] public string GroupDriverName { get; set; }
     }

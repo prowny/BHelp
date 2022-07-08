@@ -63,6 +63,8 @@ namespace BHelp.Controllers
                 view.DriverId = existngRec.DriverId;
                 view.BackupDriverList = driverList; 
                 view.BackupDriverId = existngRec.BackupDriverId;
+                view.BackupDriver2List = driverList;
+                //view.BackupDriver2List[0].Text = "(none)"; // means no "TBD" shows if selected
                 if (existngRec.GroupId == null)
                 {
                     view.GroupId = 0;
@@ -101,6 +103,7 @@ namespace BHelp.Controllers
                     Date = dt,
                     DriverId = "0",
                     BackupDriverId = "0",
+                    BackupDriver2Id = "0",
                     MonthName = view.MonthName
                 };
                 if (dt > DateTime.MinValue)
@@ -143,6 +146,8 @@ namespace BHelp.Controllers
                     rec.DriverId = schedule.DriverId;
                     if (schedule.BackupDriverId == "0") schedule.BackupDriverId = null;
                     rec.BackupDriverId = schedule.BackupDriverId;
+                    if (schedule.BackupDriver2Id == "0") schedule.BackupDriverId = null;
+                    rec.BackupDriver2Id = schedule.BackupDriver2Id;
                     if (schedule.GroupId == 0)
                     {
                         rec.GroupId = null;
@@ -161,6 +166,7 @@ namespace BHelp.Controllers
                     {
                         item.DriverId = schedule.DriverId;
                         item.BackupDriverId = schedule.BackupDriverId;
+                        item.BackupDriver2Id = schedule.BackupDriver2Id;
                         item.GroupId = schedule.GroupId;
                         item.GroupDriverId = schedule.GroupDriverId;
                     }
@@ -174,6 +180,7 @@ namespace BHelp.Controllers
                 // Add new record
                 if (schedule.DriverId == "0") schedule.DriverId = null;
                 if (schedule.BackupDriverId == "0") schedule.BackupDriverId = null;
+                if (schedule.BackupDriver2Id == "0") schedule.BackupDriver2Id = null;
                 if (schedule.GroupDriverId == "0") schedule.GroupDriverId = null;
                 var gpDriverId = schedule.GroupDriverId;
                 if (gpDriverId == "0") gpDriverId = null;
@@ -182,6 +189,7 @@ namespace BHelp.Controllers
                     Date = schedule.Date,
                     DriverId = schedule.DriverId,
                     BackupDriverId = schedule.BackupDriverId,
+                    BackupDriver2Id = schedule.BackupDriver2Id,
                     GroupId = schedule.GroupId, 
                     GroupDriverId = gpDriverId,
                     Note = schedule.Note
@@ -196,6 +204,7 @@ namespace BHelp.Controllers
                     Date = schedule.Date,
                     DriverId = schedule.DriverId,
                     BackupDriverId = schedule.BackupDriverId,
+                    BackupDriver2Id = schedule.BackupDriver2Id,
                     GroupId = schedule.GroupId,
                     GroupDriverId = schedule.GroupDriverId
                 };
@@ -469,6 +478,11 @@ namespace BHelp.Controllers
                 BoxBackupDriverPhone = new string[26],
                 BoxBackupDriverPhone2 = new string[26],
                 BoxBackupDriverEmail = new string[26],
+                BoxBackupDriver2Id = new string[26],
+                BoxBackupDriver2Name = new string[26],
+                BoxBackupDriver2Phone = new string[26],
+                BoxBackupDriver2Phone2 = new string[26],
+                BoxBackupDriver2Email = new string[26],
                 BoxGroupName = new string[26],
                 BoxGroupDriverName = new string[26],
                 BoxGroupDriverPhone = new string[26],
@@ -528,7 +542,16 @@ namespace BHelp.Controllers
                                 view.BoxBackupDriverEmail[idx] = driverDataList[bdrIdx].Email;
                             }
 
-                            var grpId = monthlyList[mIdx].GroupId;
+                            var bdr2Idx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].BackupDriver2Id);
+                            if (bdr2Idx >= 0)
+                            {
+                                view.BoxBackupDriver2Name[idx] = driverList[bdr2Idx].Text;
+                                view.BoxBackupDriver2Phone[idx] = driverDataList[bdr2Idx].PhoneNumber;
+                                view.BoxBackupDriver2Phone2[idx] = driverDataList[bdr2Idx].PhoneNumber2;
+                                view.BoxBackupDriver2Email[idx] = driverDataList[bdr2Idx].Email;
+                            }
+
+                        var grpId = monthlyList[mIdx].GroupId;
                             if (grpId > 0)
                             {
                                 var gpItem = view.GroupList.FirstOrDefault(g => g.Value == grpId.ToString());

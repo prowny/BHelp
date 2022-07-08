@@ -47,6 +47,8 @@
                                 new { @class = "form-control", @onchange="submitForm();" })
                             @Html.ValidationMessageFor(m => m.DriverId, "", new { @class = "text-danger" })
                         </td>
+                        <td></td>
+                        <td></td>
                         <td style="text-align: right">Group:</td>
                         <td>
                             @Html.DropDownListFor(m => m.GroupId,
@@ -71,6 +73,14 @@
                                 new { @class = "form-control", @onchange = "submitForm();" })
                             @Html.ValidationMessageFor(m => m.BackupDriverId, "", new { @class = "text-danger" })
                         </td>
+                        <td style="text-align: right">Backup2:</td>
+                        <td>
+                            @Html.DropDownListFor(m => m.BackupDriver2Id,
+                                new SelectList(Model.BackupDriver2List,
+                                    "Value", "Text"),
+                                new { @class = "form-control", @onchange = "submitForm();" })
+                            @Html.ValidationMessageFor(m => m.BackupDriver2Id, "", new { @class = "text-danger" })
+                        </td>
                         <td style="text-align: right">GpDriver:</td>
                         <td>
                             @Html.DropDownListFor(m => m.GroupDriverId,
@@ -80,16 +90,16 @@
                             @Html.ValidationMessageFor(m => m.GroupDriverId, "", new { @class = "text-danger" })
                         </td>
                         @*<td>
-                            @Html.TextAreaFor(t => t.Note, new { style = "height: 12px" })
-                            @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
-                        </td>
-                        @if (!Model.IsHoliday)
-                        {
-                            <td>
-                                &nbsp;&nbsp;
-                                <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
-                            </td>
-                        }*@
+            @Html.TextAreaFor(t => t.Note, new { style = "height: 12px" })
+            @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
+        </td>
+        @if (!Model.IsHoliday)
+        {
+            <td>
+                &nbsp;&nbsp;
+                <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
+            </td>
+        }*@
                     </tr>
                 </table>
                 <hr />
@@ -248,6 +258,40 @@
                                     }
                                 }
 
+                                if (Model.BoxBackupDriver2Name[i] != null)
+                                {
+                                    <br />
+                                    <span style="font-size: small">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        @Html.Label("Backup Driver 2")
+                                    </span>
+                                    <br />
+                                    @Html.Raw(Model.BoxBackupDriver2Name[i])
+
+                                    if (Model.BoxBackupDriver2Phone[i] != null)
+                                    {
+                                        <br />
+                                        @Html.Label(Model.BoxBackupDriver2Phone[i])
+                                    }
+
+                                    if (Model.BoxBackupDriver2Phone2[i] != null)
+                                    {
+                                        <br />
+                                        @Html.Label(Model.BoxBackupDriver2Phone2[i])
+                                    }
+                                    if (Model.BoxBackupDriver2Email[i] != null)
+                                    {
+                                        var subject = "BHELP Food Program";
+                                        var body = @Model.DriversSchedule[i].Date.ToLongDateString()
+                                                   + " Backup Driver: " + @Model.BoxBackupDriver2Name[i];
+                                        <a href="mailto:@Uri.EscapeDataString(Model.BoxBackupDriver2Email[i])
+                                       ?Subject=@Uri.EscapeDataString(subject)
+                                       &body=@Uri.EscapeDataString(body)">
+                                            @Model.BoxBackupDriver2Email[i]
+                                        </a>
+                                    }
+                                }
+
                                 if (Model.BoxGroupName[i] != null)
                                 {
                                     <br />
@@ -312,10 +356,10 @@
 
                                 if (Model.BoxNote[i] != null)
                                 {
-                                    @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>")) 
+                                    @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>"))
                                 }
 
-                        }
+                            }
                         </td>
                         }
                     </tr>

@@ -137,7 +137,7 @@ namespace BHelp.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-        private async Task SendEmail(string address, string htmlContent) // Send individual email   
+        private async Task SendEmail(string address, string htmlContent)   // Send individual email   
         {
             using (MailMessage msg = new MailMessage())
             {

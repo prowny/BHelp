@@ -315,23 +315,6 @@
     <Compile Include="HoursRoutines.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Migrations\202204281735597_AddODSchedule.cs" />
-    <Compile Include="Migrations\202204281735597_AddODSchedule.Designer.cs">
-      <DependentUpon>202204281735597_AddODSchedule.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202205011728320_AddODConfirmed.cs" />
-    <Compile Include="Migrations\202205011728320_AddODConfirmed.Designer.cs">
-      <DependentUpon>202205011728320_AddODConfirmed.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202205131938304_AddGroupDriver.cs" />
-    <Compile Include="Migrations\202205131938304_AddGroupDriver.Designer.cs">
-      <DependentUpon>202205131938304_AddGroupDriver.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202205132035585_AddGroupDriverAgain.cs" />
-    <Compile Include="Migrations\202205132035585_AddGroupDriverAgain.Designer.cs">
-      <DependentUpon>202205132035585_AddGroupDriverAgain.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationRole.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -834,20 +817,8 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202204281735597_AddODSchedule.resx">
-      <DependentUpon>202204281735597_AddODSchedule.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202205011728320_AddODConfirmed.resx">
-      <DependentUpon>202205011728320_AddODConfirmed.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202205131938304_AddGroupDriver.resx">
-      <DependentUpon>202205131938304_AddGroupDriver.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202205132035585_AddGroupDriverAgain.resx">
-      <DependentUpon>202205132035585_AddGroupDriverAgain.cs</DependentUpon>
-    </EmbeddedResource>
+    <Folder Include="Migrations\" />
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

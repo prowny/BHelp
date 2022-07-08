@@ -20,6 +20,11 @@ namespace BHelp.ViewModels
 
         public string BackupDriverName { get; set; }
 
+        [StringLength(128)]
+        public string BackupDriver2Id { get; set; }
+
+        public string BackupDriver2Name { get; set; }
+
         public int GroupId { get; set; }
         public string GroupName { get; set; }
 
@@ -38,6 +43,7 @@ namespace BHelp.ViewModels
         public int Year { get; set; }
         public List<SelectListItem> DriverList { get; set; }
         public List<SelectListItem> BackupDriverList { get; set; }
+        public List<SelectListItem> BackupDriver2List { get; set; }
         public List<DriverScheduleViewModel> DriversSchedule { get; set; }
         public DateTime[,] BoxDay { get; set; }
 
@@ -53,6 +59,12 @@ namespace BHelp.ViewModels
         public string[] BoxBackupDriverPhone { get; set; }
         public string[] BoxBackupDriverPhone2 { get; set; }
         public string[] BoxBackupDriverEmail { get; set; }
+
+        public string[] BoxBackupDriver2Id { get; set; }
+        public string[] BoxBackupDriver2Name { get; set; }
+        public string[] BoxBackupDriver2Phone { get; set; }
+        public string[] BoxBackupDriver2Phone2 { get; set; }
+        public string[] BoxBackupDriver2Email { get; set; }
 
         public int[] BoxGroupId { get; set; }
         public string[] BoxGroupName { get; set; }
