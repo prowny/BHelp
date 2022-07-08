@@ -103,6 +103,10 @@ namespace BHelp
         {
             var db = new BHelpContext(); 
             var usr = db.Users.Find(usrId);
+            bool IsNonFoodServiceAdministration = AppRoutines.UserIsInRole(usr.Id, "NonFoodServiceAdministrationHours");
+            if (IsNonFoodServiceAdministration) return true;
+            bool IsNonFoodServiceManagement = AppRoutines.UserIsInRole(usr.Id, "NonFoodServiceManagementHours");
+            if (IsNonFoodServiceManagement) return true;
             bool isDeveloper = AppRoutines.UserIsInRole(usr.Id, "Developer");
             if (isDeveloper) return false;
             var isAdministrator = AppRoutines.UserIsInRole(usr.Id, "Administrator");
