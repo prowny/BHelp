@@ -444,6 +444,27 @@ namespace BHelp.Controllers
                         if (view.BoxBackupDriverEmail[idx] != null)
                         { boxContents += Environment.NewLine + view.BoxBackupDriverEmail[idx]; }
 
+                        if (view.BoxBackupDriver2Name[idx] != null)
+                        {
+                            boxContents += Environment.NewLine + "Backup Driver 2:";
+                            boxContents += Environment.NewLine + view.BoxBackupDriver2Name[idx];
+                            
+                            if (view.BoxBackupDriver2Phone[idx] != null)
+                            {
+                                boxContents += Environment.NewLine + view.BoxBackupDriver2Phone[idx];
+                            }
+
+                            if (view.BoxBackupDriver2Phone2[idx] != null)
+                            {
+                                boxContents += Environment.NewLine + view.BoxBackupDriver2Phone2[idx];
+                            }
+
+                            if (view.BoxBackupDriver2Email[idx] != null)
+                            {
+                                boxContents += Environment.NewLine + view.BoxBackupDriver2Email[idx];
+                            }
+                        }
+
                         if (view.BoxGroupName[idx] != null)
                         {
                             boxContents += Environment.NewLine + "Group:";
