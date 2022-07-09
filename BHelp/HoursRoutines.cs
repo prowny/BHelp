@@ -113,6 +113,8 @@ namespace BHelp
             if (isAdministrator) return false;
             var isStaff = AppRoutines.UserIsInRole(usr.Id, "Staff");
             if (isStaff) return false;
+            var isPantryCoordinator = AppRoutines.UserIsInRole(usr.Id, "PantryCoordinator");
+            if (isPantryCoordinator) return false;
             return true;  // default unless in higher role       
         }
 
