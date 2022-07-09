@@ -48,7 +48,7 @@
                         {
                             <td class="edit" style="text-align: center; width: 75px">
                                 @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
-                                    new { id = "BoxDate", style = "width: 75px;text-align:center" })
+                                    new { id = "BoxDate", @readonly = "readonly", style = "width: 75px;text-align:center" })
                             </td>
                             <td>
                                 @Html.TextBoxFor(m => m.ODName,

@@ -100,7 +100,7 @@ namespace BHelp
             return lastMonday;
         }
         public static bool IsIndividual(string usrId)
-        {
+        {  
             var db = new BHelpContext(); 
             var usr = db.Users.Find(usrId);
             bool IsNonFoodServiceAdministration = AppRoutines.UserIsInRole(usr.Id, "NonFoodServiceAdministrationHours");

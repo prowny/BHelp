@@ -63,7 +63,7 @@
                         <td style="text-align: center"><b>Edit Section</b></td>
                         <td style="text-align: center">
                             @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
-                                new { id = "BoxDate", style = "width: 75px; background-color: yellow; text-align:center" })
+                                new { id = "BoxDate", @readonly = "readonly", style = "width: 75px; background-color: yellow; text-align:center" })
                         </td>
                         <td style="text-align: right">Backup:</td>
                         <td>
@@ -77,7 +77,7 @@
                         <td>
                             @Html.DropDownListFor(m => m.BackupDriver2Id,
                                 new SelectList(Model.BackupDriver2List,
-                                    "Value", "Text"),
+                                    "Value", "Text", Model.BackupDriver2Id),
                                 new { @class = "form-control", @onchange = "submitForm();" })
                             @Html.ValidationMessageFor(m => m.BackupDriver2Id, "", new { @class = "text-danger" })
                         </td>
@@ -89,6 +89,7 @@
                                 new { @class = "form-control", @onchange = "submitForm();" })
                             @Html.ValidationMessageFor(m => m.GroupDriverId, "", new { @class = "text-danger" })
                         </td>
+                        
                         @*<td>
             @Html.TextAreaFor(t => t.Note, new { style = "height: 12px" })
             @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })

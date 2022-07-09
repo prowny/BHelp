@@ -63,8 +63,16 @@ namespace BHelp.Controllers
                 view.DriverId = existngRec.DriverId;
                 view.BackupDriverList = driverList; 
                 view.BackupDriverId = existngRec.BackupDriverId;
-                view.BackupDriver2List = driverList;
-                //view.BackupDriver2List[0].Text = "(none)"; // means no "TBD" shows if selected
+                view.BackupDriver2Id = existngRec.BackupDriver2Id;
+                view.BackupDriver2List = new List<SelectListItem>();
+                foreach (var drvr in driverList)
+                {
+                    var newItem = new SelectListItem();
+                    newItem.Value = drvr.Value;
+                    newItem.Text = drvr.Text;
+                    view.BackupDriver2List.Add(newItem);
+                }
+                view.BackupDriver2List[0].Text = "(none)"; // means no "TBD" shows if selected
                 if (existngRec.GroupId == null)
                 {
                     view.GroupId = 0;
@@ -80,6 +88,15 @@ namespace BHelp.Controllers
             {
                 view.DriverList = (List<SelectListItem>)Session["DriverList"]; 
                 view.BackupDriverList = (List<SelectListItem>)Session["DriverList"];
+                view.BackupDriver2List = new List<SelectListItem>();
+                foreach (var drvr in driverList)
+                {
+                    var newItem = new SelectListItem();
+                    newItem.Value = drvr.Value;
+                    newItem.Text = drvr.Text;
+                    view.BackupDriver2List.Add(newItem);
+                }
+                view.BackupDriver2List[0].Text = "(none)"; // means no "TBD" shows if selected
             }
        
             var schedules = new List<DriverScheduleViewModel>();
@@ -633,12 +650,15 @@ namespace BHelp.Controllers
                 }
 
                 var _month = boxDate.GetValueOrDefault().Month;
-                var _day = boxDate.GetValueOrDefault().Day; 
+                var _day = boxDate.GetValueOrDefault().Day;
                 Session["DriverScheduleDateData"] = _day.ToString("00") + _month.ToString("00") + _year;
             }
             else
             {
-                Session["DriverScheduleDateData"] =DateTime.Today.Day.ToString("00") + DateTime .Today.Month .ToString("00") + DateTime.Today.Year;
+                var _month = DateTime.Today.Month;
+                var _year = DateTime.Today.Year; 
+                var _day = AppRoutines.GetFirstWeekdayDate(_month, _year).Day;
+                Session["DriverScheduleDateData"] = _day.ToString("00") + DateTime .Today.Month.ToString("00") + DateTime.Today.Year;
             }
         }
         

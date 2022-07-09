@@ -21,13 +21,11 @@ namespace BHelp.Controllers
         {
             var db = new BHelpContext();
             GetODLookUpLists(boxDate);
-            //var view =  new ODScheduleViewModel { CurrentUserId = User.Identity.GetUserId() };
             if (Session["ODScheduleDateData"] == null)
             {
                 var month = DateTime.Today.Month;
                 var year = DateTime.Today.Year;
                 var day = AppRoutines.GetFirstWeekdayDate(month, year);
-                //view.MonthName = Strings.ToUpperCase(view.Date.ToString("MMMM"));
                 Session["ODScheduleDateData"] = day.Day.ToString("00") + month.ToString("00") + year;
             }
             else  // returning to ODSchedule
