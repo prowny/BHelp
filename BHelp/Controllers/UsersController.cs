@@ -159,6 +159,7 @@ namespace BHelp.Controllers
                         ws.Cell(activeRow, 4).SetValue(report.Report[i][j][3]).Style.Font.SetBold();
                         ws.Cell(activeRow, 5).SetValue(report.Report[i][j][4]).Style.Font.SetBold();
                         ws.Cell(activeRow, 6).SetValue(report.Report[i][j][5]).Style.Font.SetBold();
+                        ws.Cell(activeRow, 7).SetValue(report.Report[i][j][6]).Style.Font.SetBold();
                     }
                     else
                     {
@@ -168,6 +169,7 @@ namespace BHelp.Controllers
                         ws.Cell(activeRow, 4).SetValue(report.Report[i][j][3]);
                         ws.Cell(activeRow, 5).SetValue(report.Report[i][j][4]);
                         ws.Cell(activeRow, 6).SetValue(report.Report[i][j][5]);
+                        ws.Cell(activeRow, 7).SetValue(report.Report[i][j][6]);
                     }
                 }
             }
@@ -182,7 +184,7 @@ namespace BHelp.Controllers
         {
             var report = new UsersInRolesReportViewModel { Report = new List<List<string[]>>() };
             List<string[]> headerLines = new List<string[]>
-            {new[] {DateTime.Today.ToShortDateString(), "", "", "", "", "Volunteer Roles and Start / End Dates"}};
+            {new[] {DateTime.Today.ToShortDateString(), "", "", "", "", "Volunteer Roles and Start / End Dates", "" }};
             report.Report.Add(headerLines);
             var userList = _db.Users.OrderBy(u => u.LastName).ToList();
             var rolesList = _db.Roles.OrderBy(r => r.Name).ToList();
@@ -204,7 +206,7 @@ namespace BHelp.Controllers
                     List<string[]> lines = new List<string[]>();
                     string str0 = role.Name;
                     if (role.Name == "OfficerOfTheDay") { str0 = "OD"; }
-                    lines.Add(new[] { str0, "", "Active", "Start", "End", "Notes" });
+                    lines.Add(new[] { str0, "", "Active", "Start", "End", "Notes", "Email" });
                     foreach (var usr in usersInRole)
                     {
                         var str4 = usr.BeginDate.Year.ToString();
@@ -217,9 +219,9 @@ namespace BHelp.Controllers
                         {
                             str5 = str4;
                         } 
-                        lines.Add(new[] { usr.FirstName, usr.LastName, usr.Active.ToString( ), str4, str5, usr.Notes });
+                        lines.Add(new[] { usr.FirstName, usr.LastName, usr.Active.ToString( ), str4, str5, usr.Notes, usr.Email });
                     }
-                    lines.Add(new[] { "", "", "", "", "", "" });   // Space line between Roles
+                    lines.Add(new[] { "", "", "", "", "", "","" });   // Space line between Roles
                     report.Report.Add(lines);
                 }
             }
@@ -228,7 +230,7 @@ namespace BHelp.Controllers
             var rolesUserIdList = _db.Database.SqlQuery<string>(sqlString).ToList();
             List<string[]> otherLines = new List<string[]>
             {
-                new[] { "Others", "", "Active", "Start", "End", "Notes" }
+                new[] { "Others", "", "Active", "Start", "End", "Notes", "Email" }
             };
             foreach (var user in userList)
             {
@@ -241,13 +243,13 @@ namespace BHelp.Controllers
                     var str5 = user.LastDate.Year.ToString();
                     // Has to be inactive or one year of disuse to show Ending Year
                     if (user.Active &&(user.LastDate > DateTime.Today.AddYears(-1) || str5 == "1900")) { str5 = ""; }
-                    otherLines.Add(new[] { user.FirstName, user.LastName, user.Active.ToString( ), str4, str5, user.Notes });
+                    otherLines.Add(new[] { user.FirstName, user.LastName, user.Active.ToString( ), str4, str5, user.Notes, user.Email });
                 }
             }
 
             if (otherLines.Count > 0)
             {
-                otherLines.Add(new[] { "", "", "", "", "", "" });   // Space between Roles
+                otherLines.Add(new[] { "", "", "", "", "", "", "" });   // Space between Roles
                 report.Report.Add(otherLines);
             }
             return report;

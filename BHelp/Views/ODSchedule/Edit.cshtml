@@ -69,7 +69,7 @@
                         {
                             <td class="edit" style="text-align: center; width: 75px">
                                 @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
-                                    new { id = "BoxDate", style = "width: 75px;background:lightgray;text-align:center" })
+                                    new { id = "BoxDate", @readonly = "readonly", style = "width: 75px;background:lightgray;text-align:center" })
                             </td>
                             <td>
                                 @Html.TextBoxFor(m => m.ODName,
@@ -90,7 +90,7 @@
                         {
                             <td class="edit" style="text-align: center; width: 75px">
                                 @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
-                                    new { id = "BoxDate", style = "width: 75px; background-color: yellow; text-align:center" })
+                                    new { id = "BoxDate", @readonly = "readonly", style = "width: 75px; background-color: yellow; text-align:center" })
                             </td>
                             <td>
                                 @Html.DropDownListFor(m => m.ODId,
@@ -129,7 +129,7 @@
                         <td style="text-align: right" class="edit">Enter/Edit data here:</td>
                         <td class="edit" style="text-align: center; width: 75px">
                             @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
-                                new { id = "BoxDate", style = "width: 75px; background-color: yellow; text-align:center" })
+                                new { id = "BoxDate", @readonly = "readonly", style = "width: 75px; background-color: yellow; text-align:center" })
                         </td>
                         <td>
                             @Html.DropDownListFor(m => m.ODId,
