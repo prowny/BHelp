@@ -152,7 +152,8 @@ namespace BHelp.Controllers
                         DateString = rec.Date.ToString("MM/dd/yyyy"),
                         HoursString = rec.Hours.ToString(),
                         MinutesString = rec.Minutes.ToString(),
-                        PeopleCount = rec.PeopleCount 
+                        PeopleCount = rec.PeopleCount,
+                        PeopleCountString = rec.PeopleCount.ToString()
                     };
                     view.HoursList.Add(newView);
                 }
@@ -193,7 +194,8 @@ namespace BHelp.Controllers
                         HoursString = rec.Hours.ToString(),
                         Minutes = rec.Minutes,
                         MinutesString = rec.Minutes.ToString(),
-                        PeopleCount = rec.PeopleCount 
+                        PeopleCount = rec.PeopleCount,
+                        PeopleCountString = rec.PeopleCount.ToString( )
                     };
                     var _usr = db.Users.Find(rec.UserId);
                     if (_usr != null)

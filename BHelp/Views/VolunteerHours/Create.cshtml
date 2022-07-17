@@ -184,6 +184,7 @@
                     <td style="text-align: center"><b>Date</b></td>
                     <td><b>Hours</b></td>
                     <td><b>Minutes</b></td>
+                    <td><b>People Count</b></td>
                 </tr>
                 @foreach (var item in Model.HoursList)
                 {
@@ -195,6 +196,7 @@
                         <td>@Html.Label(item.DateString)</td>
                         <td style="text-align: center">@Html.Label(item.HoursString)</td>
                         <td style="text-align: center">@Html.Label(item.MinutesString)</td>
+                        <td style="text-align: center">@Html.Label(item.PeopleCountString)</td>
                     </tr>
                 }
             </table>
