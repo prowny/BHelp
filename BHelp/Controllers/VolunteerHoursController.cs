@@ -145,6 +145,7 @@ namespace BHelp.Controllers
                         Id = rec.Id,
                         UserId = _hoursUser.Id,
                         UserFullName = _hoursUser.FullName,
+                        Category = rec.Category,
                         CategoryName = HoursRoutines.GetCategoryName(rec.Category),
                         Subcategory = rec.Subcategory,
                         VolunteerName = _hoursUser.FullName,
