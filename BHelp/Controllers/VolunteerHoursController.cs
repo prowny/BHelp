@@ -121,7 +121,7 @@ namespace BHelp.Controllers
                 view.A_MCategory = null;
             }
 
-            if (fCat == "F")
+            if (fCat == "F" || (view.IsIndividual && view.Category == "F") )
             {
                 view.A_MCategory = null;
                 view.Category = "F";

@@ -24,6 +24,7 @@
 {
     <div id="HeaderDiv">
         @Html.Hidden("IsIndividual", Model.IsIndividual)
+        @Html.Hidden("Category", Model.Category)
         @Html.Hidden(".IsNonFoodServiceAdministration", Model.IsNonFoodServiceAdministration)
         @Html.Hidden("IsNonFoodServiceManagement", Model.IsNonFoodServiceManagement)
         @Html.AntiForgeryToken()
