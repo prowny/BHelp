@@ -41,7 +41,7 @@ namespace BHelp
                     getHoursCategories = _newSelectList;
                 }
             }
-            if ((bool)IsNonFoodServiceManagement)
+            if (IsNonFoodServiceManagement)
             {
                 if (IsNonFoodServiceAdministration != null && (bool)!IsNonFoodServiceAdministration)
                 { // remove Administration

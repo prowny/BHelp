@@ -26,6 +26,7 @@
             {
             <tr>
                 <td>@Model.GroupMemberSelectList[i].Text</td>
+                <td>@Model.GroupMemberSelectList[i].Value</td>
                 <td>
                 @Html.ActionLink("Remove", "Remove",
                     new { clientId = Model.GroupMemberSelectList[i].Value })

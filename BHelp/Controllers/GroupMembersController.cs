@@ -86,15 +86,15 @@ namespace BHelp.Controllers
         public ActionResult MaintainGroupMembers(int? groupId)
         {
             if (Session["ClientSortOrder"] == null) Session["ClientSortOrder"] = 0; // deffault LastName
-            var memberViewModel = new GroupMemberViewModel()
+            var memberViewModel = new GroupMemberViewModel
             {
                 SelectedGroupId = groupId,
                 AllClients = new List<SelectListItem>(),
                 GroupMemberSelectList = new List<SelectListItem>(),
-                ClientSortOrder = (int)Session["ClientSortOrder"]
+                ClientSortOrder = (int)Session["ClientSortOrder"],
+                SelectedSortOrder = "LastName"
             };
 
-            memberViewModel.SelectedSortOrder = "LastName";
             if (memberViewModel.ClientSortOrder == 1)
             {
                 memberViewModel.SelectedSortOrder = "StreetName";
@@ -129,8 +129,9 @@ namespace BHelp.Controllers
                 {
                     var _text = client.LastFirstName + " " + client.StreetNumber + " ";
                     _text += client.StreetName;
+                    var _val = client.Phone;
                     groupMemberSelectList.Add(new SelectListItem()
-                        { Text = _text, Value = client.Id.ToString(), Selected = false });
+                        { Text = _text, Value = _val, Selected = false });
                 }
             }
 
@@ -273,13 +274,17 @@ namespace BHelp.Controllers
             ws.Cell(activeRow, 1).SetValue(view.Name + "  " + DateTime.Today.ToShortDateString());
             ws.Cell(activeRow, 1).Style.Alignment.WrapText = true;
             activeRow++;
+            ws.Columns("1").Width = 12;
             ws.Cell(activeRow, 1).SetValue("Last Name");
             ws.Cell(activeRow, 2).SetValue("First Name");
-            ws.Cell(activeRow, 3).SetValue("Street Number");
+            ws.Cell(activeRow, 3).SetValue("Street #");
             ws.Cell(activeRow, 4).SetValue("Street Name");
             ws.Cell(activeRow, 5).SetValue("City");
             ws.Cell(activeRow, 6).SetValue("Zip Code");
-            ws.Cell(activeRow, 7).SetValue("Notes");
+            ws.Columns("7").Width = 12;
+            ws.Cell(activeRow, 7).SetValue("Phone");
+            ws.Columns("8").Width = 24;
+            ws.Cell(activeRow, 8).SetValue("Notes");
             foreach (var mbr in view.GroupMembersIdList)
             {
                 var client = db.Clients.Find(mbr);
@@ -292,8 +297,10 @@ namespace BHelp.Controllers
                     ws.Cell(activeRow, 4).SetValue(client.StreetName);
                     ws.Cell(activeRow, 5).SetValue(client.City);
                     ws.Cell(activeRow, 6).SetValue(client.Zip);
-                    ws.Cell(activeRow, 7).SetValue(client.Notes);
+                    ws.Cell(activeRow, 7).SetValue(client.Phone);
                     ws.Cell(activeRow, 7).Style.Alignment.WrapText = true;
+                    ws.Cell(activeRow, 8).SetValue(client.Notes);
+                    ws.Cell(activeRow, 8).Style.Alignment.WrapText = true;
                 }
             }
             MemoryStream ms = new MemoryStream();
