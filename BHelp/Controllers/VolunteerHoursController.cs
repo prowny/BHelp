@@ -121,7 +121,7 @@ namespace BHelp.Controllers
                 view.A_MCategory = null;
             }
 
-            if (fCat == "F" || (view.IsIndividual && view.Category == "F") )
+            if (fCat == "F" || (view.IsIndividual && view.Category == "F") )  // error-catch 08/02/2022
             {
                 view.A_MCategory = null;
                 view.Category = "F";
@@ -129,8 +129,11 @@ namespace BHelp.Controllers
             else
             {
                 view.A_MCategory = a_mCat;
-                view.Category = a_mCat;
-                view.CategoryList = HoursRoutines.SetSelectedItem(view.CategoryList, a_mCat);
+                if (a_mCat != null)  // error-catch 08/02/2022
+                {
+                    view.Category = a_mCat;
+                    view.CategoryList = HoursRoutines.SetSelectedItem(view.CategoryList, a_mCat);
+                }
             }
            
             if (_isIndividual || _isNonFoodServiceAdministration || _isNonFoodServiceManagement)
@@ -235,13 +238,13 @@ namespace BHelp.Controllers
                 model.PeopleCount = view.PeopleCount;
                 if (!model.IsNonFoodServiceAdministration && ! model .IsNonFoodServiceManagement)
                 {
-                // Check for invalid Food Service/(none) pair or(none)/(none) pair
-                if (model.Category == "F" && model.Subcategory == "(none)"
-                    || (model.Category == "(none)" && model.Subcategory == "(none)"))
-                    {
-                        TempData["SubmitError"] = "Invalid Category/Subcategory setup. Contact Administrator.";
-                        return RedirectToAction("Create", new { userId = model.UserId });
-                    }
+                    // Check for invalid Food Service/(none) pair or(none)/(none) pair
+                    if (model.Category == "F" && model.Subcategory == "(none)"
+                        || (model.Category == "(none)" && model.Subcategory == "(none)"))
+                        {
+                            TempData["SubmitError"] = "Invalid Category/Subcategory setup. Contact Administrator.";
+                            return RedirectToAction("Create", new { userId = model.UserId });
+                        }
                 }
             }
 
@@ -282,6 +285,7 @@ namespace BHelp.Controllers
                 PeopleCount = model.PeopleCount
             };
 
+            if (newRec.Category == null) newRec.Category = "F"; // catch-all 08/02/2022
             db.VolunteerHours.Add(newRec);
             db.SaveChanges();
             return RedirectToAction("Create", new{hoursDate = newRec.Date });
