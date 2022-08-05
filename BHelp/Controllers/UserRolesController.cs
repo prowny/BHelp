@@ -95,6 +95,8 @@ namespace BHelp.Controllers
                     throw new Exception("Error assigning role: " + ex.Message);
                 }
 
+                // Force new session variable lookup in ODSchedules id OD:
+                if (role.Name == "OfficerOfTheDay") Session["ODSelectList"] = null;
                 return RedirectToAction("Index", "UserRoles");
             }
             // If we got this far, something failed, redisplay form

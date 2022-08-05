@@ -124,114 +124,6 @@ namespace BHelp.Controllers
                 view.Note = existingRec.Note;
             }
             
-            // Check for new OD id - returning from view having clicked the OD dropdownlist.
-            //if (odId != null) view.ODId = odId;
-
-            //view.BoxDay = new DateTime[6, 6];
-            //view.BoxODName = new string[26];
-            //view.BoxODId = new string[26];
-            //view.BoxODPhone = new string[26];
-            //view.BoxODPhone2 = new string[26];
-            //view.BoxODEmail = new string[26];
-            //view.BoxNote = new string[26];
-            //view.BoxODConfirmed = new bool[26];
-            //view.BoxHoliday = new bool[26];
-
-            // Get all OD records for this month
-            //var monthlyList = (List<ODSchedule>)Session["MonthlyODSchedule"];
-
-            //for (var i = 1; i < 6; i++)
-            //{
-            //    for (var j = 1; j < 6; j++)
-            //    {
-            //        var idx = j + 5 * (i - 1);  // index of Display Box 1 - 25
-            //        if (i == 1)
-            //        {
-            //            if (j < startDayOfWk) continue;
-            //            view.BoxDay[i, j] = startDt.AddDays(j - startDayOfWk);
-            //            if (AppRoutines.IsHoliday(view.BoxDay[i, j], (List<HolidayViewModel>)Session["Holidays"]))
-            //            {
-            //                view.BoxHoliday[idx] = true;
-            //                var holidayData = GetHolidayData(view.BoxDay[i, j]);
-            //                view.BoxNote[idx] = holidayData.Name + Environment.NewLine
-            //                                                     + "BH Closed";
-            //            }
-            //            var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
-            //            if (mIdx >= 0) // mIdx = -1 if match not found
-            //            {
-            //                var odIdx = odList.FindIndex(d => d.Value == monthlyList[mIdx].ODId);
-            //                if (odIdx >= 0)
-            //                {
-            //                    view.BoxODName[idx] = odList[odIdx].Text;
-            //                    if (odDataList[odIdx].PhoneNumber != null) view.BoxODPhone[idx] = odDataList[odIdx].PhoneNumber;
-            //                    if (odDataList[odIdx].PhoneNumber2 != null) view.BoxODPhone2[idx] = odDataList[odIdx].PhoneNumber2;
-            //                    if (odDataList[odIdx].Email != null) view.BoxODEmail[idx] = odDataList[odIdx].Email;
-            //                    if (odList[odIdx].Value != null) view.BoxODId[idx] = odList[odIdx].Value;
-            //                }
-            //                view.BoxNote[idx] = monthlyList[mIdx].Note;
-            //                view.BoxODConfirmed[idx] = monthlyList[mIdx].ODConfirmed;
-            //            }
-            //            continue;
-            //        }
-
-            //        if (view.BoxDay[i - 1, j] == DateTime.MinValue)
-            //        {
-            //            view.BoxDay[i, j] = startDt.AddDays(7 + j - startDayOfWk);
-            //            if (AppRoutines.IsHoliday(view.BoxDay[i, j], (List<HolidayViewModel>)Session["Holidays"]))
-            //            {
-            //                view.BoxHoliday[idx] = true;
-            //                var holidayData = GetHolidayData(view.BoxDay[i, j]);
-            //                view.BoxNote[idx] = holidayData.Name + Environment.NewLine
-            //                                                     + "BH Closed";
-            //            }
-            //            var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
-            //            if (mIdx >= 0)  // mIdx = -1 if match not found
-            //            {
-            //                var odIdx = odList.FindIndex(d => d.Value == monthlyList[mIdx].ODId);
-            //                if (odIdx >= 0)
-            //                {
-            //                    view.BoxODName[idx] = odList[odIdx].Text;
-            //                    if (odDataList[odIdx].PhoneNumber != null) view.BoxODPhone[idx] = odDataList[odIdx].PhoneNumber;
-            //                    if (odDataList[odIdx].PhoneNumber2 != null) view.BoxODPhone2[idx] = odDataList[odIdx].PhoneNumber2;
-            //                    if (odDataList[odIdx].Email != null) view.BoxODEmail[idx] = odDataList[odIdx].Email;
-            //                    if (odList[odIdx].Value != null) view.BoxODId[idx] = odList[odIdx].Value;
-            //                }
-            //                view.BoxNote[idx] = monthlyList[mIdx].Note;
-            //                view.BoxODConfirmed[idx] = monthlyList[mIdx].ODConfirmed;
-            //            }
-            //        }
-            //        else
-            //        {
-            //            if (view.BoxDay[i - 1, j].AddDays(7) <= endDate)
-            //            {
-            //                view.BoxDay[i, j] = view.BoxDay[i - 1, j].AddDays(7);
-            //                if (AppRoutines.IsHoliday(view.BoxDay[i, j], (List<HolidayViewModel>)Session["Holidays"]))
-            //                {
-            //                    view.BoxHoliday[idx] = true;
-            //                    var holidayData = GetHolidayData(view.BoxDay[i, j]);
-            //                    view.BoxNote[idx] = holidayData.Name + Environment.NewLine 
-            //                                                         + "BH Closed";
-            //                }
-            //                var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
-            //                if (mIdx >= 0)  // mIdx = -1 if match not found
-            //                {
-            //                    var odIdx = odList.FindIndex(d => d.Value == monthlyList[mIdx].ODId);
-            //                    if (odIdx >= 0)
-            //                    {
-            //                        view.BoxODName[idx] = odList[odIdx].Text;
-            //                        if (odDataList[odIdx].PhoneNumber != null) view.BoxODPhone[idx] = odDataList[odIdx].PhoneNumber;
-            //                        if (odDataList[odIdx].PhoneNumber2 != null) view.BoxODPhone2[idx] = odDataList[odIdx].PhoneNumber2;
-            //                        if (odDataList[odIdx].Email != null) view.BoxODEmail[idx] = odDataList[odIdx].Email;
-            //                        if (odList[odIdx].Value != null) view.BoxODId[idx] = odList[odIdx].Value;
-            //                    }
-            //                    view.BoxNote[idx] = monthlyList[mIdx].Note;
-            //                    view.BoxODConfirmed[idx] = monthlyList[mIdx].ODConfirmed;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
             var schedules = new List<ODScheduleViewModel>();
             var dt = DateTime.MinValue;
             var skip = false;
@@ -348,7 +240,7 @@ namespace BHelp.Controllers
             return RedirectToAction("Edit", new { boxDate = _boxDate });
         }
 
-        private void GetODLookUpLists(DateTime? boxDate)
+        private void  GetODLookUpLists(DateTime? boxDate)
         {   // AND ODDataList AND NonSchedulerODSelectList
             var _dt = DateTime.Today;
             if (boxDate != null)
