@@ -177,8 +177,14 @@ namespace BHelp.Controllers
             //{
             //    return RedirectToAction("Login", "Account");
             //}
+            var view = new RegisterViewModel
+                {
+                 VolunteerCategories = HoursRoutines.GetHoursCategoriesSelectList(false,false),
+                 VolunteerSubcategories = HoursRoutines.GetHoursSubcategoriesSelectList(null),
+                 States = AppRoutines.GetStatesSelectList()
+                };
 
-            return View();
+            return View(view);
         }
 
         // POST: /Account/Register
@@ -194,13 +200,22 @@ namespace BHelp.Controllers
                     UserName = model.UserName,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
+                    Title=model.Title,  
                     PhoneNumber = model.PhoneNumber,
                     Email = model.Email,
                     PhoneNumberConfirmed = true,
                     EmailConfirmed = true,
                     BeginDate = DateTime.Today,
                     LastDate = new DateTime(1900, 01, 01),
-                    Active = true
+                    Active = true,
+                    Address = model.Address,
+                    City = model.City,
+                    State = model.State,
+                    Zip = model.Zip,
+                    VolunteerCategory = model.VolunteerCategory,
+                    VolunteerSubcategory = model.VolunteerSubcategory, 
+                    States =AppRoutines.GetStatesSelectList(),
+                    Notes =model.Notes 
                 };
 
                 var result = await UserManager.CreateAsync(user, model.Password);
@@ -240,7 +255,7 @@ namespace BHelp.Controllers
                     //}
                     //    }
                     //}
-                    return RedirectToAction("Login", "Account");
+                    return RedirectToAction("Index", "Users");
                     //return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
                 }
 
@@ -248,6 +263,15 @@ namespace BHelp.Controllers
             }
 
             // If we got this far, something failed, redisplay form
+            var errors = ModelState.Select(x => x.Value.Errors)
+                .Where(y => y.Count > 0)
+                .ToList();
+            var errmsg = errors[0];
+            model.ErrorMessage = errmsg[0].ErrorMessage;
+            model.VolunteerCategories = HoursRoutines.GetHoursCategoriesSelectList(false, false);
+            model.VolunteerSubcategories = HoursRoutines.GetHoursSubcategoriesSelectList(null);
+            model.States = AppRoutines.GetStatesSelectList();
+            //return RedirectToAction("Register", "Account");
             return View(model);
         }
 
