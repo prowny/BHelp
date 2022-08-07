@@ -1996,15 +1996,15 @@ namespace BHelp.Controllers
                         switch (rec.Category)
                         {
                             case "A":
-                                totalAHours += rec.Hours + (rec.Minutes / 60);
+                                totalAHours += rec.Hours + rec.Minutes / 60f;
                                 totalAPeople += rec.PeopleCount;
                                 break;
                             case "F":
-                                totalFHours += rec.Hours + (rec.Minutes / 60);
+                                totalFHours += rec.Hours + rec.Minutes / 60f;
                                 totalFPeople += rec.PeopleCount;
                                 break;
                             case "M":
-                                totalMHours += rec.Hours + (rec.Minutes / 60);
+                                totalMHours += rec.Hours + rec.Minutes / 60f;
                                 totalMPeople += rec.PeopleCount;
                                 break;
                         }
