@@ -163,7 +163,7 @@ namespace BHelp.Controllers
                     rec.DriverId = schedule.DriverId;
                     if (schedule.BackupDriverId == "0") schedule.BackupDriverId = null;
                     rec.BackupDriverId = schedule.BackupDriverId;
-                    if (schedule.BackupDriver2Id == "0") schedule.BackupDriverId = null;
+                    if (schedule.BackupDriver2Id == "0") schedule.BackupDriver2Id = null;
                     rec.BackupDriver2Id = schedule.BackupDriver2Id;
                     if (schedule.GroupId == 0)
                     {
