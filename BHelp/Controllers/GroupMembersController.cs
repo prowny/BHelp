@@ -129,7 +129,8 @@ namespace BHelp.Controllers
                 {
                     var _text = client.LastFirstName + " " + client.StreetNumber + " ";
                     _text += client.StreetName;
-                    var _val = client.Phone;
+                    _text += "|phone|" + client.Phone;  // insert text separator for Phone
+                    var _val = client.Id.ToString();
                     groupMemberSelectList.Add(new SelectListItem()
                         { Text = _text, Value = _val, Selected = false });
                 }
