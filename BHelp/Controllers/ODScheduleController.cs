@@ -188,9 +188,13 @@ namespace BHelp.Controllers
 
                     // update session variable:
                     var msUpdate = (List<ODSchedule>)Session["MonthlyODSchedule"];
-                    msUpdate.Remove(msUpdate.FirstOrDefault(t => t.Id == rec.Id));
+                    foreach (var item in msUpdate.Where(s => s.Date == schedule.Date))
+                    {
+                        item.ODId = schedule.ODId;
+                        item.Note = schedule.Note;
+                    }
                     Session["MonthlyODSchedule"] = msUpdate;
-
+                    
                     return RedirectToAction("Edit", new { boxDate = schedule.Date, odid=schedule.ODId });
                 }
 
@@ -215,7 +219,7 @@ namespace BHelp.Controllers
                 msAdd.Add(newMsAdd);
                 Session["MonthlyODSchedule"] = msAdd;
 
-                return RedirectToAction("Edit", new { boxDate = newRec.Date });
+                return RedirectToAction("Edit", new { boxDate = newRec.Date, odId = schedule.ODId });
             }
             else
             {
