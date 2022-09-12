@@ -1274,13 +1274,13 @@ namespace BHelp
 
                 dtDay = (from day in Enumerable.Range(1, 31)
                 where new DateTime(year, 10, day).DayOfWeek == DayOfWeek.Monday
-                select day).ElementAt(1);
-            holiday = new HolidayViewModel()
-            {
-                Date = new DateTime(year, 10, dtDay),
-                Name = "Columbus Day"
-            };
-            Holidays.Add(holiday);
+                select day).ElementAt(1); // 2nd Monday
+                holiday = new HolidayViewModel()
+                {
+                    Date = new DateTime(year, 10, dtDay),
+                    Name = "Columbus Day"
+                };
+                Holidays.Add(holiday);
 
             dt = AdjustForWeekendHoliday(new DateTime(year, 11, 11).Date);
             holiday = new HolidayViewModel()
@@ -1289,7 +1289,6 @@ namespace BHelp
                 Name = "Veterans Day"
             };
             Holidays.Add(holiday);
-
 
             dtDay = (from day in Enumerable.Range(1, 30)
                 where new DateTime(year, 11, day).DayOfWeek == DayOfWeek.Thursday

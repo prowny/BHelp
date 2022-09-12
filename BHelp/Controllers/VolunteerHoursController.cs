@@ -111,6 +111,8 @@ namespace BHelp.Controllers
                 PeopleCount = 1
             };
 
+            if (a_mCat == "A") view.Category = "Administration";
+            if (a_mCat == "M") view.Category = "Management";
             if ((view.Category == "A" || view.Category == "M") && view.IsIndividual )
             {
                 a_mCat = view.Category;

@@ -538,6 +538,7 @@ namespace BHelp.Controllers
             var startDate = new DateTime(view.Year, view.Month, 1);
             var endDate = new DateTime(view.Year,view.Month, DateTime.DaysInMonth(view.Year, view.Month));
             var startDayOfWk = (int)startDate.DayOfWeek;
+            if (startDayOfWk == 6) startDayOfWk = -1;
             var monthlyList = (List<DriverSchedule>)Session["MonthlySchedule"];
             var driverList = (List<SelectListItem>)Session["DriverList"];
             var driverDataList = (List<ApplicationUser>)Session["DriverDataList"];
@@ -547,7 +548,7 @@ namespace BHelp.Controllers
             {
                 for (var j = 1; j < 6; j++)
                 {
-                    view.BoxDay[i, j] = startDate.AddDays(7*(i-1) + j - startDayOfWk);
+                    view.BoxDay[i, j] = startDate.AddDays(7 * (i - 1) + j - startDayOfWk);
                     if (view.BoxDay[i,j] < startDate || view.BoxDay[i, j] > endDate) continue;
                     var idx = j + 5 * (i - 1);
                     if (AppRoutines.IsHoliday(view.BoxDay[i, j], holidayList))  //(List<HolidayViewModel>)Session["Holidays"]))

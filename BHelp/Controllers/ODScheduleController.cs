@@ -185,6 +185,12 @@ namespace BHelp.Controllers
                     rec.ODId = schedule.ODId;
                     rec.Note = schedule.Note;
                     db.SaveChanges();
+
+                    // update session variable:
+                    var msUpdate = (List<ODSchedule>)Session["MonthlyODSchedule"];
+                    msUpdate.Remove(msUpdate.FirstOrDefault(t => t.Id == rec.Id));
+                    Session["MonthlyODSchedule"] = msUpdate;
+
                     return RedirectToAction("Edit", new { boxDate = schedule.Date, odid=schedule.ODId });
                 }
 
@@ -453,6 +459,7 @@ namespace BHelp.Controllers
             var startDate = new DateTime(view.Year, view.Month, 1);
             var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
             var startDayOfWk = (int)startDate.DayOfWeek;
+            if (startDayOfWk == 6) startDayOfWk = -1;
             var monthlyList = (List<ODSchedule>)Session["MonthlyODSchedule"];
             var odList = (List<SelectListItem>)Session["ODSelectList"];
             var odDataList = (List<ApplicationUser>)Session["ODDataList"];
