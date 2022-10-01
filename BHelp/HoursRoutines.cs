@@ -203,8 +203,8 @@ namespace BHelp
                 new VolunteerHoursTotalsViewModel(){Category ="F", CategoryName = "Food Program", PeopleCount =0,TotalHours = 0},
             };
 
-            // for checking duplicate PeopleCounts:
-            var catTotalEntriesSoFar = new List<VolunteerHoursViewModel>(); 
+            // for checking duplicate PeopleCounts: (removed 10/01/202)
+            //var catTotalEntriesSoFar = new List<VolunteerHoursViewModel>(); 
 
             foreach (var view in sortedList)
             {
@@ -213,22 +213,24 @@ namespace BHelp
                     if (view.Category == catTotal.Category)
                     {
                         catTotal.TotalHours += view.Hours + view.Minutes / 60f;
+                        catTotal.PeopleCount += view.PeopleCount;
+
                         // if this user has duplicate Cat & subcat this period, don't add to peoplecount
-                        var okToAddPeople = true;
-                        foreach (var _entry in catTotalEntriesSoFar)
-                        {
-                            if (view.Category == _entry.Category 
-                                && view.Subcategory == _entry.Subcategory 
-                                && view.UserId == _entry.UserId 
-                                && view.PeopleCount == 1) // not a bulk entry
-                            {
-                                okToAddPeople = false;
-                                break;
-                            }
-                        }
-                        if(okToAddPeople) catTotal.PeopleCount += view.PeopleCount;
-                        catTotalEntriesSoFar.Add(view);
-                        break;
+                        //var okToAddPeople = true;
+                        //foreach (var _entry in catTotalEntriesSoFar)
+                        //{
+                        //    if (view.Category == _entry.Category 
+                        //        && view.Subcategory == _entry.Subcategory 
+                        //        && view.UserId == _entry.UserId 
+                        //        && view.PeopleCount == 1) // not a bulk entry
+                        //    {
+                        //        okToAddPeople = false;
+                        //        break;
+                        //    }
+                        //}
+                        //if(okToAddPeople) catTotal.PeopleCount += view.PeopleCount;
+                        //catTotalEntriesSoFar.Add(view);
+                        //break;
                     }
                 }
             }
