@@ -25,7 +25,8 @@ namespace BHelp.Controllers
         {  
             var listDeliveries = new List<Delivery>(db.Deliveries)
                 .Where(d =>  d.Status == 0)
-                .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip).ToList();
+                .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
+                .ThenBy(n => n.StreetNumber).ThenBy(s => s.StreetName) .ToList();
 
             var duplicateClientIds = from x in listDeliveries
                        group x by x.ClientId into g
