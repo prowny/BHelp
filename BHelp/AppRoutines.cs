@@ -848,6 +848,9 @@ namespace BHelp
                     .OrderBy(d => d.DateDelivered)
                     //.ThenBy(d => d.DriverId)  // change 01/05/2022
                     .ThenBy(z => z.Zip)
+                    // add by street number then street name 10/13/2022
+                    .ThenBy(s => s.StreetNumber)
+                    .ThenBy(n => n.StreetName )
                     .ThenBy(n => n.LastName).ToList();
                 odv.OpenDeliveryCount = deliveryList.Count;
 
