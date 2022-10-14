@@ -616,8 +616,7 @@ namespace BHelp.Controllers
             {
                 var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0)
                     .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
-                    // added 10/13/2022:
-                    .ThenBy(n => n.StreetNumber).ThenBy(s => s.StreetName)
+                    .ThenBy(n => n.StreetNumber).ThenBy(s => s.StreetName) // added 10/13/2022
                     .ThenBy(n => n.LastName).ToList();   // get all open deliveries
                 if (view.ReplacementDriverId == "0") view.ReplacementDriverId = null;
                 var newView = new OpenDeliveryViewModel
