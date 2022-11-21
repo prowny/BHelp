@@ -42,7 +42,8 @@ namespace BHelp.Controllers
             if (userId.IsNullOrEmpty()) { System.Web.HttpContext.Current.User.Identity.GetUserId(); }
             var deliveryList = new List<Delivery>(db.Deliveries).Where(d => d.Status == 0)
                 .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
-                .ThenBy(n => n.LastName).ToList();
+                .ThenBy(s => s.StreetNumber)
+                .ThenBy(n => n.StreetName).ToList();  // changed 11/21/2022
             foreach (var delivery in deliveryList)
             {
                 var client = db.Clients.Find(delivery.ClientId);
