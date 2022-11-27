@@ -1,7 +1,4 @@
-﻿using Microsoft.Owin;
-using Owin;
-
-[assembly: OwinStartupAttribute(typeof(BHelp.Startup))]
+﻿[assembly: OwinStartupAttribute(typeof(BHelp.Startup))]
 namespace BHelp
 {
     public partial class Startup

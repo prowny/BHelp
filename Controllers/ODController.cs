@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
-using Castle.Core.Internal;
 using BHelp.ViewModels;
-using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
 {

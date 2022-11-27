@@ -1,18 +1,9 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
+﻿using System.Threading.Tasks;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
-using Microsoft.AspNet.Identity.EntityFramework;
 using System.Collections.Generic;
 using System;
-using System.Net.Mail;
 using BHelp.ViewModels;
-using System.Net;
 
 namespace BHelp.Controllers
 {

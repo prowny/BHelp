@@ -623,6 +623,9 @@
     <Content Include="Views\DriverEmail\Index.cshtml" />
     <Content Include="Views\DriverEmail\MonthlySchedule.cshtml" />
     <Content Include="Views\DriverEmail\DriverEmailDisplay.cshtml" />
+    <Content Include="Views\Deliveries\ClientNotFound.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>

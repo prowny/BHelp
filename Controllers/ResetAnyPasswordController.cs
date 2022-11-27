@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
-using Newtonsoft.Json;
 
 namespace BHelp.Controllers
 {

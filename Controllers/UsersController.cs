@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web.Mvc;
-using System.Linq;
-using System.Net;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
 using System.IO;
-using ClosedXML.Excel;
 
 namespace BHelp.Controllers
 {

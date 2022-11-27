@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using DocumentFormat.OpenXml.Office.CoverPageProps;
-
-namespace BHelp.ViewModels
+﻿namespace BHelp.ViewModels
 {
     public class OpenDeliveryViewModel
     {

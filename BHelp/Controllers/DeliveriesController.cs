@@ -860,9 +860,34 @@ namespace BHelp.Controllers
                         viewModel.Notes = s;
                     }
                 }
+                else
+                {
+                    return RedirectToAction("ClientNotFound", viewModel);
+                }
                 
                 viewModel.Zip = delivery.Zip;
                 return View(viewModel);
+            }
+
+            public ActionResult ClientNotFound (DeliveryViewModel view)
+            {
+                return View(view);
+            }
+
+            public ActionResult DeleteDelivery (int _id, string _returnURL)
+            {
+                Delivery delivery = db.Deliveries.Find(_id);
+                if (delivery != null) db.Deliveries.Remove(delivery);
+                db.SaveChanges();
+
+                if (_returnURL.Contains("UpdateHousehold"))
+                { return RedirectToAction("Index", "OD"); }
+                if (_returnURL.Contains("CallLogByLogDate"))
+                { return RedirectToAction("CallLogByLogDate"); }
+                if (_returnURL.Contains("CallLogIndividual"))
+                { return RedirectToAction("CallLogIndividual"); }
+
+                return RedirectToAction("Index");
             }
         
             public ActionResult AdviseCannotSave(int _id)
@@ -889,7 +914,6 @@ namespace BHelp.Controllers
                 // DriverId and DeliveryDateODId are used in Edit dropdowns and return a
                 // text value of '0' when 'nobody yet' is selected:
                 if (delivery.DriverId == "0") delivery.DriverId = null;
-                //if (delivery.DeliveryDateODId == "0") delivery.DeliveryDateODId = null;
                 if (delivery.DeliveryDateODId == "0")
                 {  // Reminder error - ODId required: 
                     return RedirectToAction("AdviseODIdRequired", new { _id = delivery.Id });
@@ -960,7 +984,7 @@ namespace BHelp.Controllers
             }
         
             // GET: Deliveries/Delete/5
-            [Authorize(Roles = "Administrator,Staff,Develope,OfficerOfTheDay")]
+            [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
             public ActionResult Delete(int? id, string returnURL)
             {
                 if (id == null)
@@ -981,18 +1005,7 @@ namespace BHelp.Controllers
             [ValidateAntiForgeryToken]
             public ActionResult DeleteConfirmed(int id, string returnURL)
             {
-                Delivery delivery = db.Deliveries.Find(id);
-                if (delivery != null) db.Deliveries.Remove(delivery);
-                db.SaveChanges();
-                if (returnURL.Contains("UpdateHousehold"))
-                { return RedirectToAction("Index", "OD"); }
-                if (returnURL.Contains("CallLogByLogDate"))
-                {return RedirectToAction("CallLogByLogDate");}
-                if (returnURL.Contains("CallLogIndividual"))
-                { return RedirectToAction("CallLogIndividual"); }
-               
-                return RedirectToAction("Index");
-
+                return RedirectToAction("DeleteDelivery", new {_id = id, _returnURL = returnURL});
             }
 
             [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]

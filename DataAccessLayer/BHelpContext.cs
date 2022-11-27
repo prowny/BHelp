@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
-using BHelp.Models;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration.Conventions;
-using System.Diagnostics;
+﻿using BHelp.Models;
 
 namespace BHelp.DataAccessLayer
 {

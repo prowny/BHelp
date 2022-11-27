@@ -1,8 +1,5 @@
-﻿using System.Linq;
-using System.Web.Mvc;
-using BHelp.DataAccessLayer;
+﻿using BHelp.DataAccessLayer;
 using BHelp.ViewModels;
-using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
 {

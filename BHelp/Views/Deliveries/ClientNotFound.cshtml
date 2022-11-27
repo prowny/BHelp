@@ -1,0 +1,27 @@
+﻿@model BHelp.ViewModels.DeliveryViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Client Not Found</title>
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+</head>
+<body>
+    <div>
+        <span style="color: red">
+            <b>Client Record not Found for this Delivery</b>
+        </span>
+       <br/>
+        @*<span>@Model.Id</span>*@
+       <br />
+       Do you want to delete this delivery?
+       @Html.ActionLink("Delete", "Delete", new { id = Model.Id, returnURL = Model.ReturnURL }, new { id = "DeleteButton" })
+    </div>
+    <br/>
+    <div>
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
+</body>
+</html>

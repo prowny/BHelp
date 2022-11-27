@@ -1,12 +1,6 @@
-﻿using System.ComponentModel;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using System.ComponentModel.DataAnnotations.Schema;
-using Newtonsoft.Json;
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace BHelp.Models
 {

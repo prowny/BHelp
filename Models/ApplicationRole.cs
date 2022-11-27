@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
-
-namespace BHelp.Models
+﻿namespace BHelp.Models
 {
     public class ApplicationRole : IdentityRole
     {

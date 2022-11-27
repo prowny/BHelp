@@ -1,10 +1,5 @@
 ﻿namespace BHelp.Migrations
 {
-    using System;
-    using System.Data.Entity;
-    using System.Data.Entity.Migrations;
-    using System.Linq;
-
     internal sealed class Configuration : DbMigrationsConfiguration<BHelp.DataAccessLayer.BHelpContext>
     {
         public Configuration()
