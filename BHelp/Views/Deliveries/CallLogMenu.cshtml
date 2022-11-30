@@ -13,8 +13,10 @@
         <b>Call Log History</b>
         <br />
         <a href="@Url.Action("CallLogIndividual", "Deliveries")">History by Individual Client</a><br />
-        <a href="@Url.Action("CallLogByLogDate", "Deliveries")">History by Log Date Range</a><br />
         <a href="@Url.Action("CallLogByDateDelivered", "Deliveries")">History by Date Delivered Range</a><br />
+        <a href="@Url.Action("CallLogByLogDate", "Deliveries")">History by Log Date Range</a>
+        <span style="font-style: italic; color: darkmagenta">&nbsp;(Will find deliveries with missing Client records)</span>
+        <br />
     </div>
 <br/>
 <div>

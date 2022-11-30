@@ -20,7 +20,9 @@
         @Html.HiddenFor(m => m.ReturnURL)
         <div>
             <span style="color: red"><b>Client Record not Found for this Delivery</b></span>
-            <span >&nbsp;Date:&nbsp;@Model.DateDeliveredString
+            <span >&nbsp;Log Date:&nbsp;@Model.LogDate.ToString("MM/dd/yyyy")</span>
+            <br/>
+            <span >Delivery Date:&nbsp;@Model.DateDeliveredString
                 &nbsp;@Model.FirstName&nbsp;@Model.LastName 
             </span>
             <br />
