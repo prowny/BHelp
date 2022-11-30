@@ -862,6 +862,8 @@ namespace BHelp.Controllers
                 }
                 else
                 {
+                    viewModel.FirstName  = delivery.FirstName;
+                    viewModel.LastName = delivery.LastName;
                     return RedirectToAction("ClientNotFound", viewModel);
                 }
                 
@@ -871,6 +873,19 @@ namespace BHelp.Controllers
 
             public ActionResult ClientNotFound (DeliveryViewModel view)
             {
+                var clientSelectList = new List<SelectListItem>();
+                var clientList = db.Clients.OrderBy(c => c.LastName).ToList();
+                var maxTextLength = 70;
+                foreach (var client in clientList)
+                {
+                    var text = client.LastName + ", " + client.FirstName + " ";
+                    text += client.StreetNumber + " " + client.StreetName;
+                    if (text.Length > maxTextLength) text = text.Substring(0, maxTextLength) + "...";
+                    var selListItem = new SelectListItem() { Value = client.Id.ToString(), Text = text, Selected = false };
+                    clientSelectList.Add(selListItem);
+                }
+                view.ClientSelectList = clientSelectList;
+                view.DateDeliveredString = string.Format("{0:MM/dd/yyyy}", view.DateDelivered);
                 return View(view);
             }
 
@@ -1000,8 +1015,33 @@ namespace BHelp.Controllers
                 return View(delivery);
             }
 
-            // POST: Deliveries/Delete/5
-            [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay"), ActionName("Delete")]
+        //public ActionResult Assign(int? id, string returnURL)
+        [HttpPost]
+        public ActionResult Assign(DeliveryViewModel model)
+        {
+            var _id = model.Id;
+            if (_id == 0)
+            { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
+
+            Delivery delivery = db.Deliveries.Find(_id);
+            if (delivery == null)
+            { return HttpNotFound(); }
+
+            delivery.ClientId = model.ClientId;
+            db.SaveChanges();
+
+            if (model.ReturnURL.Contains("UpdateHousehold"))
+            { return RedirectToAction("Index", "OD"); }
+            if (model.ReturnURL.Contains("CallLogByLogDate"))
+            { return RedirectToAction("CallLogByLogDate"); }
+            if (model.ReturnURL.Contains("CallLogIndividual"))
+            { return RedirectToAction("CallLogIndividual"); }
+
+            return RedirectToAction("Index");
+        }
+
+        // POST: Deliveries/Delete/5
+        [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay"), ActionName("Delete")]
             [ValidateAntiForgeryToken]
             public ActionResult DeleteConfirmed(int id, string returnURL)
             {

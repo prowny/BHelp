@@ -7,21 +7,60 @@
     <meta name="viewport" content="width=device-width" />
     <title>Client Not Found</title>
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+    <style>
+        #AssignButton{display:none;}
+    </style>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
 </head>
 <body>
-    <div>
-        <span style="color: red">
-            <b>Client Record not Found for this Delivery</b>
-        </span>
-       <br/>
-        @*<span>@Model.Id</span>*@
-       <br />
-       Do you want to delete this delivery?
-       @Html.ActionLink("Delete", "Delete", new { id = Model.Id, returnURL = Model.ReturnURL }, new { id = "DeleteButton" })
-    </div>
-    <br/>
+    @using (Html.BeginForm("Assign", "Deliveries", FormMethod.Post))
+    {
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.ReturnURL)
+        <div>
+            <span style="color: red"><b>Client Record not Found for this Delivery</b></span>
+            <span >&nbsp;Date:&nbsp;@Model.DateDeliveredString
+                &nbsp;@Model.FirstName&nbsp;@Model.LastName 
+            </span>
+            <br />
+            <br />
+            Do you want to delete this delivery?
+            @Html.ActionLink("Delete", "Delete",
+                new { id = Model.Id, returnURL = Model.ReturnURL },
+                new { id = "DeleteButton" })
+        </div>
+        <br />
+        <div>
+            <table>
+                <tr>
+                    @Html.Label("To assign existing client to this delivery:")
+                </tr>
+                <tr>
+                    <td>Select Client:</td>
+                    <td>
+                        @Html.DropDownListFor(model => model.ClientId,
+                            new SelectList(Model.ClientSelectList, "Value", "Text"),
+                            "--Select--", new { @id = "clientList", @class = "form-control" })
+                    </td>
+                    <td>
+                        <input type="submit" value="Assign" id="AssignButton" style ="color: blue">
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+    <br />
     <div>
         @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
     </div>
 </body>
 </html>
+
+<script>
+    $(document).ready(function(){
+        window.$('#clientList').on('change', function() {
+            window.$('#AssignButton').show();
+        });
+    });
+</script>
