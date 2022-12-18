@@ -1214,7 +1214,7 @@ namespace BHelp
                     select day).ElementAt(2); // third Monday
                 holiday = new HolidayViewModel()
                 {
-                    Date = new DateTime(year, 2, dtDay),
+                    Date = new DateTime(year, 1, dtDay),
                     Name = "Martiin Luther King, Jr. Day"
                 };
                 Holidays.Add(holiday);
