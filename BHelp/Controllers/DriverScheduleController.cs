@@ -687,6 +687,17 @@ namespace BHelp.Controllers
         private HolidayViewModel GetHolidayData(DateTime dt)
         {
             var holidays = (List<HolidayViewModel>)Session["Holidays"];
+            // check holidays for proper year:
+            var july4th = holidays.FirstOrDefault(h => h.Date.Month == 7
+                                                       && h.Date.Day == 4);
+            if (july4th != null)
+            {
+                if (july4th.Date.Year != dt.Year) // need to reloadholidays (year change)
+                {
+                    holidays = AppRoutines.GetFederalHolidays(dt.Year);
+                    Session["Holidays"] = holidays;
+                }
+            }
             foreach (var holiday in holidays)
             {
                 if (dt == holiday.Date)
