@@ -1222,7 +1222,7 @@ namespace BHelp
                 //    NOT OBSERVED AT BETHESDA HELP
                 // dtDay = (from day in Enumerable.Range(1, 29)
                 //    where new DateTime(year, 2, day).DayOfWeek == DayOfWeek.Monday
-                //    select day).ElementAt(2);  // third Monday
+                //    select day).ElementAt(2);  // 3rd Monday
                 //holiday = new HolidayViewModel()
                 //{
                 //    Date = new DateTime(year, 2, dtDay),
@@ -1236,7 +1236,7 @@ namespace BHelp
                 while (dayOfWeek != DayOfWeek.Monday)
                 {
                     dt = dt.AddDays(-1);
-                    dayOfWeek = dt.DayOfWeek;
+                    dayOfWeek = dt.DayOfWeek; // Last Monday in May
                 }
                 holiday = new HolidayViewModel()
                 {
@@ -1275,27 +1275,29 @@ namespace BHelp
                 };
                 Holidays.Add(holiday);
 
-                dtDay = (from day in Enumerable.Range(1, 31)
-                where new DateTime(year, 10, day).DayOfWeek == DayOfWeek.Monday
-                select day).ElementAt(1); // 2nd Monday
-                holiday = new HolidayViewModel()
-                {
-                    Date = new DateTime(year, 10, dtDay),
-                    Name = "Columbus Day"
-                };
-                Holidays.Add(holiday);
+            //    NOT OBSERVED AT BETHESDA HELP 
+            //dtDay = (from day in Enumerable.Range(1, 31)
+            //where new DateTime(year, 10, day).DayOfWeek == DayOfWeek.Monday
+            //select day).ElementAt(1); // 2nd Monday
+            //holiday = new HolidayViewModel()
+            //{
+            //    Date = new DateTime(year, 10, dtDay),
+            //    Name = "Indigenous Peoples' Day"
+            //};
+            //Holidays.Add(holiday);
 
-            dt = AdjustForWeekendHoliday(new DateTime(year, 11, 11).Date);
-            holiday = new HolidayViewModel()
-            {
-                Date = dt.Date,
-                Name = "Veterans Day"
-            };
-            Holidays.Add(holiday);
+            //    NOT OBSERVED AT BETHESDA HELP
+            //dt = AdjustForWeekendHoliday(new DateTime(year, 11, 11).Date);
+            //holiday = new HolidayViewModel()
+            //{
+            //    Date = dt.Date,
+            //    Name = "Veterans Day"
+            //};
+            //Holidays.Add(holiday);
 
             dtDay = (from day in Enumerable.Range(1, 30)
                 where new DateTime(year, 11, day).DayOfWeek == DayOfWeek.Thursday
-                select day).ElementAt(3);
+                select day).ElementAt(3); // 4th Thursday
             holiday = new HolidayViewModel()
             {
                 Date = new  DateTime(year, 11, dtDay),
