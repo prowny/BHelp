@@ -36,5 +36,7 @@ namespace BHelp.DataAccessLayer
         public DbSet<DriverSchedule> DriverSchedules { get; set; }
 
         public DbSet<ODSchedule> ODSchedules { get; set; }
+
+        public DbSet<Holiday> Holidays { get; set; }
     }
 }

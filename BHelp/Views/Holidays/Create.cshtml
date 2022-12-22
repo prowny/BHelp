@@ -1,0 +1,142 @@
+﻿@model BHelp.ViewModels.HolidayViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Create</title>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+</head>
+<body>
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+        
+    <div class="form-horizontal">
+        <h4>Holiday</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    
+        <div class="form-group">
+            @Html.LabelFor(model => model.Repeat, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(r => r.Repeat,
+                    Model.Repeats, new { @id = "RepeatsDDL" })
+                @Html.ValidationMessageFor(model => model.Repeat, "", new { @class = "text-danger" })
+                
+                &nbsp;&nbsp;@Html.LabelFor(model => model.FixedDate, htmlAttributes: new { @id = "FixedDateLabel", @class = "control-label col-md-2" })
+                @Html.TextBoxFor(model => model.FixedDate, Model.FixedDate.ToString("MM/dd/yyyy"),
+                    new { id = "FixedDate", style = "width: 75px;" })
+             </div>
+        </div>
+    
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.FixedDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FixedDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FixedDate, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+    
+        <div id="AnnualMonthDay">
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Month, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Month, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Month, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Day, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Day, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Day, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Weekday, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Weekday, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Weekday, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.WeekNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.WeekNumber, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.WeekNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+        </div> @*/AnnualMonthDay*@
+        <br />
+        <div class="form-group">
+            @Html.LabelFor(model => model.EffectiveDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.EffectiveDate, Model.EffectiveDate.ToString("MM/dd/yyyy"),
+                    new { id = "EffectiveDate", style = "width: 75px;" })
+                @Html.ValidationMessageFor(model => model.EffectiveDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br/>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<br />
+<div>
+    @Html.ActionLink("Back to List", "Index")
+    <div>
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)            
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+    $(document).ready(function() {
+        window.$('#AnnualMonthDay').hide();
+    });
+</script>
+<script>
+    $(function () {
+        window.$("#FixedDate").datepicker();
+        window.$("#EffectiveDate").datepicker();
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        window.$('#RepeatsDDL').change(function () {
+            var value = window.$(this).val();
+            if (value === '0') {
+                window.$('#FixedDate').show();
+                window.$('#FixedDateLabel').show();
+                window.$('#AnnualMonthDay').Hide();
+            } else {
+                window.$('#FixedDate').hide();
+                window.$('#FixedDateLabel').hide();
+            }
+            if (value === '1') {
+                window.$('#AnnualMonthDay').show();
+            }
+        });
+    });
+</script>

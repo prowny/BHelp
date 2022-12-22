@@ -27,12 +27,13 @@
 
     @if (User.IsInRole("Developer"))
     {
-        <div>
-            <strong>Developer Menu</strong><br />
-            <a href="@Url.Action("Index", "DriverEmail")">Driver Email</a><br />
-            <a href="@Url.Action("Edit", "DriverSchedule")">Driver Schedule</a><br />
-            <a href="@Url.Action("Edit", "ODSchedule")">OD Schedule</a><br />
-        </div>
+<div>
+    <strong>Developer Menu</strong><br />
+    <a href="@Url.Action("Index", "DriverEmail")">Driver Email</a><br />
+    <a href="@Url.Action("Edit", "DriverSchedule")">Driver Schedule</a><br />
+    <a href="@Url.Action("Edit", "ODSchedule")">OD Schedule</a><br />
+    <a href="@Url.Action("Index", "Holidays")">Maintain Holidays</a><br />
+</div>
         <br />
     }
 
