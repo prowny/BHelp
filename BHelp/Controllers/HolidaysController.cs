@@ -89,7 +89,7 @@ namespace BHelp.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Description,Repeat,FixedDate,Month,Day,Weekday,WeekNumber,EffectiveDate")] Holiday holiday)
+        public ActionResult Create([Bind(Include = "Description,Repeat,FixedDate,Month,Day,Weekday,WeekNumber,EffectiveDate")] Holiday holiday)
         {
             if (ModelState.IsValid)
             {

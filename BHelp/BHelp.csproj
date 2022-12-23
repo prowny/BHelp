@@ -371,7 +371,9 @@
     <Compile Include="ViewModels\GroupNameViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="ViewModels\HolidayViewModel.cs" />
+    <Compile Include="ViewModels\HolidayViewModel.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="ViewModels\ODScheduleViewModel.cs" />
     <Compile Include="ViewModels\OpenDeliveryViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -630,11 +632,18 @@
     <Content Include="Views\Deliveries\ClientNotFound.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Holidays\Create.cshtml" />
-    <Content Include="Views\Holidays\Delete.cshtml" />
-    <Content Include="Views\Holidays\Details.cshtml" />
-    <Content Include="Views\Holidays\Edit.cshtml" />
-    <Content Include="Views\Holidays\Index.cshtml" />
+    <Content Include="Views\Holidays\Create.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Holidays\Delete.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Holidays\Edit.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Holidays\Index.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
