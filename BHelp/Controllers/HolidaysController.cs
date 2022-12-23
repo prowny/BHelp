@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -17,70 +16,29 @@ namespace BHelp.Controllers
         // GET: Holidays
         public ActionResult Index()
         {
-            return View(db.Holidays.ToList());
+            var holidayList = db.Holidays.ToList();
+            foreach (var hol in holidayList)
+            {
+                hol.MonthList = HolidayRoutines.GetMonthArray();
+                hol.WeekDayList = HolidayRoutines.GetWeekdayArray();
+                hol.WeekDayNumber = HolidayRoutines.GetWeekdayNumberArray();
+            }
+            return View(holidayList);
         }
 
         // GET: Holidays/Create
         public ActionResult Create()
         {
-            var view = new HolidayViewModel()
+            var view = new HolidayViewModel
             {
-                Repeat = 0,
                 FixedDate = DateTime.Today,
-                EffectiveDate = DateTime.Today 
+                EffectiveDate = DateTime.Today,
+                Repeats = HolidayRoutines.GetRepeatsSelectList(),
+                Months = HolidayRoutines.GetMonthsSelectList(),
+                Days = HolidayRoutines.GetDaysSelectList(),
+                WeekDayNumbers = HolidayRoutines.GetWeekDayNumberSelectList(),
+                WeekDays = HolidayRoutines.GetWeekDaySelectList(),
             };
-            List<SelectListItem> repeats = new List<SelectListItem>
-            {
-                new SelectListItem() { Text = "Does not repeat", Value = "0" },
-                new SelectListItem() { Text = "Annually on fixed month/day", Value = "1" },
-                new SelectListItem() { Text = "Annually on fixed month/week/day", Value = "2" }
-            };
-            view.Repeats = repeats;
-
-            List<SelectListItem> months = new List<SelectListItem>
-            {
-                new SelectListItem() { Text = "January", Value = "1" },
-                new SelectListItem() { Text = "February", Value = "2" },
-                new SelectListItem() { Text = "March", Value = "3" },
-                new SelectListItem() { Text = "April", Value = "4" },
-                new SelectListItem() { Text = "May", Value = "5" },
-                new SelectListItem() { Text = "June", Value = "6" },
-                new SelectListItem() { Text = "July", Value = "7" },
-                new SelectListItem() { Text = "August", Value = "8" },
-                new SelectListItem() { Text = "September", Value = "9" },
-                new SelectListItem() { Text = "October", Value = "10" },
-                new SelectListItem() { Text = "November", Value = "11" },
-                new SelectListItem() { Text = "December", Value = "12" }
-            };
-            view.Months = months;
-
-            List<SelectListItem> days = new List<SelectListItem>();
-            for (int i = 1; i < 32; i++)
-            {
-                days.Add(new SelectListItem() { Text = i.ToString(), Value = i.ToString() });
-            }
-            view.Days = days;
-
-            List<SelectListItem> weekdays = new List<SelectListItem>
-            {
-                new SelectListItem() { Text = "Monday", Value = "1" },
-                new SelectListItem() { Text = "Tuesday", Value = "2" },
-                new SelectListItem() { Text = "Wednesday", Value = "3" },
-                new SelectListItem() { Text = "Thursday", Value = "4" },
-                new SelectListItem() { Text = "Friday", Value = "5" }
-            };
-            view.WeekDays = weekdays;
-
-            List<SelectListItem> weekdaynumbers = new List<SelectListItem>
-            {
-                new SelectListItem() { Text = "First", Value = "1" },
-                new SelectListItem() { Text = "Second", Value = "2" },
-                new SelectListItem() { Text = "Third", Value = "3" },
-                new SelectListItem() { Text = "Fourth", Value = "4" },
-                new SelectListItem() { Text = "Last", Value = "5" }
-            };
-            view.WeekDayNumbers = weekdaynumbers;
-
             return View(view);
         }
 
@@ -113,12 +71,15 @@ namespace BHelp.Controllers
             {
                 return HttpNotFound();
             }
+
+            holiday.Days = HolidayRoutines.GetDaysSelectList();
+            holiday.Months = HolidayRoutines.GetMonthsSelectList();
+            holiday.Repeats = HolidayRoutines.GetRepeatsSelectList();
+            holiday.WeekDayNumbers = HolidayRoutines.GetWeekDayNumberSelectList();
             return View(holiday);
         }
 
         // POST: Holidays/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Description,Repeat,FixedDate,Month,Day,Weekday,WeekNumber,EffectiveDate")] Holiday holiday)

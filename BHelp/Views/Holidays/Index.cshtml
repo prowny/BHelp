@@ -29,66 +29,78 @@
                 @Html.DisplayNameFor(model => model.Day)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Weekday)
+                @Html.DisplayNameFor(model => model.WeekNumber)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.WeekNumber)
+                @Html.DisplayNameFor(model => model.Weekday)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.EffectiveDate)
             </th>
             <th></th>
         </tr>
-    
-    @foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        @if (item.Repeat == 0)
-        {
-            <td>Fixed Date</td>
-            string fixeddate = item.FixedDate.ToString("MM/dd/yyyy");
-            <td>@fixeddate</td>
-        }
-        @if (item.Repeat == 1)
-        {
-            <td>Annually on fixed month/day</td>
-}
-        @if (item.Repeat == 2)
-        {
-            <td>Annually on fixed month/week/day</td>
-}
 
-        @if (item.Repeat == 1 || item.Repeat == 2)
+        @foreach (var item in Model)
         {
-            <td style="text-align: center">
-                @Html.DisplayFor(modelItem => item.Month)
-            </td>
-        }
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                @if (item.Repeat == 0)
+                {
+                    <td>Fixed Date</td>
+                    string fixeddate = item.FixedDate.ToString("MM/dd/yyyy");
+                    <td>@fixeddate</td>
+                }
+                @if (item.Repeat == 1)
+                {
+                    <td>Annually on fixed month/day</td>
+                }
+                @if (item.Repeat == 2)
+                {
+                    <td>Annually on fixed month/week/day</td>
+                }
 
-        <td style="text-align: center">
-            @Html.DisplayFor(modelItem => item.Month)
-        </td>
-        <td style="text-align: center">
-            @Html.DisplayFor(modelItem => item.Day)
-        </td>
-        <td style="text-align: center">
-            @Html.DisplayFor(modelItem => item.Weekday)
-        </td>
-        <td style="text-align: center">
-            @Html.DisplayFor(modelItem => item.WeekNumber)
-        </td>
-        
-        @{ string effectivedate = item.EffectiveDate.ToString("MM/dd/yyyy"); }
-        <td>@effectivedate</td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-        </td>
-    </tr>
-    }
-    
+                @if (item.Repeat == 1 || item.Repeat == 2)
+                {
+                    <td></td>
+                    <td style="text-align: center">
+                        @Html.DisplayFor(modelItem => item.MonthList[item.Month])
+                    </td>
+                }
+
+                @if (item.Repeat == 1)
+                {
+                    <td style="text-align: center">
+                        @Html.DisplayFor(modelItem => item.Day)
+                    </td>
+                    <td></td>
+                    <td></td>
+                }
+
+                @if (item.Repeat == 2)
+                {
+                    <td></td>
+                    <td style="text-align: center">
+                        @Html.DisplayFor(modelItem => item.WeekDayNumber[item.WeekNumber])
+                    </td>
+                    <td style="text-align: center">
+                        @Html.DisplayFor(modelItem => item.WeekDayList[item.Weekday])
+                    </td>
+                }
+
+                @{ string effectivedate = item.EffectiveDate.ToString("MM/dd/yyyy"); }
+                <td>@effectivedate</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
     </table>
+    <br />
+    <div>
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
 </body>
 </html>
