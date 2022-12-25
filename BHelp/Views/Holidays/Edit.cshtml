@@ -1,5 +1,4 @@
-﻿@using System.Web.Mvc.Html
-@model BHelp.Models.Holiday
+﻿@model BHelp.Models.Holiday
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -8,7 +7,10 @@
     <meta name="viewport" content="width=device-width" />
     <title>Edit</title>
     <style>
-        #SaveButton {background-color: blue;color: white}
+        #SaveButton {
+            background-color: blue;
+            color: white
+        }
     </style>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
@@ -16,12 +18,12 @@
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
 </head>
 <body>
-    @using (Html.BeginForm())
+    @using (Html.BeginForm("Edit", "Holidays", FormMethod.Post))
     {
         @Html.AntiForgeryToken()
 
         <div class="form-horizontal">
-            <h4>Holiday</h4>
+            <h4>Edit Holiday</h4>
             <hr />
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             @Html.HiddenFor(model => model.Id)
@@ -30,13 +32,24 @@
                 @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(d => d.Description, "", new { @class = "text-danger" })
                 </div>
             </div>
 
-            <div id="AnnualMonthDayDiv">
-                @*======================================*@
+            <div class="form-group">
+                @Html.LabelFor(model => model.Repeat, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(r => r.Repeat,
+                        Model.Repeats, new { @id = "RepeatsDDL" })
+                    @Html.ValidationMessageFor(r => r.Repeat, "", new { @class = "text-danger" })
 
+                    &nbsp;&nbsp;@Html.LabelFor(model => model.FixedDate, htmlAttributes: new { @id = "FixedDateLabel", @class = "control-label col-md-2" })
+                    @Html.TextBoxFor(d => d.FixedDate, Model.FixedDate.ToString("MM/dd/yyyy"),
+                        new { id = "FixedDate", style = "width: 75px;" })
+                </div>
+            </div>
+
+            <div id="MonthDiv">
                 <div class="form-group">
                     @Html.LabelFor(model => model.Month, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
@@ -44,58 +57,48 @@
                         @Html.ValidationMessageFor(model => model.Month, "", new { @class = "text-danger" })
                     </div>
                 </div>
+            </div> @*/MonthDiv*@
 
+            <div id="AnnualMonthDayDiv">
+                @*======================================*@
                 <div class="form-group">
                     @Html.LabelFor(model => model.Day, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.DropDownListFor(d => d.Day,
-                            Model.Days,  new { @id = "DaysDDL" })
+                            Model.Days, new { @id = "DaysDDL" })
                         @Html.ValidationMessageFor(model => model.Day, "", new { @class = "text-danger" })
                     </div>
                 </div>
-
             </div> @*/AnnualMonthDayDiv*@  @*======================================*@
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.Month, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.Month, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Month, "", new { @class = "text-danger" })
-                </div>
-            </div>
+            <div id="AnnualMonthWeekDayDiv">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.WeekNumber, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(n => n.WeekNumber, Model.WeekDayNumbers, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(n => n.WeekNumber, "", new { @class = "text-danger" })
+                    </div>
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.Day, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.Day, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Day, "", new { @class = "text-danger" })
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Weekday, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(w => w.Weekday, Model.WeekDays)
+                            @Html.ValidationMessageFor(model => model.Weekday, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </div> @*/</div>AnnualMonthWeekDayDiv*@
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.Weekday, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.Weekday, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Weekday, "", new { @class = "text-danger" })
+            <div id="EffectiveDateDiv">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.EffectiveDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(e => e.EffectiveDate, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.EffectiveDate, "", new { @class = "text-danger" })
+                    </div>
                 </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.WeekNumber,  new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.DropDownListFor(model => model.WeekDayNumbers, Model.WeekDayNumbers, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.WeekNumber, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.EffectiveDate, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.EffectiveDate, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.EffectiveDate, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
+            </div> @*/EffectiveDateDiv*@
+            <br />
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="submit" value="Save" id="SaveButton" class="btn btn-default" />
@@ -103,17 +106,29 @@
             </div>
         </div>
     }
-
+    <br />
     <div>
         @Html.ActionLink("Back to List", "Index")
+    </div>
+    <div>
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
     </div>
 </body>
 </html>
 
 <script>
     $(document).ready(function () {
-        window.$('#AnnualMonthDayDivDiv').hide();
-        window.$('#AnnualMonthWeekDay').hide();
+        ;
+        window.$('#AnnualMonthDayDiv').hide();
+        window.$('#AnnualMonthWeekDayDiv').hide();
+        window.$('#EffectiveDateDiv').hide();
+        var value = window.$("#RepeatsDDL").val();
+        if (value === '1') {
+            window.$('#AnnualMonthDayDiv').show();
+        }
+        if (value === '2') {
+            window.$('#AnnualMonthWeekDayDiv').show();
+        }
     });
 </script>
 <script>
@@ -122,7 +137,7 @@
             minDate: -0, beforeShowDay: window.$.datepicker.noWeekends
         });
         window.$("#EffectiveDate").datepicker({
-            minDate: -0, beforeShowDay: window.$.datepicker.noWeekends
+            minDate: -0
         });
     });
 </script>
@@ -131,20 +146,24 @@
         window.$('#RepeatsDDL').change(function () {
             var value = window.$(this).val();
             if (value === '0') {
+                window.$('#MonthDiv').hide();
+                window.$('#AnnualMonthDayDiv').hide();
+                window.$('#AnnualMonthWeekDay').hide();
                 window.$('#FixedDate').show();
                 window.$('#FixedDateLabel').show();
-                window.$('#AnnualMonthDayDivDiv').hide();
             } else {
                 window.$('#FixedDate').hide();
                 window.$('#FixedDateLabel').hide();
             }
             if (value === '1') {
-                window.$('#AnnualMonthDayDivDiv').show();
-                window.$('#AnnualMonthWeekDay').hide();
+                window.$('#MonthDiv').show();
+                window.$('#AnnualMonthDayDiv').show();
+                window.$('#AnnualMonthWeekDayDiv').hide();
             }
             if (value === '2') {
-                window.$('#AnnualMonthWeekDay').show();
-                window.$('#AnnualMonthDayDivDiv').hide();
+                window.$('#MonthDiv').show();
+                window.$('#AnnualMonthWeekDayDiv').show();
+                window.$('#AnnualMonthDayDiv').hide();
             }
         });
     });

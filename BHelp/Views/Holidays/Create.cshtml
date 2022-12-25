@@ -1,4 +1,5 @@
-﻿@model BHelp.ViewModels.HolidayViewModel
+﻿@using System.Web.Mvc.Html
+@model BHelp.ViewModels.HolidayViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -15,10 +16,10 @@
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
 </head>
 <body>
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-        
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
     <div class="form-horizontal">
         <h4>Create New Holiday</h4>
         <hr />
@@ -26,9 +27,10 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Description, 
+                @Html.EditorFor(model => model.Description,
                     new { htmlAttributes = new { style = "width: 230px;", @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                @Html.ValidationMessageFor(model => model.Description,
+                    "", new { @style = "color: red", @class = "text-danger" })
             </div>
         </div>
 
@@ -44,8 +46,9 @@
                     new { id = "FixedDate", style = "width: 75px;" })
             </div>
         </div>
-
-        <div id="AnnualMonthDayDiv">  @*======================================*@
+        
+        <div id="AnnualMonthDayDiv">
+            @*======================================*@
 
             <div class="form-group">
                 @Html.LabelFor(model => model.Month, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -60,13 +63,13 @@
                 @Html.LabelFor(model => model.Day, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.DropDownListFor(d => d.Day,
-                        Model.Days, new{ @id = "DaysDDL"})
+                        Model.Days, new { @id = "DaysDDL" })
                     @Html.ValidationMessageFor(model => model.Day, "", new { @class = "text-danger" })
                 </div>
             </div>
 
-        </div> @*/AnnualMonthDayDiv*@  
-
+        </div> @*/AnnualMonthDayDiv*@
+        
         <div id="AnnualMonthWeekDayDiv">
             @*======================================*@
             <div class="form-group">
@@ -86,53 +89,57 @@
             </div>
 
             <div class="form-group">
-                @Html.LabelFor(w => w.Weekday,  new { @class = "control-label col-md-2" })
+                @Html.LabelFor(w => w.Weekday, new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     <div class="col-md-10">
                         @Html.DropDownListFor(w => w.Weekday, Model.WeekDays)
                         @Html.ValidationMessageFor(model => model.Weekday, "", new { @class = "text-danger" })
                     </div>
                 </div>
-            </div> 
+            </div>
         </div>@*/AnnualMonthWeekDay ======================================*@
 
         <br />
-        <div class="form-group">
-            @Html.LabelFor(model => model.EffectiveDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(model => model.EffectiveDate, Model.EffectiveDate.ToString("MM/dd/yyyy"),
-                    new { id = "EffectiveDate", style = "width: 75px;" })
-                @Html.ValidationMessageFor(model => model.EffectiveDate, "", new { @class = "text-danger" })
+        <div id="EffectiveDateDiv">
+            <div class="form-group">
+                @Html.LabelFor(model => model.EffectiveDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(model => model.EffectiveDate, Model.EffectiveDate.ToString("MM/dd/yyyy"),
+                        new { id = "EffectiveDate", style = "width: 75px;" })
+                    @Html.ValidationMessageFor(model => model.EffectiveDate, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
-        <br />
+        </div> @*/EffectiveDateDiv*@
+
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Create" id="CreateButton" class="btn btn-default" />
             </div>
         </div>
-    </div>  
-}
-<br />
-<div>
-    @Html.ActionLink("Back to List", "Index")
-    <div>
-        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)            
     </div>
-</div>
+    }
+    <br />
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+        <div>
+            @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+        </div>
+    </div>
 </body>
 </html>
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         window.$('#AnnualMonthDayDiv').hide();
         window.$('#AnnualMonthWeekDayDiv').hide();
+        window.$('#EffectiveDateDiv').hide();
     });
 </script>
 <script>
     $(function () {
         window.$("#FixedDate").datepicker({
-            minDate:-0, beforeShowDay: window.$.datepicker.noWeekends});
+            minDate: -0, beforeShowDay: window.$.datepicker.noWeekends
+        });
         window.$("#EffectiveDate").datepicker({
             minDate: -0, beforeShowDay: window.$.datepicker.noWeekends
         });
@@ -143,12 +150,12 @@
         window.$('#RepeatsDDL').change(function () {
             var value = window.$(this).val();
             if (value === '0') {
-                window.$('#AnnualMonthDayDiv').hide();
-                window.$('#FixedDate').show();
                 window.$('#FixedDateLabel').show();
+                window.$('#FixedDate').show();
+                window.$('#AnnualMonthDayDiv').hide();
+                window.$('#AnnualMonthWeekDayDiv').hide();
             }
-            else
-            {
+            else {
                 window.$('#FixedDate').hide();
                 window.$('#FixedDateLabel').hide();
             }

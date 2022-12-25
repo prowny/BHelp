@@ -17,13 +17,33 @@ namespace BHelp.Controllers
         public ActionResult Index()
         {
             var holidayList = db.Holidays.ToList();
+            // Add Month-Day to list for sorting
             foreach (var hol in holidayList)
             {
+                if (hol.Repeat == 0) // get mo-day from fixed date
+                {
+                    hol.MonthDay = hol.FixedDate.Month.ToString("00")
+                                   + hol.FixedDate.Day.ToString("00");
+                }
+
+                if (hol.Repeat == 1)
+                {
+                    hol.MonthDay = hol.Month.ToString("00") + hol.Day.ToString("00");
+                }
+
+                if (hol.Repeat == 2)
+                {
+                    var weekNo = 7*(hol.WeekNumber + 1); // (close enough)
+                    hol.MonthDay = hol.Month.ToString("00") + weekNo.ToString("00");
+                }
+
                 hol.MonthList = HolidayRoutines.GetMonthArray();
                 hol.WeekDayList = HolidayRoutines.GetWeekdayArray();
                 hol.WeekDayNumber = HolidayRoutines.GetWeekdayNumberArray();
+                hol.RepeatList = HolidayRoutines.GetRepeatArray();
             }
-            return View(holidayList);
+            
+            return View(holidayList.OrderBy(md => md.MonthDay));
         }
 
         // GET: Holidays/Create
@@ -37,26 +57,45 @@ namespace BHelp.Controllers
                 Months = HolidayRoutines.GetMonthsSelectList(),
                 Days = HolidayRoutines.GetDaysSelectList(),
                 WeekDayNumbers = HolidayRoutines.GetWeekDayNumberSelectList(),
-                WeekDays = HolidayRoutines.GetWeekDaySelectList(),
+                WeekDays = HolidayRoutines.GetWeekDaySelectList()
             };
             return View(view);
         }
 
         // POST: Holidays/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Description,Repeat,FixedDate,Month,Day,Weekday,WeekNumber,EffectiveDate")] Holiday holiday)
+        public ActionResult Create([Bind(Include = "Description,Repeat,FixedDate,Month,Day," +
+                           "Weekday,WeekNumber,EffectiveDate,Repeats")] HolidayViewModel holiday)
         {
+            if (string.IsNullOrEmpty(holiday.Description))
+            {
+                ModelState.AddModelError("Description", "*Description Required");
+            }
             if (ModelState.IsValid)
             {
-                db.Holidays.Add(holiday);
+                var newHoliday = new Holiday()
+                {
+                    Description = holiday.Description,
+                    Repeat = holiday.Repeat,
+                    FixedDate = holiday.FixedDate,
+                    Month = holiday.Month,
+                    Day = holiday.Day,
+                    Weekday = holiday.Weekday,
+                    WeekNumber = holiday.WeekNumber,
+                    EffectiveDate = holiday.EffectiveDate
+                };
+                db.Holidays.Add(newHoliday);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
-            return RedirectToAction("Index");
+            
+            holiday.Repeats = HolidayRoutines.GetRepeatsSelectList();
+            holiday.Months = HolidayRoutines.GetMonthsSelectList();
+            holiday.Days = HolidayRoutines.GetDaysSelectList();
+            holiday.WeekDayNumbers = HolidayRoutines.GetWeekDayNumberSelectList();
+            holiday.WeekDays = HolidayRoutines.GetWeekDaySelectList();
+            return View(holiday);
         }
 
         // GET: Holidays/Edit/5
@@ -76,13 +115,14 @@ namespace BHelp.Controllers
             holiday.Months = HolidayRoutines.GetMonthsSelectList();
             holiday.Repeats = HolidayRoutines.GetRepeatsSelectList();
             holiday.WeekDayNumbers = HolidayRoutines.GetWeekDayNumberSelectList();
+            holiday.WeekDays = HolidayRoutines.GetWeekDaySelectList();
             return View(holiday);
         }
 
         // POST: Holidays/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Description,Repeat,FixedDate,Month,Day,Weekday,WeekNumber,EffectiveDate")] Holiday holiday)
+        public ActionResult Edit([Bind(Include = "Id,Description,Repeat,FixedDate,Month,Day,WeekNumber,Weekday,EffectiveDate")] Holiday holiday)
         {
             if (ModelState.IsValid)
             {
@@ -105,6 +145,10 @@ namespace BHelp.Controllers
             {
                 return HttpNotFound();
             }
+            holiday.MonthList = HolidayRoutines.GetMonthArray();
+            holiday.WeekDayList = HolidayRoutines.GetWeekdayArray();
+            holiday.WeekDayNumber = HolidayRoutines.GetWeekdayNumberArray();
+            holiday.RepeatList = HolidayRoutines.GetRepeatArray();
             return View(holiday);
         }
 

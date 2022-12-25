@@ -1,9 +1,5 @@
 ﻿@model BHelp.Models.Holiday
-
-@{
-    Layout = null;
-}
-
+@{ Layout = null; }
 <!DOCTYPE html>
 
 <html>
@@ -20,73 +16,47 @@
             <dt>
                 @Html.DisplayNameFor(model => model.Description)
             </dt>
-    
+
             <dd>
                 @Html.DisplayFor(model => model.Description)
             </dd>
-    
+
             <dt>
                 @Html.DisplayNameFor(model => model.Repeat)
             </dt>
-    
+
             <dd>
-                @Html.DisplayFor(model => model.Repeat)
+                @Html.DisplayFor(model => model.RepeatList[Model.Repeat])
             </dd>
-    
-            <dt>
-                @Html.DisplayNameFor(model => model.FixedDate)
-            </dt>
-    
-            <dd>
-                @Html.DisplayFor(model => model.FixedDate)
-            </dd>
-    
-            <dt>
-                @Html.DisplayNameFor(model => model.Month)
-            </dt>
-    
-            <dd>
-                @Html.DisplayFor(model => model.Month)
-            </dd>
-    
-            <dt>
-                @Html.DisplayNameFor(model => model.Day)
-            </dt>
-    
-            <dd>
-                @Html.DisplayFor(model => model.Day)
-            </dd>
-    
-            <dt>
-                @Html.DisplayNameFor(model => model.Weekday)
-            </dt>
-    
-            <dd>
-                @Html.DisplayFor(model => model.Weekday)
-            </dd>
-    
-            <dt>
-                @Html.DisplayNameFor(model => model.WeekNumber)
-            </dt>
-    
-            <dd>
-                @Html.DisplayFor(model => model.WeekNumber)
-            </dd>
-    
-            <dt>
-                @Html.DisplayNameFor(model => model.EffectiveDate)
-            </dt>
-    
-            <dd>
-                @Html.DisplayFor(model => model.EffectiveDate)
-            </dd>
-    
+
+            @if (Model.Repeat == 0)
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.FixedDate)
+                </dt>
+
+                <dd>
+                    @Html.Label(Model.FixedDate.ToString("MM/dd/yyyy"))
+                </dd>
+            }
+
+            @if (Model.Repeat == 1 || Model.Repeat == 2)
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.Month)
+                </dt>
+
+                <dd>
+                @Html.Label(Model.MonthList[Model.Month])
+                </dd>
+            }
+            
         </dl>
     
         @using (Html.BeginForm()) {
             @Html.AntiForgeryToken()
     
-            <div class="form-actions no-color">
+            <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Delete" class="btn btn-default" /> |
                 @Html.ActionLink("Back to List", "Index")
             </div>

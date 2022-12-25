@@ -5,7 +5,7 @@ namespace BHelp
 {
     public static class HolidayRoutines
     {
-        private static string[] GetRepeatArray()
+        public static string[] GetRepeatArray()
         {
             var repeatList = new string[3];
             repeatList[0] = "Does not repeat";
