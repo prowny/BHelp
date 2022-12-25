@@ -31,6 +31,8 @@ namespace BHelp.Models
         [NotMapped]
         public string[] WeekDayNumber { get; set; } // 1st - 4th, Last
         [NotMapped]
+        public DateTime CalculatedDate { get; set; }
+        [NotMapped]
         public IEnumerable<SelectListItem> Repeats { get; set; }
         [NotMapped]
         public IEnumerable<SelectListItem> Months { get; set; }
@@ -40,6 +42,5 @@ namespace BHelp.Models
         public IEnumerable<SelectListItem> WeekDays { get; set; }
         [NotMapped]
         public IEnumerable<SelectListItem> WeekDayNumbers { get; set; }
-
     }
 }

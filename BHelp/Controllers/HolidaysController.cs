@@ -12,10 +12,10 @@ namespace BHelp.Controllers
     public class HolidaysController : Controller
     {
         private readonly BHelpContext db = new BHelpContext();
-
         // GET: Holidays
         public ActionResult Index()
         {
+            //List<Holiday> holidayList = HolidayRoutines.GetHolidays(2023);
             var holidayList = db.Holidays.ToList();
             // Add Month-Day to list for sorting
             foreach (var hol in holidayList)
@@ -33,7 +33,7 @@ namespace BHelp.Controllers
 
                 if (hol.Repeat == 2)
                 {
-                    var weekNo = 7*(hol.WeekNumber + 1); // (close enough)
+                    var weekNo = 7 * (hol.WeekNumber + 1); // (close enough)
                     hol.MonthDay = hol.Month.ToString("00") + weekNo.ToString("00");
                 }
 
@@ -122,15 +122,12 @@ namespace BHelp.Controllers
         // POST: Holidays/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Description,Repeat,FixedDate,Month,Day,WeekNumber,Weekday,EffectiveDate")] Holiday holiday)
+        public ActionResult Edit([Bind(Include = "Id,Description,Repeat,FixedDate,Month,Day,WeekNumber,Weekday,EffectiveDate,CalculatedDate")] Holiday holiday)
         {
-            if (ModelState.IsValid)
-            {
-                db.Entry(holiday).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(holiday);
+            if (!ModelState.IsValid) return View(holiday);
+            db.Entry(holiday).State = EntityState.Modified;
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         // GET: Holidays/Delete/5

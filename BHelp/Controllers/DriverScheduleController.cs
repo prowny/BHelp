@@ -67,9 +67,11 @@ namespace BHelp.Controllers
                 view.BackupDriver2List = new List<SelectListItem>();
                 foreach (var drvr in driverList)
                 {
-                    var newItem = new SelectListItem();
-                    newItem.Value = drvr.Value;
-                    newItem.Text = drvr.Text;
+                    var newItem = new SelectListItem
+                    {
+                        Value = drvr.Value,
+                        Text = drvr.Text
+                    };
                     view.BackupDriver2List.Add(newItem);
                 }
                 view.BackupDriver2List[0].Text = "(none)"; // means no "TBD" shows if selected
@@ -91,9 +93,11 @@ namespace BHelp.Controllers
                 view.BackupDriver2List = new List<SelectListItem>();
                 foreach (var drvr in driverList)
                 {
-                    var newItem = new SelectListItem();
-                    newItem.Value = drvr.Value;
-                    newItem.Text = drvr.Text;
+                    var newItem = new SelectListItem
+                    {
+                        Value = drvr.Value,
+                        Text = drvr.Text
+                    };
                     view.BackupDriver2List.Add(newItem);
                 }
                 view.BackupDriver2List[0].Text = "(none)"; // means no "TBD" shows if selected
