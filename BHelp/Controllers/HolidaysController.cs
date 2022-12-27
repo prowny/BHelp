@@ -15,7 +15,6 @@ namespace BHelp.Controllers
         // GET: Holidays
         public ActionResult Index()
         {
-            //List<Holiday> holidayList = HolidayRoutines.GetHolidays(2023);
             var holidayList = db.Holidays.ToList();
             // Add Month-Day to list for sorting
             foreach (var hol in holidayList)
@@ -24,6 +23,8 @@ namespace BHelp.Controllers
                 {
                     hol.MonthDay = hol.FixedDate.Month.ToString("00")
                                    + hol.FixedDate.Day.ToString("00");
+                    // add weekday name for display
+                    hol.WeekDayName = hol.FixedDate.DayOfWeek.ToString();
                 }
 
                 if (hol.Repeat == 1)

@@ -42,5 +42,7 @@ namespace BHelp.Models
         public IEnumerable<SelectListItem> WeekDays { get; set; }
         [NotMapped]
         public IEnumerable<SelectListItem> WeekDayNumbers { get; set; }
+        [NotMapped] 
+        public string WeekDayName { get; set; } // for display in Holidays Index 
     }
 }
