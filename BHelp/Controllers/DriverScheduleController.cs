@@ -547,7 +547,7 @@ namespace BHelp.Controllers
             var driverList = (List<SelectListItem>)Session["DriverList"];
             var driverDataList = (List<ApplicationUser>)Session["DriverDataList"];
             view.GroupList = (List<SelectListItem>)(Session["GroupList"]);
-            List<HolidayViewModel> holidayList = AppRoutines.GetFederalHolidays(view.Year);
+            var holidayList = HolidayRoutines.GetHolidays(view.Year);
             for (var i = 1; i < 6; i++)
             {
                 for (var j = 1; j < 6; j++)
@@ -555,11 +555,11 @@ namespace BHelp.Controllers
                     view.BoxDay[i, j] = startDate.AddDays(7 * (i - 1) + j - startDayOfWk);
                     if (view.BoxDay[i,j] < startDate || view.BoxDay[i, j] > endDate) continue;
                     var idx = j + 5 * (i - 1);
-                    if (AppRoutines.IsHoliday(view.BoxDay[i, j], holidayList))  //(List<HolidayViewModel>)Session["Holidays"]))
+                    if (HolidayRoutines.IsHoliday(view.BoxDay[i, j], holidayList))  //(List<Holiday>)Session["Holidays"]))
                     {
                         view.BoxHoliday[idx] = true;
                         var holidayData = GetHolidayData(view.BoxDay[i, j]);
-                        view.BoxNote[idx] = holidayData.Name + Environment.NewLine
+                        view.BoxNote[idx] = holidayData.Description + Environment.NewLine
                             + "BH Closed";
                     }
 
@@ -656,68 +656,62 @@ namespace BHelp.Controllers
 
             if (Session["Holidays"] == null)
             {
-                Session["Holidays"] = AppRoutines.GetFederalHolidays(DateTime.Today.Year);
+                Session["Holidays"] = HolidayRoutines.GetHolidays(DateTime.Today.Year);
             }
             // check holidays for proper year:
-
-            var holidays = (List<HolidayViewModel>)Session["Holidays"];
-            var july4th = holidays.FirstOrDefault(h => h.Date.Month == 7
-                                                       && h.Date.Day == 4);
+            var holidays = (List<Holiday>)Session["Holidays"];
+            
+            //var july4th = holidays.FirstOrDefault(h => h.CalculatedDate.Month == 7
+            //                                           && h.CalculatedDate.Day == 4);
             if (boxDate != null)
             {
+                // check if ANY calculated date in proper year:
                 var _year = boxDate.GetValueOrDefault().Year;
-                if (july4th != null)
+                foreach (var hol in holidays)
                 {
-                    if (july4th.Date.Year !=_year) // need to reloadholidays (year change)
-                    {
-                        holidays = AppRoutines.GetFederalHolidays(_year);
-                        Session["Holidays"] = holidays;
-                    }
+                    if (hol.CalculatedDate.Year ==_year) { break; }
+                    // else load requested year's holidays:
+                    holidays = HolidayRoutines.GetHolidays(_year);
+                    Session["Holidays"] = holidays;
                 }
+                //var _year = boxDate.GetValueOrDefault().Year;
+                //if (july4th != null)
+                //{
+                //    if (july4th.CalculatedDate.Year !=_year) // need to reloadholidays (year change)
+                //    {
+                //        holidays = HolidayRoutines.GetHolidays(_year);
+                //        Session["Holidays"] = holidays;
+                //    }
+                //}
 
                 var _month = boxDate.GetValueOrDefault().Month;
                 var _day = boxDate.GetValueOrDefault().Day;
                 Session["DriverScheduleDateData"] = _day.ToString("00") + _month.ToString("00") + _year;
             }
-            else
+            else // boxDate == null;  
             {
                 var _month = DateTime.Today.Month;
                 var _year = DateTime.Today.Year; 
                 var _day = AppRoutines.GetFirstWeekdayDate(_month, _year).Day;
                 Session["DriverScheduleDateData"] = _day.ToString("00") + DateTime .Today.Month.ToString("00") + DateTime.Today.Year;
+                holidays = HolidayRoutines.GetHolidays(_year);
+                Session["Holidays"] = holidays;
             }
         }
         
-        private HolidayViewModel GetHolidayData(DateTime dt)
+        private Holiday GetHolidayData(DateTime dt)
         {
-            var holidays = (List<HolidayViewModel>)Session["Holidays"];
-            // check holidays for proper year:
-            var july4th = holidays.FirstOrDefault(h => h.Date.Month == 7
-                                                       && h.Date.Day == 4);
-            if (july4th != null)
+            var holidays = (List<Holiday>)Session["Holidays"];
+            // check if ANY calculated date in proper year:
+            foreach (var hol in holidays)
             {
-                if (july4th.Date.Year != dt.Year) // need to reloadholidays (year change)
-                {
-                    holidays = AppRoutines.GetFederalHolidays(dt.Year);
-                    Session["Holidays"] = holidays;
-                }
-            }
-            foreach (var holiday in holidays)
-            {
-                if (dt == holiday.Date)
-                {
-                    return holiday;
-                }
+                if (hol.CalculatedDate.Year == dt.Year) { break; }
+                // else load requested year's holidays:
+                holidays = HolidayRoutines.GetHolidays(dt.Year);
+                Session["Holidays"] = holidays;
             }
 
-            return null;
+            return holidays.FirstOrDefault(holiday => dt == holiday.CalculatedDate);
         }
-
-        public ActionResult Test()
-        { 
-            //var Holidays =AppRoutines.GetFederalHolidays(DateTime.Today.Year);
-            return RedirectToAction("Index", "Home");
-        }
-
     }
 }

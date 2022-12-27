@@ -93,7 +93,8 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.EffectiveDate, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.EditorFor(e => e.EffectiveDate, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.TextBoxFor(d => d.EffectiveDate, Model.EffectiveDate.ToString("MM/dd/yyyy"),
+                            new { id = "EffectiveDate", style = "width: 75px;" })
                         @Html.ValidationMessageFor(model => model.EffectiveDate, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -118,16 +119,17 @@
 
 <script>
     $(document).ready(function () {
-        ;
         window.$('#AnnualMonthDayDiv').hide();
         window.$('#AnnualMonthWeekDayDiv').hide();
         window.$('#EffectiveDateDiv').hide();
         var value = window.$("#RepeatsDDL").val();
         if (value === '1') {
             window.$('#AnnualMonthDayDiv').show();
+            window.$('#EffectiveDateDiv').show();
         }
         if (value === '2') {
             window.$('#AnnualMonthWeekDayDiv').show();
+            window.$('#EffectiveDateDiv').show();
         }
     });
 </script>
@@ -136,9 +138,7 @@
         window.$("#FixedDate").datepicker({
             minDate: -0, beforeShowDay: window.$.datepicker.noWeekends
         });
-        window.$("#EffectiveDate").datepicker({
-            minDate: -0
-        });
+        window.$("#EffectiveDate").datepicker();
     });
 </script>
 <script type="text/javascript">
@@ -149,6 +149,7 @@
                 window.$('#MonthDiv').hide();
                 window.$('#AnnualMonthDayDiv').hide();
                 window.$('#AnnualMonthWeekDay').hide();
+                window.$('#EffectiveDateDiv').hide();
                 window.$('#FixedDate').show();
                 window.$('#FixedDateLabel').show();
             } else {
@@ -156,14 +157,16 @@
                 window.$('#FixedDateLabel').hide();
             }
             if (value === '1') {
+                window.$('#AnnualMonthWeekDayDiv').hide();
                 window.$('#MonthDiv').show();
                 window.$('#AnnualMonthDayDiv').show();
-                window.$('#AnnualMonthWeekDayDiv').hide();
+                window.$('#EffectiveDateDiv').show();
             }
             if (value === '2') {
+                window.$('#AnnualMonthDayDiv').hide();
                 window.$('#MonthDiv').show();
                 window.$('#AnnualMonthWeekDayDiv').show();
-                window.$('#AnnualMonthDayDiv').hide();
+                window.$('#EffectiveDateDiv').show();
             }
         });
     });

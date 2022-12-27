@@ -12,44 +12,84 @@ namespace BHelp
         private static readonly BHelpContext db = new BHelpContext();
         public static List<Holiday> GetHolidays(int year)
         {
-            string[] listWeekDays = GetWeekdayArray();
+            var listWeekDays = GetWeekdayArray();
             var Holidays = new List<Holiday>();
             var _holidayList = db.Holidays.ToList();
+            var rangeTo = 28;
+            List<int> rangeList31 = new List<int>() { 1, 3, 5, 7, 8, 10, 12 }; // Jan, Mar, May, Jul, Aug, Oct, Dec 
+            List<int> rangeList30 = new List<int>() { 4, 6, 9, 11 }; // Apr, Jun, Sep, Nov
             foreach (var hol in _holidayList)
             {
+                
                 if (hol.Repeat == 0) // Fixed Date, no repeats
                 {
-                    var _holiday = new Holiday()
+                    if (hol.FixedDate.Year == year)
                     {
-                        CalculatedDate = hol.FixedDate,
-                        FixedDate = hol.FixedDate,
-                        Description = hol.Description
-                    };
-                    Holidays.Add(_holiday);
+                        var _holiday = new Holiday()
+                        {
+                            CalculatedDate = hol.FixedDate,
+                            FixedDate = hol.FixedDate,
+                            Description = hol.Description
+                        };
+                        Holidays.Add(_holiday);
+                    }
                 }
 
                 if (hol.Repeat == 1) // Annual Month-Day
                 {
                     var _holiday = new Holiday()
                     {
-                        CalculatedDate = AdjustForWeekendHoliday(new DateTime(year, hol.Month, hol.Day).Date),
-                        Description = hol.Description
+                        CalculatedDate = AdjustForWeekendHoliday(new DateTime(year, hol.Month, hol.Day)),
+                        Description = hol.Description,
+                        EffectiveDate = hol.EffectiveDate
                     };
-                    Holidays.Add(_holiday);
+                    if (_holiday.CalculatedDate >= hol.EffectiveDate)
+                    {
+                        Holidays.Add(_holiday);
+                    }
                 }
 
                 if (hol.Repeat == 2) // Annual Month-WeekNumber-WeekDay
                 {
+                    if (hol.Month == 2)
+                    {
+                        rangeTo = 28;
+                        if (DateTime.IsLeapYear(year)) { rangeTo = 29; }
+                    }
+                    if (rangeList30.IndexOf(hol.Month) != -1) { rangeTo = 30; }
+                    if (rangeList31.IndexOf(hol.Month) != -1) { rangeTo = 31; }
                     var dtDayOfWeek = listWeekDays[hol.Weekday];
-                    var dtDay = (from day in Enumerable.Range(1, 31)
-                        where (new DateTime(year, hol.Month, day).DayOfWeek.ToString() == dtDayOfWeek)
-                                 select day).ElementAt(hol.WeekNumber +1);
-                    var _holiday = new Holiday()
+                    var dtDay = 0;
+                    var weekdayCount = 0;
+                    for (int i = 1; i < rangeTo + 1; i++)
+                    {
+                        var dtDate = new DateTime(year, hol.Month, i);
+                        if (dtDate.DayOfWeek.ToString() == dtDayOfWeek)
+                        {
+                            weekdayCount++;
+                            if (weekdayCount == hol.WeekNumber + 1)
+                            {
+                                dtDay = i;
+                                break;
+                            }
+                        }
+                    }
+
+                    // routine fails for 4th Thursday: ************
+                    //var dtDay = (from day in Enumerable.Range(1, rangeTo)
+                    //             where (new DateTime(year, hol.Month, day).DayOfWeek.ToString() == dtDayOfWeek)
+                    //             select day).ElementAt(hol.WeekNumber +1);
+                    
+                    var _holiday = new Holiday
                     {
                         CalculatedDate = new DateTime(year, hol.Month, dtDay),
-                        Description = hol.Description
+                        Description = hol.Description,
+                        EffectiveDate = hol.EffectiveDate
                     };
-                    Holidays.Add(_holiday);
+                    if (_holiday.CalculatedDate >= hol.EffectiveDate)
+                    {
+                        Holidays.Add(_holiday);
+                    }
                 }
             }
 
@@ -92,15 +132,12 @@ namespace BHelp
 
         public static bool IsHoliday(DateTime dt, List<Holiday> holidays)
         {
-            // check 4th of July for proper year:
-            var july4th = holidays.FirstOrDefault(j => j.CalculatedDate.Month == 7
-                                                       && j.CalculatedDate.Day == 4);
-            if (july4th != null)
+            // check if ANY calculated date in proper year:
+            foreach (var hol in holidays)
             {
-                if (july4th.CalculatedDate.Year != dt.Year) // need to reloadholidays (year change)
-                {
-                    holidays = GetHolidays(dt.Year);
-                }
+                if (hol.CalculatedDate.Year == dt.Year) { break; }
+                // else load requested year's holidays:
+                holidays = GetHolidays(dt.Year);
             }
 
             foreach (var hol in holidays)
