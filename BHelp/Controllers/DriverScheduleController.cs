@@ -190,6 +190,7 @@ namespace BHelp.Controllers
                         item.BackupDriver2Id = schedule.BackupDriver2Id;
                         item.GroupId = schedule.GroupId;
                         item.GroupDriverId = schedule.GroupDriverId;
+                        item.Note = schedule.Note;
                     }
                     Session["MonthlySchedule"] = msUpdate;
 
@@ -487,7 +488,7 @@ namespace BHelp.Controllers
 
                         if (view.BoxNote[idx] != null)
                         {
-                            boxContents += Environment.NewLine + "Notes:";
+                            boxContents += Environment.NewLine + "Note:";
                             boxContents += Environment.NewLine + view.BoxNote[idx];
                         }
                         
@@ -625,8 +626,8 @@ namespace BHelp.Controllers
             // Get / Update Session Lookup Data
             if (Session["DriverList"] == null)
             {
-                // Sets Session["DriverSelectList"], Session["DriverDataList"],
-                // and Session["NonSchedulerDriverSelectList"]:
+                // Sets Session["DriverSelectList"], Session["DriverDataList"]
+                //  and Session["NonSchedulerDriverSelectList"]:
                 Session["DriverList"] = GetDriverIdSelectList();
             }
 
@@ -661,15 +662,13 @@ namespace BHelp.Controllers
             // check holidays for proper year:
             var holidays = (List<Holiday>)Session["Holidays"];
             
-            //var july4th = holidays.FirstOrDefault(h => h.CalculatedDate.Month == 7
-            //                                           && h.CalculatedDate.Day == 4);
             if (boxDate != null)
             {
-                // check if ANY calculated date in proper year:
+                // check if ANY calculated date in repeating holidays which have the proper year:
                 var _year = boxDate.GetValueOrDefault().Year;
                 foreach (var hol in holidays)
                 {
-                    if (hol.CalculatedDate.Year ==_year) { break; }
+                    if (hol.Repeat !=0 && hol.CalculatedDate.Year ==_year) { break; }
                     // else load requested year's holidays:
                     holidays = HolidayRoutines.GetHolidays(_year);
                     Session["Holidays"] = holidays;

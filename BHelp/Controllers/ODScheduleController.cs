@@ -59,21 +59,20 @@ namespace BHelp.Controllers
             var view = GetODScheduleViewModel();
 
             if (Session["Holidays"] == null)
-            //{ Session["Holidays"] = AppRoutines.GetFederalHolidays(DateTime.Today.Year); }
             { Session["Holidays"] = HolidayRoutines.GetHolidays(DateTime.Today.Year); }
 
             // check holidays for proper year:
             //var holidays = (List<HolidayViewModel>)Session["Holidays"];
             var holidays = (List<Holiday>)Session["Holidays"];
-            var july4th = holidays.FirstOrDefault(h => h.CalculatedDate.Month == 7
-                                                       && h.CalculatedDate.Day == 4);
-            if (july4th != null)
+
+            // check if ANY calculated date in repeating holidays which have the proper year:
+            var _year = boxDate.GetValueOrDefault().Year;
+            foreach (var hol in holidays)
             {
-                if (july4th.CalculatedDate.Year != view.Date.Year) // need to reload holidays (year change)
-                {
-                    holidays = HolidayRoutines.GetHolidays(view.Date.Year);
-                    Session["Holidays"] = holidays;
-                }
+                if (hol.Repeat != 0 && hol.CalculatedDate.Year == _year) { break; }
+                // else load requested year's holidays:
+                holidays = HolidayRoutines.GetHolidays(_year);
+                Session["Holidays"] = holidays;
             }
 
             if (User.IsInAnyRoles("Scheduler", "Developer", "Administrator"))
@@ -414,7 +413,7 @@ namespace BHelp.Controllers
 
                         if (view.BoxNote[idx] != null)
                         {
-                            boxContents += Environment.NewLine + "Notes:";
+                            boxContents += Environment.NewLine + "Note:";
                             boxContents += Environment.NewLine + view.BoxNote[idx];
                         }
 
@@ -431,18 +430,19 @@ namespace BHelp.Controllers
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             { FileDownloadName = "BHelpODSchedule " + tempDate.ToString("MM") + "-" + tempDate.ToString("yyyy") + ".xlsx" };
         }
-         private HolidayViewModel GetHolidayData(DateTime dt)
+         private Holiday GetHolidayData(DateTime dt)
         {
-            var holidays = (List<HolidayViewModel>)Session["Holidays"];
-            foreach (var holiday in holidays)
+            var holidays = (List<Holiday>)Session["Holidays"];
+            // check if ANY calculated date in proper year:
+            foreach (var hol in holidays)
             {
-                if (dt == holiday.Date)
-                {
-                    return holiday;
-                }
+                if (hol.CalculatedDate.Year == dt.Year) { break; }
+                // else load requested year's holidays:
+                holidays = HolidayRoutines.GetHolidays(dt.Year);
+                Session["Holidays"] = holidays;
             }
 
-            return null;
+            return holidays.FirstOrDefault(holiday => dt == holiday.CalculatedDate);
         }
 
         private ODScheduleViewModel GetODScheduleViewModel()
@@ -483,7 +483,7 @@ namespace BHelp.Controllers
                     {
                         view.BoxHoliday[idx] = true;
                         var holidayData = GetHolidayData(view.BoxDay[i, j]);
-                        view.BoxNote[idx] = holidayData.Name + Environment.NewLine + "BH Closed";
+                        view.BoxNote[idx] = holidayData.Description + Environment.NewLine + "BH Closed";
                     }
 
                     var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);

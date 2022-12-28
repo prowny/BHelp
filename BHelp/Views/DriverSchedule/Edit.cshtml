@@ -11,7 +11,7 @@
         #schedule {border-collapse: collapse;border: thin solid black}
         .top {width: 185px;border-right: thin solid black;}
         .edit {width: 160px;}
-        #SaveButton {background-color: blue;color: white}
+        #SaveNoteButton {background-color: blue;color: white}
     </style>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
@@ -57,7 +57,9 @@
                                 new { @class = "form-control", @onchange = "submitForm();" })
                             @Html.ValidationMessageFor(m => m.GroupId, "", new { @class = "text-danger" })
                         </td>
-                        @*<td style="text-align: center">Notes:</td>*@
+                        <td style="text-align: center">Note:</td>
+                        <td>@Html.TextAreaFor(n => n.Note,
+                                new { style = "height: 12px; width: 130px" })</td>
                     </tr>
                     <tr>
                         <td style="text-align: center"><b>Edit Section</b></td>
@@ -89,18 +91,8 @@
                                 new { @class = "form-control", @onchange = "submitForm();" })
                             @Html.ValidationMessageFor(m => m.GroupDriverId, "", new { @class = "text-danger" })
                         </td>
-                        
-                        @*<td>
-            @Html.TextAreaFor(t => t.Note, new { style = "height: 12px" })
-            @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
-        </td>
-        @if (!Model.IsHoliday)
-        {
-            <td>
-                &nbsp;&nbsp;
-                <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
-            </td>
-        }*@
+                        <td></td>
+                        <td style="text-align: center"><input type="submit" value="Save Note" class="btn btn-default" id="SaveNoteButton" /></td>
                     </tr>
                 </table>
                 <hr />
@@ -318,6 +310,11 @@
                                             <span style="text-decoration-color: red">
                                                 @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
                                             </span>
+                                              if (Model.BoxGroupDriverPhone[i] != null)
+                                    {
+                                        <br />
+                                        @Html.Label(Model.BoxGroupDriverPhone[i])
+                                    }
                                         }
                                     }
                                 }
@@ -357,6 +354,7 @@
 
                                 if (Model.BoxNote[i] != null)
                                 {
+                                    <br/>
                                     @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>"))
                                 }
 
