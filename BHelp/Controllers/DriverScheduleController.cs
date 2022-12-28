@@ -661,7 +661,6 @@ namespace BHelp.Controllers
             }
             // check holidays for proper year:
             var holidays = (List<Holiday>)Session["Holidays"];
-            
             if (boxDate != null)
             {
                 // check if ANY calculated date in repeating holidays which have the proper year:
@@ -673,15 +672,6 @@ namespace BHelp.Controllers
                     holidays = HolidayRoutines.GetHolidays(_year);
                     Session["Holidays"] = holidays;
                 }
-                //var _year = boxDate.GetValueOrDefault().Year;
-                //if (july4th != null)
-                //{
-                //    if (july4th.CalculatedDate.Year !=_year) // need to reloadholidays (year change)
-                //    {
-                //        holidays = HolidayRoutines.GetHolidays(_year);
-                //        Session["Holidays"] = holidays;
-                //    }
-                //}
 
                 var _month = boxDate.GetValueOrDefault().Month;
                 var _day = boxDate.GetValueOrDefault().Day;

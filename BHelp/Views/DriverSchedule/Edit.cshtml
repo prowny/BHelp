@@ -57,7 +57,7 @@
                                 new { @class = "form-control", @onchange = "submitForm();" })
                             @Html.ValidationMessageFor(m => m.GroupId, "", new { @class = "text-danger" })
                         </td>
-                        <td style="text-align: center">Note:</td>
+                        <td style="text-align: center">Notes:</td>
                         <td>@Html.TextAreaFor(n => n.Note,
                                 new { style = "height: 12px; width: 130px" })</td>
                     </tr>
@@ -354,6 +354,11 @@
 
                                 if (Model.BoxNote[i] != null)
                                 {
+                                    <br/>
+                                    <span style="font-size: small">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        @Html.Label("Notes")
+                                    </span>
                                     <br/>
                                     @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>"))
                                 }

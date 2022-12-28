@@ -98,8 +98,7 @@
                 </div>
             </div>
         </div>@*/AnnualMonthWeekDay ======================================*@
-
-        <br />
+        
         <div id="EffectiveDateDiv">
             <div class="form-group">
                 @Html.LabelFor(model => model.EffectiveDate, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -110,7 +109,7 @@
                 </div>
             </div>
         </div> @*/EffectiveDateDiv*@
-
+        <br/>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Create" id="CreateButton" class="btn btn-default" />
@@ -140,9 +139,7 @@
         window.$("#FixedDate").datepicker({
             minDate: -0, beforeShowDay: window.$.datepicker.noWeekends
         });
-        window.$("#EffectiveDate").datepicker({
-            minDate: -0, beforeShowDay: window.$.datepicker.noWeekends
-        });
+        window.$("#EffectiveDate").datepicker();
     });
 </script>
 <script type="text/javascript">
@@ -150,10 +147,11 @@
         window.$('#RepeatsDDL').change(function () {
             var value = window.$(this).val();
             if (value === '0') {
-                window.$('#FixedDateLabel').show();
-                window.$('#FixedDate').show();
                 window.$('#AnnualMonthDayDiv').hide();
                 window.$('#AnnualMonthWeekDayDiv').hide();
+                window.$('#EffectiveDateDiv').hide();
+                window.$('#FixedDateLabel').show();
+                window.$('#FixedDate').show();
             }
             else {
                 window.$('#FixedDate').hide();
@@ -163,11 +161,13 @@
             if (value === '1') {
                 window.$('#AnnualMonthWeekDayDiv').hide();
                 window.$('#AnnualMonthDayDiv').show();
+                window.$('#EffectiveDateDiv').show();
             }
 
             if (value === '2') {
                 window.$('#AnnualMonthDayDiv').hide();
                 window.$('#AnnualMonthWeekDayDiv').show();
+                window.$('#EffectiveDateDiv').show();
             }
         });
     });
