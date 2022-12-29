@@ -417,9 +417,13 @@ namespace BHelp.Controllers
                             boxContents += Environment.NewLine + view.BoxNote[idx];
                         }
 
+                        if (view.BoxHoliday[idx])
+                        {
+                            boxContents += Environment.NewLine + view.BoxHolidayDescription[idx];
+                        }
+
                         ws.Cell(row, j).Style.Alignment.SetVertical(XLAlignmentVerticalValues.Top);
                         ws.Cell(row, j).SetValue(boxContents);
-
                     }
                 }
             }

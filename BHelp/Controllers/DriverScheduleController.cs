@@ -488,13 +488,17 @@ namespace BHelp.Controllers
 
                         if (view.BoxNote[idx] != null)
                         {
-                            boxContents += Environment.NewLine + "Note:";
+                            boxContents += Environment.NewLine + "Notes:";
                             boxContents += Environment.NewLine + view.BoxNote[idx];
                         }
-                        
+
+                        if (view.BoxHoliday[idx])
+                        {
+                            boxContents += Environment.NewLine + view.BoxHolidayDescription[idx];
+                        }
+
                         ws.Cell(row, j).Style.Alignment.SetVertical(XLAlignmentVerticalValues.Top);
                         ws.Cell(row, j).SetValue(boxContents);
-
                     }
                 }
             }
