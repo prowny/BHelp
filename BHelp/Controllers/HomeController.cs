@@ -44,6 +44,20 @@ namespace BHelp.Controllers
             if (menuCatString.Contains("Reports")) view.ShowReportsDocumentsMenu = true;
             if (menuCatString.Contains("PantryCoordinator")) view.ShowPantryCoordinatorDocumentsMenu = true;
 
+            if (view.ShowEveryoneDocumentsMenu)
+            { // get Everyone docs Title and Index for direct access on main menu
+                var listEveryoneDocs = db.Documents.Where(c => c.MenuCategory == "Everyone" ).ToList();
+                view.EveryoneDocTitles = new string[listEveryoneDocs.Count];
+                view.EveryoneDocIds = new int[listEveryoneDocs.Count];
+                var i = -1;
+                foreach (var doc in listEveryoneDocs)
+                {
+                    i++;
+                    view.EveryoneDocTitles[i] = doc.Title;
+                    view.EveryoneDocIds[i] = doc.Id;
+                }
+            }
+
             ViewData["vmPassword"]  = AppRoutines.GetVoicemailPassword();
             return View(view);
         }

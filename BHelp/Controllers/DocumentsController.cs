@@ -15,7 +15,7 @@ namespace BHelp.Controllers
 {
     public class DocumentsController : Controller
     {
-        private BHelpContext db = new BHelpContext();
+        private readonly BHelpContext db = new BHelpContext();
 
         // GET: Documents
         public ActionResult Index()
@@ -29,8 +29,8 @@ namespace BHelp.Controllers
             return View(view);
         }
 
-       // GET: Documents/Upload
-        public ActionResult Upload()
+            // GET: Documents/Upload
+            public ActionResult Upload()
         {
             var view = new Document { Categories = LoadMenuCategories()};
             if (TempData["DocumentTitleError"] != null)

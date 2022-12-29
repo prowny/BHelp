@@ -129,6 +129,8 @@ namespace BHelp.Models
         [NotMapped] public bool ShowODDocumentsMenu { get; set; }
         [NotMapped] public bool ShowDriverDocumentsMenu { get; set; }
         [NotMapped] public bool ShowEveryoneDocumentsMenu { get; set; }
+        [NotMapped] public string[] EveryoneDocTitles { get; set; }
+        [NotMapped] public int[] EveryoneDocIds { get; set; }
         [NotMapped] public bool ShowReportsDocumentsMenu { get; set; }
         [NotMapped] public bool ShowPantryCoordinatorDocumentsMenu { get; set; }
         [NotMapped] public List<SelectListItem> States { get; set; }

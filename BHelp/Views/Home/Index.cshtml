@@ -173,7 +173,13 @@
     }
     @if (Model.ShowEveryoneDocumentsMenu)
     {
-        <a href="@Url.Action("ViewDocumentCategory", "Documents", new { menuCat = "Everyone" })">Documents</a><br/>
+        for (var i = 0; i < Model.EveryoneDocTitles.Length; i++)
+        {
+            <span style="color: blue; text-decoration: underline;">@Html.Label(Model.EveryoneDocTitles[i])</span>
+            <input type="image" src="~/Images/PDF10.png" alt="Submit" width="16" height="16"
+                   onclick="window.open('@Url.Action("ViewDocument", "Documents", new { id = Model.EveryoneDocIds[i] }) ')"/>
+            <br/>
+        }
     }
     <br/>
     @Html.AntiForgeryToken()

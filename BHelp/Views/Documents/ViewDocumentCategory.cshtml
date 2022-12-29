@@ -16,7 +16,7 @@
             <div>
                 @Html.Label(Model.DocNames[i])
                 <input type="image" src="~/Images/PDF10.png" alt="Submit" width="16" height="16"
-                       onclick="window.open('@Url.Action("ViewDocument", "Documents", new { id = @Model.DocIds[i] }) ')" />
+                       onclick="window.open('@Url.Action("ViewDocument", "Documents", new { id = Model.DocIds[i] })')" />
             </div>
         }
     </div>
