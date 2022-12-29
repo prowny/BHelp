@@ -34,6 +34,7 @@ namespace BHelp.ViewModels
         public string[] BoxODEmail { get; set; }
         public bool[] BoxODConfirmed { get; set; }
         public bool[] BoxHoliday { get; set; }
+        public string[] BoxHolidayDescription { get; set; }
 
         [DataType(DataType.MultilineText)]
         public string[] BoxNote { get; set; }

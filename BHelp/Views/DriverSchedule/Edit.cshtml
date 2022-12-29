@@ -363,6 +363,17 @@
                                     @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>"))
                                 }
 
+                                if (Model.BoxHolidayDescription[i] != null)
+                                {
+                                    @*<br/>
+                                    <span style="font-size: small">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        @Html.Label("Notes")
+                                    </span>*@
+                                    <br/>
+                                    @Html.Raw(Model.BoxHolidayDescription[i].Replace(Environment.NewLine, "<br/>"))
+                                }
+
                             }
                         </td>
                         }

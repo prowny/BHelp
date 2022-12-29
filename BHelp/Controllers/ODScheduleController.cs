@@ -456,7 +456,8 @@ namespace BHelp.Controllers
                 BoxODPhone2 = new string[26],
                 BoxODEmail = new string[26],
                 BoxNote = new string[26],
-                BoxHoliday = new bool[26]
+                BoxHoliday = new bool[26],
+                BoxHolidayDescription = new string[26]
             };
             var dateData = Session["ODScheduleDateData"].ToString();
             view.Month = Convert.ToInt32(dateData.Substring(2, 2));
@@ -483,13 +484,12 @@ namespace BHelp.Controllers
                     {
                         view.BoxHoliday[idx] = true;
                         var holidayData = GetHolidayData(view.BoxDay[i, j]);
-                        view.BoxNote[idx] = holidayData.Description + Environment.NewLine + "BH Closed";
+                        view.BoxHolidayDescription[idx] = holidayData.Description + Environment.NewLine + "BH Closed";
                     }
 
                     var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
                     if (mIdx >= 0) // mIdx = -1 if match not found
                     {
-
                         var odIdx = odList.FindIndex(d => d.Value == monthlyList[mIdx].ODId);
                         if (odIdx >= 0)
                         {

@@ -28,7 +28,6 @@ namespace BHelp.Controllers
             {
                 var cutOffDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
                 if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer", "Administrator"))
-                    //if (view.Date >= cutOffDate)
                 {
                     view.AllowEdit = true;
                 }
@@ -125,7 +124,8 @@ namespace BHelp.Controllers
                     DriverId = "0",
                     BackupDriverId = "0",
                     BackupDriver2Id = "0",
-                    MonthName = view.MonthName
+                    MonthName = view.MonthName,
+                    Note = view.Note
                 };
                 if (dt > DateTime.MinValue)
                 {
@@ -345,25 +345,25 @@ namespace BHelp.Controllers
         {
             var start =new DateTime(year, month, 1);
             var end = new DateTime(year, month, DateTime.DaysInMonth(year, month));
-            var ml = (List<DriverSchedule>)Session["MonthlySchedule"];
-            if (Session["MonthlySchedule"] == null || ml.Count == 0)
-            {
+            //var ml = (List<DriverSchedule>)Session["MonthlySchedule"];
+            //if (Session["MonthlySchedule"] == null || ml.Count == 0)
+            //{
                 var db = new BHelpContext();
                 var monthlyList = db.DriverSchedules
                     .Where(d => d.Date >= start && d.Date <= end).OrderBy(d => d.Date).ToList();
                 Session["MonthlySchedule"] = monthlyList;
-            }
-            else
-            {  // use existing list:
-                var monthlyList = (List<DriverSchedule>)Session["MonthlySchedule"];
-                if (monthlyList[0].Date.Month != month || monthlyList[0].Date.Year != year)
-                {  // reload:
-                    var db = new BHelpContext();
-                    monthlyList = db.DriverSchedules
-                        .Where(d => d.Date >= start && d.Date <= end).OrderBy(d => d.Date).ToList();
-                    Session["MonthlySchedule"] = monthlyList;
-                }
-            }
+            //}
+            //else
+            //{  // use existing list:
+            //    var monthlyList = (List<DriverSchedule>)Session["MonthlySchedule"];
+            //    if (monthlyList[0].Date.Month != month || monthlyList[0].Date.Year != year)
+            //    {  // reload:
+            //        var db = new BHelpContext();
+            //        monthlyList = db.DriverSchedules
+            //            .Where(d => d.Date >= start && d.Date <= end).OrderBy(d => d.Date).ToList();
+            //        Session["MonthlySchedule"] = monthlyList;
+            //    }
+            //}
         }
 
         [Authorize(Roles = "Developer,Administrator,Staff,Scheduler,Driver")]
@@ -533,6 +533,7 @@ namespace BHelp.Controllers
                 BoxGroupDriverEmail = new string[26],
                 BoxNote = new string[26],
                 BoxHoliday = new bool[26],
+                BoxHolidayDescription = new string[26],
                 BoxDriverConfirmed = new bool[26]
         };
             var dateData = Session["DriverScheduleDateData"].ToString();
@@ -556,66 +557,65 @@ namespace BHelp.Controllers
                     view.BoxDay[i, j] = startDate.AddDays(7 * (i - 1) + j - startDayOfWk);
                     if (view.BoxDay[i,j] < startDate || view.BoxDay[i, j] > endDate) continue;
                     var idx = j + 5 * (i - 1);
+                    
                     if (HolidayRoutines.IsHoliday(view.BoxDay[i, j], holidayList))  //(List<Holiday>)Session["Holidays"]))
                     {
                         view.BoxHoliday[idx] = true;
                         var holidayData = GetHolidayData(view.BoxDay[i, j]);
-                        view.BoxNote[idx] = holidayData.Description + Environment.NewLine
+                        view.BoxHolidayDescription[idx] = holidayData.Description + Environment.NewLine
                             + "BH Closed";
                     }
 
                     var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
-                        if (mIdx >= 0)  // mIdx = -1 if match not found
+                    if (mIdx >= 0)  // mIdx = -1 if match not found
+                    {
+                        view.BoxNote[idx] = monthlyList[mIdx].Note;
+                        var drIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].DriverId);
+                        if (drIdx >= 0)
                         {
-                            
-                            var drIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].DriverId);
-                            if (drIdx >= 0)
-                            {
-                                view.BoxDriverName[idx] = driverList[drIdx].Text;
-                                view.BoxDriverPhone[idx] = driverDataList[drIdx].PhoneNumber;
-                                view.BoxDriverPhone2[idx] = driverDataList[drIdx].PhoneNumber2;
-                                view.BoxDriverEmail[idx] = driverDataList[drIdx].Email;
-                            }
+                            view.BoxDriverName[idx] = driverList[drIdx].Text;
+                            view.BoxDriverPhone[idx] = driverDataList[drIdx].PhoneNumber;
+                            view.BoxDriverPhone2[idx] = driverDataList[drIdx].PhoneNumber2;
+                            view.BoxDriverEmail[idx] = driverDataList[drIdx].Email;
+                        }
 
-                            var bdrIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].BackupDriverId);
-                            if (bdrIdx >= 0)
-                            {
-                                view.BoxBackupDriverName[idx] = driverList[bdrIdx].Text;
-                                view.BoxBackupDriverPhone[idx] = driverDataList[bdrIdx].PhoneNumber;
-                                view.BoxBackupDriverPhone2[idx] = driverDataList[bdrIdx].PhoneNumber2;
-                                view.BoxBackupDriverEmail[idx] = driverDataList[bdrIdx].Email;
-                            }
+                        var bdrIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].BackupDriverId);
+                        if (bdrIdx >= 0)
+                        {
+                            view.BoxBackupDriverName[idx] = driverList[bdrIdx].Text;
+                            view.BoxBackupDriverPhone[idx] = driverDataList[bdrIdx].PhoneNumber;
+                            view.BoxBackupDriverPhone2[idx] = driverDataList[bdrIdx].PhoneNumber2;
+                            view.BoxBackupDriverEmail[idx] = driverDataList[bdrIdx].Email;
+                        }
 
-                            var bdr2Idx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].BackupDriver2Id);
-                            if (bdr2Idx >= 0)
-                            {
-                                view.BoxBackupDriver2Name[idx] = driverList[bdr2Idx].Text;
-                                view.BoxBackupDriver2Phone[idx] = driverDataList[bdr2Idx].PhoneNumber;
-                                view.BoxBackupDriver2Phone2[idx] = driverDataList[bdr2Idx].PhoneNumber2;
-                                view.BoxBackupDriver2Email[idx] = driverDataList[bdr2Idx].Email;
-                            }
+                        var bdr2Idx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].BackupDriver2Id);
+                        if (bdr2Idx >= 0)
+                        {
+                            view.BoxBackupDriver2Name[idx] = driverList[bdr2Idx].Text;
+                            view.BoxBackupDriver2Phone[idx] = driverDataList[bdr2Idx].PhoneNumber;
+                            view.BoxBackupDriver2Phone2[idx] = driverDataList[bdr2Idx].PhoneNumber2;
+                            view.BoxBackupDriver2Email[idx] = driverDataList[bdr2Idx].Email;
+                        }
 
                         var grpId = monthlyList[mIdx].GroupId;
-                            if (grpId > 0)
+                        if (grpId > 0)
+                        {
+                            var gpItem = view.GroupList.FirstOrDefault(g => g.Value == grpId.ToString());
+                            if (gpItem != null)
                             {
-                                var gpItem = view.GroupList.FirstOrDefault(g => g.Value == grpId.ToString());
-                                if (gpItem != null)
-                                {
-                                    view.BoxGroupName[idx] = gpItem.Text;
-                                }
-                            } 
-
-                            var gpdrIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].GroupDriverId);
-                            if (gpdrIdx >= 0)
-                            {
-                                view.BoxGroupDriverName[idx] = driverList[gpdrIdx].Text;
-                                view.BoxGroupDriverPhone[idx] = driverDataList[gpdrIdx].PhoneNumber;
-                                view.BoxGroupDriverPhone2[idx] = driverDataList[gpdrIdx].PhoneNumber2;
-                                view.BoxGroupDriverEmail[idx] = driverDataList[gpdrIdx].Email;
+                                view.BoxGroupName[idx] = gpItem.Text;
                             }
+                        } 
 
-                            view.BoxNote[idx] = monthlyList[mIdx].Note;
+                        var gpdrIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].GroupDriverId);
+                        if (gpdrIdx >= 0)
+                        {
+                            view.BoxGroupDriverName[idx] = driverList[gpdrIdx].Text;
+                            view.BoxGroupDriverPhone[idx] = driverDataList[gpdrIdx].PhoneNumber;
+                            view.BoxGroupDriverPhone2[idx] = driverDataList[gpdrIdx].PhoneNumber2;
+                            view.BoxGroupDriverEmail[idx] = driverDataList[gpdrIdx].Email;
                         }
+                    }
                 }
             }
             return view;
@@ -691,6 +691,11 @@ namespace BHelp.Controllers
         private Holiday GetHolidayData(DateTime dt)
         {
             var holidays = (List<Holiday>)Session["Holidays"];
+            if (holidays.Count == 0)
+            {
+                holidays = HolidayRoutines.GetHolidays(dt.Year);
+                Session["Holidays"] = holidays;
+            }
             // check if ANY calculated date in proper year:
             foreach (var hol in holidays)
             {
@@ -699,8 +704,7 @@ namespace BHelp.Controllers
                 holidays = HolidayRoutines.GetHolidays(dt.Year);
                 Session["Holidays"] = holidays;
             }
-
-            return holidays.FirstOrDefault(holiday => dt == holiday.CalculatedDate);
+            return holidays.Find(h => h.CalculatedDate == dt);
         }
     }
 }

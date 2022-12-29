@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Web.Mvc;
 
 namespace BHelp.ViewModels
@@ -79,7 +80,7 @@ namespace BHelp.ViewModels
         public string[] BoxNote { get; set; }
 
         public bool[] BoxHoliday { get; set; }
-
+        public string[] BoxHolidayDescription { get; set; }
         public bool IsDriverOnly { get; set; }
         public bool IsScheduler { get; set; }
         public bool AllowEdit { get; set; }

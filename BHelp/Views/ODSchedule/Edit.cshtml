@@ -141,13 +141,13 @@
                             @Html.TextAreaFor(t => t.Note)
                             @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
                         </td>
-                        @if (!Model.IsHoliday)
-                        {
+                        @*@if (!Model.IsHoliday)
+                        {*@
                             <td>
                                 &nbsp;&nbsp;
                                 <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
                             </td>
-                        }
+                        @*}*@
                     </tr>
                 </table>
                 <hr />
@@ -280,16 +280,19 @@
 
                                 if (Model.BoxNote[i] != null)
                                 {
-                                    if (!Model.BoxHoliday[i])
-                                    {
-                                        <br/>
-                                        <span style="font-size: small">
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            @Html.Label("Notes")
-                                        </span>
-                                        <br/>
-                                    }
+                                    <span style="font-size: small">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        @Html.Label("Notes")
+                                    </span>
+                                    <br/>
                                     @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>"))
+
+                                }
+                                
+                                if (Model.BoxHoliday[i])
+                                {
+                                    <br/>
+                                    @Html.Raw(Model.BoxHolidayDescription[i].Replace(Environment.NewLine, "<br/>"))
                                 }
                             }
                         </td>

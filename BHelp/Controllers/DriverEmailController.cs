@@ -198,6 +198,7 @@ namespace BHelp.Controllers
                 BoxGroupDriverPhone = new string[26],
                 BoxGroupDriverPhone2 = new string[26],
                 BoxGroupDriverEmail = new string[26],
+                BoxHolidayDescription = new string[26],
                 BoxNote = new string[26],
                 Month = month,
                 Year = year

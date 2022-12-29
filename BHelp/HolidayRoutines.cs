@@ -23,8 +23,7 @@ namespace BHelp
                 
                 if (hol.Repeat == 0) // Fixed Date, no repeats
                 {
-                    if (hol.FixedDate.Year == year)
-                    {
+                    
                         var _holiday = new Holiday()
                         {
                             CalculatedDate = hol.FixedDate,
@@ -32,8 +31,8 @@ namespace BHelp
                             Description = hol.Description
                         };
                         Holidays.Add(_holiday);
-                    }
                 }
+                
 
                 if (hol.Repeat == 1) // Annual Month-Day
                 {
