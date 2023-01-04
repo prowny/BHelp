@@ -168,13 +168,6 @@ namespace BHelp.Controllers
                 }
             }
         }
-
-        [Authorize(Roles = "Administrator,Developer")]
-        public ActionResult MaintainDocuments()
-        {
-            return null;
-        }
-        
     }
 }
 

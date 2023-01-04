@@ -251,6 +251,7 @@
     <Compile Include="App_Start\Startup.Auth.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Controllers\LoginsController.cs" />
     <Compile Include="HolidayRoutines.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -647,6 +648,7 @@
     <Content Include="Views\Holidays\Index.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Views\Logins\Index.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>

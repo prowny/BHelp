@@ -9,6 +9,8 @@
     <style>
         p.indent {padding-left: 1em}
         div {padding-left: 10px}
+        #btnView {background-color: white;color: blue;border: none;text-decoration: underline;
+             padding: 0;font-size: 14px}
     </style>
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
 </head>
@@ -32,7 +34,7 @@
     <a href="@Url.Action("Index", "DriverEmail")">Driver Email</a><br />
     <a href="@Url.Action("Edit", "DriverSchedule")">Driver Schedule</a><br />
     <a href="@Url.Action("Edit", "ODSchedule")">OD Schedule</a><br />
-    <a href="@Url.Action("Index", "Holidays")">Maintain Holidays</a><br />
+    <a href="@Url.Action("Index", "Logins")">View Logins Log</a><br />
 </div>
         <br />
     }
@@ -150,41 +152,43 @@
     }
     <br />
 
-<div>
-    @{ var AllowHours = false; }
-    @if (User.IsInRole("Driver") || User.IsInRole("Administrator") || User.IsInRole("Developer")
-        || User.IsInRole("Staff")){AllowHours = true;}
-    @*@if (!User.IsInRole("Administrator") && (!User.IsInRole("Staff") || User.IsInRole("Trainer")))
-    {AllowHours = true;}*@
-    @if (!(User.IsInRole("OfficerOfTheDay") && !User.IsInRole("Administrator") && !User.IsInRole("Staff")) || User.IsInRole("Trainer"))
-    {AllowHours = true;}
-    @if (AllowHours)
-    {
-        <a href="@Url.Action("Create", "VolunteerHours")">Enter Volunteer Hours</a>
-        <br/>
-    }
-    <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br/>
-    <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br/>
-    @*<a href="http://www.bethesdahelp.org" target="_blank">Go To Bethesda Help Website</a><br />*@
-    @if (User.IsInRole("VoicemailAccess"))
-    {
-        <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
-        <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["vmPassword"])</span>
-    }
-    @if (Model.ShowEveryoneDocumentsMenu)
-    {
-        for (var i = 0; i < Model.EveryoneDocTitles.Length; i++)
+    <div>
+        @{ var AllowHours = false; }
+        @if (User.IsInRole("Driver") || User.IsInRole("Administrator") || User.IsInRole("Developer")
+            || User.IsInRole("Staff")) { AllowHours = true; }
+        @*@if (!User.IsInRole("Administrator") && (!User.IsInRole("Staff") || User.IsInRole("Trainer")))
+        {AllowHours = true;}*@
+        @if (!(User.IsInRole("OfficerOfTheDay") && !User.IsInRole("Administrator") && !User.IsInRole("Staff")) || User.IsInRole("Trainer"))
+        { AllowHours = true; }
+        @if (AllowHours)
         {
-            <span style="color: blue; text-decoration: underline;">@Html.Label(Model.EveryoneDocTitles[i])</span>
-            <input type="image" src="~/Images/PDF10.png" alt="Submit" width="16" height="16"
-                   onclick="window.open('@Url.Action("ViewDocument", "Documents", new { id = Model.EveryoneDocIds[i] }) ')"/>
-            <br/>
+            <a href="@Url.Action("Create", "VolunteerHours")">Enter Volunteer Hours</a>
+            <br />
         }
-    }
-    <br/>
-    @Html.AntiForgeryToken()
-    <a href="@Url.Action("Logout", "Home")">LogOut</a>
-</div>
+        <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br />
+        <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br />
+        @*<a href="http://www.bethesdahelp.org" target="_blank">Go To Bethesda Help Website</a><br />*@
+        @if (User.IsInRole("VoicemailAccess"))
+        {
+            <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
+            <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["vmPassword"])</span>
+        }
+        @if (Model.ShowEveryoneDocumentsMenu)
+        {
+            for (var i = 0; i < Model.EveryoneDocTitles.Length; i++)
+            {
+                <span id ="btnView" style = "color: blue" >@Html.Label(Model.EveryoneDocTitles[i]):</span>
+
+                <input type="image" src="~/Images/PDF10.png" alt="Submit" width="16" height="16"
+                    onclick="window.open('@Url.Action("ViewDocument", "Documents",
+                                                 new { id = Model.EveryoneDocIds[i] })')" />
+    <br />
+}
+}
+        <br />
+        @Html.AntiForgeryToken()
+        <a href="@Url.Action("Logout", "Home")">LogOut</a>
+    </div>
 
 </body>
 </html>
