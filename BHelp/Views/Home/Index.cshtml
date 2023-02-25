@@ -41,19 +41,20 @@
 
     @if (User.IsInAnyRoles("Administrator","Developer"))
     {
-        <div>
-            <strong>Administrator Menu</strong><br />
-            @if (Model.ShowAdminDocumentsMenu)
-            {
-                <a href="@Url.Action("ViewDocumentCategory", "Documents", new{menuCat="Administrator"})">View Admin Documents</a><br />
-            }
-            <a href="@Url.Action("MaintainUsers", "Home")">Maintain Volunteers / Website Users</a><br />
-            <a href="@Url.Action("MaintainUserRoles", "Home")">Maintain User Permissions (&quot;Roles&quot;)</a><br />
-            <a href="@Url.Action("ResetVoicemailPassword", "Home")">Reset Voicemail Password</a><br />
-            <a href="@Url.Action("ResetAnyPassword", "Account")">Reset Any Password</a><br />
-            <a href="@Url.Action("Index", "Documents")">Maintain Documents</a><br />
-            <br />
-        </div>
+<div>
+    <strong>Administrator Menu</strong><br />
+    @if (Model.ShowAdminDocumentsMenu)
+    {
+        <a href="@Url.Action("ViewDocumentCategory", "Documents", new{menuCat="Administrator"})">View Admin Documents</a><br />
+    }
+    <a href="@Url.Action("MaintainUsers", "Home")">Maintain Volunteers / Website Users</a><br />
+    <a href="@Url.Action("MaintainUserRoles", "Home")">Maintain User Permissions (&quot;Roles&quot;)</a><br />
+    <a href="@Url.Action("ResetVoicemailPassword", "Home")">Reset Voicemail Password</a><br />
+    <a href="@Url.Action("ResetAnyPassword", "Account")">Reset Any Password</a><br />
+    <a href="@Url.Action("Index", "Documents")">Maintain Documents</a><br />
+    <a href="@Url.Action("Index", "AddressChecks")">Maintain New Client Address Check List</a><br />
+    <br />
+</div>
     }
 
     @if (User.IsInAnyRoles("Developer","Staff","Administrator"))

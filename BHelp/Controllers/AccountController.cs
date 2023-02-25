@@ -18,7 +18,7 @@ namespace BHelp.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        BHelpContext db = new BHelpContext();
+        readonly BHelpContext db = new BHelpContext();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 

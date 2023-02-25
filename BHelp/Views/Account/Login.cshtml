@@ -1,9 +1,6 @@
 ﻿﻿@using DocumentFormat.OpenXml.Bibliography
 @model BHelp.ViewModels.LoginViewModel
-@{
-    Layout = null;
-}
-
+@{ Layout = null; }
 <!DOCTYPE html>
 
 <html>
@@ -18,13 +15,7 @@
 </head>
 <body>
     <div class="row">
-        <div class="col-md-8">
-            <!--<section id="switchToHostGator ">-->  @*unRem this section and rem out section 'loginForm'*@
-                <!--<div>
-                    <b>This Website Has Moved!</b><br/>
-                    <a href="@Url.Action("GoToHostGatorSite", "Home")">Go To BethesdaHelpFD.org</a><br />
-                </div>
-            </section>--> 
+        <div class="col-md-8"> 
             <section id="loginForm">
                 @using (Html.BeginForm("Login", "Account", FormMethod.Post))
                 {
@@ -83,12 +74,3 @@
 
 </body>
 </html>
-<script type="text/javascript">
-    $(document).ready(function () {
-        window.$(function () {
-            window.$('#UserName').focus();
-        });
-    });
-
-
-</script>

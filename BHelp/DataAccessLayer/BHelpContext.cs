@@ -38,5 +38,8 @@ namespace BHelp.DataAccessLayer
         public DbSet<ODSchedule> ODSchedules { get; set; }
 
         public DbSet<Holiday> Holidays { get; set; }
+
+        public DbSet<AddressCheck> AddressChecks { get; set; }
+
     }
 }
