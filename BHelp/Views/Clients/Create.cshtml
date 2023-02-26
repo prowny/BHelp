@@ -1,18 +1,14 @@
-﻿@model BHelp.ViewModels.ClientViewModel
+﻿@using System.Web.Mvc.Html
+@model BHelp.ViewModels.ClientViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
 
 <html>
 <head>
     <style>
-        #CreateButton {
-            background-color: blue;
-            color: white
-        }
-
-        .agewidth {
-            width: 10px
-        }
+        #CreateButton {background-color: blue;color: white}
+        .agewidth {width: 10px}
+        .field-validation-error { color: red; font-weight: bold}
     </style>
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
 </head>
@@ -67,11 +63,42 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
-            </div>
+            <table>
+                <tr>
+                    <td>
+                        @Html.LabelFor(model => model.City, new { @class = "control-label col-md-2" })
+                    </td>
+                    @if (Model.AddressCheckListExists)
+                    {
+                        <td style="text-align: center">
+                            @Html.LabelFor(model => model.AddressCheckSelectList, new { @class = "control-label col-md-2" })
+                        </td>
+                        <td>
+                            @Html.LabelFor(model => model.AddressOK, new { @class = "control-label col-md-2" })
+                        </td>
+                    }
+                </tr>
+
+                <tr>
+                    <td>
+                        @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                    </td>
+                    @if (Model.AddressCheckListExists)
+                    {
+                        <td>
+                            @Html.DropDownListFor(m => m.AddressCheck,
+                                new SelectList(Model.AddressCheckSelectList,
+                                    "Value","Text")) 
+                           
+                        </td>
+                        <td style="text-align: center">
+                            @Html.CheckBoxFor(model => model.AddressOK)
+                            @Html.ValidationMessageFor(model => model.AddressOK, "", new { @class = "text-danger" })
+                        </td>
+                    }
+                </tr>
+            </table>
         </div>
 
         <div class="form-group">
@@ -149,3 +176,9 @@ else
 </body>
 </html>
 
+<script type="text/javascript">
+    jQuery.validator.addMethod("enforcetrue", function (value, element) {
+        return element.checked;
+    });
+    jQuery.validator.unobtrusive.adapters.addBool("enforcetrue");
+</script>

@@ -9,27 +9,12 @@ namespace BHelp.Controllers
 {
     public class AddressChecksController : Controller
     {
-        private BHelpContext db = new BHelpContext();
+        private readonly BHelpContext db = new BHelpContext();
 
         // GET: AddressChecks
         public ActionResult Index()
         {
             return View(db.AddressChecks.ToList());
-        }
-
-        // GET: AddressChecks/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            AddressCheck addressCheck = db.AddressChecks.Find(id);
-            if (addressCheck == null)
-            {
-                return HttpNotFound();
-            }
-            return View(addressCheck);
         }
 
         // GET: AddressChecks/Create
@@ -39,8 +24,6 @@ namespace BHelp.Controllers
         }
 
         // POST: AddressChecks/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Address,Note")] AddressCheck addressCheck)
@@ -71,8 +54,6 @@ namespace BHelp.Controllers
         }
 
         // POST: AddressChecks/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Address,Note")] AddressCheck addressCheck)

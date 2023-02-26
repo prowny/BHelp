@@ -71,21 +71,6 @@ namespace BHelp.Controllers
             return View(clientView);
         }
 
-        // GET: Clients/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Client client = db.Clients.Find(id);
-            if (client == null)
-            {
-                return HttpNotFound();
-            }
-            return View(client);
-        }
-
         // GET: Clients/Create
         [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult Create()
@@ -105,6 +90,13 @@ namespace BHelp.Controllers
                 viewModel.ReturnURL = Request.UrlReferrer.ToString();
             }
 
+            var _addressCheckList = ClientRoutines.GetAddressCheckSelectList();
+            if (_addressCheckList != null)
+            {
+                viewModel.AddressCheckListExists = true;
+                viewModel.AddressCheckSelectList = _addressCheckList;
+            }
+
             return View(viewModel);
         }
 
@@ -113,7 +105,7 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Age,StreetNumber,"
                               + "StreetName,City,Zip,Phone,Email,Notes,FamilyMembers,"
-                              + "ReturnURL" )] ClientViewModel client)
+                              + "ReturnURL,AddressOK" )] ClientViewModel client)
         {
             if (ModelState.IsValid)
             {
@@ -160,7 +152,11 @@ namespace BHelp.Controllers
                 return RedirectToAction("Index");
             }
 
+            // ModelState.IsValid was false:
             client.ZipCodes = AppRoutines.GetZipCodesSelectList();
+            client.AddressCheckSelectList = ClientRoutines.GetAddressCheckSelectList();
+            if (client.AddressCheckSelectList != null) client.AddressCheckListExists = true;
+
             return View(client);
         }
 

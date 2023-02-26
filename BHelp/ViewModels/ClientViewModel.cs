@@ -32,10 +32,16 @@ namespace BHelp.ViewModels
         [DisplayName("Street Name")]
         public string StreetName { get; set; }
         
+       
         [Required]
         [DisplayName("City")]
         public string City { get; set; }
-        
+
+        [Required]
+        [EnforceTrue(ErrorMessage = @"Error Message")]
+        [DisplayName("Not On List or OK'd by Supervisor")]
+        public bool AddressOK { get; set; }
+
         [Required]
         [DisplayName("Zip Code")]
         public string Zip { get; set; }
@@ -48,13 +54,14 @@ namespace BHelp.ViewModels
         public string Notes { get; set; }
 
         public IEnumerable<SelectListItem> ZipCodes { get; set; }
-
-        public Client client { get; set; }
-        public List<FamilyMember> family { get; set; }
-
-        public List<FamilyMember> FamilyMembers { get; set; }
         
-        public string SearchString { get; set; }
+        public List<FamilyMember> FamilyMembers { get; set; }
+
+        [DisplayName("Address Check List")]
+        public IEnumerable<SelectListItem> AddressCheckSelectList { get; set; }
+        public bool AddressCheckListExists { get; set; }
+        public string AddressCheck { get; set; }  // dummy value for DropDownListFor 
+
         public string StreetToolTip { get; set; }
         public string CityToolTip { get; set; }
         public string PhoneToolTip { get; set; }

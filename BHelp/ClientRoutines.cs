@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
+using System.Web.UI;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
@@ -315,5 +317,28 @@ namespace BHelp
             return deliverySubList.Where(i => i.DateDelivered >= startDate
                                               && i.DateDelivered <= endDate).ToList();
         }
+        
+        public static List<SelectListItem> GetAddressCheckSelectList()
+        {
+            var AddressCheckList = (from a in new BHelpContext()
+                   .AddressChecks select new {Text = a.Address}).ToList();
+            if (AddressCheckList.Count == 0) return null;
+            
+            var checkList = new List<SelectListItem>();
+            foreach (var item  in AddressCheckList)
+            {
+                // remove "Text =  {" & trailing " }"
+                var _address = item.ToString().Substring(9);
+                _address = _address.Substring(0, _address.Length - 2);
+                var addItem = new SelectListItem()
+                {
+                    Value = "0", Text = _address
+                };
+               
+                checkList.Add(addItem);
+            }
+            return checkList;
+        }
+
     }
 }
