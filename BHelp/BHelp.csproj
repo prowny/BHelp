@@ -255,9 +255,13 @@
     <Compile Include="App_Start\Startup.Auth.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Controllers\AddressChecksController.cs" />
+    <Compile Include="Controllers\AddressChecksController.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Controllers\LoginsController.cs" />
-    <Compile Include="EnforceTrueAttribute.cs" />
+    <Compile Include="EnforceTrueAttribute.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="HolidayRoutines.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -633,10 +637,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Logins\Index.cshtml" />
-    <Content Include="Views\AddressChecks\Create.cshtml" />
-    <Content Include="Views\AddressChecks\Delete.cshtml" />
-    <Content Include="Views\AddressChecks\Edit.cshtml" />
-    <Content Include="Views\AddressChecks\Index.cshtml" />
+    <Content Include="Views\AddressChecks\Create.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\AddressChecks\Delete.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\AddressChecks\Edit.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\AddressChecks\Index.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
     <None Include="Web.config">
