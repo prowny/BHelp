@@ -1424,6 +1424,7 @@ namespace BHelp.Controllers
                 var view = GetHelperReportView(reportYear, reportMonth);
                 return View(view);
             }
+
             public ActionResult HelperReportToExcel(string yy = "", string mm = "")
             {
                 var year = Convert.ToInt32(yy);
@@ -1480,6 +1481,19 @@ namespace BHelp.Controllers
                 return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                     { FileDownloadName = view.ReportTitle + ".xlsx" };
             }
+
+            public ActionResult HelperReportToCSV(string yy = "", string mm = "")
+            {
+                var year = Convert.ToInt32(yy);
+                var month = Convert.ToInt32(mm);
+                var view = GetHelperReportView(year, month);
+                var monthYear = CultureInfo.CurrentCulture
+                    .DateTimeFormat.GetMonthName(month) + yy;
+                    
+                var result = AppRoutines.HelperReportToCSV(view);
+                return result;
+            }
+
             private static ReportsViewModel GetHelperReportView(int year, int month)
             {
                 var view = new ReportsViewModel {Year = year, Month = month};

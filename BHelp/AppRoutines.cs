@@ -1099,13 +1099,6 @@ namespace BHelp
                     var _people = view.HoursTotal[2, 1];
                     sb.Append("People Count:," + _people);
                     sb.AppendLine();
-                    //for (var i = 0; i < 3; i++)  // detail removed 03/03/2022
-                    //{
-                    //    sb.Append(view.HoursTotal[i, 0] + ",");
-                    //    sb.Append(view.HoursTotal[i, 1] + ",");
-                    //    sb.Append(view.HoursTotal[i, 2] + ",");
-                    //    sb.AppendLine();
-                    //}
                 }
 
                 var response = System.Web.HttpContext.Current.Response;
@@ -1113,14 +1106,63 @@ namespace BHelp
                 response.Clear();
                 response.ClearHeaders();
                 response.ContentEncoding = Encoding.Unicode;
+                var shortMonthYear = CultureInfo.CurrentCulture.DateTimeFormat
+                    .GetAbbreviatedMonthName(view.Month) + view.Year.ToString();
                 response.AddHeader("content-disposition", "attachment;filename=" 
-                                                          + "BHelpQORK" + view.EndDate.ToString("MM-dd-yyyy") + ".csv");
+                                                          + "Bethesda Helper Data " + shortMonthYear + ".csv");
                 response.ContentType = "text/plain";
                 response.Write(sb.ToString());
                 response.End();
                 return null;
             }
-            public static List<SelectListItem> GetDistinctDeliveryDatesOdList(List<Delivery> deliveryList)
+
+        public static FileStreamResult HelperReportToCSV(ReportsViewModel view)
+        {
+            var sb = new StringBuilder();
+            sb.Append(view.ReportTitle + ',');
+            sb.AppendLine();
+
+            sb.Append("Time Period,");
+            foreach (var z in view.ZipCodes)
+            {
+                sb.Append(z + ",");
+            }
+            sb.Append("Total Zip Codes");
+            sb.AppendLine();
+
+            var startDate = new DateTime(view.Year, view.Month, 1);
+            var endDate = startDate.AddMonths(1).AddDays(-1);
+            sb.Append(startDate.ToString("d"));
+            sb.AppendLine();
+            sb.Append(endDate.ToString("d"));
+            sb.AppendLine();
+
+            for (var i = 1; i < 11; i++)   // First 10 data rows
+            {
+                sb.Append(view.HelperTitles[i] + ",");
+                for (var j = 1; j < view.ZipCodes.Count + 2; j++)
+                {
+                   sb.Append(view.ZipCounts[i, j] + ",");
+                }
+                sb.AppendLine();
+            }
+
+            sb.AppendLine();  // blank line
+            
+            var response = System.Web.HttpContext.Current.Response;
+            response.BufferOutput = true;
+            response.Clear();
+            response.ClearHeaders();
+            response.ContentEncoding = Encoding.Unicode;
+            response.AddHeader("content-disposition", "attachment;filename="
+                                                      + "Bethesda Helper Data" + view.EndDate.ToString("MM-dd-yyyy") + ".csv");
+            response.ContentType = "text/plain";
+            response.Write(sb.ToString());
+            response.End();
+            return null;
+        }
+
+        public static List<SelectListItem> GetDistinctDeliveryDatesOdList(List<Delivery> deliveryList)
             {
                 var distinctDeliveryDatesOdList = new List<SelectListItem>();
                 var distinctDatesList = deliveryList.Select(d => d.DateDelivered).Distinct().ToList();

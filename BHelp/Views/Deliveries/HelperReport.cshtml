@@ -63,6 +63,8 @@
     <div>
         @Html.ActionLink("Download to Excel File", "HelperReportToExcel", new { yy = Model.Year, mm = Model.Month }, null)
         <br />
+        @Html.ActionLink("Download to CSV File", "HelperReportToCSV", new { yy = Model.Year, mm = Model.Month }, null)
+        <br />
         @Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu", new { })
         <br />
         @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
