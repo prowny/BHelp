@@ -1106,10 +1106,8 @@ namespace BHelp
                 response.Clear();
                 response.ClearHeaders();
                 response.ContentEncoding = Encoding.Unicode;
-                var shortMonthYear = CultureInfo.CurrentCulture.DateTimeFormat
-                    .GetAbbreviatedMonthName(view.Month) + view.Year.ToString();
                 response.AddHeader("content-disposition", "attachment;filename=" 
-                                                          + "Bethesda Helper Data " + shortMonthYear + ".csv");
+                                                          + "Bethesda Helper Data " + view.EndDateString + ".csv");
                 response.ContentType = "text/plain";
                 response.Write(sb.ToString());
                 response.End();
@@ -1119,7 +1117,7 @@ namespace BHelp
         public static FileStreamResult HelperReportToCSV(ReportsViewModel view)
         {
             var sb = new StringBuilder();
-            sb.Append(view.ReportTitle + ',');
+            sb.Append("\"" + "Bethesda Help, Inc. " + "\"" + view.DateRangeTitle + ',');
             sb.AppendLine();
 
             sb.Append("Time Period,");
@@ -1140,22 +1138,38 @@ namespace BHelp
             for (var i = 1; i < 11; i++)   // First 10 data rows
             {
                 sb.Append(view.HelperTitles[i] + ",");
-                for (var j = 1; j < view.ZipCodes.Count + 2; j++)
+                for (var j = 1; j < view.ZipCodes.Count + 1; j++)
                 {
                    sb.Append(view.ZipCounts[i, j] + ",");
                 }
+                var k = view.ZipCodes.Count + 1;
+                sb.Append(view.ZipCounts[i, k]); // add totals column
                 sb.AppendLine();
             }
 
             sb.AppendLine();  // blank line
-            
+
+            sb.Append("Distinct Households and Residents Served (NOT reported in the Helper)");
+            sb.AppendLine();
+            for (var i = 11; i < 20; i++)   // Last 9 data rows
+            {
+                sb.Append(view.HelperTitles[i] + ",");
+                for (var j = 1; j < view.ZipCodes.Count + 1; j++)
+                {
+                    sb.Append(view.ZipCounts[i, j] + ",");
+                }
+                var k = view.ZipCodes.Count + 1;
+                sb.Append(view.ZipCounts[i, k]); // add totals column
+                sb.AppendLine();
+            }
+
             var response = System.Web.HttpContext.Current.Response;
             response.BufferOutput = true;
             response.Clear();
             response.ClearHeaders();
             response.ContentEncoding = Encoding.Unicode;
             response.AddHeader("content-disposition", "attachment;filename="
-                                                      + "Bethesda Helper Data" + view.EndDate.ToString("MM-dd-yyyy") + ".csv");
+                                                      + view.ReportTitle + ".csv");
             response.ContentType = "text/plain";
             response.Write(sb.ToString());
             response.End();
