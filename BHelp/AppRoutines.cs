@@ -304,17 +304,7 @@ namespace BHelp
                 }
                 return getZipCodesList;
             }
-
-            public static List<string> GetCountyTitlesList()
-            {
-            List<string> GetCountyTitlesList = new List<string>();
-            var strTitle = "Zip Code"; GetCountyTitlesList.Add(strTitle);
-            strTitle = "# of Families";
-            return null;
-            }
-
-
-
+        
             public static string GetVoicemailPassword()
             {
                 string _password = "";
@@ -1116,128 +1106,126 @@ namespace BHelp
                 return null;
             }
 
-        public static FileStreamResult CountyReportToCSV(ReportsViewModel view)
-        {
-            var sb = new StringBuilder();
-            sb.Append ("\"" + "Bethesda Help, Inc." + "\"") ;
-            sb.AppendLine();
-            sb.Append(view.DateRangeTitle);
-            sb.AppendLine();
-
-            for (int i = 0; i < 3; i++)
+            public static FileStreamResult CountyReportToCSV(ReportsViewModel view)
             {
-                sb.Append(view.MonthYear[i]);
-                sb.Append(view.ZipCodes[0]);
-            }
+                var sb = new StringBuilder();
+                sb.Append("\"" + "Bethesda Help, Inc." + "\"");
+                sb.AppendLine();
+                sb.Append(view.DateRangeTitle);
+                sb.AppendLine();
+                sb.AppendLine();
 
-            for (var i = 0; i < view.ZipCount; i++)
-            {
-                sb.Append(view.ZipCodes[i] + ",");
-                for (var j = 1; j < 8; j++)
+                var commas = new string(',', view.ZipCodes.Count + 1);
+                for (var i = 0; i < 3; i++)
                 {
-                    if (j == 6)
-                    { sb.Append("N/A,"); } //prepared meals column
-                    else
-                    { sb.Append(view.Counts[0, j, i] + ","); }
+                    sb.Append(view.MonthYear[i]);
+                    sb.Append(commas + "TOTAL");
+                    sb.AppendLine();
+
+                    for (var t = 0; t < view.CountyTitles.Length; t++)
+                    {
+                        sb.Append(view.CountyTitles[t] + ',');
+                        if (t == 0)
+                        {
+                            foreach (var z in view.ZipCodes)
+                            {
+                                sb.Append(z + ",");
+                            }
+
+                            sb.Append("All Zip Codes");
+                            sb.AppendLine();
+                        }
+                        else
+                        {
+                            for (var j = 0; j < view.ZipCodes.Count + 1; j++)
+                            {
+                                sb.Append(view.Counts[i + 1, j, t -1].ToString() + ',');
+                            }
+                          
+                            sb.AppendLine();
+                        }
+                    }
+                    
+                    sb.AppendLine();
                 }
+
+                var response = System.Web.HttpContext.Current.Response;
+                    response.BufferOutput = true;
+                    response.Clear();
+                    response.ClearHeaders();
+                    response.ContentEncoding = Encoding.Unicode;
+                    response.AddHeader("content-disposition", "attachment;filename="
+                                                              + view.ReportTitle + ".csv");
+                    response.ContentType = "text/plain";
+                    response.Write(sb.ToString());
+                    response.End();
+                    return null;
+            }
+
+
+            public static FileStreamResult HelperReportToCSV(ReportsViewModel view)
+            {
+                var sb = new StringBuilder();
+                sb.Append("\"" + "Bethesda Help, Inc. " + "\"" + view.DateRangeTitle + ',');
                 sb.AppendLine();
-            }
 
-            sb.Append("Total Served:,");
-            for (var j = 1; j < 8; j++)
-            {
-                if (j == 6)
-                { sb.Append("N/A,"); } // prepared meals column
-                else
-                { sb.Append(view.Counts[0, j, view.ZipCount] + ","); }
-            }
-            sb.AppendLine();
-            if (view.ShowHoursTotals)
-            {
-                var _hours = view.HoursTotal[2, 2];
-                sb.Append("Food Program Hours:," + _hours + ",");
-                var _people = view.HoursTotal[2, 1];
-                sb.Append("People Count:," + _people);
-                sb.AppendLine();
-            }
-
-            var response = System.Web.HttpContext.Current.Response;
-            response.BufferOutput = true;
-            response.Clear();
-            response.ClearHeaders();
-            response.ContentEncoding = Encoding.Unicode;
-            response.AddHeader("content-disposition", "attachment;filename="
-                                                      + "QORK Report " + view.EndDateString + ".csv");
-            response.ContentType = "text/plain";
-            response.Write(sb.ToString());
-            response.End();
-            return null;
-        }
-
-
-        public static FileStreamResult HelperReportToCSV(ReportsViewModel view)
-        {
-            var sb = new StringBuilder();
-            sb.Append("\"" + "Bethesda Help, Inc. " + "\"" + view.DateRangeTitle + ',');
-            sb.AppendLine();
-
-            sb.Append("Time Period,");
-            foreach (var z in view.ZipCodes)
-            {
-                sb.Append(z + ",");
-            }
-            sb.Append("Total Zip Codes");
-            sb.AppendLine();
-
-            var startDate = new DateTime(view.Year, view.Month, 1);
-            var endDate = startDate.AddMonths(1).AddDays(-1);
-            sb.Append(startDate.ToString("d"));
-            sb.AppendLine();
-            sb.Append(endDate.ToString("d"));
-            sb.AppendLine();
-
-            for (var i = 1; i < 11; i++)   // First 10 data rows
-            {
-                sb.Append(view.HelperTitles[i] + ",");
-                for (var j = 1; j < view.ZipCodes.Count + 1; j++)
+                sb.Append("Time Period,");
+                foreach (var z in view.ZipCodes)
                 {
-                   sb.Append(view.ZipCounts[i, j] + ",");
+                    sb.Append(z + ",");
                 }
-                var k = view.ZipCodes.Count + 1;
-                sb.Append(view.ZipCounts[i, k]); // add totals column
+                sb.Append("Total Zip Codes");
                 sb.AppendLine();
-            }
 
-            sb.AppendLine();  // blank line
+                var startDate = new DateTime(view.Year, view.Month, 1);
+                var endDate = startDate.AddMonths(1).AddDays(-1);
+                sb.Append(startDate.ToString("d"));
+                sb.AppendLine();
+                sb.Append(endDate.ToString("d"));
+                sb.AppendLine();
 
-            sb.Append("Distinct Households and Residents Served (NOT reported in the Helper)");
-            sb.AppendLine();
-            for (var i = 11; i < 20; i++)   // Last 9 data rows
-            {
-                sb.Append(view.HelperTitles[i] + ",");
-                for (var j = 1; j < view.ZipCodes.Count + 1; j++)
+                for (var i = 1; i < 11; i++)   // First 10 data rows
                 {
-                    sb.Append(view.ZipCounts[i, j] + ",");
+                    sb.Append(view.HelperTitles[i] + ",");
+                    for (var j = 1; j < view.ZipCodes.Count + 1; j++)
+                    {
+                        sb.Append(view.ZipCounts[i, j] + ",");
+                    }
+                    var k = view.ZipCodes.Count + 1;
+                    sb.Append(view.ZipCounts[i, k]); // add totals column
+                    sb.AppendLine();
                 }
-                var k = view.ZipCodes.Count + 1;
-                sb.Append(view.ZipCounts[i, k]); // add totals column
+
+                sb.AppendLine();  // blank line
+
+                sb.Append("Distinct Households and Residents Served (NOT reported in the Helper)");
                 sb.AppendLine();
+                for (var i = 11; i < 20; i++)   // Last 9 data rows
+                {
+                    sb.Append(view.HelperTitles[i] + ",");
+                    for (var j = 1; j < view.ZipCodes.Count + 1; j++)
+                    {
+                        sb.Append(view.ZipCounts[i, j] + ",");
+                    }
+                    var k = view.ZipCodes.Count + 1;
+                    sb.Append(view.ZipCounts[i, k]); // add totals column
+                    sb.AppendLine();
+                }
+
+                var response = System.Web.HttpContext.Current.Response;
+                response.BufferOutput = true;
+                response.Clear();
+                response.ClearHeaders();
+                response.ContentEncoding = Encoding.Unicode;
+                response.AddHeader("content-disposition", "attachment;filename="
+                                                          + view.ReportTitle + ".csv");
+                response.ContentType = "text/plain";
+                response.Write(sb.ToString());
+                response.End();
+                return null;
             }
 
-            var response = System.Web.HttpContext.Current.Response;
-            response.BufferOutput = true;
-            response.Clear();
-            response.ClearHeaders();
-            response.ContentEncoding = Encoding.Unicode;
-            response.AddHeader("content-disposition", "attachment;filename="
-                                                      + view.ReportTitle + ".csv");
-            response.ContentType = "text/plain";
-            response.Write(sb.ToString());
-            response.End();
-            return null;
-        }
-
-        public static List<SelectListItem> GetDistinctDeliveryDatesOdList(List<Delivery> deliveryList)
+            public static List<SelectListItem> GetDistinctDeliveryDatesOdList(List<Delivery> deliveryList)
             {
                 var distinctDeliveryDatesOdList = new List<SelectListItem>();
                 var distinctDatesList = deliveryList.Select(d => d.DateDelivered).Distinct().ToList();
@@ -1301,18 +1289,18 @@ namespace BHelp
 
             public static string GetRoleId(string name)
             {
-            var sqlString = "SELECT Id FROM AspNetRoles WHERE Name = '" + name + "'";
-            var context = new BHelpContext();
-            var roleId = context.Database.SqlQuery<string>(sqlString).FirstOrDefault();
-            return roleId;
+                var sqlString = "SELECT Id FROM AspNetRoles WHERE Name = '" + name + "'";
+                var context = new BHelpContext();
+                var roleId = context.Database.SqlQuery<string>(sqlString).FirstOrDefault();
+                return roleId;
             }
 
             public static string GetStringAllRolesForUser(string userId)
             {
                 
                 var sqlString = "SELECT Name from AspNetUserRoles "
-                    + "LEFT JOIN AspNetRoles ON AspNetRoles.Id = AspNetUserRoles.RoleId "
-                    + "WHERE AspNetUserRoles.UserId =  '" + userId + "'";
+                                + "LEFT JOIN AspNetRoles ON AspNetRoles.Id = AspNetUserRoles.RoleId "
+                                + "WHERE AspNetUserRoles.UserId =  '" + userId + "'";
                 
                 var context = new BHelpContext();
                 var isEmpty = context.Database.SqlQuery<string>(sqlString).IsNullOrEmpty() ;
@@ -1375,7 +1363,7 @@ namespace BHelp
                 //Holidays.Add(holiday);
 
 
-            var dt = new DateTime(year, 5, 31);
+                var dt = new DateTime(year, 5, 31);
                 var dayOfWeek = dt.DayOfWeek;
                 while (dayOfWeek != DayOfWeek.Monday)
                 {
@@ -1419,45 +1407,45 @@ namespace BHelp
                 };
                 Holidays.Add(holiday);
 
-            //    NOT OBSERVED AT BETHESDA HELP 
-            //dtDay = (from day in Enumerable.Range(1, 31)
-            //where new DateTime(year, 10, day).DayOfWeek == DayOfWeek.Monday
-            //select day).ElementAt(1); // 2nd Monday
-            //holiday = new HolidayViewModel()
-            //{
-            //    Date = new DateTime(year, 10, dtDay),
-            //    Name = "Indigenous Peoples' Day"
-            //};
-            //Holidays.Add(holiday);
+                //    NOT OBSERVED AT BETHESDA HELP 
+                //dtDay = (from day in Enumerable.Range(1, 31)
+                //where new DateTime(year, 10, day).DayOfWeek == DayOfWeek.Monday
+                //select day).ElementAt(1); // 2nd Monday
+                //holiday = new HolidayViewModel()
+                //{
+                //    Date = new DateTime(year, 10, dtDay),
+                //    Name = "Indigenous Peoples' Day"
+                //};
+                //Holidays.Add(holiday);
 
-            //    NOT OBSERVED AT BETHESDA HELP
-            //dt = AdjustForWeekendHoliday(new DateTime(year, 11, 11).Date);
-            //holiday = new HolidayViewModel()
-            //{
-            //    Date = dt.Date,
-            //    Name = "Veterans Day"
-            //};
-            //Holidays.Add(holiday);
+                //    NOT OBSERVED AT BETHESDA HELP
+                //dt = AdjustForWeekendHoliday(new DateTime(year, 11, 11).Date);
+                //holiday = new HolidayViewModel()
+                //{
+                //    Date = dt.Date,
+                //    Name = "Veterans Day"
+                //};
+                //Holidays.Add(holiday);
 
-            dtDay = (from day in Enumerable.Range(1, 30)
-                where new DateTime(year, 11, day).DayOfWeek == DayOfWeek.Thursday
-                select day).ElementAt(3); // 4th Thursday
-            holiday = new HolidayViewModel()
-            {
-                Date = new  DateTime(year, 11, dtDay),
-                Name = "Thanksgiving Day"
-            };
-            Holidays.Add(holiday);
+                dtDay = (from day in Enumerable.Range(1, 30)
+                    where new DateTime(year, 11, day).DayOfWeek == DayOfWeek.Thursday
+                    select day).ElementAt(3); // 4th Thursday
+                holiday = new HolidayViewModel()
+                {
+                    Date = new  DateTime(year, 11, dtDay),
+                    Name = "Thanksgiving Day"
+                };
+                Holidays.Add(holiday);
 
-            dt = AdjustForWeekendHoliday(new DateTime(year, 12, 25).Date);
-            holiday = new HolidayViewModel()
-            {
-                Date = dt.Date,
-                Name = "Christmas Day"
-            };
-            Holidays.Add(holiday);
+                dt = AdjustForWeekendHoliday(new DateTime(year, 12, 25).Date);
+                holiday = new HolidayViewModel()
+                {
+                    Date = dt.Date,
+                    Name = "Christmas Day"
+                };
+                Holidays.Add(holiday);
 
-            return Holidays;
+                return Holidays;
             }
 
             private static DateTime AdjustForWeekendHoliday(DateTime holiday)
@@ -1485,7 +1473,7 @@ namespace BHelp
                 {
                     if (july4th.Date.Year != dt.Year) // need to reloadholidays (year change)
                     {
-                       holidays = GetFederalHolidays(dt.Year);
+                        holidays = GetFederalHolidays(dt.Year);
                     }
                 }
 

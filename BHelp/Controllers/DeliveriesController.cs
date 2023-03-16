@@ -1748,6 +1748,14 @@ namespace BHelp.Controllers
                         }
                     }
                 }
+                view.CountyTitles = new string[7];
+                view.CountyTitles[0] = "Zip Code";
+                view.CountyTitles[1] = "# of Families";
+                view.CountyTitles[2] = "# of Children (<18)";
+                view.CountyTitles[3] = "# of Adults (>=18 and <60)";
+                view.CountyTitles[4] = "# of Seniors (>=60)";
+                view.CountyTitles[5] = "# of Residents";
+                view.CountyTitles[6] = "# of Pounds of Food";
                 return view;
             }
 
@@ -1825,69 +1833,6 @@ namespace BHelp.Controllers
             var view = GetCountyReportView(yy, qtr);
             var result = AppRoutines.CountyReportToCSV(view);
             return result;
-
-            //XLWorkbook workbook = new XLWorkbook();
-            //IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
-            //int activeRow = 1;
-            //ws.Cell(activeRow, 1).SetValue("Bethesda Help, Inc.");
-            //activeRow++;
-            //ws.Cell(activeRow, 1).SetValue(view.DateRangeTitle);
-            //activeRow += 2;
-            //for (int mo = 0; mo < 3; mo++)
-            //{
-            //    ws.Cell(activeRow, 1).SetValue(view.MonthYear[mo]);
-            //    ws.Cell(activeRow, view.ZipCodes.Count + 2).SetValue("TOTAL");
-            //    activeRow++;
-            //    ws.Cell(activeRow, 1).SetValue("Zip Code");
-            //    for (int i = 0; i < view.ZipCodes.Count; i++)
-            //    {
-            //        ws.Cell(activeRow, i + 2).SetValue(view.ZipCodes[i]); ;
-            //    }
-            //    ws.Cell(activeRow, view.ZipCodes.Count + 2).SetValue("All Zip Codes");
-            //    activeRow++;
-            //    ws.Cell(activeRow, 1).SetValue("# of Families");
-            //    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
-            //    {
-            //        ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 0]);
-            //    }
-            //    activeRow++;
-            //    ws.Cell(activeRow, 1).SetValue("# of Children (&#60;18)");
-            //    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
-            //    {
-            //        ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 1]);
-            //    }
-            //    activeRow++;
-            //    ws.Cell(activeRow, 1).SetValue("# of Adults(&#62;=18 and &#60;60");
-            //    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
-            //    {
-            //        ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 2]);
-            //    }
-            //    activeRow++;
-            //    ws.Cell(activeRow, 1).SetValue("# of Seniors (&#62;=60)");
-            //    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
-            //    {
-            //        ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 3]);
-            //    }
-            //    activeRow++;
-            //    ws.Cell(activeRow, 1).SetValue("# of Residents");
-            //    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
-            //    {
-            //        ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 4]);
-            //    }
-            //    activeRow++;
-            //    ws.Cell(activeRow, 1).SetValue("# of Pounds of Food");
-            //    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
-            //    {
-            //        ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 5]);
-            //    }
-            //    activeRow += 2;
-            //}
-            //ws.Columns().AdjustToContents();
-            //MemoryStream ms = new MemoryStream();
-            //workbook.SaveAs(ms);
-            //ms.Position = 0;
-            //return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-            //{ FileDownloadName = view.ReportTitle + ".xlsx" };
         }
 
         private  DateTime? GetLastGetDeliveryDate(int id)
