@@ -285,11 +285,9 @@ namespace BHelp.Controllers
             ws.Columns("10").Width = 12;
             ws.Cell(2, 10).SetValue("Phone 2").Style.Font.SetBold(true);
             ws.Cell(2, 11).SetValue("Roles").Style.Font.SetBold(true);
-            ws.Cell(2, 12).SetValue("Notes").Style.Font.SetBold(true);
-
-
+            ws.Cell(2, 11).SetValue("Notes").Style.Font.SetBold(true);
+            
             var activeRow = 2;
-
             foreach (var vol in activeVolunteersList)
             {
                 activeRow++;
@@ -303,7 +301,8 @@ namespace BHelp.Controllers
                 ws.Cell(activeRow, 8).SetValue(vol.Email);
                 ws.Cell(activeRow, 9).SetValue(vol.PhoneNumber);
                 ws.Cell(activeRow, 10).SetValue(vol.PhoneNumber2);
-                //ws.Cell(activeRow, 11).SetValue("Roles");
+                var volRoles = AppRoutines.GetStringAllRolesForUser(vol.Id);
+                ws.Cell(activeRow, 11).SetValue(volRoles);
                 ws.Cell(activeRow, 12).SetValue(vol.Notes);
             }
 
@@ -313,11 +312,11 @@ namespace BHelp.Controllers
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 { FileDownloadName = "Active Volunteers" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
         }
-
+        
         [Authorize(Roles = "Administrator,Developer")]
         public ActionResult ReturnToReportsMenu()
         {
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
+            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("ReportsMenu", "Deliveries");
         }
         protected override void Dispose(bool disposing)
         {

@@ -25,6 +25,8 @@ namespace BHelp.ViewModels
         public int[] Months { get; set; }   // month numbers for the quarter e.g. 1,2,3 or 7,8,9
         public int[,] ZipCounts { get; set; } // for Bethesda Helper Data Report
         public string[] HelperTitles { get; set; }
+        public string[] QORKTitles { get; set; }
+        public string[] CountyTitles { get; set; }
         public int ZipCount { get; set; } // for New QORK Report 02/22
         public string[,] HoursTotal { get; set; } // for New QORK Report 02/22
         public bool ShowHoursTotals { get; set; } // for New QORK Report 02/22

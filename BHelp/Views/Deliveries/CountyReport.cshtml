@@ -100,13 +100,15 @@
     }
 </div>
     <br />
-    <div>
-        @Html.ActionLink("Download to Excel File", "CountyReportToExcel", new { yy = Model.Year, qtr = Model.Quarter }, null)
-        <br />
-        @Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu", new { })
-        <br />
-        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
-    </div>
+<div>
+    @Html.ActionLink("Download to ExcelFile", "CountyReportToExcel", new { yy = Model.Year, qtr = Model.Quarter }, null)
+    <br />
+    @Html.ActionLink("Download to CSV File", "CountyReportToCSV", new { yy = Model.Year, qtr = Model.Quarter }, null)
+    <br/>
+    @Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu", new { })
+    <br/>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
 </body>
 </html>
 <script type="text/javascript">

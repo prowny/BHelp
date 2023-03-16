@@ -7,29 +7,12 @@
     <meta name="viewport" content="width=device-width" />
     <title>VolunteerDatesReport</title>
     <style>
-        #ColA {
-            width: 100px;
-        }
-
-        #ColB {
-            width: 100px;
-        }
-
-        #ColC {
-            width: 35px;
-        }
-
-        #ColD {
-            width: 75px;
-        }
-
-        #ColE {
-            width: 75px;
-        }
-
-        #ColF {
-            width: 220px;
-        }
+        #ColA {width: 100px;}
+        #ColB {width: 100px;}
+        #ColC {width: 35px;}
+        #ColD {width: 75px;}
+        #ColE {width: 75px;}
+        #ColF {width: 220px;}
     </style>
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
 </head>
@@ -67,6 +50,9 @@
 <br/>
 <div>
     @Html.ActionLink("Download to Excel File", "VolunteerDatesReportToExcel", new { }, null)
+    <br />
+    @Html.ActionLink("Return to Reports Menu", "ReportsMenu", "Deliveries", new { }, null)
+
     <br />
     @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
 </div>

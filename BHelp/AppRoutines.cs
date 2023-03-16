@@ -304,6 +304,17 @@ namespace BHelp
                 }
                 return getZipCodesList;
             }
+
+            public static List<string> GetCountyTitlesList()
+            {
+            List<string> GetCountyTitlesList = new List<string>();
+            var strTitle = "Zip Code"; GetCountyTitlesList.Add(strTitle);
+            strTitle = "# of Families";
+            return null;
+            }
+
+
+
             public static string GetVoicemailPassword()
             {
                 string _password = "";
@@ -766,15 +777,6 @@ namespace BHelp
                         ws.Cell(activeRow, col).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                     }
                 }
-                //activeRow++;
-                //ws.Cell(activeRow, 1).SetValue(view.OpenDeliveries[0,1]); //last Date
-                //ws.Cell(activeRow, 1).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-                //ws.Cell(activeRow, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                //ws.Cell(activeRow, 4).SetValue(view.OpenDeliveries[0, 4]); //last OD Name & Phone
-                //ws.Cell(activeRow, 4).Style.Alignment.WrapText = true;
-                //ws.Cell(activeRow, 4).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-                //ws.Cell(activeRow, 4).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-
                 var ms = new MemoryStream();
                 workbook.SaveAs(ms);
                 ms.Position = 0;
@@ -1107,12 +1109,71 @@ namespace BHelp
                 response.ClearHeaders();
                 response.ContentEncoding = Encoding.Unicode;
                 response.AddHeader("content-disposition", "attachment;filename=" 
-                                                          + "Bethesda Helper Data " + view.EndDateString + ".csv");
+                                                          + "QORK Report " + view.EndDateString + ".csv");
                 response.ContentType = "text/plain";
                 response.Write(sb.ToString());
                 response.End();
                 return null;
             }
+
+        public static FileStreamResult CountyReportToCSV(ReportsViewModel view)
+        {
+            var sb = new StringBuilder();
+            sb.Append ("\"" + "Bethesda Help, Inc." + "\"") ;
+            sb.AppendLine();
+            sb.Append(view.DateRangeTitle);
+            sb.AppendLine();
+
+            for (int i = 0; i < 3; i++)
+            {
+                sb.Append(view.MonthYear[i]);
+                sb.Append(view.ZipCodes[0]);
+            }
+
+            for (var i = 0; i < view.ZipCount; i++)
+            {
+                sb.Append(view.ZipCodes[i] + ",");
+                for (var j = 1; j < 8; j++)
+                {
+                    if (j == 6)
+                    { sb.Append("N/A,"); } //prepared meals column
+                    else
+                    { sb.Append(view.Counts[0, j, i] + ","); }
+                }
+                sb.AppendLine();
+            }
+
+            sb.Append("Total Served:,");
+            for (var j = 1; j < 8; j++)
+            {
+                if (j == 6)
+                { sb.Append("N/A,"); } // prepared meals column
+                else
+                { sb.Append(view.Counts[0, j, view.ZipCount] + ","); }
+            }
+            sb.AppendLine();
+            if (view.ShowHoursTotals)
+            {
+                var _hours = view.HoursTotal[2, 2];
+                sb.Append("Food Program Hours:," + _hours + ",");
+                var _people = view.HoursTotal[2, 1];
+                sb.Append("People Count:," + _people);
+                sb.AppendLine();
+            }
+
+            var response = System.Web.HttpContext.Current.Response;
+            response.BufferOutput = true;
+            response.Clear();
+            response.ClearHeaders();
+            response.ContentEncoding = Encoding.Unicode;
+            response.AddHeader("content-disposition", "attachment;filename="
+                                                      + "QORK Report " + view.EndDateString + ".csv");
+            response.ContentType = "text/plain";
+            response.Write(sb.ToString());
+            response.End();
+            return null;
+        }
+
 
         public static FileStreamResult HelperReportToCSV(ReportsViewModel view)
         {
@@ -1244,6 +1305,33 @@ namespace BHelp
             var context = new BHelpContext();
             var roleId = context.Database.SqlQuery<string>(sqlString).FirstOrDefault();
             return roleId;
+            }
+
+            public static string GetStringAllRolesForUser(string userId)
+            {
+                
+                var sqlString = "SELECT Name from AspNetUserRoles "
+                    + "LEFT JOIN AspNetRoles ON AspNetRoles.Id = AspNetUserRoles.RoleId "
+                    + "WHERE AspNetUserRoles.UserId =  '" + userId + "'";
+                
+                var context = new BHelpContext();
+                var isEmpty = context.Database.SqlQuery<string>(sqlString).IsNullOrEmpty() ;
+                var roleNameString = "";
+                if (!isEmpty)
+                {
+                    var roleNameList = context.Database.SqlQuery<string>(sqlString).ToList();
+                    foreach (var roleName in roleNameList)
+                    {
+                        roleNameString = roleNameString + roleName + " ";
+                    }
+                }
+
+                if (roleNameString.Length > 0)
+                {
+                    return roleNameString.Substring(0, roleNameString.Length - 1);
+                }
+
+                return roleNameString;
             }
 
             public static DateTime GetFirstWeekdayDate(int month, int year)

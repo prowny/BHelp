@@ -84,23 +84,17 @@
                 <td>People Count: </td>
                 <td style="text-align: center">@Model.HoursTotal[2, 1]</td>
             </tr>
-            @*@for (var i = 0; i < 3; i++)
-            {
-                <tr>
-                    <td>@Model.HoursTotal[i, 0]</td>
-                    <td style="text-align: center">@Model.HoursTotal[i, 1]</td>
-                    <td style="text-align: center">@Model.HoursTotal[i, 2]</td>
-                </tr>
-            }*@
         </table>
         <br/>
     }
-    <div>
-        @Html.ActionLink("Download to CSV File", "QORKReportToCSV", new { endingDate = Model.EndDateString }, null)
-        <br />
-        @Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu", new { })
-        <br />
-        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
-    </div>
+<div>
+    @Html.ActionLink("Download to Excel File", "QORKReportToExcel", new { endingDate = Model.EndDateString }, null)
+    <br />
+    @Html.ActionLink("Download to CSV File", "QORKReportToCSV", new { endingDate = Model.EndDateString }, null)
+    <br/>
+    @Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu", new { })
+    <br/>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
 </body>
 </html>

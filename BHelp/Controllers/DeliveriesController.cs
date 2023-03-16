@@ -1487,9 +1487,7 @@ namespace BHelp.Controllers
                 var year = Convert.ToInt32(yy);
                 var month = Convert.ToInt32(mm);
                 var view = GetHelperReportView(year, month);
-                var monthYear = CultureInfo.CurrentCulture
-                    .DateTimeFormat.GetMonthName(month) + yy;
-                    
+   
                 var result = AppRoutines.HelperReportToCSV(view);
                 return result;
             }
@@ -1782,19 +1780,19 @@ namespace BHelp.Controllers
                         ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 0]);
                     }
                     activeRow ++;
-                    ws.Cell(activeRow, 1).SetValue("# of Children (&#60;18)");
+                    ws.Cell(activeRow, 1).SetValue("# of Children (" + "<"+ "18)");
                     for (int i = 0; i < view.ZipCodes.Count + 1; i++)
                     {
                         ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 1]);
                     }
                     activeRow ++;
-                    ws.Cell(activeRow, 1).SetValue("# of Adults(&#62;=18 and &#60;60");
+                    ws.Cell(activeRow, 1).SetValue("# of Adults(" + ">" + "=18 and " + "<" + "60)");
                     for (int i = 0; i < view.ZipCodes.Count + 1; i++)
                     {
                         ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 2]);
                     }
                     activeRow ++;
-                    ws.Cell(activeRow, 1).SetValue("# of Seniors (&#62;=60)");
+                    ws.Cell(activeRow, 1).SetValue("# of Seniors (" + ">" + "=60)");
                     for (int i = 0; i < view.ZipCodes.Count + 1; i++)
                     {
                         ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 3]);
@@ -1820,7 +1818,79 @@ namespace BHelp.Controllers
                 return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                     { FileDownloadName = view.ReportTitle +".xlsx" };
             }
-            private  DateTime? GetLastGetDeliveryDate(int id)
+
+        [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
+        public ActionResult CountyReportToCSV(int yy, int qtr)
+        {
+            var view = GetCountyReportView(yy, qtr);
+            var result = AppRoutines.CountyReportToCSV(view);
+            return result;
+
+            //XLWorkbook workbook = new XLWorkbook();
+            //IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
+            //int activeRow = 1;
+            //ws.Cell(activeRow, 1).SetValue("Bethesda Help, Inc.");
+            //activeRow++;
+            //ws.Cell(activeRow, 1).SetValue(view.DateRangeTitle);
+            //activeRow += 2;
+            //for (int mo = 0; mo < 3; mo++)
+            //{
+            //    ws.Cell(activeRow, 1).SetValue(view.MonthYear[mo]);
+            //    ws.Cell(activeRow, view.ZipCodes.Count + 2).SetValue("TOTAL");
+            //    activeRow++;
+            //    ws.Cell(activeRow, 1).SetValue("Zip Code");
+            //    for (int i = 0; i < view.ZipCodes.Count; i++)
+            //    {
+            //        ws.Cell(activeRow, i + 2).SetValue(view.ZipCodes[i]); ;
+            //    }
+            //    ws.Cell(activeRow, view.ZipCodes.Count + 2).SetValue("All Zip Codes");
+            //    activeRow++;
+            //    ws.Cell(activeRow, 1).SetValue("# of Families");
+            //    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+            //    {
+            //        ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 0]);
+            //    }
+            //    activeRow++;
+            //    ws.Cell(activeRow, 1).SetValue("# of Children (&#60;18)");
+            //    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+            //    {
+            //        ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 1]);
+            //    }
+            //    activeRow++;
+            //    ws.Cell(activeRow, 1).SetValue("# of Adults(&#62;=18 and &#60;60");
+            //    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+            //    {
+            //        ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 2]);
+            //    }
+            //    activeRow++;
+            //    ws.Cell(activeRow, 1).SetValue("# of Seniors (&#62;=60)");
+            //    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+            //    {
+            //        ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 3]);
+            //    }
+            //    activeRow++;
+            //    ws.Cell(activeRow, 1).SetValue("# of Residents");
+            //    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+            //    {
+            //        ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 4]);
+            //    }
+            //    activeRow++;
+            //    ws.Cell(activeRow, 1).SetValue("# of Pounds of Food");
+            //    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+            //    {
+            //        ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 5]);
+            //    }
+            //    activeRow += 2;
+            //}
+            //ws.Columns().AdjustToContents();
+            //MemoryStream ms = new MemoryStream();
+            //workbook.SaveAs(ms);
+            //ms.Position = 0;
+            //return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            //{ FileDownloadName = view.ReportTitle + ".xlsx" };
+        }
+
+        private  DateTime? GetLastGetDeliveryDate(int id)
             {
                 DateTime? dt = db.Deliveries.Where(d => d.DateDelivered != null
                                                         && d.Id == id)
@@ -1989,7 +2059,93 @@ namespace BHelp.Controllers
                     { FileDownloadName = view.ReportTitle + ".xlsx" };
             }
 
-            [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
+        public ActionResult QORKReportToExcel(string endingDate)
+        {
+            DateTime endDate;
+            if (endingDate.IsNullOrEmpty())
+            {
+                // Ends on a Sunday - weekday Monday is 1, Saturday is 6, Sunday is 0
+                // If today is a  Sunday, default to this week
+                var weekDay = Convert.ToInt32(DateTime.Today.DayOfWeek);
+                if (weekDay == 0) // Default to this this Sunday, else Sunday last week
+                { endDate = DateTime.Today; }
+                else
+                {
+                    var lastSunday = DateTime.Now.AddDays(-1);
+                    while (lastSunday.DayOfWeek != DayOfWeek.Sunday) lastSunday = lastSunday.AddDays(-1);
+                    endDate = lastSunday;
+                }
+            }
+            else
+            {
+                endDate = Convert.ToDateTime(endingDate);
+            }
+            
+            var view = GetQORKReportView(endDate);
+            view.ReportTitle = "Bethesda Help, Inc. QORK Report for week ending " + endDate.ToString("MM/dd/yyyy");
+
+            var workbook = new XLWorkbook();
+            var ws = workbook.Worksheets.Add("QORK Report " + view.EndDateString);
+
+            var activeRow = 1;
+            ws.Cell(activeRow, 1).SetValue(view.ReportTitle);
+            activeRow++;
+            for (int i = 0; i < view.QORKTitles.Length; i++)
+            {
+                ws.Cell(activeRow, i + 1).SetValue(view.QORKTitles[i]);
+            }
+            
+            for (var i = 0; i < view.ZipCodes.Count; i++)
+            {
+                activeRow++;
+                ws.Cell(activeRow, 1).SetValue(view.ZipCodes[i]);
+                for (var j = 0; j < view.QORKTitles.Length; j++)
+                {
+                    if (j == 6)
+                    {
+                        ws.Cell(activeRow, j +1).SetValue("N/A");
+                        ws.Cell(activeRow, j + 2).SetValue(view.Counts[0, j + 1, i]);
+                        break;
+                    }
+                    else
+                    {
+                        ws.Cell(activeRow, j + 2).SetValue(view.Counts[0, j + 1, i] );
+                    }
+                }
+            }
+
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue("Total Served:");
+            for (var i = 0; i < view.QORKTitles.Length; i++)
+            {
+                if (i == 6)
+                {
+                    ws.Cell(activeRow, i + 1).SetValue("N/A");
+                    ws.Cell(activeRow, i + 2).SetValue(view.Counts[0, i + 1, view.ZipCount]);
+                    break;
+                }
+                else
+                {
+                    ws.Cell(activeRow, i + 2).SetValue(view.Counts[0, i + 1, view.ZipCount]);
+                }
+            }
+
+            activeRow++;
+            ws.Cell(activeRow, 1).SetValue("Food Program Hours:");
+            ws.Cell(activeRow, 2).SetValue(view.HoursTotal[2,2]);
+            ws.Cell(activeRow, 3).SetValue("People Count:");
+            ws.Cell(activeRow, 4).SetValue(view.HoursTotal[2, 1]);
+            
+            ws.Columns().AdjustToContents();
+            var ms = new MemoryStream();
+            workbook.SaveAs(ms);
+            ms.Position = 0;
+            return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            { FileDownloadName = "QORK Report " + view.EndDateString + ".xlsx" };
+        }
+        
+        [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
             public ActionResult QORKReport(string endingDate = "") // New QORK Report 02/22
             {
                 DateTime endDate;
@@ -2091,7 +2247,17 @@ namespace BHelp.Controllers
                     view.HoursTotal[2, 2] = totalFHours.ToString("#.00");
                     view.ShowHoursTotals = true;
                 }
-                
+
+                view.QORKTitles = new string[8];
+                view.QORKTitles[0] = "Zip Code";
+                view.QORKTitles[1] = "Children Served (<18)";
+                view.QORKTitles[2] = "Adult Non-seniors Served(18-59)";
+                view.QORKTitles[3] = "Seniors Served (60+)";
+                view.QORKTitles[4] = "Households Served";
+                view.QORKTitles[5] = "Pounds Distributed";
+                view.QORKTitles[6] = "Prepared Meals Served";
+                view.QORKTitles[7] = "Individuals Served";
+
                 return view;
             }
 
@@ -2103,12 +2269,12 @@ namespace BHelp.Controllers
                 {
                     // Ends on a Sunday - weekday Monday is 1, Saturday is 6, Sunday is 0
                     // If today is a  Sunday, default to this week
-                    int weekDay = Convert.ToInt32(DateTime.Today.DayOfWeek);
+                    var weekDay = Convert.ToInt32(DateTime.Today.DayOfWeek);
                     if (weekDay == 0) // Default to this this Sunday, else Sunday last week
                     { endDate = DateTime.Today; }
                     else
                     {
-                        DateTime lastSunday = DateTime.Now.AddDays(-1);
+                        var lastSunday = DateTime.Now.AddDays(-1);
                         while (lastSunday.DayOfWeek != DayOfWeek.Sunday) lastSunday = lastSunday.AddDays(-1);
                         endDate = lastSunday;
                     }
@@ -2118,7 +2284,7 @@ namespace BHelp.Controllers
                     endDate = Convert.ToDateTime(endingDate);
                 }
                 var view = GetQORKReportView(endDate);
-                view.ReportTitle = "Bethesda Help, Inc. QORK Report for week ending " + endDate.ToString("MM/dd/yyyy");
+                view.ReportTitle = "\"" + "Bethesda Help, Inc. QORK Report for week ending " + "\"" + endDate.ToString("MM/dd/yyyy");
 
                 var result = AppRoutines.QORKReportToCSV(view);
                 return result;
