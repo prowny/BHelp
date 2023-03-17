@@ -49,8 +49,10 @@
     @Html.ActionLink("Filter Open Deliveries", "OpenFilters")
     <span style="color: darkmagenta">&#8592;Filter by Date/Driver; Bulk Changes</span>
     <br />
-    @Html.ActionLink("Download to Excel", "ExcelOpenDeliveries", new { })
+    @Html.ActionLink("Download to Excel File", "ExcelOpenDeliveries", new { })
     @*<span style="color: darkmagenta">&#8592;Will include Client Notes, OD Notes, and Driver Notes</span>*@
+    <br />
+    @Html.ActionLink("Download to CSV File", "OpenDeliveriesToCSV", new { })
 </div>
 <div id="ReturnToDashboard">
     @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)

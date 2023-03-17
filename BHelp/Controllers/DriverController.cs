@@ -157,6 +157,13 @@ namespace BHelp.Controllers
         }
 
         [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
+        public ActionResult OpenDeliveriesToCSV()
+        {
+            var result = AppRoutines.OpenDeliveriesToCSV(null);
+            return result;
+        }
+
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult OpenFilters()
         {
             return RedirectToAction("OpenFilters", "Deliveries",new{btnAllCheckAll="True"});
