@@ -476,11 +476,11 @@ namespace BHelp.Controllers
 
             for (var i = 0; i < view.Count; i++)
             {
-                sb.Append(view [i].DateDeliveredString + ",");
-                sb.Append(view[i].LastName + "," + view[i].FirstName + ",");
-                sb.Append(view[i].StreetNumber + ",");
-                sb.Append(view[i].StreetName.Replace(",", ";") + ",");
-                sb.Append(view[i].City + "," + view[i].Zip);
+                sb.Append(view[i].DateDeliveredString + ','); 
+                sb.Append(view[i].LastName + ',' + view[i].FirstName + ',');
+                sb.Append(view[i].StreetNumber + ',');
+                sb.Append(view[i].StreetName.Replace(",", ";") + ',');
+                sb.Append(view[i].City + ',' + view[i].Zip);
                 sb.AppendLine();
             }
 

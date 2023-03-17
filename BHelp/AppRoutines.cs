@@ -1162,7 +1162,6 @@ namespace BHelp
                     return null;
             }
 
-
             public static FileStreamResult HelperReportToCSV(ReportsViewModel view)
             {
                 var sb = new StringBuilder();

@@ -7,6 +7,7 @@ using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
 using System.IO;
+using System.Text;
 using Castle.Core.Internal;
 using ClosedXML.Excel;
 
@@ -180,6 +181,45 @@ namespace BHelp.Controllers
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             { FileDownloadName =  "Volunteer Start Dates.xlsx" };
         }
+
+        public ActionResult VolunteerDatesReportToCSV()
+        {
+            UsersInRolesReportViewModel report = GetUsersInRolesReport();
+
+
+            var sb = new StringBuilder();
+            sb.Append(",," + report.Report[0][0][0] + ",," + report.Report[0][0][5]);
+            sb.AppendLine();
+            sb.AppendLine();
+
+            for (var i = 1; i < report.Report.Count; i++)
+            {
+                for (var j = 0; j < report.Report[i].Count; j++)
+                {
+                    sb.Append(report.Report[i][j][0] + ',');
+                    sb.Append(report.Report[i][j][1] + ',');
+                    sb.Append(report.Report[i][j][2] + ',');
+                    sb.Append(report.Report[i][j][3] + ',');
+                    sb.Append(report.Report[i][j][4] + ',');
+                    sb.Append("\"" + report.Report[i][j][5] + "\"" + ',');
+                    sb.Append(report.Report[i][j][6]);
+                    sb.AppendLine();
+                }
+            }
+
+            var response = System.Web.HttpContext.Current.Response;
+            response.BufferOutput = true;
+            response.Clear();
+            response.ClearHeaders();
+            response.ContentEncoding = Encoding.Unicode;
+            response.AddHeader("content-disposition", "attachment;filename="
+                                                      + "UserRolesReport.csv");
+            response.ContentType = "text/plain";
+            response.Write(sb);
+            response.End();
+            return null;
+        }
+
         private UsersInRolesReportViewModel GetUsersInRolesReport()
         {
             var report = new UsersInRolesReportViewModel { Report = new List<List<string[]>>() };
@@ -312,7 +352,64 @@ namespace BHelp.Controllers
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 { FileDownloadName = "Active Volunteers" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
         }
-        
+
+        public ActionResult ActiveVolunteerDetailsToCSV()
+        {
+            var db = new BHelpContext();
+            var activeVolunteersList = db.Users
+                .Where(u => u.Active).OrderBy(u => u.LastName)
+                .ThenBy(u => u.FirstName).ToList();
+            
+            var sb = new StringBuilder();
+            sb.Append("Active Volunteers" + ',');
+            sb.Append(DateTime.Today.ToShortDateString());
+            sb.AppendLine();
+
+            sb.Append("Last Name" + ',');
+            sb.Append("First Name" + ',');
+            sb.Append("Title" + ',');
+            sb.Append("Address" + ',');
+            sb.Append("City" + ',');
+            sb.Append("State" + ',');
+            sb.Append("Zip Code" + ',');
+            sb.Append("Email" + ',');
+            sb.Append("Phone 1" + ',');
+            sb.Append("Phone 2" + ',');
+            sb.Append("Roles" + ',');
+            sb.Append("Notes");
+            sb.AppendLine();
+
+            foreach (var vol in activeVolunteersList)
+            {
+                sb.Append(vol.LastName + ',');
+                sb.Append(vol.FirstName + ',');
+                sb.Append("\"" + vol.Title + "\""  + ',');
+                sb.Append("\"" + vol.Address + "\"" + ',');
+                sb.Append(vol.City + ',');
+                sb.Append(vol.State + ',');
+                sb.Append(vol.Zip + ',');
+                sb.Append(vol.Email + ',');
+                sb.Append(vol.PhoneNumber + ',');
+                sb.Append(vol.PhoneNumber2 + ',');
+                sb.Append(AppRoutines.GetStringAllRolesForUser(vol.Id) + ',');
+                sb.Append(vol.Notes);
+                sb.AppendLine();
+            }
+
+            var response = System.Web.HttpContext.Current.Response;
+            response.BufferOutput = true;
+            response.Clear();
+            response.ClearHeaders();
+            response.ContentEncoding = Encoding.Unicode;
+            response.AddHeader("content-disposition", "attachment;filename="
+                   + "Active Volunteers" + DateTime.Today.ToString("MM-dd-yy") + ".csv" );
+            response.ContentType = "text/plain";
+            response.Write(sb);
+            response.End();
+            return null;
+        }
+
+
         [Authorize(Roles = "Administrator,Developer")]
         public ActionResult ReturnToReportsMenu()
         {
