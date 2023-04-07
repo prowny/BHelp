@@ -182,6 +182,38 @@ namespace BHelp.Controllers
             { FileDownloadName =  "Volunteer Start Dates.xlsx" };
         }
 
+        [Authorize(Roles = "Administrator,Developer")]
+        public ActionResult WeeklyInfoReport(DateTime? monday)
+        {
+            if (monday != null)
+            {
+            }
+            else
+            {
+                monday = AppRoutines.GetMondaysDate(DateTime.Today);
+            }
+
+            var beginDate = (DateTime)monday;
+            var view = new ReportsViewModel
+            {
+                BeginDate = beginDate,
+                DateRangeTitle = beginDate.ToString("MM/dd/yyyy") + " - " + beginDate.AddDays(4).ToString("MM/dd/yyyy")
+            };
+            return View(view);
+        }
+
+        public ActionResult WeekPrevious(DateTime monday)
+        {
+            monday = monday.AddDays(-7);
+            return RedirectToAction("WeeklyInfoReport", new { monday = monday });
+        }
+
+        public ActionResult WeekNext(DateTime monday)
+        {
+            monday = monday.AddDays(7);
+            return RedirectToAction("WeeklyInfoReport", new { monday = monday });
+        }
+
         public ActionResult VolunteerDatesReportToCSV()
         {
             UsersInRolesReportViewModel report = GetUsersInRolesReport();

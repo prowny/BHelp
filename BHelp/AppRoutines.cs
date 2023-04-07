@@ -1486,5 +1486,33 @@ namespace BHelp
                 return false;
             }
 
+            public static DateTime GetMondaysDate(DateTime date)
+            {
+                var returnDate = date;
+                // if Sat or Sun (6 or 0), get next Monday
+                var dow = (int)date.DayOfWeek; 
+                switch (dow)
+                {
+                    case 0:
+                        returnDate = date.AddDays(1);
+                        break;
+                    case 2:
+                        returnDate = date.AddDays(-1);
+                        break;
+                    case 3:
+                        returnDate = date.AddDays(-2);
+                        break;
+                    case 4:
+                        returnDate = date.AddDays(-3);
+                        break;
+                    case 5:
+                        returnDate = date.AddDays(-4);
+                        break;
+                    case 6:
+                        returnDate = date.AddDays(2);
+                        break;
+                }
+                return returnDate;
+            }
     }
 }
