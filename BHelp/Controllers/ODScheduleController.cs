@@ -62,10 +62,9 @@ namespace BHelp.Controllers
             { Session["Holidays"] = HolidayRoutines.GetHolidays(DateTime.Today.Year); }
 
             // check holidays for proper year:
-            //var holidays = (List<HolidayViewModel>)Session["Holidays"];
             var holidays = (List<Holiday>)Session["Holidays"];
 
-            // check if ANY calculated date in repeating holidays which have the proper year:
+            // check if ANY calculated date in repeating holidays have the proper year:
             var _year = boxDate.GetValueOrDefault().Year;
             foreach (var hol in holidays)
             {

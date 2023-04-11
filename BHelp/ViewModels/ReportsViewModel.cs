@@ -30,5 +30,29 @@ namespace BHelp.ViewModels
         public int ZipCount { get; set; } // for New QORK Report 02/22
         public string[,] HoursTotal { get; set; } // for New QORK Report 02/22
         public bool ShowHoursTotals { get; set; } // for New QORK Report 02/22
+
+        // for Weekly Info Report 04/23  
+        public bool[] BoxHoliday { get; set; }
+        public string[] BoxHolidayDescription { get; set; }
+
+        public string[] BoxDateDay { get; set; } 
+        public string[] BoxDriverName { get; set; }
+        public string[] BoxDriverId { get; set; }
+        public string[] BoxDriverPhone { get; set; }
+        public string[] BoxDriverEmail { get; set; }
+        public string[] BoxBackupDriverId { get; set; }
+        public string[] BoxBackupDriverName { get; set; }
+        public string[] BoxBackupDriverPhone { get; set; }
+        public string[] BoxBackupDriverEmail { get; set; }
+        public string[] BoxGroupName { get; set; }
+        public string[] BoxGroupDriverId { get; set; }
+        public string[] BoxGroupDriverName { get; set; }
+        public string[] BoxGroupDriverPhone { get; set; }
+        public string[] BoxGroupDriverEmail { get; set; }
+
+        public string[] BoxODName { get; set; }
+        public string[] BoxODId { get; set; }
+        public string[] BoxODPhone { get; set; }
+        public string[] BoxODEmail { get; set; }
     }
 }

@@ -1,0 +1,90 @@
+﻿@model BHelp.ViewModels.ReportsViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>WeeklyInfo</title>
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+    <style>
+        #schedule {
+            border-collapse: collapse;
+            border: thin solid black;
+            font-size: smaller
+        }
+
+        .grid {
+            border-right: thin solid black;
+            vertical-align: top;
+            width: 290px
+        }
+
+        .gridtop {
+            border-right: thin solid black;
+            border-top: thin solid black;
+            vertical-align: top;
+            width: 290px
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <table>
+            <tr>
+                <td><b>Weekly Info Report</b></td>
+            </tr>
+            <tr>
+                <td style="text-align: right">Time Period: </td>
+                <td>@Model.DateRangeTitle</td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink(" Previous Week", "WeekPrevious", new { monday = Model.BeginDate })</td>
+                <td>&nbsp;&nbsp;@Html.ActionLink(" Next Week", "WeekNext", new { monday = Model.BeginDate })</td>
+            </tr>
+        </table>
+        <table id="schedule">
+            <tr>
+                <td class="grid">
+                    &nbsp;@Model.DateRangeTitle
+                    <br />
+                    <span><b>&nbsp;DRIVERS</b></span>
+                    <br />
+                    <span><b>&nbsp;Use the relational database to enter your delivery</b></span>
+                    <span><b>&nbsp;report and your time asap</b></span>
+                </td>
+                <td class="grid">
+                    <span><b>&nbsp;ODs</b></span>
+                    <br />
+                    <span><b>&nbsp;Please inform the Next Day Drivers, Next Day</b></span>
+                    <span><b>&nbsp;OD and Françoise when you are done and tell</b></span>
+                    <span><b>&nbsp;Drivers they can get their delivery list in the</b></span>
+                    <span><b>&nbsp;database</b></span>
+                </td>
+                <td class="grid">
+                    <br /><br /><br /><br />
+                    <span><b>&nbsp;NEXT DAY DRIVER(s)</b></span>
+                </td>
+            </tr>
+            @for (var row = 0; row < 5; row++)
+            {
+                <tr>
+                    <td class="gridtop">
+                        @{ int box = row * 3; }
+                        <span><b>&nbsp;@Model.BoxDateDay[box]</b>&nbsp;&nbsp;Driver</span>
+                    </td>
+                    <td class="gridtop">
+                        <span><b>&nbsp;@Model.BoxDateDay[box + 1]</b>&nbsp;&nbsp;OD</span>
+                    </td>
+                    <td class="gridtop">
+                        <span><b>&nbsp;@Model.BoxDateDay[box + 2]</b>&nbsp;&nbsp;Driver</span>
+                    </td>
+                </tr>
+            }
+        </table>
+
+    </div>
+    <div>
+        <br />
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
+</body>
+</html>
