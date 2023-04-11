@@ -67,15 +67,28 @@
             @for (var row = 0; row < 5; row++)
             {
                 <tr>
-                    <td class="gridtop">
+                    <td class="gridtop">  @*First Column*@
                         @{ int box = row * 3; }
-                        <span><b>&nbsp;@Model.BoxDateDay[box]</b>&nbsp;&nbsp;Driver</span>
+                        <span><b>&nbsp;@Model.BoxDateDay[box]</b></span>
+                        @if (Model.BoxHoliday[box])
+                        {<br /><span>Holiday</span>}
+                        else
+                        {
+                            if (Model.BoxDriverId[box] != null)
+                            {
+                                <span> &nbsp;&nbsp; Driver</span>
+                                <br/>
+                                <span> &nbsp;@Model.BoxDriverId[box]</span>
+                            }
+                        }
                     </td>
-                    <td class="gridtop">
+                    <td class="gridtop">  @*Second Column*@
                         <span><b>&nbsp;@Model.BoxDateDay[box + 1]</b>&nbsp;&nbsp;OD</span>
+                        @if(Model.BoxHoliday[box +1]) { <br/> <span>Holiday</span>}
                     </td>
-                    <td class="gridtop">
+                    <td class="gridtop">  @*Third Column*@
                         <span><b>&nbsp;@Model.BoxDateDay[box + 2]</b>&nbsp;&nbsp;Driver</span>
+                        @if(Model.BoxHoliday[box +2]) { <br/> <span>Holiday</span>}
                     </td>
                 </tr>
             }

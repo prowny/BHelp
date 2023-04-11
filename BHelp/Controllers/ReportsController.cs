@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
+using System.Linq;
 using System.Web.Mvc;
+using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
 
@@ -33,21 +34,40 @@ namespace BHelp.Controllers
                 BeginDate = monday,
                 DateRangeTitle = monday.ToString("MM/dd/yyyy") + " - " + monday.AddDays(4).ToString("MM/dd/yyyy"),
                 BoxDateDay = new string[15],
-                BoxHoliday = new bool[15]
+                BoxHoliday = new bool[15],
+                BoxDriverId = new string[15],
+                BoxBackupDriverId = new string[15],
+                BoxGroupDriverId = new string[15]
             };
 
-            if(Session["Holidays"] == null) { HolidayRoutines.GetHolidays(monday.Year);}
+            var shortMonthList = HolidayRoutines.GetShortMonthArray();
+            if (Session["Holidays"] == null)
+            {
+                HolidayRoutines.GetHolidays(monday.Year);
+            }
+
             var holidays = (List<Holiday>)Session["Holidays"];
 
+            var db = new BHelpContext();
             for (var row = 0; row < 5; row++) // Mon - Fri
             {
                 var box = row * 3;
                 var boxDate = view.BeginDate.AddDays(row);
-                view.BoxDateDay[box] = boxDate.Day.ToString();
+                view.BoxDateDay[box] = shortMonthList[boxDate.Month] + " " + boxDate.Day;
                 view.BoxHoliday[box] = HolidayRoutines.IsHoliday(boxDate, holidays);
-                
+                var drSched = db.DriverSchedules
+                    .SingleOrDefault(d => d.Date == boxDate);
+                // First Column
+                if (drSched != null)
+                {
+                    if (drSched.DriverId != null) view.BoxDriverId[box] = drSched.DriverId;
+                    if (drSched.BackupDriverId != null) view.BoxBackupDriverId[box] = drSched.BackupDriverId;
+                    if (drSched.GroupDriverId != null) view.BoxGroupDriverId[box] = drSched.GroupDriverId;
+                }
+
+                // Second Column
                 boxDate = view.BeginDate.AddDays(row);
-                view.BoxDateDay[box + 1] = boxDate.Day.ToString();
+                view.BoxDateDay[box + 1] = shortMonthList[boxDate.Month] + " " + boxDate.Day;
                 view.BoxHoliday[box + 1] = HolidayRoutines.IsHoliday(boxDate, holidays);
 
                 if (row < 3)
@@ -60,9 +80,9 @@ namespace BHelp.Controllers
                 }
 
                 view.BoxDateDay[box + 2] = boxDate.Day.ToString();
+                view.BoxDateDay[box + 2] = shortMonthList[boxDate.Month] + " " + boxDate.Day;
                 view.BoxHoliday[box + 2] = HolidayRoutines.IsHoliday(boxDate, holidays);
             }
-
             return view;
         }
 

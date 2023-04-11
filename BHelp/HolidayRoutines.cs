@@ -33,7 +33,6 @@ namespace BHelp
                         Holidays.Add(_holiday);
                 }
                 
-
                 if (hol.Repeat == 1) // Annual Month-Day
                 {
                     var _holiday = new Holiday()
@@ -126,6 +125,16 @@ namespace BHelp
             monthList[4] = "April"; monthList[5] = "May"; monthList[6] = "June";
             monthList[7] = "July"; monthList[8] = "August"; monthList[9] = "September";
             monthList[10] = "October"; monthList[11] = "November"; monthList[12] = "December";
+            return monthList;
+        }
+
+        public static string[] GetShortMonthArray()
+        {
+            var monthList = new string[13];
+            monthList[1] = "Jan"; monthList[2] = "Feb"; monthList[3] = "Mar";
+            monthList[4] = "Apr"; monthList[5] = "May"; monthList[6] = "Jun";
+            monthList[7] = "Jul"; monthList[8] = "Aug"; monthList[9] = "Sep";
+            monthList[10] = "Oct"; monthList[11] = "Nov"; monthList[12] = "Dec";
             return monthList;
         }
 
