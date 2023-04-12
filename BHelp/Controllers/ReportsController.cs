@@ -36,93 +36,198 @@ namespace BHelp.Controllers
                 BoxDateDay = new string[15],
                 BoxHoliday = new bool[15],
                 BoxDriverId = new string[15],
+                BoxDriverName = new string[15],
+                BoxDriverPhone = new string[15],
+                BoxDriverEmail = new string[15],
                 BoxBackupDriverId = new string[15],
-                BoxGroupDriverId = new string[15]
+                BoxBackupDriverName = new string[15],
+                BoxBackupDriverPhone = new string[15],
+                BoxBackupDriverEmail = new string[15],
+                BoxGroupDriverId = new string[15],
+                BoxGroupName = new string[15],
+                BoxGroupDriverName = new string[15],
+                BoxGroupDriverPhone = new string[15],
+                BoxGroupDriverEmail = new string[15],
+                BoxODId = new string[15],
+                BoxODName = new string[15],
+                BoxODPhone = new string[15],
+                BoxODEmail = new string[15],
+                BoxODOddEvenMsg = new string[15]
             };
 
             var shortMonthList = HolidayRoutines.GetShortMonthArray();
-            if (Session["Holidays"] == null)
-            {
-                HolidayRoutines.GetHolidays(monday.Year);
-            }
-
             var holidays = (List<Holiday>)Session["Holidays"];
 
             var db = new BHelpContext();
             for (var row = 0; row < 5; row++) // Mon - Fri
             {
+                // First Column - Driver
                 var box = row * 3;
                 var boxDate = view.BeginDate.AddDays(row);
                 view.BoxDateDay[box] = shortMonthList[boxDate.Month] + " " + boxDate.Day;
                 view.BoxHoliday[box] = HolidayRoutines.IsHoliday(boxDate, holidays);
                 var drSched = db.DriverSchedules
                     .SingleOrDefault(d => d.Date == boxDate);
-                // First Column
                 if (drSched != null)
                 {
-                    if (drSched.DriverId != null) view.BoxDriverId[box] = drSched.DriverId;
-                    if (drSched.BackupDriverId != null) view.BoxBackupDriverId[box] = drSched.BackupDriverId;
-                    if (drSched.GroupDriverId != null) view.BoxGroupDriverId[box] = drSched.GroupDriverId;
+                    if (drSched.DriverId != null)
+                    {
+                        view.BoxDriverId[box] = drSched.DriverId;
+                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.DriverId);
+                        if (usr != null)
+                        {
+                            view.BoxDriverName[box] = usr.FullName;
+                            view.BoxDriverPhone[box] = usr.PhoneNumber;
+                            view.BoxDriverEmail[box] = usr.Email;
+                        }
+                    }
+
+                    if (drSched.BackupDriverId != null)
+                    {
+                        view.BoxBackupDriverId[box] = drSched.BackupDriverId;
+                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.BackupDriverId);
+                        if (usr != null)
+                        {
+                            view.BoxBackupDriverName[box] = usr.FullName;
+                            view.BoxBackupDriverPhone[box] = usr.PhoneNumber;
+                            view.BoxBackupDriverEmail[box] = usr.Email;
+                        }
+                    }
+
+                    if (drSched.GroupDriverId != null)
+                    {
+                        view.BoxGroupDriverId[box] = drSched.GroupDriverId;
+                        var grp = db.GroupNames.SingleOrDefault(n => n.Id == drSched.GroupId);
+                        if (grp != null) view.BoxGroupName[box] = grp.Name;
+                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.GroupDriverId);
+                        if (usr != null)
+                        {
+                            view.BoxGroupDriverName[box] = usr.FullName;
+                            view.BoxGroupDriverPhone[box] = usr.PhoneNumber;
+                            view.BoxGroupDriverEmail[box] = usr.Email;
+                        }
+                    }
                 }
-
-                // Second Column
-                boxDate = view.BeginDate.AddDays(row);
-                view.BoxDateDay[box + 1] = shortMonthList[boxDate.Month] + " " + boxDate.Day;
-                view.BoxHoliday[box + 1] = HolidayRoutines.IsHoliday(boxDate, holidays);
-
-                if (row < 3)
+                // Second Column - OD
+                box++;
+                view.BoxDateDay[box] = view.BoxDateDay[box -1];  // repeats first column date
+                view.BoxHoliday[box] = view.BoxHoliday[box];  // repeats first column date
+                var odSched = db.ODSchedules
+                    .SingleOrDefault(d => d.Date == boxDate);  // repeats first column date
+                if (odSched != null)
                 {
-                    boxDate = view.BeginDate.AddDays(row + 1);
+                    if (odSched.ODId != null)
+                    {
+                        view.BoxODId[box] = odSched.ODId;
+                        var usr = db.Users.SingleOrDefault(d => d.Id == odSched.ODId);
+                        if (usr != null)
+                        {
+                            view.BoxODName[box] = usr.FullName;
+                            view.BoxODPhone[box] = usr.PhoneNumber;
+                            view.BoxODEmail[box] = usr.Email;
+                            if (boxDate.Day % 2 == 0)
+                            { view.BoxODOddEvenMsg[box] = "Take Food Requests Only From EVEN Numbers"; }
+                            else
+                            { view.BoxODOddEvenMsg[box] = "Take Food Requests Only From ODD Numbers"; }
+                        }
+                    }
+                }
+                // Third Column - next day Driver
+                box++;
+                if ((int)boxDate.DayOfWeek == 5)
+                {
+                    boxDate = boxDate.AddDays(3);
                 }
                 else
                 {
-                    boxDate = view.BeginDate.AddDays(row + 3);
+                    boxDate = boxDate.AddDays(1);
                 }
+                view.BoxDateDay[box] = shortMonthList[boxDate.Month] + " " + boxDate.Day;
+                view.BoxHoliday[box] = HolidayRoutines.IsHoliday(boxDate, holidays);
+                drSched = db.DriverSchedules
+                   .SingleOrDefault(d => d.Date == boxDate);
+                if (drSched != null)
+                {
+                    if (drSched.DriverId != null)
+                    {
+                        view.BoxDriverId[box] = drSched.DriverId;
+                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.DriverId);
+                        if (usr != null)
+                        {
+                            view.BoxDriverName[box] = usr.FullName;
+                            view.BoxDriverPhone[box] = usr.PhoneNumber;
+                            view.BoxDriverEmail[box] = usr.Email;
+                        }
+                    }
 
-                view.BoxDateDay[box + 2] = boxDate.Day.ToString();
-                view.BoxDateDay[box + 2] = shortMonthList[boxDate.Month] + " " + boxDate.Day;
-                view.BoxHoliday[box + 2] = HolidayRoutines.IsHoliday(boxDate, holidays);
+                    if (drSched.BackupDriverId != null)
+                    {
+                        view.BoxBackupDriverId[box] = drSched.BackupDriverId;
+                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.BackupDriverId);
+                        if (usr != null)
+                        {
+                            view.BoxBackupDriverName[box] = usr.FullName;
+                            view.BoxBackupDriverPhone[box] = usr.PhoneNumber;
+                            view.BoxBackupDriverEmail[box] = usr.Email;
+                        }
+                    }
+
+                    if (drSched.GroupDriverId != null)
+                    {
+                        view.BoxGroupDriverId[box] = drSched.GroupDriverId;
+                        var grp = db.GroupNames.SingleOrDefault(n => n.Id == drSched.GroupId);
+                        if (grp != null) view.BoxGroupName[box] = grp.Name;
+                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.GroupDriverId);
+                        if (usr != null)
+                        {
+                            view.BoxGroupDriverName[box] = usr.FullName;
+                            view.BoxGroupDriverPhone[box] = usr.PhoneNumber;
+                            view.BoxGroupDriverEmail[box] = usr.Email;
+                        }
+                    }
+                }
             }
             return view;
         }
 
         public ActionResult WeekPrevious(DateTime monday)
-        {
-            monday = monday.AddDays(-7);
-            return RedirectToAction("WeeklyInfoReport", new { monday });
-        }
-        public ActionResult WeekNext(DateTime monday)
-        {
-            monday = monday.AddDays(7);
-            return RedirectToAction("WeeklyInfoReport", new { monday });
-        }
-        private static DateTime GetMondaysDate(DateTime date)
-        {
-            var returnDate = date;
-            // if Sat or Sun (6 or 0), get next Monday
-            var dow = (int)date.DayOfWeek;
-            switch (dow)
             {
-                case 0:
-                    returnDate = date.AddDays(1);
-                    break;
-                case 2:
-                    returnDate = date.AddDays(-1);
-                    break;
-                case 3:
-                    returnDate = date.AddDays(-2);
-                    break;
-                case 4:
-                    returnDate = date.AddDays(-3);
-                    break;
-                case 5:
-                    returnDate = date.AddDays(-4);
-                    break;
-                case 6:
-                    returnDate = date.AddDays(2);
-                    break;
+                monday = monday.AddDays(-7);
+                return RedirectToAction("WeeklyInfoReport", new { monday });
             }
-            return returnDate;
-        }
+        public ActionResult WeekNext(DateTime monday)
+            {
+                monday = monday.AddDays(7);
+                return RedirectToAction("WeeklyInfoReport", new { monday });
+            }
+        private static DateTime GetMondaysDate(DateTime date)
+            {
+                var returnDate = date;
+                // if Sat or Sun (6 or 0), get next Monday
+                var dow = (int)date.DayOfWeek;
+                switch (dow)
+                {
+                    case 0:
+                        returnDate = date.AddDays(1);
+                        break;
+                    case 2:
+                        returnDate = date.AddDays(-1);
+                        break;
+                    case 3:
+                        returnDate = date.AddDays(-2);
+                        break;
+                    case 4:
+                        returnDate = date.AddDays(-3);
+                        break;
+                    case 5:
+                        returnDate = date.AddDays(-4);
+                        break;
+                    case 6:
+                        returnDate = date.AddDays(2);
+                        break;
+                }
+
+                return returnDate;
+            }
     }
 }

@@ -54,5 +54,6 @@ namespace BHelp.ViewModels
         public string[] BoxODId { get; set; }
         public string[] BoxODPhone { get; set; }
         public string[] BoxODEmail { get; set; }
+        public string[] BoxODOddEvenMsg { get; set; }
     }
 }
