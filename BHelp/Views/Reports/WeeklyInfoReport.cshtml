@@ -44,15 +44,13 @@
         <table id="schedule">
             <tr>
                 <td class="grid">
-                    &nbsp;@Model.DateRangeTitle
-                    <br />
-                    <span><b>&nbsp;DRIVERS</b></span>
+                    <span><b>&nbsp;&nbsp;&nbsp;&nbsp;DRIVERS</b></span>
                     <br />
                     <span><b>&nbsp;Use the relational database to enter your delivery</b></span>
                     <span><b>&nbsp;report and your time asap</b></span>
                 </td>
                 <td class="grid">
-                    <span><b>&nbsp;ODs</b></span>
+                    <span><b>&nbsp;&nbsp;&nbsp;&nbsp;ODs</b></span>
                     <br/><span><b>&nbsp;Please inform the Next Day Drivers, Next Day</b></span>
                     <br/><span><b>&nbsp;OD and the Scheduler when you are done and</b></span>
                     <br/><span><b>&nbsp;tell Drivers they can get their delivery list in the</b></span>
@@ -60,7 +58,7 @@
                 </td>
                 <td class="grid">
                     <br /><br /><br /><br />
-                    <span><b>&nbsp;NEXT DAY DRIVER(s)</b></span>
+                    <span><b>&nbsp;&nbsp;&nbsp;&nbsp;NEXT DAY DRIVER(s)</b></span>
                 </td>
             </tr>
             @for (var row = 0; row < 5; row++)
@@ -71,14 +69,16 @@
                     @*First Column*@
                     <span><b>&nbsp;@Model.BoxDateDay[box]</b></span>
                     @if (Model.BoxHoliday[box])
-                    {<br /><span>Holiday</span>}
+                    {
+                        <br /><span>&nbsp;@Model.BoxHolidayDescription[box]</span>
+                        <br /><span>&nbsp;BHELP Closed</span>
+                    }
                     else
                     {
                         if (Model.BoxDriverId[box] != null)
                         {
-                            <span>&nbsp;Driver</span>
-                            <br />
-                            <span>&nbsp;@Model.BoxDriverName[box]</span>
+                            <br/>
+                            <span>&nbsp;Driver:&nbsp;@Model.BoxDriverName[box]</span>
                             <br />
                             <span>&nbsp;@Model.BoxDriverPhone[box]</span>
                             <a href="mailto:">@Model.BoxDriverEmail[box]</a>
@@ -87,9 +87,7 @@
                         if (Model.BoxBackupDriverId[box] != null)
                         {
                             <br/>
-                            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BackupDriver</span>
-                            <br />
-                            <span>&nbsp;@Model.BoxBackupDriverName[box]</span>
+                            <span>&nbsp;BackupDriver:&nbsp;@Model.BoxBackupDriverName[box]</span>
                             <br />
                             <span>&nbsp;@Model.BoxBackupDriverPhone[box]</span>
                             <a href="mailto:">@Model.BoxBackupDriverEmail[box]</a>
@@ -98,9 +96,7 @@
                         if (Model.BoxGroupDriverId[box] != null)
                         {
                             <br/>
-                            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Model.BoxGroupName[box]&nbsp;Group Driver</span>
-                            <br />
-                            <span>&nbsp;@Model.BoxGroupDriverName[box]</span>
+                            <span>&nbsp;@Model.BoxGroupName[box]&nbsp;Group Driver:&nbsp;@Model.BoxGroupDriverName[box]</span>
                             <br />
                             <span>&nbsp;@Model.BoxGroupDriverPhone[box]</span>
                             <a href="mailto:">@Model.BoxGroupDriverEmail[box]</a>
@@ -113,14 +109,14 @@
                     <span><b>&nbsp;@Model.BoxDateDay[box]</b></span>
                     @if (Model.BoxHoliday[box])
                     {
-                        <br /><span>Holiday</span>}
+                        <br /><span>&nbsp;@Model.BoxHolidayDescription[box]</span>
+                        <br /><span>&nbsp;BHELP Closed</span>}
                     else
                     {
                         if (Model.BoxODId[box] != null)
                         {
-                            <span>&nbsp;&nbsp;OD</span>
                             <br />
-                            <span>&nbsp;@Model.BoxODName[box]</span>
+                            <span>&nbsp;OD:&nbsp;@Model.BoxODName[box]</span>
                             <br />
                             <span>&nbsp;@Model.BoxODPhone[box]</span>
                             <a href="mailto:">@Model.BoxODEmail[box]</a>
@@ -135,41 +131,37 @@
                     @{ box += 1; }
                     <span><b>&nbsp;@Model.BoxDateDay[box]</b></span>
                     @if (Model.BoxHoliday[box])
-                    {<br /><span>Holiday</span>}
-                    else
+                    {<br /><span>&nbsp;@Model.BoxHolidayDescription[box]</span>
+                     <br /><span>&nbsp;BHELP Closed</span>}
+                else
+                {
+                    if (Model.BoxDriverId[box] != null)
                     {
-                        if (Model.BoxDriverId[box] != null)
-                        {
-                            <span>&nbsp;Driver</span>
-                            <br />
-                            <span>&nbsp;@Model.BoxDriverName[box]</span>
-                            <br />
-                            <span>&nbsp;@Model.BoxDriverPhone[box]</span>
-                            <a href="mailto:">@Model.BoxDriverEmail[box]</a>
-                        }
-
-                        if (Model.BoxBackupDriverId[box] != null)
-                        {
-                            <br />
-                            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BackupDriver</span>
-                            <br />
-                            <span>&nbsp;@Model.BoxBackupDriverName[box]</span>
-                            <br />
-                            <span>&nbsp;@Model.BoxBackupDriverPhone[box]</span>
-                            <a href="mailto:">@Model.BoxBackupDriverEmail[box]</a>
-                        }
-
-                        if (Model.BoxGroupDriverId[box] != null)
-                        {
-                            <br />
-                            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Model.BoxGroupName[box]&nbsp;Group Driver</span>
-                            <br />
-                            <span>&nbsp;@Model.BoxGroupDriverName[box]</span>
-                            <br />
-                            <span>&nbsp;@Model.BoxGroupDriverPhone[box]</span>
-                            <a href="mailto:">@Model.BoxGroupDriverEmail[box]</a>
-                        }
+                        <br />
+                        <span>&nbsp;Driver:&nbsp;@Model.BoxDriverName[box]</span>
+                        <br />
+                        <span>&nbsp;@Model.BoxDriverPhone[box]</span>
+                        <a href="mailto:">@Model.BoxDriverEmail[box]</a>
                     }
+
+                    if (Model.BoxBackupDriverId[box] != null)
+                    {
+                        <br />
+                        <span>&nbsp;Backup Driver:&nbsp;@Model.BoxBackupDriverName[box]</span>
+                        <br />
+                        <span>&nbsp;@Model.BoxBackupDriverPhone[box]</span>
+                        <a href="mailto:">@Model.BoxBackupDriverEmail[box]</a>
+                    }
+
+                    if (Model.BoxGroupDriverId[box] != null)
+                    {
+                        <br />
+                        <span>&nbsp;@Model.BoxGroupName[box]&nbsp;Group Driver:&nbsp;@Model.BoxGroupDriverName[box]</span>
+                        <br />
+                        <span>&nbsp;@Model.BoxGroupDriverPhone[box]</span>
+                        <a href="mailto:">@Model.BoxGroupDriverEmail[box]</a>
+                    }
+                }
                 </td>
             </tr>
             }

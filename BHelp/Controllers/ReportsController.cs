@@ -35,6 +35,7 @@ namespace BHelp.Controllers
                 DateRangeTitle = monday.ToString("MM/dd/yyyy") + " - " + monday.AddDays(4).ToString("MM/dd/yyyy"),
                 BoxDateDay = new string[15],
                 BoxHoliday = new bool[15],
+                BoxHolidayDescription = new string[15],
                 BoxDriverId = new string[15],
                 BoxDriverName = new string[15],
                 BoxDriverPhone = new string[15],
@@ -55,7 +56,8 @@ namespace BHelp.Controllers
                 BoxODOddEvenMsg = new string[15]
             };
 
-            var shortMonthList = HolidayRoutines.GetShortMonthArray();
+            var shortMonthList = AppRoutines.GetShortMonthArray();
+            var shortWeekdayList = AppRoutines.GetShortWeekdayArray();
             var holidays = (List<Holiday>)Session["Holidays"];
 
             var db = new BHelpContext();
@@ -64,8 +66,15 @@ namespace BHelp.Controllers
                 // First Column - Driver
                 var box = row * 3;
                 var boxDate = view.BeginDate.AddDays(row);
-                view.BoxDateDay[box] = shortMonthList[boxDate.Month] + " " + boxDate.Day;
-                view.BoxHoliday[box] = HolidayRoutines.IsHoliday(boxDate, holidays);
+                view.BoxDateDay[box] = shortWeekdayList[(int)boxDate.DayOfWeek] +
+                                       " " + shortMonthList[boxDate.Month] + " " + boxDate.Day;
+                var isHoliday = HolidayRoutines.IsHoliday(boxDate, holidays);
+                view.BoxHoliday[box] = isHoliday;
+                if (isHoliday)
+                {
+                    var holiday = GetHolidayData(boxDate);
+                    view.BoxHolidayDescription[box] = holiday.Description;
+                }
                 var drSched = db.DriverSchedules
                     .SingleOrDefault(d => d.Date == boxDate);
                 if (drSched != null)
@@ -108,12 +117,14 @@ namespace BHelp.Controllers
                         }
                     }
                 }
+
                 // Second Column - OD
                 box++;
-                view.BoxDateDay[box] = view.BoxDateDay[box -1];  // repeats first column date
-                view.BoxHoliday[box] = view.BoxHoliday[box];  // repeats first column date
+                view.BoxDateDay[box] = view.BoxDateDay[box - 1]; // repeats first column date
+                view.BoxHoliday[box] = view.BoxHoliday[box -1]; // repeats first column date
+                view.BoxHolidayDescription[box] = view.BoxHolidayDescription[box - 1];
                 var odSched = db.ODSchedules
-                    .SingleOrDefault(d => d.Date == boxDate);  // repeats first column date
+                    .SingleOrDefault(d => d.Date == boxDate); // repeats first column date
                 if (odSched != null)
                 {
                     if (odSched.ODId != null)
@@ -126,12 +137,17 @@ namespace BHelp.Controllers
                             view.BoxODPhone[box] = usr.PhoneNumber;
                             view.BoxODEmail[box] = usr.Email;
                             if (boxDate.Day % 2 == 0)
-                            { view.BoxODOddEvenMsg[box] = "Take Food Requests Only From EVEN Numbers"; }
+                            {
+                                view.BoxODOddEvenMsg[box] = "Take Food Requests Only From EVEN Numbers";
+                            }
                             else
-                            { view.BoxODOddEvenMsg[box] = "Take Food Requests Only From ODD Numbers"; }
+                            {
+                                view.BoxODOddEvenMsg[box] = "Take Food Requests Only From ODD Numbers";
+                            }
                         }
                     }
                 }
+
                 // Third Column - next day Driver
                 box++;
                 if ((int)boxDate.DayOfWeek == 5)
@@ -142,8 +158,15 @@ namespace BHelp.Controllers
                 {
                     boxDate = boxDate.AddDays(1);
                 }
-                view.BoxDateDay[box] = shortMonthList[boxDate.Month] + " " + boxDate.Day;
-                view.BoxHoliday[box] = HolidayRoutines.IsHoliday(boxDate, holidays);
+                view.BoxDateDay[box] = shortWeekdayList[(int)boxDate.DayOfWeek] + " " +
+                    shortMonthList[boxDate.Month] + " " + boxDate.Day;
+                isHoliday = HolidayRoutines.IsHoliday(boxDate, holidays);
+                view.BoxHoliday[box] = isHoliday;
+                if (isHoliday)
+                {
+                    var holiday = GetHolidayData(boxDate);
+                    view.BoxHolidayDescription[box] = holiday.Description;
+                }
                 drSched = db.DriverSchedules
                    .SingleOrDefault(d => d.Date == boxDate);
                 if (drSched != null)
@@ -188,6 +211,25 @@ namespace BHelp.Controllers
                 }
             }
             return view;
+        }
+
+        private Holiday GetHolidayData(DateTime dt)
+        {
+            var holidays = (List<Holiday>)Session["Holidays"];
+            if (holidays.Count == 0)
+            {
+                holidays = HolidayRoutines.GetHolidays(dt.Year);
+                Session["Holidays"] = holidays;
+            }
+            // check if ANY calculated date in proper year:
+            foreach (var hol in holidays)
+            {
+                if (hol.CalculatedDate.Year == dt.Year) { break; }
+                // else load requested year's holidays:
+                holidays = HolidayRoutines.GetHolidays(dt.Year);
+                Session["Holidays"] = holidays;
+            }
+            return holidays.Find(h => h.CalculatedDate == dt);
         }
 
         public ActionResult WeekPrevious(DateTime monday)

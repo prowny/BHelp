@@ -128,16 +128,6 @@ namespace BHelp
             return monthList;
         }
 
-        public static string[] GetShortMonthArray()
-        {
-            var monthList = new string[13];
-            monthList[1] = "Jan"; monthList[2] = "Feb"; monthList[3] = "Mar";
-            monthList[4] = "Apr"; monthList[5] = "May"; monthList[6] = "Jun";
-            monthList[7] = "Jul"; monthList[8] = "Aug"; monthList[9] = "Sep";
-            monthList[10] = "Oct"; monthList[11] = "Nov"; monthList[12] = "Dec";
-            return monthList;
-        }
-
         public static bool IsHoliday(DateTime dt, List<Holiday> holidays)
         {
             // check if ANY calculated date in proper year:
