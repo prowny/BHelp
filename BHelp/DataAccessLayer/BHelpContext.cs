@@ -2,6 +2,8 @@
 using BHelp.Models;
 using System.Data.Entity;
 using System.Diagnostics;
+using System.Linq;
+using Castle.Core.Internal;
 
 namespace BHelp.DataAccessLayer
 {
@@ -16,7 +18,7 @@ namespace BHelp.DataAccessLayer
       
         public DbSet<Login> Logins { get; set; }
 
-        public DbSet <FamilyMember> FamilyMembers { get; set;}
+        public DbSet<FamilyMember> FamilyMembers { get; set;}
 
         public DbSet<Delivery> Deliveries { get; set; }
 
@@ -41,5 +43,30 @@ namespace BHelp.DataAccessLayer
 
         public DbSet<AddressCheck> AddressChecks { get; set; }
 
+        public string GetStringAllRolesForUser(string userId)
+        {
+
+            var sqlString = "SELECT Name from AspNetUserRoles "
+                            + "LEFT JOIN AspNetRoles ON AspNetRoles.Id = AspNetUserRoles.RoleId "
+                            + "WHERE AspNetUserRoles.UserId =  '" + userId + "'";
+
+            var isEmpty = this.Database.SqlQuery<string>(sqlString).IsNullOrEmpty();
+                var roleNameString = "";
+                if (!isEmpty)
+                {
+                    var roleNameList = this.Database.SqlQuery<string>(sqlString).ToList();
+                    foreach (var roleName in roleNameList)
+                    {
+                        roleNameString = roleNameString + roleName + " ";
+                    }
+                }
+
+                if (roleNameString.Length > 0)
+                {
+                    return roleNameString.Substring(0, roleNameString.Length - 1);
+                }
+                
+                return roleNameString;
+        }
     }
 }

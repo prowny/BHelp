@@ -1294,33 +1294,6 @@ namespace BHelp
                 return roleId;
             }
 
-            public static string GetStringAllRolesForUser(string userId)
-            {
-                
-                var sqlString = "SELECT Name from AspNetUserRoles "
-                                + "LEFT JOIN AspNetRoles ON AspNetRoles.Id = AspNetUserRoles.RoleId "
-                                + "WHERE AspNetUserRoles.UserId =  '" + userId + "'";
-                
-                var context = new BHelpContext();
-                var isEmpty = context.Database.SqlQuery<string>(sqlString).IsNullOrEmpty() ;
-                var roleNameString = "";
-                if (!isEmpty)
-                {
-                    var roleNameList = context.Database.SqlQuery<string>(sqlString).ToList();
-                    foreach (var roleName in roleNameList)
-                    {
-                        roleNameString = roleNameString + roleName + " ";
-                    }
-                }
-
-                if (roleNameString.Length > 0)
-                {
-                    return roleNameString.Substring(0, roleNameString.Length - 1);
-                }
-
-                return roleNameString;
-            }
-
             public static DateTime GetFirstWeekdayDate(int month, int year)
             {
                 DateTime dt = new DateTime(year, month, 1);
@@ -1502,6 +1475,18 @@ namespace BHelp
                 weekdayList[3] = "Wed"; weekdayList[4] = "Thu"; weekdayList[5] = "Fri";
                 weekdayList[6] = "Sat";
                 return weekdayList;
+            }
+
+            public static List<ApplicationUser> GetActiveUserList()
+            {
+
+                using (var _db = new BHelpContext())
+                {
+                    var activeVolunteersList = _db.Users
+                        .Where(u => u.Active).OrderBy(u => u.LastName)
+                        .ThenBy(u => u.FirstName).ToList();
+                    return activeVolunteersList;
+                }
             }
     }
 }
