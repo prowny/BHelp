@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 using BHelp.Models;
+
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
@@ -59,7 +60,7 @@ namespace BHelp.DataAccessLayer
                     {
                         roleNameString = roleNameString + roleName + " ";
                     }
-                }
+                }   
 
                 if (roleNameString.Length > 0)
                 {
