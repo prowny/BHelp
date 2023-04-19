@@ -34,61 +34,41 @@ namespace BHelp.Controllers
             if (Session["DriverList"] == null) Session["DriverList"] = GetDriverIdSelectList();
             if (Session["GroupList"] == null)
             {
-                var db = new BHelpContext(); 
-                var groupList = db.GroupNames.OrderBy(n => n.Name).ToList();
-                var items = new List<SelectListItem> { new SelectListItem { Text = @"(none)", Value = "0" } };
-                foreach (var item in groupList)
+                using (var db = new BHelpContext())
                 {
-                    items.Add(new SelectListItem { Text = item.Name, Value = item.Id.ToString() });
-                }
+                    var groupList = db.GroupNames.OrderBy(n => n.Name).ToList();
+                    var items = new List<SelectListItem> { new SelectListItem { Text = @"(none)", Value = "0" } };
+                    foreach (var item in groupList)
+                    {
+                        items.Add(new SelectListItem { Text = item.Name, Value = item.Id.ToString() });
+                    }
 
-                Session["GroupList"] = items;
+                    Session["GroupList"] = items;
+                }
             }
 
             var _dt = new DateTime(year, month, 1);
-            var email = new DriverEmailViewModel
-            {
-                Title = "Email Drivers",
-                MonthYear = _dt.ToString("MMMM") + " " + _dt.Year.ToString()
-            };
-        
-            var text = "Dear Drivers,";
-            text += "<br />Please check current driver assignments to be sure it is correct. Note the many ";
-            text += "TBDs. If you are able to fill any of them, please let me know.";
-            text += "<br />IMPORTANT: You can also view the current schedule with driver contact info ";
-            text += "included at bethesdahelpfd.com";
-            
-            email.EmailText = text;
-            //var startDate = DateTime.Today;
-            //var endDate = DateTime.Today;
+                    var email = new DriverEmailViewModel
+                    {
+                        Title = "Email Drivers",
+                        MonthYear = _dt.ToString("MMMM") + " " + _dt.Year.ToString()
+                    };
 
-            email.HtmlContent = GetDriverSchedule(year, month);
-            //var allUsers = db.Users.ToList();
-            //List<ApplicationUser> recipients = new List<ApplicationUser>();
-            //foreach (ApplicationUser user in allUsers)
-            //{
-            //    if (AppRoutines.UserIsInRole(user.Id, "Driver")
-            //        || AppRoutines.UserIsInRole(user.Id, "Scheduler"))
-            //    {
-            //        recipients.Add(user);
-            //    }
-            //}
+                    var text = "Dear Drivers,";
+                    text += "<br />Please check current driver assignments to be sure it is correct. Note the many ";
+                    text += "TBDs. If you are able to fill any of them, please let me know.";
+                    text += "<br />IMPORTANT: You can also view the current schedule with driver contact info ";
+                    text += "included at bethesdahelpfd.com";
 
-            //var newList = new List<DriverEmailRecipient>();
-            //foreach (ApplicationUser user in recipients)
-            //{
-            //    newList.Add(new DriverEmailRecipient()
-            //    { Id = user.Id, FullName = user.FullName, Email = user.Email, Checked = true });
-            //}
+                    email.EmailText = text;
+                    //var startDate = DateTime.Today;
+                    //var endDate = DateTime.Today;
 
-            //TempData["Recipients"] =
-            //    newList; // TempData holds complex data not passed in Redirects.                            
-            //email.Recipients = newList;
-            //return RedirectToAction("Index", email);
-
-
-            return View(email);
+                    email.HtmlContent = GetDriverSchedule(year, month);
+                   
+                    return View(email);
         }
+        
 
         private string GetDriverSchedule(int year, int month)
         {
@@ -173,9 +153,11 @@ namespace BHelp.Controllers
         {
             var start = new DateTime(year, month, 1);
             var end = new DateTime(year, month, DateTime.DaysInMonth(year, month));
-            var db = new BHelpContext();
-            return db.DriverSchedules
-                .Where(d => d.Date >= start && d.Date <= end).OrderBy(d => d.Date).ToList();
+            using (var db = new BHelpContext())
+            {
+                return db.DriverSchedules
+                    .Where(d => d.Date >= start && d.Date <= end).OrderBy(d => d.Date).ToList();
+            }
         }
 
         private DriverScheduleViewModel GetDriverScheduleViewModel(int year, int month)
@@ -368,77 +350,79 @@ namespace BHelp.Controllers
 
         private List<SelectListItem> GetDriverIdSelectList()
         {
-
             if (Session["DriverSelectList"] == null)
             {
                 var driverList = new List<SelectListItem>();
                 var driverDataList = new List<ApplicationUser>();
-                var _db = new BHelpContext();
-                var userList = _db.Users.OrderBy(u => u.LastName).ToList();
                 var roleLookup = AppRoutines.UsersInRolesLookup();
                 var driverRoleId = AppRoutines.GetRoleId("Driver");
 
                 driverList.Add(new SelectListItem()
                 {
-                    Text
-                        = @"(nobody yet)",
-                    Value = "0"
+                    Text = @"(nobody yet)", Value = "0"
                 });
+
                 driverDataList.Add(new ApplicationUser()
                 {
                     Id = "0" // added so indexes of driverDataList match driverList 
                 });
-                foreach (var user in userList)
-                {
-                    if (roleLookup.Any(r => r.UserId == user.Id && r.RoleId == driverRoleId))
-                    {
-                        driverList.Add(new SelectListItem()
-                        {
-                            Text = user.FirstName + @" " + user.LastName,
-                            Value = user.Id,
-                            Selected = false
-                        });
-                        driverDataList.Add(user);
-                    };
-                }
-                Session["DriverSelectList"] = driverList;
-                Session["DriverDataList"] = driverDataList;
 
-                if (!User.IsInAnyRoles("Scheduler", "Developer", "Administrator")) // is NOT Scheduler
+                using (var db = new BHelpContext())
                 {
-                    var nonSchedulerDriverSelectList = new List<SelectListItem>
+                    var userList = db.Users.OrderBy(u => u.LastName).ToList();
+                    foreach (var user in userList)
                     {
-                        new SelectListItem()
+                        if (roleLookup.Any(r => r.UserId == user.Id && r.RoleId == driverRoleId))
                         {
-                            Text = @"(nobody yet)",
-                            Value = "0"
+                            driverList.Add(new SelectListItem()
+                            {
+                                Text = user.FirstName + @" " + user.LastName,
+                                Value = user.Id,
+                                Selected = false
+                            });
+                            driverDataList.Add(user);
                         }
-                    };
-                    var currentUserId = User.Identity.GetUserId();
-                    // get user's record from driverDataList
-                    var userData = driverDataList.FirstOrDefault(i => i.Id == currentUserId);
-                    if (userData != null)
-                    {
-                        var userDataSelectItem = new SelectListItem()
-                        {
-
-                            Text = userData.FullName,
-                            Value = currentUserId
-                        };
-                        nonSchedulerDriverSelectList.Add(userDataSelectItem);
                     }
-                    Session["NonSchedulerDriverSelectList"] = nonSchedulerDriverSelectList;
-                }
 
-                if (Session["GroupList"] == null)
-                {
-                    var db = new BHelpContext();
-                    var groupList = db.GroupNames.OrderBy(n => n.Name).ToList();
-                    var items = new List<SelectListItem> { new SelectListItem { Text = @"(none)", Value = "0" } };
-                    if (items == null) throw new ArgumentNullException(nameof(items));
-                    foreach (var item in groupList)
+                    Session["DriverSelectList"] = driverList;
+                    Session["DriverDataList"] = driverDataList;
+
+                    if (!User.IsInAnyRoles("Scheduler", "Developer", "Administrator")) // is NOT Scheduler
                     {
-                        items.Add(new SelectListItem { Text = item.Name, Value = item.Id.ToString() });
+                        var nonSchedulerDriverSelectList = new List<SelectListItem>
+                        {
+                            new SelectListItem()
+                            {
+                                Text = @"(nobody yet)", Value = "0"
+                            }
+                        };
+                        var currentUserId = User.Identity.GetUserId();
+                        // get user's record from driverDataList
+                        var userData = driverDataList.FirstOrDefault(i => i.Id == currentUserId);
+                        if (userData != null)
+                        {
+                            var userDataSelectItem = new SelectListItem()
+                            {
+
+                                Text = userData.FullName,
+                                Value = currentUserId
+                            };
+                            nonSchedulerDriverSelectList.Add(userDataSelectItem);
+                        }
+
+                        Session["NonSchedulerDriverSelectList"] = nonSchedulerDriverSelectList;
+                    }
+
+                    if (Session["GroupList"] == null)
+                    {
+                        var groupList = db.GroupNames.OrderBy(n => n.Name).ToList();
+                        var items = new List<SelectListItem> { new SelectListItem { Text = @"(none)", Value = "0" } };
+                        foreach (var item in groupList)
+                        {
+                            items.Add(new SelectListItem { Text = item.Name, Value = item.Id.ToString() });
+                        }
+
+                        Session["GroupList"] = items;
                     }
                 }
 

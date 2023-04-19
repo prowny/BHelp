@@ -104,12 +104,7 @@ namespace BHelp.Controllers
             AppRoutines.GetZipCodesSelectList();
             return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
-        public ActionResult GetLatestDeliveries()
-        {
-            Utilities.GetLatestDeliveries();
-            return RedirectToAction("Index", "Home");
-        }
-       
+
         // GET: Reset Voicemail Password/Edit
         [Authorize(Roles = "Administrator,Developer")]
         public ActionResult ResetVoicemailPassword()
