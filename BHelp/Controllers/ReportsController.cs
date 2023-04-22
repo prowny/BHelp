@@ -236,9 +236,8 @@ namespace BHelp.Controllers
             var view = GetWeeklyInfoReportData(monday);
             
             var workbook = new XLWorkbook();
-            IXLWorksheet ws = workbook.Worksheets.Add("Weekly Schedule");
-
-            int row = 1;
+            var ws = workbook.Worksheets.Add("Weekly Schedule");
+            var row = 1;
             ws.Columns("1").Width = 75;
             ws.Columns("2").Width = 75;
             ws.Columns("3").Width = 75;
@@ -287,7 +286,7 @@ namespace BHelp.Controllers
                     if (view.BoxBackupDriverId[boxNo] != null)
                     {
                         boxContents += Environment.NewLine;
-                        boxContents += "BackupDriver: " + view.BoxBackupDriverName[boxNo] + Environment.NewLine;
+                        boxContents += "Backup Driver: " + view.BoxBackupDriverName[boxNo] + Environment.NewLine;
                         boxContents += view.BoxBackupDriverPhone[boxNo] + " " + view.BoxBackupDriverEmail[boxNo];
                     }
 
@@ -340,7 +339,7 @@ namespace BHelp.Controllers
                     if (view.BoxBackupDriverId[boxNo] != null)
                     {
                         boxContents += Environment.NewLine;
-                        boxContents += "BackupDriver: " + view.BoxBackupDriverName[boxNo] + Environment.NewLine;
+                        boxContents += "Backup Driver: " + view.BoxBackupDriverName[boxNo] + Environment.NewLine;
                         boxContents += view.BoxBackupDriverPhone[boxNo] + " " + view.BoxBackupDriverEmail[boxNo];
                     }
 
@@ -360,9 +359,9 @@ namespace BHelp.Controllers
             workbook.SaveAs(ms);
             ms.Position = 0;
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                { FileDownloadName = "WeeklyInfoReport" + monday.ToString("MM-dd-yy") + ".xlsx" };
+            { FileDownloadName = "WeeklyInfoReport" + monday.ToString("MM-dd-yy") + ".xlsx" };
         }
-
+        
         public ActionResult ActiveVolunteerDetailsToCSV()
         {
             using (var context = new BHelpContext())
@@ -411,8 +410,8 @@ namespace BHelp.Controllers
                 response.ClearHeaders();
                 response.ContentEncoding = Encoding.Unicode;
                 response.AddHeader("content-disposition", "attachment;filename="
-                                                          + "Active Volunteers" + DateTime.Today.ToString("MM-dd-yy") +
-                                                          ".csv");
+                                                          + "Active Volunteers" + DateTime.Today.ToString("MM-dd-yy")
+                                                          + ".csv");
                 response.ContentType = "text/plain";
                 response.Write(sb);
                 response.End();
@@ -478,7 +477,6 @@ namespace BHelp.Controllers
                     { FileDownloadName = "Active Volunteers" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
             }
         }
-
         private Holiday GetHolidayData(DateTime dt)
         {
             var holidays = (List<Holiday>)Session["Holidays"];

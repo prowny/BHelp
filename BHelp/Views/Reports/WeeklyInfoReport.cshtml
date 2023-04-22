@@ -8,24 +8,9 @@
     <title>WeeklyInfo</title>
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
     <style>
-        #schedule {
-            border-collapse: collapse;
-            border: thin solid black;
-            font-size: smaller
-        }
-
-        .grid {
-            border-right: thin solid black;
-            vertical-align: top;
-            width: 290px
-        }
-
-        .gridtop {
-            border-right: thin solid black;
-            border-top: thin solid black;
-            vertical-align: top;
-            width: 290px
-        }
+        #schedule {border-collapse: collapse;border: thin solid black;font-size: smaller}
+        .grid {border-right: thin solid black;vertical-align: top;width: 290px}
+        .gridtop {border-right: thin solid black;border-top: thin solid black;vertical-align: top;width: 290px}
     </style>
 </head>
 <body>
@@ -170,7 +155,7 @@
 <div>
     <br/>
     @Html.ActionLink("Download to Excel File", "WeeklyInfoReportToExcel", "Reports")
-    <br/>
+   <br/>
     @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
 </div>
 </body>
