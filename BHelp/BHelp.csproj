@@ -387,6 +387,7 @@
     <Compile Include="PriincipalExtensions.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Role.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utilities.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -435,6 +436,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="ViewModels\UserRoleViewModel.cs" />
+    <Compile Include="ViewModels\UserViewModel.cs" />
     <Compile Include="ViewModels\VoicemailPasswordViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -675,6 +677,7 @@
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
     <Content Include="Views\Reports\WeeklyInfoReport.cshtml" />
+    <Content Include="Views\Reports\DriverMasterList.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

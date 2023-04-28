@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
+﻿using System;
+using Microsoft.AspNet.Identity.EntityFramework;
 using BHelp.Models;
-
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
@@ -16,10 +16,10 @@ namespace BHelp.DataAccessLayer
         }
 
         public DbSet<Client> Clients { get; set; }
-      
+
         public DbSet<Login> Logins { get; set; }
 
-        public DbSet<FamilyMember> FamilyMembers { get; set;}
+        public DbSet<FamilyMember> FamilyMembers { get; set; }
 
         public DbSet<Delivery> Deliveries { get; set; }
 
@@ -52,22 +52,61 @@ namespace BHelp.DataAccessLayer
                             + "WHERE AspNetUserRoles.UserId =  '" + userId + "'";
 
             var isEmpty = this.Database.SqlQuery<string>(sqlString).IsNullOrEmpty();
-                var roleNameString = "";
-                if (!isEmpty)
+            var roleNameString = "";
+            if (!isEmpty)
+            {
+                var roleNameList = this.Database.SqlQuery<string>(sqlString).ToList();
+                foreach (var roleName in roleNameList)
                 {
-                    var roleNameList = this.Database.SqlQuery<string>(sqlString).ToList();
-                    foreach (var roleName in roleNameList)
-                    {
-                        roleNameString = roleNameString + roleName + " ";
-                    }
-                }   
-
-                if (roleNameString.Length > 0)
-                {
-                    return roleNameString.Substring(0, roleNameString.Length - 1);
+                    roleNameString = roleNameString + roleName + " ";
                 }
-                
-                return roleNameString;
+            }
+
+            if (roleNameString.Length > 0)
+            {
+                return roleNameString.Substring(0, roleNameString.Length - 1);
+            }
+
+            return roleNameString;
+        }
+
+        public void SetDeliveryStatus(int id, int status)
+        {
+            var rec = this.Deliveries.Find(id);
+            if (rec != null)
+            {
+                rec.Status = status;
+                this.SaveChanges();
+            }
+        }
+
+        public void SetDeliveryDate(int id, DateTime dateDelivered)
+        {
+            var rec = this.Deliveries.Find(id);
+            if (rec != null)
+            {
+                rec.DateDelivered = dateDelivered;
+                this.SaveChanges();
+            }
+        }
+
+        public void SetDeliveryDriver(int id, string driverId)
+        {
+            var rec = this.Deliveries.Find(id);
+            if (rec != null)
+            {
+                rec.DriverId = driverId;
+                this.SaveChanges();
+            }
+        }
+        public void SetDeliveryDateODId(int id, string odId)
+        {
+            var rec = this.Deliveries.Find(id);
+            if (rec != null)
+            {
+                rec.DeliveryDateODId = odId;
+                this.SaveChanges();
+            }
         }
     }
 }

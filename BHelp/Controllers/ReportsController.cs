@@ -73,156 +73,162 @@ namespace BHelp.Controllers
             var shortWeekdayList = AppRoutines.GetShortWeekdayArray();
             var holidays = (List<Holiday>)Session["Holidays"];
 
-            var db = new BHelpContext();
-            for (var row = 0; row < 5; row++) // Mon - Fri
+            using (var db = new BHelpContext())
             {
-                // First Column - Driver
-                var box = row * 3;
-                var boxDate = view.BeginDate.AddDays(row);
-                view.BoxDateDay[box] = shortWeekdayList[(int)boxDate.DayOfWeek] +
-                                       " " + shortMonthList[boxDate.Month] + " " + boxDate.Day;
-                var isHoliday = HolidayRoutines.IsHoliday(boxDate, holidays);
-                view.BoxHoliday[box] = isHoliday;
-                if (isHoliday)
+                for (var row = 0; row < 5; row++) // Mon - Fri
                 {
-                    var holiday = GetHolidayData(boxDate);
-                    view.BoxHolidayDescription[box] = holiday.Description;
-                }
-                var drSched = db.DriverSchedules
-                    .SingleOrDefault(d => d.Date == boxDate);
-                if (drSched != null)
-                {
-                    if (drSched.DriverId != null)
+                    // First Column - Driver
+                    var box = row * 3;
+                    var boxDate = view.BeginDate.AddDays(row);
+                    view.BoxDateDay[box] = shortWeekdayList[(int)boxDate.DayOfWeek] +
+                                           " " + shortMonthList[boxDate.Month] + " " + boxDate.Day;
+                    var isHoliday = HolidayRoutines.IsHoliday(boxDate, holidays);
+                    view.BoxHoliday[box] = isHoliday;
+                    if (isHoliday)
                     {
-                        view.BoxDriverId[box] = drSched.DriverId;
-                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.DriverId);
-                        if (usr != null)
-                        {
-                            view.BoxDriverName[box] = usr.FullName;
-                            view.BoxDriverPhone[box] = usr.PhoneNumber;
-                            view.BoxDriverEmail[box] = usr.Email;
-                        }
+                        var holiday = GetHolidayData(boxDate);
+                        view.BoxHolidayDescription[box] = holiday.Description;
                     }
 
-                    if (drSched.BackupDriverId != null)
+                    var drSched = db.DriverSchedules
+                        .SingleOrDefault(d => d.Date == boxDate);
+                    if (drSched != null)
                     {
-                        view.BoxBackupDriverId[box] = drSched.BackupDriverId;
-                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.BackupDriverId);
-                        if (usr != null)
+                        if (drSched.DriverId != null)
                         {
-                            view.BoxBackupDriverName[box] = usr.FullName;
-                            view.BoxBackupDriverPhone[box] = usr.PhoneNumber;
-                            view.BoxBackupDriverEmail[box] = usr.Email;
-                        }
-                    }
-
-                    if (drSched.GroupDriverId != null)
-                    {
-                        view.BoxGroupDriverId[box] = drSched.GroupDriverId;
-                        var grp = db.GroupNames.SingleOrDefault(n => n.Id == drSched.GroupId);
-                        if (grp != null) view.BoxGroupName[box] = grp.Name;
-                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.GroupDriverId);
-                        if (usr != null)
-                        {
-                            view.BoxGroupDriverName[box] = usr.FullName;
-                            view.BoxGroupDriverPhone[box] = usr.PhoneNumber;
-                            view.BoxGroupDriverEmail[box] = usr.Email;
-                        }
-                    }
-                }
-
-                // Second Column - OD
-                box++;
-                view.BoxDateDay[box] = view.BoxDateDay[box - 1]; // repeats first column date
-                view.BoxHoliday[box] = view.BoxHoliday[box -1]; // repeats first column date
-                view.BoxHolidayDescription[box] = view.BoxHolidayDescription[box - 1];
-                var odSched = db.ODSchedules
-                    .SingleOrDefault(d => d.Date == boxDate); // repeats first column date
-                if (odSched != null)
-                {
-                    if (odSched.ODId != null)
-                    {
-                        view.BoxODId[box] = odSched.ODId;
-                        var usr = db.Users.SingleOrDefault(d => d.Id == odSched.ODId);
-                        if (usr != null)
-                        {
-                            view.BoxODName[box] = usr.FullName;
-                            view.BoxODPhone[box] = usr.PhoneNumber;
-                            view.BoxODEmail[box] = usr.Email;
-                            if (boxDate.Day % 2 == 0)
+                            view.BoxDriverId[box] = drSched.DriverId;
+                            var usr = db.Users.SingleOrDefault(d => d.Id == drSched.DriverId);
+                            if (usr != null)
                             {
-                                view.BoxODOddEvenMsg[box] = "Take Food Requests Only From EVEN Numbers";
+                                view.BoxDriverName[box] = usr.FullName;
+                                view.BoxDriverPhone[box] = usr.PhoneNumber;
+                                view.BoxDriverEmail[box] = usr.Email;
                             }
-                            else
+                        }
+
+                        if (drSched.BackupDriverId != null)
+                        {
+                            view.BoxBackupDriverId[box] = drSched.BackupDriverId;
+                            var usr = db.Users.SingleOrDefault(d => d.Id == drSched.BackupDriverId);
+                            if (usr != null)
                             {
-                                view.BoxODOddEvenMsg[box] = "Take Food Requests Only From ODD Numbers";
+                                view.BoxBackupDriverName[box] = usr.FullName;
+                                view.BoxBackupDriverPhone[box] = usr.PhoneNumber;
+                                view.BoxBackupDriverEmail[box] = usr.Email;
+                            }
+                        }
+
+                        if (drSched.GroupDriverId != null)
+                        {
+                            view.BoxGroupDriverId[box] = drSched.GroupDriverId;
+                            var grp = db.GroupNames.SingleOrDefault(n => n.Id == drSched.GroupId);
+                            if (grp != null) view.BoxGroupName[box] = grp.Name;
+                            var usr = db.Users.SingleOrDefault(d => d.Id == drSched.GroupDriverId);
+                            if (usr != null)
+                            {
+                                view.BoxGroupDriverName[box] = usr.FullName;
+                                view.BoxGroupDriverPhone[box] = usr.PhoneNumber;
+                                view.BoxGroupDriverEmail[box] = usr.Email;
                             }
                         }
                     }
-                }
 
-                // Third Column - next day Driver
-                box++;
-                if ((int)boxDate.DayOfWeek == 5)
-                {
-                    boxDate = boxDate.AddDays(3);
-                }
-                else
-                {
-                    boxDate = boxDate.AddDays(1);
-                }
-                view.BoxDateDay[box] = shortWeekdayList[(int)boxDate.DayOfWeek] + " " +
-                    shortMonthList[boxDate.Month] + " " + boxDate.Day;
-                isHoliday = HolidayRoutines.IsHoliday(boxDate, holidays);
-                view.BoxHoliday[box] = isHoliday;
-                if (isHoliday)
-                {
-                    var holiday = GetHolidayData(boxDate);
-                    view.BoxHolidayDescription[box] = holiday.Description;
-                }
-                drSched = db.DriverSchedules
-                   .SingleOrDefault(d => d.Date == boxDate);
-                if (drSched != null)
-                {
-                    if (drSched.DriverId != null)
+                    // Second Column - OD
+                    box++;
+                    view.BoxDateDay[box] = view.BoxDateDay[box - 1]; // repeats first column date
+                    view.BoxHoliday[box] = view.BoxHoliday[box - 1]; // repeats first column date
+                    view.BoxHolidayDescription[box] = view.BoxHolidayDescription[box - 1];
+                    var odSched = db.ODSchedules
+                        .SingleOrDefault(d => d.Date == boxDate); // repeats first column date
+                    if (odSched != null)
                     {
-                        view.BoxDriverId[box] = drSched.DriverId;
-                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.DriverId);
-                        if (usr != null)
+                        if (odSched.ODId != null)
                         {
-                            view.BoxDriverName[box] = usr.FullName;
-                            view.BoxDriverPhone[box] = usr.PhoneNumber;
-                            view.BoxDriverEmail[box] = usr.Email;
+                            view.BoxODId[box] = odSched.ODId;
+                            var usr = db.Users.SingleOrDefault(d => d.Id == odSched.ODId);
+                            if (usr != null)
+                            {
+                                view.BoxODName[box] = usr.FullName;
+                                view.BoxODPhone[box] = usr.PhoneNumber;
+                                view.BoxODEmail[box] = usr.Email;
+                                if (boxDate.Day % 2 == 0)
+                                {
+                                    view.BoxODOddEvenMsg[box] = "Take Food Requests Only From EVEN Numbers";
+                                }
+                                else
+                                {
+                                    view.BoxODOddEvenMsg[box] = "Take Food Requests Only From ODD Numbers";
+                                }
+                            }
                         }
                     }
 
-                    if (drSched.BackupDriverId != null)
+                    // Third Column - next day Driver
+                    box++;
+                    if ((int)boxDate.DayOfWeek == 5)
                     {
-                        view.BoxBackupDriverId[box] = drSched.BackupDriverId;
-                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.BackupDriverId);
-                        if (usr != null)
-                        {
-                            view.BoxBackupDriverName[box] = usr.FullName;
-                            view.BoxBackupDriverPhone[box] = usr.PhoneNumber;
-                            view.BoxBackupDriverEmail[box] = usr.Email;
-                        }
+                        boxDate = boxDate.AddDays(3);
+                    }
+                    else
+                    {
+                        boxDate = boxDate.AddDays(1);
                     }
 
-                    if (drSched.GroupDriverId != null)
+                    view.BoxDateDay[box] = shortWeekdayList[(int)boxDate.DayOfWeek] + " " +
+                                           shortMonthList[boxDate.Month] + " " + boxDate.Day;
+                    isHoliday = HolidayRoutines.IsHoliday(boxDate, holidays);
+                    view.BoxHoliday[box] = isHoliday;
+                    if (isHoliday)
                     {
-                        view.BoxGroupDriverId[box] = drSched.GroupDriverId;
-                        var grp = db.GroupNames.SingleOrDefault(n => n.Id == drSched.GroupId);
-                        if (grp != null) view.BoxGroupName[box] = grp.Name;
-                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.GroupDriverId);
-                        if (usr != null)
+                        var holiday = GetHolidayData(boxDate);
+                        view.BoxHolidayDescription[box] = holiday.Description;
+                    }
+
+                    drSched = db.DriverSchedules
+                        .SingleOrDefault(d => d.Date == boxDate);
+                    if (drSched != null)
+                    {
+                        if (drSched.DriverId != null)
                         {
-                            view.BoxGroupDriverName[box] = usr.FullName;
-                            view.BoxGroupDriverPhone[box] = usr.PhoneNumber;
-                            view.BoxGroupDriverEmail[box] = usr.Email;
+                            view.BoxDriverId[box] = drSched.DriverId;
+                            var usr = db.Users.SingleOrDefault(d => d.Id == drSched.DriverId);
+                            if (usr != null)
+                            {
+                                view.BoxDriverName[box] = usr.FullName;
+                                view.BoxDriverPhone[box] = usr.PhoneNumber;
+                                view.BoxDriverEmail[box] = usr.Email;
+                            }
+                        }
+
+                        if (drSched.BackupDriverId != null)
+                        {
+                            view.BoxBackupDriverId[box] = drSched.BackupDriverId;
+                            var usr = db.Users.SingleOrDefault(d => d.Id == drSched.BackupDriverId);
+                            if (usr != null)
+                            {
+                                view.BoxBackupDriverName[box] = usr.FullName;
+                                view.BoxBackupDriverPhone[box] = usr.PhoneNumber;
+                                view.BoxBackupDriverEmail[box] = usr.Email;
+                            }
+                        }
+
+                        if (drSched.GroupDriverId != null)
+                        {
+                            view.BoxGroupDriverId[box] = drSched.GroupDriverId;
+                            var grp = db.GroupNames.SingleOrDefault(n => n.Id == drSched.GroupId);
+                            if (grp != null) view.BoxGroupName[box] = grp.Name;
+                            var usr = db.Users.SingleOrDefault(d => d.Id == drSched.GroupDriverId);
+                            if (usr != null)
+                            {
+                                view.BoxGroupDriverName[box] = usr.FullName;
+                                view.BoxGroupDriverPhone[box] = usr.PhoneNumber;
+                                view.BoxGroupDriverEmail[box] = usr.Email;
+                            }
                         }
                     }
                 }
             }
+
             return view;
         }
 
@@ -361,7 +367,81 @@ namespace BHelp.Controllers
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             { FileDownloadName = "WeeklyInfoReport" + monday.ToString("MM-dd-yy") + ".xlsx" };
         }
-        
+
+        public ActionResult DriverMasterList()
+        {
+            var view = new UserViewModel {UserList = GetUserMasterList("Driver")};
+            return View(view);
+        }
+
+        private List<ApplicationUser> GetUserMasterList(string roleName)
+        {
+            var listActiveUsers = AppRoutines.GetActiveUserList();
+            var roleId = AppRoutines.GetRoleId(roleName);
+            var listUserIdsInRole = AppRoutines.GetUserIdsInRole(roleId);
+            var listMaster = new List<ApplicationUser>();
+            foreach (var activeUser in listActiveUsers)
+            {
+                foreach (var userIdInRole in listUserIdsInRole)
+                {
+                    if (userIdInRole == activeUser.Id)
+                    {
+                        var addUsr = new ApplicationUser
+                        {
+                            Id = activeUser.Id,
+                            FirstName = activeUser.FirstName,
+                            LastName = activeUser.LastName,
+                            Email = activeUser.Email,
+                            PhoneNumber = activeUser.PhoneNumber,
+                            PhoneNumber2 = activeUser.PhoneNumber2
+                        };
+                        listMaster.Add(addUsr);
+                    }
+                }
+            }
+            return listMaster;
+        }
+
+        public ActionResult DriverMasterListToExcel()
+        {
+            var listMaster = GetUserMasterList("Driver");
+            var workbook = new XLWorkbook();
+            var ws = workbook.Worksheets.Add("Driver Master List");
+            var activeRow = 1;
+            ws.Columns("1").Width = 10;
+            ws.Cell(activeRow, 1).SetValue("As of " + DateTime.Today.ToShortDateString()).Style.Font.SetBold(true);
+            activeRow++;
+            ws.Cell(activeRow, 2).SetValue(DateTime.Today.ToShortDateString()).Style.Font.SetBold(true);
+            activeRow++;
+            ws.Cell(activeRow,1).SetValue("Active Drivers").Style.Font.SetBold(true);
+            activeRow++;
+            ws.Columns("1").Width = 15;
+            ws.Cell(activeRow, 1).SetValue("First Name").Style.Font.SetBold(true);
+            ws.Columns("2").Width = 15;
+            ws.Cell(2, 2).SetValue("Last Name").Style.Font.SetBold(true);
+            ws.Columns("3").Width = 40;
+            ws.Cell(activeRow, 3).SetValue("Email").Style.Font.SetBold(true);
+            ws.Columns("4").Width = 12;
+            ws.Cell(activeRow, 4).SetValue("Phone").Style.Font.SetBold(true);
+            ws.Columns("5").Width = 12;
+            ws.Cell(activeRow, 5).SetValue("Phone 2").Style.Font.SetBold(true);
+
+            foreach (var usr in listMaster)
+            {
+                activeRow++;
+                ws.Cell(activeRow, 1).SetValue(usr.FirstName);
+                ws.Cell(activeRow, 2).SetValue(usr.LastName);
+                ws.Cell(activeRow, 3).SetValue(usr.Email);
+                ws.Cell(activeRow, 4).SetValue(usr.PhoneNumber);
+                ws.Cell(activeRow, 5).SetValue(usr.PhoneNumber2);
+            }
+            var ms = new MemoryStream();
+            workbook.SaveAs(ms);
+            ms.Position = 0;
+            return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                { FileDownloadName = "DriverMasterList" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
+        }
+
         public ActionResult ActiveVolunteerDetailsToCSV()
         {
             using (var context = new BHelpContext())
@@ -462,7 +542,7 @@ namespace BHelp.Controllers
                     ws.Cell(activeRow, 5).SetValue(vol.City);
                     ws.Cell(activeRow, 6).SetValue(vol.State);
                     ws.Cell(activeRow, 7).SetValue(vol.Zip);
-                    ws.Cell(activeRow, 8).SetValue(vol.Email);
+                    ws.Cell(activeRow, 8).SetValue( vol.Email);  
                     ws.Cell(activeRow, 9).SetValue(vol.PhoneNumber);
                     ws.Cell(activeRow, 10).SetValue(vol.PhoneNumber2);
                     var volRoles = context.GetStringAllRolesForUser(vol.Id);

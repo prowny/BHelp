@@ -1616,5 +1616,16 @@ namespace BHelp
                     return activeVolunteersList;
                 }
             }
+
+        public static List<string> GetUserIdsInRole(string roleId)
+        {
+            // Load user roles lookup table
+            using (var db = new BHelpContext())
+            {
+                var sqlString = "SELECT UserId FROM AspNetUserRoles WHERE ";
+                sqlString += "RoleId = '" + roleId + "'";
+                return db.Database.SqlQuery<string>(sqlString).ToList();
+            }
+        }
     }
 }
