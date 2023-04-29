@@ -134,5 +134,6 @@ namespace BHelp.Models
         [NotMapped] public bool ShowReportsDocumentsMenu { get; set; }
         [NotMapped] public bool ShowPantryCoordinatorDocumentsMenu { get; set; }
         [NotMapped] public List<SelectListItem> States { get; set; }
+        [NotMapped] public string AllRolesForUser { get; set; }
     }
 }

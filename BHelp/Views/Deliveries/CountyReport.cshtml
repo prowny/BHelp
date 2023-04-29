@@ -1,5 +1,6 @@
 ﻿@using System.Web.Mvc.Html
 @using BHelp.ViewModels
+@using Microsoft.Owin.Security.Provider
 
 @model ReportsViewModel
 @{ Layout = null; }
@@ -105,7 +106,7 @@
     <br />
     @Html.ActionLink("Download to CSV File", "CountyReportToCSV", new { yy = Model.Year, qtr = Model.Quarter }, null)
     <br/>
-    @Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu", new { })
+    @Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu" )
     <br/>
     @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
 </div>

@@ -1,0 +1,64 @@
+﻿@model BHelp.ViewModels.UserViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ActiveVolunteerDetails</title>
+    <style>
+        .col75 {width: 75px;text-align: left}
+        .col100 {width: 100px;text-align: left;}
+        .col200 {width: 200px;text-align: left;}
+        .col250 {width: 250px;text-align: left;}
+        .col500 {width: 500px;text-align: left;}
+    </style>
+</head>
+<body>
+<div>
+    <table>
+        <tr>
+            <td><div class="col100"><b>Last Name</b></div></td>
+            <td><div class="col100"><b>First Name</b></div></td>
+            <td><div class="col200"><b>Title</b></div></td>
+            <td><div class="col250"><b>Address</b></div></td>
+            <td><b>City</b></td>
+            <td><b>State</b></td>
+            <td><div class="col75"><b>Zip Code</b></div></td>
+            <td><b>Email</b></td>
+            <td><div class="col100"><b>Phone 1</b></div></td>
+            <td><div class="col100"><b>Phone 2</b></div></td>
+            <td><b>Roles</b></td>
+            <td><div class="col500"><b>Notes</b></div></td>
+        </tr>
+        @foreach(var vol in Model.UserList)
+        {
+            <tr>
+                <td>@vol.LastName</td>
+                <td>@vol.FirstName</td>
+                <td>@vol.Title</td>
+                <td>@vol.Address</td>
+                <td>@vol.City</td>
+                <td>@vol.State</td>
+                <td>@vol.Zip</td>
+                <td>@vol.Email</td>
+                <td>@vol.PhoneNumber</td>
+                <td>@vol.PhoneNumber2</td>
+                <td>@vol.AllRolesForUser</td>
+                <td>@vol.Notes</td>
+            </tr>
+        }
+    </table>
+</div>
+<div>
+    <br />
+    @Html.ActionLink("Download to Excel File", "ActiveVolunteerDetailsToExcel")
+    <br />
+    @Html.ActionLink("Download to CSV File", "ActiveVolunteerDetailsToCSV")
+    <br />
+    @Html.ActionLink("Return to Reports Menu", "ReportsMenu")
+    <br />
+    @Html.ActionLink("Return toDashboard", "Index", "Home")
+</div>
+</body>
+</html>

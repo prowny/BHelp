@@ -678,6 +678,8 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
     <Content Include="Views\Reports\WeeklyInfoReport.cshtml" />
     <Content Include="Views\Reports\DriverMasterList.cshtml" />
+    <Content Include="Views\Reports\ODMasterList.cshtml" />
+    <Content Include="Views\Reports\ActiveVolunteerDetails.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -824,7 +826,7 @@
     <Content Include="Views\ResetAnyPassword\Index.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Deliveries\ReportsMenu.cshtml">
+    <Content Include="Views\Reports\ReportsMenu.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Deliveries\CountyReport.cshtml">

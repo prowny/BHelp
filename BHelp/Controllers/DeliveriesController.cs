@@ -1504,12 +1504,6 @@ namespace BHelp.Controllers
             }
 
             [Authorize(Roles = "Reports,Administrator,Staff,Developer")]
-            public ActionResult ReportsMenu()
-            {
-                return View();
-            }
-
-            [Authorize(Roles = "Reports,Administrator,Staff,Developer")]
             public ActionResult CountyReport(string yy = "", string qtr = "")
             {
                 int reportYear;
@@ -2444,16 +2438,10 @@ namespace BHelp.Controllers
                 return RedirectToAction("QORKReport", new { endingDate = sunday.ToShortDateString() });
             }
 
-            [Authorize(Roles = "Reports,Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
-            public ActionResult ReturnToReportsMenu()
-            {
-                return RedirectToAction("ReportsMenu");
-            }
-            //protected override void Dispose(bool disposing)
-            //{
-            //    if (disposing)
-            //    { db.Dispose(); }
-            //    base.Dispose(disposing);
-            //}
+        [Authorize(Roles = "Reports,Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
+        public ActionResult ReturnToReportsMenu()
+        {
+            return RedirectToAction("ReportsMenu", "Reports");
+        }
     }
 }

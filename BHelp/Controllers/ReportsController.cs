@@ -15,7 +15,11 @@ namespace BHelp.Controllers
     {
         // GET: Reports
 
-        [Authorize(Roles = "Administrator,Developer,Scheduler")]
+        [Authorize(Roles = "Reports,Administrator,Developer")]
+        public ActionResult ReportsMenu()
+        {
+            return View();
+        }
         public ActionResult WeeklyInfoReport(DateTime? monday)
         {
             if (monday == null)
@@ -39,7 +43,6 @@ namespace BHelp.Controllers
          
             return View(view);
         }
-
         private ReportsViewModel GetWeeklyInfoReportData(DateTime monday)
         {
             var view = new ReportsViewModel
@@ -231,7 +234,6 @@ namespace BHelp.Controllers
 
             return view;
         }
-
         public ActionResult WeeklyInfoReportToExcel()
         {
             var strDt = Session["WeeklyInfoDate"].ToString();
@@ -367,17 +369,20 @@ namespace BHelp.Controllers
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             { FileDownloadName = "WeeklyInfoReport" + monday.ToString("MM-dd-yy") + ".xlsx" };
         }
-
         public ActionResult DriverMasterList()
         {
             var view = new UserViewModel {UserList = GetUserMasterList("Driver")};
             return View(view);
         }
-
-        private static List<ApplicationUser> GetUserMasterList(string roleName)
+        public ActionResult ODMasterList()
+        {
+            var view = new UserViewModel { UserList = GetUserMasterList("OfficerOfTheDay") };
+            return View(view);
+        }
+        private static List<ApplicationUser> GetUserMasterList(string role)
         {
             var listActiveUsers = AppRoutines.GetActiveUserList();
-            var roleId = AppRoutines.GetRoleId(roleName);
+            var roleId = AppRoutines.GetRoleId(role);
             var listUserIdsInRole = AppRoutines.GetUserIdsInRole(roleId);
             var listMaster = new List<ApplicationUser>();
             foreach (var activeUser in listActiveUsers)
@@ -401,19 +406,19 @@ namespace BHelp.Controllers
             }
             return listMaster;
         }
-
-        public ActionResult DriverMasterListToExcel()
+        public ActionResult MasterListToExcel(string role)
         {
-            var listMaster = GetUserMasterList("Driver");
+            var listMaster = GetUserMasterList(role);
+            if (role == "OfficerOfTheDay") role = "OD";
             var workbook = new XLWorkbook();
-            var ws = workbook.Worksheets.Add("Driver Master List");
+            var ws = workbook.Worksheets.Add( role + " Master List");
             var activeRow = 1;
             ws.Columns("1").Width = 10;
             ws.Cell(activeRow, 1).SetValue("As of " + DateTime.Today.ToShortDateString()).Style.Font.SetBold(true);
             activeRow++;
             ws.Cell(activeRow, 2).SetValue(DateTime.Today.ToShortDateString()).Style.Font.SetBold(true);
             activeRow++;
-            ws.Cell(activeRow,1).SetValue("Active Drivers").Style.Font.SetBold(true);
+            ws.Cell(activeRow,1).SetValue("Active " + role + "s").Style.Font.SetBold(true);
             activeRow++;
             ws.Columns("1").Width = 15;
             ws.Cell(activeRow, 1).SetValue("First Name").Style.Font.SetBold(true);
@@ -439,9 +444,8 @@ namespace BHelp.Controllers
             workbook.SaveAs(ms);
             ms.Position = 0;
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                { FileDownloadName = "DriverMasterList" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
+                { FileDownloadName = role + "MasterList" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
         }
-
         public ActionResult MasterListToCSV(string role)
         {
             var listMaster = GetUserMasterList(role);
@@ -449,6 +453,7 @@ namespace BHelp.Controllers
             var sb = new StringBuilder();
             sb.Append("As of " + DateTime.Today.ToShortDateString());
             sb.AppendLine();
+            if (role == "OfficerOfTheDay") { role = "OD"; }
             sb.Append(role + "s");
             sb.AppendLine();
 
@@ -456,7 +461,7 @@ namespace BHelp.Controllers
             sb.Append("Last Name" + ',');
             sb.Append("Email" + ',');
             sb.Append("Phone" + ',');
-            sb.Append("Phone 2" + ',');
+            sb.Append("Phone 2");
             sb.AppendLine();
 
             foreach (var usr in listMaster)
@@ -475,14 +480,24 @@ namespace BHelp.Controllers
             response.ClearHeaders();
             response.ContentEncoding = Encoding.Unicode;
             response.AddHeader("content-disposition", "attachment;filename="
-                                                      + role +"s" + DateTime.Today.ToString("MM-dd-yy")
-                                                      + ".csv");
+                + role + "MasterList" + DateTime.Today.ToString("MM-dd-yy") + ".csv");
             response.ContentType = "text/plain";
             response.Write(sb);
             response.End();
             return null;
         }
-
+        public ActionResult ActiveVolunteerDetails()
+        {
+            var view = new UserViewModel() {UserList = AppRoutines.GetActiveUserList() };
+            using (var db = new BHelpContext())
+            {
+                foreach (var vol in view.UserList)
+                {
+                    vol.AllRolesForUser = db.GetStringAllRolesForUser(vol.Id);
+                }
+            }
+            return View(view);
+        }
         public ActionResult ActiveVolunteerDetailsToCSV()
         {
             using (var context = new BHelpContext())
@@ -531,8 +546,7 @@ namespace BHelp.Controllers
                 response.ClearHeaders();
                 response.ContentEncoding = Encoding.Unicode;
                 response.AddHeader("content-disposition", "attachment;filename="
-                                                          + "Active Volunteers" + DateTime.Today.ToString("MM-dd-yy")
-                                                          + ".csv");
+                    + "Active Volunteers" + DateTime.Today.ToString("MM-dd-yy") + ".csv");
                 response.ContentType = "text/plain";
                 response.Write(sb);
                 response.End();
@@ -582,7 +596,7 @@ namespace BHelp.Controllers
                     ws.Cell(activeRow, 5).SetValue(vol.City);
                     ws.Cell(activeRow, 6).SetValue(vol.State);
                     ws.Cell(activeRow, 7).SetValue(vol.Zip);
-                    ws.Cell(activeRow, 8).SetHyperlink(new XLHyperlink(@"mailto:" + vol.Email));
+                    ws.Cell(activeRow, 8).SetValue(vol.Email);
                     ws.Cell(activeRow, 9).SetValue(vol.PhoneNumber);
                     ws.Cell(activeRow, 10).SetValue(vol.PhoneNumber2);
                     var volRoles = context.GetStringAllRolesForUser(vol.Id);

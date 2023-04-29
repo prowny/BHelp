@@ -8,7 +8,6 @@ using BHelp.Models;
 using BHelp.ViewModels;
 using System.IO;
 using System.Text;
-using Castle.Core.Internal;
 using ClosedXML.Excel;
 
 namespace BHelp.Controllers
@@ -294,11 +293,11 @@ namespace BHelp.Controllers
             return report;
         }
 
-        [Authorize(Roles = "Administrator,Developer")]
-        public ActionResult ReturnToReportsMenu()
-        {
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("ReportsMenu", "Deliveries");
-        }
+        //[Authorize(Roles = "Administrator,Developer")]
+        //public ActionResult ReturnToReportsMenu()
+        //{
+        //    return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("ReportsMenu", "Deliveries");
+        //}
 
         protected override void Dispose(bool disposing)
         {

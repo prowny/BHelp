@@ -12,7 +12,7 @@
     <tr>
         <td><b>Active Clients Latest Deliveries</b></td>
         <td>&nbsp;by oldest date first (@Model.Count)</td>
-        <td>&nbsp;@Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu", "Deliveries")</td>
+        <td>&nbsp;@Html.ActionLink("Return to Reports Menu", "ReportsMenu", "Reports")</td>
         <td>&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home")</td>
     </tr>
 </table>
@@ -42,7 +42,7 @@
 <div>
     @Html.ActionLink("Download to CSV File", "ActiveClientsLatestDeliveriesToCSV", "Clients")
     <br />
-    @Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu", "Deliveries")
+    @Html.ActionLink("Return to Reports Menu", "ReportsMenu", "Reports")
     <br />
     @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
 </div>
