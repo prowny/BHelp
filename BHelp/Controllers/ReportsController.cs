@@ -374,7 +374,7 @@ namespace BHelp.Controllers
             return View(view);
         }
 
-        private List<ApplicationUser> GetUserMasterList(string roleName)
+        private static List<ApplicationUser> GetUserMasterList(string roleName)
         {
             var listActiveUsers = AppRoutines.GetActiveUserList();
             var roleId = AppRoutines.GetRoleId(roleName);
@@ -442,6 +442,47 @@ namespace BHelp.Controllers
                 { FileDownloadName = "DriverMasterList" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
         }
 
+        public ActionResult MasterListToCSV(string role)
+        {
+            var listMaster = GetUserMasterList(role);
+
+            var sb = new StringBuilder();
+            sb.Append("As of " + DateTime.Today.ToShortDateString());
+            sb.AppendLine();
+            sb.Append(role + "s");
+            sb.AppendLine();
+
+            sb.Append("First Name" + ',');
+            sb.Append("Last Name" + ',');
+            sb.Append("Email" + ',');
+            sb.Append("Phone" + ',');
+            sb.Append("Phone 2" + ',');
+            sb.AppendLine();
+
+            foreach (var usr in listMaster)
+            {
+                sb.Append(usr.FirstName + ',');
+                sb.Append(usr.LastName + ',');
+                sb.Append(usr.Email + ',');
+                sb.Append(usr.PhoneNumber + ',');
+                sb.Append(usr.PhoneNumber2);
+                sb.AppendLine();
+            }
+
+            var response = System.Web.HttpContext.Current.Response;
+            response.BufferOutput = true;
+            response.Clear();
+            response.ClearHeaders();
+            response.ContentEncoding = Encoding.Unicode;
+            response.AddHeader("content-disposition", "attachment;filename="
+                                                      + role +"s" + DateTime.Today.ToString("MM-dd-yy")
+                                                      + ".csv");
+            response.ContentType = "text/plain";
+            response.Write(sb);
+            response.End();
+            return null;
+        }
+
         public ActionResult ActiveVolunteerDetailsToCSV()
         {
             using (var context = new BHelpContext())
@@ -499,7 +540,6 @@ namespace BHelp.Controllers
 
             return null;
         }
-
         public ActionResult ActiveVolunteerDetailsToExcel()
         {
             using (var context = new BHelpContext())
@@ -542,7 +582,7 @@ namespace BHelp.Controllers
                     ws.Cell(activeRow, 5).SetValue(vol.City);
                     ws.Cell(activeRow, 6).SetValue(vol.State);
                     ws.Cell(activeRow, 7).SetValue(vol.Zip);
-                    ws.Cell(activeRow, 8).SetValue( vol.Email);  
+                    ws.Cell(activeRow, 8).SetHyperlink(new XLHyperlink(@"mailto:" + vol.Email));
                     ws.Cell(activeRow, 9).SetValue(vol.PhoneNumber);
                     ws.Cell(activeRow, 10).SetValue(vol.PhoneNumber2);
                     var volRoles = context.GetStringAllRolesForUser(vol.Id);

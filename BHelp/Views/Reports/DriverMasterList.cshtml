@@ -36,9 +36,11 @@
     </table>
 </div>
 <div>
-    <br/>
+    <br />
     @Html.ActionLink("Download to Excel File", "DriverMasterListToExcel", "Reports")
-    <br/>
+    <br />
+    @Html.ActionLink("Download to CSV File", "MasterListToCSV",  new{role = "Driver"})
+    <br />
     @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
 </div>
 </body>

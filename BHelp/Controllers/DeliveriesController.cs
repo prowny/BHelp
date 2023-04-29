@@ -340,25 +340,18 @@ namespace BHelp.Controllers
             view.BtnByDriverClearAll = btnByDriverClearAll;
 
             var db = new BHelpContext();
-            //{
             if (btnAllCheckAll != null || btnAllClearAll != null)
             {
-                //using (var db = new BHelpContext())
-                //{
                 var selectedDeliveries = db.Deliveries
                     .Where(d => d.Status == 0).OrderBy(d => d.DateDelivered)
                     .ThenBy(z => z.Zip).ThenBy(n => n.LastName).ToList();
                 view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnAllCheckAll);
                 view.ButtonGroupName = $"All";
                 return View(view);
-                //}
             }
-
-
+            
             if (btnByDateCheckAll != null || btnByDateClearAll != null)
             {
-                //using (var db = new BHelpContext())
-                //{
                 var selectedDeliveries = db.Deliveries.Where(d => d.Status == 0
                                                                   && d.DateDelivered ==
                                                                   model.SelectedDistinctDeliveryDate)
@@ -366,7 +359,6 @@ namespace BHelp.Controllers
                 view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnByDateCheckAll);
                 view.ButtonGroupName = $"ByDate";
                 return View(view);
-                //}
             }
 
             if (btnByDriverCheckAll != null || btnByDriverClearAll != null)
@@ -376,9 +368,7 @@ namespace BHelp.Controllers
                 {
                     selDistinctDriverId = null;
                 }
-
-                //using(var db = new BHelpContext())
-                //{
+                
                 var selectedDeliveries = db.Deliveries
                     .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
                     .ThenBy(n => n.LastName)
@@ -386,7 +376,6 @@ namespace BHelp.Controllers
                 view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnByDriverCheckAll);
                 view.ButtonGroupName = $"ByDriver";
                 return View(view);
-                //}
             }
             
             if (btnReplacementDeliveryDate != null)
@@ -427,8 +416,6 @@ namespace BHelp.Controllers
                     }
                 }
                 
-                //using (var db = new BHelpContext())
-                //{
                 foreach (var rec in selectedDeliveries)
                 {
                     if (rec.IsChecked)
@@ -437,7 +424,6 @@ namespace BHelp.Controllers
                         db.SetDeliveryDriver(rec.Id, view.ReplacementDriverId);
                     }
                 }
-                //}
 
                 return RedirectToAction("OpenFilters", new { btnCheckAll = "True" });
             }
