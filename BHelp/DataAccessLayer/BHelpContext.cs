@@ -3,8 +3,6 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using BHelp.Models;
 using System.Data.Entity;
 using System.Diagnostics;
-using System.Linq;
-using Castle.Core.Internal;
 
 namespace BHelp.DataAccessLayer
 {
@@ -43,33 +41,7 @@ namespace BHelp.DataAccessLayer
         public DbSet<Holiday> Holidays { get; set; }
 
         public DbSet<AddressCheck> AddressChecks { get; set; }
-
-        public string GetStringAllRolesForUser(string userId)
-        {
-
-            var sqlString = "SELECT Name from AspNetUserRoles "
-                            + "LEFT JOIN AspNetRoles ON AspNetRoles.Id = AspNetUserRoles.RoleId "
-                            + "WHERE AspNetUserRoles.UserId =  '" + userId + "'";
-
-            var isEmpty = this.Database.SqlQuery<string>(sqlString).IsNullOrEmpty();
-            var roleNameString = "";
-            if (!isEmpty)
-            {
-                var roleNameList = this.Database.SqlQuery<string>(sqlString).ToList();
-                foreach (var roleName in roleNameList)
-                {
-                    roleNameString = roleNameString + roleName + " ";
-                }
-            }
-
-            if (roleNameString.Length > 0)
-            {
-                return roleNameString.Substring(0, roleNameString.Length - 1);
-            }
-
-            return roleNameString;
-        }
-
+        
         public void SetDeliveryStatus(int id, int status)
         {
             var rec = this.Deliveries.Find(id);
@@ -108,6 +80,11 @@ namespace BHelp.DataAccessLayer
                 rec.DeliveryDateODId = odId;
                 this.SaveChanges();
             }
+        }
+
+        internal object SqlQuery<T>(T sqlString)
+        {
+            throw new NotImplementedException();
         }
     }
 }

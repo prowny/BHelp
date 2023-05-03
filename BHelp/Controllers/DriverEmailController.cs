@@ -19,18 +19,6 @@ namespace BHelp.Controllers
 
         public ActionResult DriverEmailDisplay(int year, int month)
         {
-            if (Session["Holidays"] == null)
-            { Session["Holidays"] = HolidayRoutines.GetHolidays(DateTime.Today.Year); }
-            // check if ANY calculated date in repeating holidays which have the proper year:
-            //var _year = boxDate.GetValueOrDefault().Year;
-            var holidays = (List<Holiday>)Session["Holidays"];
-            foreach (var hol in holidays)
-            {
-                if (hol.Repeat != 0 && hol.CalculatedDate.Year == year) { break; }
-                // else load requested year's holidays:
-                holidays = HolidayRoutines.GetHolidays(year);
-                Session["Holidays"] = holidays;
-            }
             if (Session["DriverList"] == null) Session["DriverList"] = GetDriverIdSelectList();
             if (Session["GroupList"] == null)
             {
@@ -83,6 +71,7 @@ namespace BHelp.Controllers
             content += "<td" + hdrStyle + "><b>THURSDAY</b></td>";
             content += "<td" + hdrStyle + "><b>FRIDAY</b></td></tr>";
 
+            var holidays = HolidayRoutines.GetHolidays(year);
             var row = 0;
             for (var i = 1; i < 6; i++)
             { 
@@ -95,7 +84,7 @@ namespace BHelp.Controllers
                     if (view.BoxDay[row, col] > DateTime.MinValue)
                     {
                         content += (view.BoxDay[row, col].Day.ToString("0"));
-                        if (HolidayRoutines.IsHoliday(view.BoxDay[row, col],  (List<Holiday>)Session["Holidays"]))
+                        if (HolidayRoutines.IsHoliday(view.BoxDay[row, col], holidays))
                         {
                             var holidayData = GetHolidayData(view.BoxDay[row, col]);
                             content += "<br />&nbsp;" + holidayData.Description + "<br />&nbsp;BH Closed";
@@ -434,7 +423,7 @@ namespace BHelp.Controllers
 
         private Holiday GetHolidayData(DateTime dt)
         {
-            var holidays = (List<Holiday>)Session["Holidays"];
+            var holidays = HolidayRoutines.GetHolidays(dt.Year);
             foreach (var holiday in holidays)
             {
                 if (dt == holiday.CalculatedDate)

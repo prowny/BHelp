@@ -57,27 +57,10 @@ namespace BHelp.Controllers
 
             var view = GetODScheduleViewModel();
 
-            if (Session["Holidays"] == null)
-            { Session["Holidays"] = HolidayRoutines.GetHolidays(DateTime.Today.Year); }
-
-            // check holidays for proper year:
-            var holidays = (List<Holiday>)Session["Holidays"];
-
-            // check if ANY calculated date in repeating holidays have the proper year:
-            var _year = boxDate.GetValueOrDefault().Year;
-            foreach (var hol in holidays)
-            {
-                if (hol.Repeat != 0 && hol.CalculatedDate.Year == _year) { break; }
-                // else load requested year's holidays:
-                holidays = HolidayRoutines.GetHolidays(_year);
-                Session["Holidays"] = holidays;
-            }
-
             if (User.IsInAnyRoles("Scheduler", "Developer", "Administrator"))
             {
                 var cutOffDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
                 if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer", "Administrator"))
-                    //if (view.Date >= cutOffDate)
                 {
                     view.AllowEdit = true;
                 }
@@ -443,16 +426,7 @@ namespace BHelp.Controllers
         }
          private Holiday GetHolidayData(DateTime dt)
         {
-            var holidays = (List<Holiday>)Session["Holidays"];
-            // check if ANY calculated date in proper year:
-            foreach (var hol in holidays)
-            {
-                if (hol.CalculatedDate.Year == dt.Year) { break; }
-                // else load requested year's holidays:
-                holidays = HolidayRoutines.GetHolidays(dt.Year);
-                Session["Holidays"] = holidays;
-            }
-
+            var holidays = HolidayRoutines.GetHolidays(dt.Year);
             return holidays.FirstOrDefault(holiday => dt == holiday.CalculatedDate);
         }
 
@@ -483,7 +457,6 @@ namespace BHelp.Controllers
             var odList = (List<SelectListItem>)Session["ODSelectList"];
             var odDataList = (List<ApplicationUser>)Session["ODDataList"];
             var holidayList = HolidayRoutines.GetHolidays(view.Year);
-            Session["Holidays"] = holidayList;
             for (var i = 1; i < 6; i++)
             {
                 for (var j = 1; j < 6; j++)
@@ -491,7 +464,7 @@ namespace BHelp.Controllers
                     view.BoxDay[i, j] = startDate.AddDays(7 * (i - 1) + j - startDayOfWk);
                     if (view.BoxDay[i, j] < startDate || view.BoxDay[i, j] > endDate) continue;
                     var idx = j + 5 * (i - 1);
-                    if (HolidayRoutines.IsHoliday(view.BoxDay[i, j], holidayList))  //(List<Holiday>)Session["Holidays"]))
+                    if (HolidayRoutines.IsHoliday(view.BoxDay[i, j], holidayList))
                     {
                         view.BoxHoliday[idx] = true;
                         var holidayData = GetHolidayData(view.BoxDay[i, j]);
