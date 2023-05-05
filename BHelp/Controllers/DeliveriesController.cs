@@ -554,7 +554,7 @@ namespace BHelp.Controllers
                         odv.OpenDeliveries[j, 8] = kidCount.ToString();
                         odv.OpenDeliveries[j, 9] = AppRoutines.GetNumberOfAdults(rec.Client.Id).ToString();
                         odv.OpenDeliveries[j, 10] = AppRoutines.GetNumberOfSeniors(rec.Client.Id).ToString();
-                        odv.OpenDeliveries[j, 11] = (familyMembers.Count + 1).ToString();
+                        odv.OpenDeliveries[j, 11] = familyMembers.Count.ToString();
                         odv.OpenDeliveries[j, 12] = AppRoutines.GetNamesAgesOfAllInHousehold(rec.Client.Id);
                         odv.OpenDeliveries[j, 13] = rec.FullBags.ToString();
                         odv.OpenDeliveries[j, 14] = rec.HalfBags.ToString();

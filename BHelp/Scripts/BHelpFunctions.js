@@ -1,29 +1,14 @@
-﻿function Test() {
-    var postData = { celltext };
-
-    window.$.ajax({
-        type: "POST",
-        url: "/DriverSchedule/SaveList",
-        data: postData,
-        success: function (data) {
-            alert(data.Result);
-        },
-        dataType: "json",
-        traditional: true
-    });
-}
-
-
-function UpdateCallLogDate(callLogDate) {
+﻿function UpdateCallLogDate(callLogDate) {
     window.$.ajax({
         url: '/OD/Index',
         data: { callLogDate: callLogDate },
         type: "POST",
-        success: function(data) {
+        success: function (data) {
             window.$("body").html(data); // to refresh the page
             //alert('Ajax hit'); 
         },
-        error: function(jqxhr, status, exception) {
+        error: function (jqxhr, status, exception)
+        {
             alert('Exception:', exception);
         }
     });
@@ -169,31 +154,8 @@ function UpdateDesiredDeliveryDate(ddDate) {
     });
 }
 
-//function GetGroupMembers()
-//{
-//    _groupId = window.$(this).val();
-   
-//    window.$.ajax({
-//        url: "/GroupMembers/GetGroupMembers",
-//        data: { groupId: _groupId },
-//        type: "GET",
-//        dataType: "JSON",
-//        success: function (data) {
-//            window.$("#groupMembersDDL").empty();
-//            var s = "";
-//            for (var i = 0; i < data.length; i++) {
-//                s += '<option value="' + data[i].Value + '">' + data[i].Text + '</option>';
-//            }
-//            window.$("#groupMembersDDL").html(s) ;
-        
-//            //window.$("#MembersDiv").show();
-//            //var dummy = "";
-//        }
-//    });   // $.ajax({
-//}
-
 function AddGroupMember() {
-    var _clientId = window.$(this).val();
+    //var _clientId = window.$(this).val();
     window.$.ajax({
         url: "/GroupMembers/AddGroupMember",
         type: "GET",
@@ -217,20 +179,3 @@ function AddGroupMember() {
         }
     });
 };
-
-//function GroupNameChange() {
-    //    var _groupId = window.$(this).val();
-    //    window.$("#selectClientDDL").empty();
-    //    window.$.ajax({
-    //        url: "/GroupMembers/GetGroupMembers",
-    //        data: { gpid: _groupId },
-    //        type: "GET",
-    //        dataType: "JSON",
-    //        success: function() {
-    //            window.$("#GroupMembersDiv").show();
-    //        },
-    //        error: function() {
-    //            window.$("#GroupMembersDiv").hide();
-    //        }
-    //    });
-    //}
