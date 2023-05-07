@@ -609,9 +609,6 @@
     <Content Include="Views\Home\ResetVoicemailPassword.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Deliveries\QORKReport.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Views\Documents\Upload.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -680,6 +677,7 @@
     <Content Include="Views\Reports\DriverMasterList.cshtml" />
     <Content Include="Views\Reports\ODMasterList.cshtml" />
     <Content Include="Views\Reports\ActiveVolunteerDetails.cshtml" />
+    <Content Include="Views\Reports\QORKReport.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -830,9 +828,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Deliveries\CountyReport.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Deliveries\QuorkReport.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Users\VolunteerDatesReport.cshtml" />

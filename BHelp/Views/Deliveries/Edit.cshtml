@@ -47,7 +47,7 @@
                     <b>Email:</b>&nbsp;@Model.Email
                 </span>
                 <b>Permanent Notes:</b>&nbsp;@Html.TextBoxFor(n => n.Notes,
- new{@readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip })
+new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip })
             </div>
             <span>
                 <b>Family:</b>&nbsp;
@@ -61,7 +61,7 @@
             <br />
 
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            @Html.HiddenFor(model => model.Id)
+                @Html.HiddenFor(model => Model.ClientId, new { id = "ClientId" })
             <hr /> // horizontal line
             <div class="form-group">
                 <table>
@@ -76,7 +76,8 @@
 
                         <td> &nbsp;&nbsp;&nbsp;&nbsp;Delivery Date:</td>
                         <td>
-                            @Html.TextBoxFor(model => model.DateDelivered, "{0:MM/dd/yyyy}",
+                            @Html.TextBoxFor(model => model.DateDelivered,
+                                "{0:MM/dd/yyyy}",
                             new { id = "DateDelivered", style = "width: 75px;" })
                         </td>
                         <td style="color: darkmagenta"> &#8592;Click to change</td>
@@ -165,7 +166,7 @@
             <br />
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
+                    <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
                     @Html.ActionLink("Delete", "Delete", new { id = Model.Id, returnURL = Model.ReturnURL }, new { id = "DeleteButton" })
                 </div>
             </div>
@@ -180,7 +181,7 @@
                 {
                     @Html.ActionLink("Back to Delivery List", "CallLogIndividual", new { clientId = Model.ClientId })
                 }
-                
+
                 @if (Model.ReturnURL.Contains("CallLogByDateDelivered"))
                 {
                     @Html.ActionLink("Back to Delivery List", "CallLogByDateDelivered", new { clientId = Model.ClientId })
@@ -192,7 +193,7 @@
                 }
             </div>
             <div>
-                @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)            
+                @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
             </div>
         }
     </section>
@@ -203,11 +204,7 @@
         window.$("#LogDate").datepicker();
     });
 </script> @*LogDate datepicker*@
-<script>
-    $(function () {
-        window.$("#DesiredDeliveryDate").datepicker();
-    });
-</script> @*DeliveryDate datepicker*@
+
 <script>
     $(function () {
         window.$("#DateDelivered").datepicker();
@@ -220,5 +217,11 @@
             changemonth: true,
             changeyear: true
         });
+    });
+</script>
+<script>
+    $("#DateDelivered").change(function() {
+        var dt = window.$("#DateDelivered").val();
+        UpdateDeliveryDateOD(dt);
     });
 </script>

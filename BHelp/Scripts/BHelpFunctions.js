@@ -14,6 +14,22 @@
     });
 }
 
+function UpdateDeliveryDateOD(newDeliveryDate) {
+    window.$.ajax({
+        url: '/Deliveries/Edit',
+        data: { id: 0, newDeliveryDate: newDeliveryDate },
+        type: "GET",
+        success: function (data) {
+            window.$("body").html(data); // to refresh the page
+            //alert('Ajax hit'); 
+        },
+        error: function (jqxhr, status, exception) {
+            alert('Exception:', exception);
+        }
+    });
+}
+
+
 function UpdateDriverLogDate(callLogDate) {
     window.$.ajax({
         url: '/Driver/Index',

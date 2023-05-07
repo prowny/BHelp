@@ -770,7 +770,7 @@ namespace BHelp.Controllers
 
             // GET: Deliveries/Edit/5
             [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
-            public ActionResult Edit(int? id, string returnURL)
+            public ActionResult Edit(int? id, string returnURL, DateTime? newDeliveryDate)
             {
                 using (var db = new BHelpContext())
                 {
@@ -778,28 +778,37 @@ namespace BHelp.Controllers
                     {
                         case null:
                             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                        case 0: // coming from UpdateDesiredDeliveryDate
+                        case 0: // coming from UpdateDeliveryDateOD
                         {
-                            id = Convert.ToInt32(TempData["CurrentDeliveryId"]);
-                            var del = db.Deliveries.Find(id);
-                            if (del != null)
+                            // get new delivery date ODId:
+                            var _view = (DeliveryViewModel)Session["CurrentDeliveryViewModel"];
+                            var odSched = db.ODSchedules
+                                .FirstOrDefault(d => d.Date == newDeliveryDate);
+                            if (odSched != null)
                             {
-                                if (del.Status == 1 && del.FullBags == 0 && del.HalfBags == 0
-                                    && del.KidSnacks == 0 && del.GiftCards == 0)
+                                if (odSched.ODId != null)
                                 {
-                                    // Cannot save delivery as completed with zero products: 
-                                    return RedirectToAction("Edit", new { id = del.Id });
+                                    _view.DateDelivered = newDeliveryDate;
+                                    _view.DeliveryDateODId = odSched.ODId;
+                                    _view.DeliveryDateODList = _view.ODList;
+                                    foreach (var item in _view.DeliveryDateODList)
+                                    {
+                                        if (item.Value == _view.DeliveryDateODId)
+                                        {
+                                            item.Selected = true;
+                                            break;
+                                        }
+                                    }
                                 }
-
-                                db.SaveChanges();
                             }
 
-                            break;
+                            Session["CurrentDeliveryViewModel"] = _view;
+                            // return to View page with new Delivery Date OD:
+                            return View(_view);
                         }
                     }
 
-                    TempData["CurrentDeliveryId"] = id.ToString();
-
+                    Session["CurrentDeliveryId"] = id.ToString();
                     var delivery = db.Deliveries.Find(id);
                     if (delivery == null)
                     {
@@ -844,6 +853,7 @@ namespace BHelp.Controllers
                             viewModel.SelectedStatus = "Undelivered";
                             break;
                     }
+
 
                     if (Request.UrlReferrer != null)
                     {
@@ -925,6 +935,7 @@ namespace BHelp.Controllers
                     }
 
                     viewModel.Zip = delivery.Zip;
+                    Session["CurrentDeliveryViewModel"] = viewModel; // save for returning with new Del Date
                     return View(viewModel);
                 }
             }
@@ -947,7 +958,7 @@ namespace BHelp.Controllers
                     }
 
                     view.ClientSelectList = clientSelectList;
-                    view.DateDeliveredString = string.Format("{0:MM/dd/yyyy}", view.DateDelivered);
+                    view.DateDeliveredString = $"{view.DateDelivered:MM/dd/yyyy}";
                     return View(view);
                 }
             }
@@ -1012,6 +1023,7 @@ namespace BHelp.Controllers
                 {
                     if (ModelState.IsValid)
                     {
+                        if (delivery.Id == 0) delivery.Id = (Convert.ToInt32(Session["CurrentDeliveryId"]));
                         var updateData = db.Deliveries.Find(delivery.Id);
 
                         if (updateData != null)
@@ -2170,272 +2182,7 @@ namespace BHelp.Controllers
                 return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                     { FileDownloadName = view.ReportTitle + ".xlsx" };
             }
-
-        [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
-        public ActionResult QORKReportToExcel(string endingDate)
-        {
-            DateTime endDate;
-            if (endingDate.IsNullOrEmpty())
-            {
-                // Ends on a Sunday - weekday Monday is 1, Saturday is 6, Sunday is 0
-                // If today is a  Sunday, default to this week
-                var weekDay = Convert.ToInt32(DateTime.Today.DayOfWeek);
-                if (weekDay == 0) // Default to this this Sunday, else Sunday last week
-                { endDate = DateTime.Today; }
-                else
-                {
-                    var lastSunday = DateTime.Now.AddDays(-1);
-                    while (lastSunday.DayOfWeek != DayOfWeek.Sunday) lastSunday = lastSunday.AddDays(-1);
-                    endDate = lastSunday;
-                }
-            }
-            else
-            {
-                endDate = Convert.ToDateTime(endingDate);
-            }
-            
-            var view = GetQORKReportView(endDate);
-            view.ReportTitle = "Bethesda Help, Inc. QORK Report for week ending " + endDate.ToString("MM/dd/yyyy");
-
-            var workbook = new XLWorkbook();
-            var ws = workbook.Worksheets.Add("QORK Report " + view.EndDateString);
-
-            var activeRow = 1;
-            ws.Cell(activeRow, 1).SetValue(view.ReportTitle);
-            activeRow++;
-            for (int i = 0; i < view.QORKTitles.Length; i++)
-            {
-                ws.Cell(activeRow, i + 1).SetValue(view.QORKTitles[i]);
-            }
-            
-            for (var i = 0; i < view.ZipCodes.Count; i++)
-            {
-                activeRow++;
-                ws.Cell(activeRow, 1).SetValue(view.ZipCodes[i]);
-                for (var j = 0; j < view.QORKTitles.Length; j++)
-                {
-                    if (j == 6)
-                    {
-                        ws.Cell(activeRow, j +1).SetValue("N/A");
-                        ws.Cell(activeRow, j + 2).SetValue(view.Counts[0, j + 1, i]);
-                        break;
-                    }
-                    else
-                    {
-                        ws.Cell(activeRow, j + 2).SetValue(view.Counts[0, j + 1, i] );
-                    }
-                }
-            }
-
-            activeRow++;
-            ws.Cell(activeRow, 1).SetValue("Total Served:");
-            for (var i = 0; i < view.QORKTitles.Length; i++)
-            {
-                if (i == 6)
-                {
-                    ws.Cell(activeRow, i + 1).SetValue("N/A");
-                    ws.Cell(activeRow, i + 2).SetValue(view.Counts[0, i + 1, view.ZipCount]);
-                    break;
-                }
-                else
-                {
-                    ws.Cell(activeRow, i + 2).SetValue(view.Counts[0, i + 1, view.ZipCount]);
-                }
-            }
-
-            activeRow++;
-            ws.Cell(activeRow, 1).SetValue("Food Program Hours:");
-            ws.Cell(activeRow, 2).SetValue(view.HoursTotal[2,2]);
-            ws.Cell(activeRow, 3).SetValue("People Count:");
-            ws.Cell(activeRow, 4).SetValue(view.HoursTotal[2, 1]);
-            
-            ws.Columns().AdjustToContents();
-            var ms = new MemoryStream();
-            workbook.SaveAs(ms);
-            ms.Position = 0;
-            return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-            { FileDownloadName = "QORK Report " + view.EndDateString + ".xlsx" };
-        }
         
-        [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
-            public ActionResult QORKReport(string endingDate = "") // New QORK Report 02/22
-            {
-                DateTime endDate;
-                if (endingDate.IsNullOrEmpty())
-                {
-                    // Ends on a Sunday - weekday Monday is 1, Saturday is 6, Sunday is 0
-                    // If today is a  Sunday, default to this week
-                    int weekDay = Convert.ToInt32(DateTime.Today.DayOfWeek);
-                    if (weekDay == 0) // Default to this this Sunday, else Sunday last week
-                    { endDate = DateTime.Today; }
-                    else
-                    {
-                        DateTime lastSunday = DateTime.Now.AddDays(-1);
-                        while (lastSunday.DayOfWeek != DayOfWeek.Sunday) lastSunday = lastSunday.AddDays(-1);
-                        endDate = lastSunday;
-                    }
-                }
-                else
-                {
-                    endDate = Convert.ToDateTime(endingDate);
-                }
-                var view = GetQORKReportView(endDate);
-                return View(view);
-            }
-            private ReportsViewModel GetQORKReportView(DateTime endDate) // new QORK Report 02/22
-            {
-                using (var db = new BHelpContext())
-                {
-                    DateTime startDate = endDate.AddDays(-6);
-                    var view = new ReportsViewModel()
-                    {
-                        BeginDate = startDate,
-                        EndDate = endDate
-                    };
-                    view.EndDateString = view.EndDate.ToString("M-d-yy");
-                    view.DateRangeTitle = startDate.ToShortDateString() + " - " + endDate.ToShortDateString();
-                    view.ReportTitle = view.EndDateString + " QORK Weekly Report";
-                    view.ZipCodes = AppRoutines.GetZipCodesList();
-                    // Load Counts - extra zip code is for totals row.
-                    view.Counts = new int[1, 9, view.ZipCodes.Count + 1]; // 0 (unused), Counts, Zipcodes
-                    view.ZipCount = view.ZipCodes.Count;
-                    var deliveries = db.Deliveries
-                        .Where(d => d.Status == 1 && d.DateDelivered >= startDate
-                                                  && d.DateDelivered < endDate).ToList();
-
-                    foreach (var delivery in deliveries)
-                    {
-                        var zipCount = view.ZipCodes.Count; // Extra zip code Row is for totals
-                        for (var zip = 0; zip < view.ZipCodes.Count; zip++)
-                        {
-                            if (delivery.Zip == view.ZipCodes[zip]) // 0 (unused), Column, ZipCode
-                            {
-                                var c = Convert.ToInt32(delivery.Children);
-                                var a = Convert.ToInt32(delivery.Adults);
-                                var s = Convert.ToInt32(delivery.Seniors);
-                                view.Counts[0, 1, zip] += c;
-                                view.Counts[0, 1, zipCount] += c; //# children
-                                view.Counts[0, 2, zip] += a;
-                                view.Counts[0, 2, zipCount] += a; //# adults
-                                view.Counts[0, 3, zip] += s;
-                                view.Counts[0, 3, zipCount] += s; //# seniors
-                                view.Counts[0, 4, zip]++;
-                                view.Counts[0, 4, zipCount]++; //#  households served
-                                var lbs = Convert.ToInt32(delivery.FullBags * 10 + delivery.HalfBags * 9);
-                                view.Counts[0, 5, zip] += lbs;
-                                view.Counts[0, 5, zipCount] += lbs; //pounds distributed
-                                // column 6 - prepared meals served
-                                view.Counts[0, 7, zip] += (a + c + s);
-                                view.Counts[0, 7, zipCount] += (a + c + s); //# individuals served
-                            }
-                        }
-                    }
-
-                    // Section to add Volunteer Hours Summary ========================
-                    var hoursList = db.VolunteerHours.Where(h => h.Date >= startDate && h.Date <= endDate).ToList();
-                    double totalAHours = 0;
-                    double totalFHours = 0;
-                    double totalMHours = 0;
-                    var totalAPeople = 0;
-                    var totalFPeople = 0;
-                    var totalMPeople = 0;
-                    if (hoursList.Count != 0)
-                    {
-                        foreach (var rec in hoursList)
-                        {
-                            switch (rec.Category)
-                            {
-                                case "A":
-                                    totalAHours += rec.Hours + rec.Minutes / 60f;
-                                    totalAPeople += rec.PeopleCount;
-                                    break;
-                                case "F":
-                                    totalFHours += rec.Hours + rec.Minutes / 60f;
-                                    totalFPeople += rec.PeopleCount;
-                                    break;
-                                case "M":
-                                    totalMHours += rec.Hours + rec.Minutes / 60f;
-                                    totalMPeople += rec.PeopleCount;
-                                    break;
-                            }
-                        }
-
-                        view.HoursTotal = new string[3, 3]; // A-F-M, total volunteer hours 
-                        view.HoursTotal[0, 0] = "Administration";
-                        view.HoursTotal[0, 1] = totalAPeople.ToString();
-                        view.HoursTotal[0, 2] = totalAHours.ToString("#.00");
-                        view.HoursTotal[1, 0] = "Management";
-                        view.HoursTotal[1, 1] = totalMPeople.ToString();
-                        view.HoursTotal[1, 2] = totalMHours.ToString("#.00");
-                        view.HoursTotal[2, 0] = "Food Program";
-                        view.HoursTotal[2, 1] = totalFPeople.ToString();
-                        view.HoursTotal[2, 2] = totalFHours.ToString("#.00");
-                        view.ShowHoursTotals = true;
-                    }
-
-                    view.QORKTitles = new string[8];
-                    view.QORKTitles[0] = "Zip Code";
-                    view.QORKTitles[1] = "Children Served (<18)";
-                    view.QORKTitles[2] = "Adult Non-seniors Served(18-59)";
-                    view.QORKTitles[3] = "Seniors Served (60+)";
-                    view.QORKTitles[4] = "Households Served";
-                    view.QORKTitles[5] = "Pounds Distributed";
-                    view.QORKTitles[6] = "Prepared Meals Served";
-                    view.QORKTitles[7] = "Individuals Served";
-
-                    return view;
-                }
-            }
-
-            [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
-            public ActionResult QORKReportToCSV(string endingDate = "")
-            {
-                DateTime endDate;
-                if (endingDate.IsNullOrEmpty())
-                {
-                    // Ends on a Sunday - weekday Monday is 1, Saturday is 6, Sunday is 0
-                    // If today is a  Sunday, default to this week
-                    var weekDay = Convert.ToInt32(DateTime.Today.DayOfWeek);
-                    if (weekDay == 0) // Default to this this Sunday, else Sunday last week
-                    { endDate = DateTime.Today; }
-                    else
-                    {
-                        var lastSunday = DateTime.Now.AddDays(-1);
-                        while (lastSunday.DayOfWeek != DayOfWeek.Sunday) lastSunday = lastSunday.AddDays(-1);
-                        endDate = lastSunday;
-                    }
-                }
-                else
-                {
-                    endDate = Convert.ToDateTime(endingDate);
-                }
-                var view = GetQORKReportView(endDate);
-                view.ReportTitle = "\"" + "Bethesda Help, Inc. QORK Report for week ending " + "\"" + endDate.ToString("MM/dd/yyyy");
-
-                var result = AppRoutines.QORKReportToCSV(view);
-                return result;
-            }
-            public ActionResult SaturdayNext(DateTime saturday)
-            {
-                saturday = saturday.AddDays(7);
-                return RedirectToAction("QuorkReport", new { endingDate = saturday.ToShortDateString() });
-            }
-            public ActionResult SaturdayPrevious(DateTime saturday)
-            {
-                saturday = saturday.AddDays(-7);
-                return RedirectToAction("QuorkReport", new{endingDate = saturday.ToShortDateString()});
-            }
-            public ActionResult SundayNext(DateTime sunday)
-            {
-                sunday = sunday.AddDays(7);
-                return RedirectToAction("QORKReport", new { endingDate = sunday.ToShortDateString() });
-            }
-            public ActionResult SundayPrevious(DateTime sunday)
-            {
-                sunday = sunday.AddDays(-7);
-                return RedirectToAction("QORKReport", new { endingDate = sunday.ToShortDateString() });
-            }
-
         [Authorize(Roles = "Reports,Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult ReturnToReportsMenu()
         {

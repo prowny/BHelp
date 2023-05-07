@@ -866,5 +866,21 @@ namespace BHelp.Controllers
             var holidays = HolidayRoutines.GetHolidays(dt.Year);
             return holidays.Find(h => h.CalculatedDate == dt);
         }
+
+        [Authorize(Roles = "Reports,Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
+        public ActionResult ReturnToReportsMenu()
+        {
+            return RedirectToAction("ReportsMenu", "Reports");
+        }
+        public ActionResult SundayNext(DateTime sunday)
+        {
+            sunday = sunday.AddDays(7);
+            return RedirectToAction("QORKReport", new { endingDate = sunday.ToShortDateString() });
+        }
+        public ActionResult SundayPrevious(DateTime sunday)
+        {
+            sunday = sunday.AddDays(-7);
+            return RedirectToAction("QORKReport", new { endingDate = sunday.ToShortDateString() });
+        }
     }
 }
