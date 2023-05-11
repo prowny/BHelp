@@ -104,21 +104,25 @@ namespace BHelp.ViewModels
         public DateTime HistoryEndDate { get; set; }
         public string ReturnURL { get; set; }
         public IEnumerable<SelectListItem> SnapshotFamily { get; set; }
-        public HouseholdViewModel Household { get; set; }
+        //public HouseholdViewModel Household { get; set; }
         public string DateDeliveredString { get; set; }
         public string ReportTitle { get; set; }
         public DateTime NextDeliveryEligibleDate { get; set; }
         public DateTime NextGiftCardEligibleDate { get; set; }
         public Boolean EligiibilityRulesException { get; set; }
         public Boolean OkToEdit { get; set; }
-        public int TotalHouseholdCount { get; set; }  // Total in DeliveyList
-        public int TotalChildren { get; set; }  // Total in DeliveyList
-        public int TotalAdults { get; set; }  // Total in DeliveyList
-        public int TotalSeniors { get; set; }  // Total in DeliveyList
-        public int TotalFullBags { get; set; }  // Total in DeliveyList
-        public int TotalHalfBags { get; set; }  // Total in DeliveyList
-        public int TotalKidSnacks { get; set; }  // Total in DeliveyList
-        public int TotalGiftCards { get; set; }  // Total in DeliveyList
-        public int TotalPoundsOfFood { get; set; }  // Total in DeliveyList
+        public int TotalHouseholdCount { get; set; }  // Total in DeliveryList
+        public int TotalChildren { get; set; }  // Total in DeliveryList
+        public int TotalAdults { get; set; }  // Total in DeliveryList
+        public int TotalSeniors { get; set; }  // Total in DeliveryList
+        public int TotalFullBags { get; set; }  // Total in DeliveryList
+        public int TotalHalfBags { get; set; }  // Total in DeliveryList
+        public int TotalKidSnacks { get; set; }  // Total in DeliveryList
+        public int TotalGiftCards { get; set; }  // Total in DeliveryList
+        public int TotalPoundsOfFood { get; set; }  // Total in DeliveryList
+
+        // For change in Edit DateDelivered
+        // which calls Ajax Function UpdateDeliveryDateOD
+        public DateTime? NewDeliveryDate { get; set; }
     }
 }

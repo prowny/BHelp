@@ -20,7 +20,7 @@
 </head>
 <body>
     <section id="editForm">
-        @using (Html.BeginForm("Edit", "Deliveries", FormMethod.Post))
+        @using (Html.BeginForm("EditPost", "Deliveries", FormMethod.Post))
         {
             <input type="hidden" name="ReturnUrl" value="@Model.ReturnURL" />
             <input type="hidden" name="HistoryStartDate" value="@Model.HistoryStartDate" />
@@ -29,6 +29,8 @@
             <input type="hidden" name="ClientNameAddress" value="@Model.ClientNameAddress" />
             <input type="hidden" name="Phone" value="@Model.Phone" />
             @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => Model.Id, new { id = "DeliveryId" })
+
             <h4>Edit Delivery</h4>
             <hr /> // horizontal line
             <div class="form-horizontal">
@@ -51,9 +53,16 @@ new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip 
             </div>
             <span>
                 <b>Family:</b>&nbsp;
-                @if (Model.SnapshotFamily != null)
+                @if (Model.SnapshotFamily == null)
                 {
                     @Html.Label("(none)")
+                }
+                else
+                {
+                    foreach (var mbr in Model.SnapshotFamily)
+                    {
+                        @Html.Label(mbr.Text)
+                    }
                 }
                 <b>&nbsp;Gift Cards This Month:&nbsp;</b>@Html.Label(Model.GiftCardsThisMonth.ToString())
                 <b>&nbsp;Gift Cards Eligible:</b>&nbsp;@Html.Label(Model.GiftCardsEligible.ToString())
@@ -62,6 +71,7 @@ new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip 
 
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 @Html.HiddenFor(model => Model.ClientId, new { id = "ClientId" })
+                @Html.HiddenFor(m => m.Status, new{ id = "Status"})
             <hr /> // horizontal line
             <div class="form-group">
                 <table>
@@ -95,19 +105,19 @@ new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip 
                         @if (Model.ODList != null)
                         {
                             <td>
-                                @Html.DropDownListFor(model => model.ODId, new SelectList(Model.ODList, "Value", "Text"), new { @class = "form-control" })
+                                @Html.DropDownListFor(model => model.ODId, new SelectList(Model.ODList, "Value", "Text"), new { id = "ODId", @class = "form-control" })
                                 @Html.ValidationMessageFor(model => model.ODId, "", new { @class = "text-danger" })
                             </td>
                             <td>
-                                @Html.DropDownListFor(model => model.DeliveryDateODId, new SelectList(Model.ODList, "Value", "Text"), new { @class = "form-control" })
+                                @Html.DropDownListFor(model => model.DeliveryDateODId, new SelectList(Model.DeliveryDateODList, "Value", "Text", selectedValue: Model.DeliveryDateODId ), new { id = "DeliveryDateODId", @class = "form-control" })
                                 @Html.ValidationMessageFor(model => model.DeliveryDateODId, "", new { @class = "text-danger" })
                             </td>
                             <td>
                                 @Html.DropDownListFor(model => model.DriverId, new SelectList(Model.DriversList, "Value", "Text"), new { @class = "form-control" })
-                                @Html.ValidationMessageFor(model => model.DriverId, "", new { @class = "text-danger" })
+                                @Html.ValidationMessageFor(model => model.DriverId, "", new { id = "DriverId", @class = "text-danger" })
                             </td>
                             <td>
-                                @Html.DropDownListFor(model => model.Zip, new SelectList(Model.ZipCodes, "Value", "Text"), new { @class = "form-control" })
+                                @Html.DropDownListFor(model => model.Zip, new SelectList(Model.ZipCodes, "Value", "Text"), new { id = "Zip", @class = "form-control" })
                                 @Html.ValidationMessageFor(model => model.Zip, "", new { @class = "text-danger" })
                             </td>
                         }
@@ -133,22 +143,22 @@ new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip 
                     <tr>
                         <td>@Html.LabelFor(model => model.FullBags, htmlAttributes: new { @class = "control-label col-md-2" })</td>
                         <td>
-                            @Html.EditorFor(model => model.FullBags, new { htmlAttributes = new { style = "width:35px", min = 0, max = 5 } })
+                            @Html.EditorFor(model => model.FullBags, new { htmlAttributes = new { id = "FullBags", style = "width:35px", min = 0, max = 5 } })
                             @Html.ValidationMessageFor(model => model.FullBags, "", new { @class = "text-danger" })
                         </td>
-                        <td>@Html.LabelFor(model => model.HalfBags, htmlAttributes: new { @class = "control-label col-md-2" })</td>
+                        <td>@Html.LabelFor(model => model.HalfBags, htmlAttributes: new {  @class = "control-label col-md-2" })</td>
                         <td>
-                            @Html.EditorFor(model => model.HalfBags, new { htmlAttributes = new { style = "width:35px", min = 0, max = 3 } })
+                            @Html.EditorFor(model => model.HalfBags, new { htmlAttributes = new { id = "HalfBags", style = "width:35px", min = 0, max = 3 } })
                             @Html.ValidationMessageFor(model => model.HalfBags, "", new { @class = "text-danger" })
                         </td>
                         <td>@Html.LabelFor(model => model.KidSnacks, htmlAttributes: new { @class = "control-label col-md-2" })</td>
                         <td>
-                            @Html.EditorFor(model => model.KidSnacks, new { htmlAttributes = new { style = "width:35px", min = 0, max = 20 } })
+                            @Html.EditorFor(model => model.KidSnacks, new { htmlAttributes = new { id="KidSnacks", style = "width:35px", min = 0, max = 20 } })
                             @Html.ValidationMessageFor(model => model.KidSnacks, "", new { @class = "text-danger" })
                         </td>
                         <td>@Html.LabelFor(model => model.GiftCards, htmlAttributes: new { @class = "control-label col-md-2" })</td>
                         <td>
-                            @Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { style = "width:35px", min = 0, max = 2 } })
+                            @Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { id="GiftCards", style = "width:35px", min = 0, max = 2 } })
                             @Html.ValidationMessageFor(model => model.GiftCards, "", new { @class = "text-danger" })
                         </td>
                     </tr>
@@ -220,8 +230,37 @@ new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip 
     });
 </script>
 <script>
-    $("#DateDelivered").change(function() {
-        var dt = window.$("#DateDelivered").val();
-        UpdateDeliveryDateOD(dt);
+    $("#DateDelivered").change(function () {
+        var Id = window.$("#DeliveryId").val();
+        var newdatedelivered = window.$("#DateDelivered").val();
+        var returnurl = window.$("#ReturnURL").val();
+        var odid = window.$("#ODId").val();
+        var odnotes = window.$("#ODNotes").val();
+        var drivernotes = window.$("#DriverNotes").val();
+        var zip = window.$("#Zip").val();
+        var fullbags = window.$("#FullBags").val();
+        var halfbags = window.$("#HalfBags").val();
+        var kidsnacks = window.$("#KidSnacks").val();
+        var giftcards = window.$("#GiftCards").val();
+
+        var data = "id=" + Id + "|" + "newdatedelivered=" + newdatedelivered + "|";
+        data += "returnurl=" + returnurl + "|" + "odid=" + odid + "|" + "odnotes=" + odnotes;
+        data += "drivernotes=" + drivernotes + "|" + "zip=" + zip + "|" + "fullbags=" + fullbags;
+        data += "halfbags=" + halfbags + "|" + "kidsnacks=" + kidsnacks + "|" + "giftcards=" + giftcards;
+        window.$.ajax({
+            type: "Get",
+            url: "/Deliveries/EditDateDeliveredChange?parameters=" + data,  //remember change the controller to your owns.
+            success: function () {
+                //$("#productcontainer").html("");
+                //$("#productcontainer").html(data);
+            },
+            error: function (response) {
+                console.log(response.responseText);
+            }
+        });
+        //var url = "/Deliveries/EditDateDeliveredChange";
+        //window.$.get(url, {parameter: data});
+        //var json = window.Json.stringify(data);
+        //UpdateDeliveryDateOD(data);
     });
 </script>

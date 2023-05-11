@@ -14,17 +14,45 @@
     });
 }
 
-function UpdateDeliveryDateOD(newDeliveryDate) {
+function UpdateDeliveryDateOD(json) {
+    //var json = [
+    //    {
+    //        Id: window.$("#DeliveryId").val,
+    //      _NewDateDelivered: window.$("#DateDelivered").val,
+    //        _ODId: window.$("#ODId").val,
+    //        _ODNotes: window.$("#ODNotes").val(),
+    //        _DriverNotes: window.$("#DriverNotes").val(),
+    //        _Zip: window.$("#Zip").val(),
+    //        _FullBags: window.$("#FullBags").val(),
+    //        _HalfBags: window.$("#HalfBags").val(),
+    //        _KidSnacks: window.$("#KidSnacks").val(),
+    //        _GiftCards: window.$("#GiftCards").val()
+     //   }
+    //];
+    //json = json.replace("\"", "'");
+
     window.$.ajax({
-        url: '/Deliveries/Edit',
-        data: { id: 0, newDeliveryDate: newDeliveryDate },
         type: "GET",
+        url: "/Deliveries/Edit",
+        data: json,
+        dataType: "JSON",
+            //_NewDateDelivered: window.$("#DateDelivered").val,
+            //_ODId: window.$("#ODId").val,
+            //_ODNotes: window.$("#ODNotes").val(),
+            //_DriverNotes: window.$("#DriverNotes").val(),
+            //_Zip: window.$("#Zip").val(),
+            //_FullBags: window.$("#FullBags").val(),
+            //_HalfBags: window.$("#HalfBags").val(),
+            //_KidSnacks: window.$("#KidSnacks").val(),
+            //_GiftCards: window.$("#GiftCards").val()
+        //},
+       
         success: function (data) {
             window.$("body").html(data); // to refresh the page
             //alert('Ajax hit'); 
         },
-        error: function (jqxhr, status, exception) {
-            alert('Exception:', exception);
+        error: function (_jqxhr, _status, exception) {
+           alert('Exception:', exception);
         }
     });
 }
