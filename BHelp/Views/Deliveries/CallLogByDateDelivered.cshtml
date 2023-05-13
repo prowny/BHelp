@@ -83,7 +83,7 @@
             <tr>
                 @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
                 {
-                    <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id, delivery.DateDeliveredString })</td>
+                    <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id })</td>
                 }
                 else
                 {
@@ -108,10 +108,10 @@
                 <td style="text-align: center">@delivery.PoundsOfFood</td>
                 @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
                 {
-                    <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id, delivery.DateDeliveredString })</td>
+                    <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id })</td>
                 }
             </tr>
-                }
+                    }
             <tr>
                 <td>Totals</td>
                 <td></td>

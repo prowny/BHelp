@@ -750,252 +750,252 @@ namespace BHelp.Controllers
             }
             private Client GetClientData(int id)
             {
-                using (var db = new BHelpContext())
+                var _client = AppRoutines.GetClientRecord(id);
+                if (_client != null)
                 {
-                    var _client = db.Clients.Find(id);
-                    if (_client != null)
-                    {
-                        _client.ClientNameAddress = _client.LastName + ", " + _client.FirstName
-                                                    + " " + _client.StreetNumber + " " + _client.StreetName;
-                        _client.NameAddressToolTip = _client.ClientNameAddress.Replace(" ", "\u00a0");
-                        var s = _client.ClientNameAddress;
-                        s = s.Length <= 30 ? s : s.Substring(0, 30) + "...";
-                        _client.ClientNameAddress = s;
-                        return _client;
-                    }
-
-                    return null;
+                    _client.ClientNameAddress = _client.LastName + ", " + _client.FirstName
+                                                + " " + _client.StreetNumber + " " + _client.StreetName;
+                    _client.NameAddressToolTip = _client.ClientNameAddress.Replace(" ", "\u00a0");
+                    var s = _client.ClientNameAddress;
+                    s = s.Length <= 30 ? s : s.Substring(0, 30) + "...";
+                    _client.ClientNameAddress = s;
+                    return _client;
                 }
+
+                return null;
             }
 
             // GET: Deliveries/Edit/5
-            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
+            [HttpGet, Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
             public ActionResult Edit(int? id, string returnURL,
                 DateTime? _NewDateDelivered, string _ODId, string _DeliveryDateODId,
                 string _ODNotes, string _DriverNotes, string _Zip,
-                int? _Status, int? _FullBags, int? _HalfBags, int? _KidSnacks, int? _GiftCards)
+                string _Status, int? _FullBags, int? _HalfBags, int? _KidSnacks, int? _GiftCards,
+                DateTime? _HistoryStartDate, DateTime? _HistoryEndDate )
             {
-                using (var db = new BHelpContext()) 
+                if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                
+                // ================= routine to handle DateDelivered change:
+                if (_NewDateDelivered != null)
                 {
-                    if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                    // ================= routine to handle DateDelivered change:
-                    if (_NewDateDelivered != null)
+                    var _view = (DeliveryViewModel)Session["CurrentDeliveryViewModel"];
+                    _view.DateDelivered = _NewDateDelivered;
+                    if(_ODId != null) _view.ODId = _ODId;
+                    if(_DeliveryDateODId != null) _view.DeliveryDateODId = _DeliveryDateODId;
+                    if(_ODNotes != null) _view.ODNotes = _ODNotes;
+                    if (_DriverNotes != null) _view.DriverNotes = _DriverNotes;
+                    if (_Zip != null) _view.Zip = _Zip;
+                    if (_Status != null) _view.SelectedStatus = _Status;
+                    if (_FullBags != null) _view.FullBags = (int)_FullBags;
+                    if (_HalfBags != null) _view.HalfBags = (int)_HalfBags;
+                    if (_KidSnacks != null) _view.KidSnacks = (int)_KidSnacks;
+                    if (_GiftCards != null) _view.GiftCards = (int)_GiftCards;
+                    if (_HistoryStartDate != null) _view.HistoryStartDate = _HistoryStartDate;
+                    if (_HistoryEndDate != null) _view.HistoryEndDate = _HistoryEndDate;
+
+                    var odSched = AppRoutines.GetODSchedule((DateTime)_NewDateDelivered);
+                    if (odSched != null)
                     {
-                        var _view = (DeliveryViewModel)Session["CurrentDeliveryViewModel"];
-                        _view.DateDelivered = _NewDateDelivered;
-                        if(_ODId != null) _view.ODId = _ODId;
-                        if(_DeliveryDateODId != null) _view.DeliveryDateODId = _DeliveryDateODId;
-                        if(_ODNotes != null) _view.ODNotes = _ODNotes;
-                        if (_DriverNotes != null) _view.DriverNotes = _DriverNotes;
-                        if (_Zip != null) _view.Zip = _Zip;
-                        if (_Status != null) _view.Status = (int)_Status;
-                        if (_FullBags != null) _view.FullBags = (int)_FullBags;
-                        if (_HalfBags != null) _view.HalfBags = (int)_HalfBags;
-                        if (_KidSnacks != null) _view.KidSnacks = (int)_KidSnacks;
-                        if (_GiftCards != null) _view.GiftCards = (int)_GiftCards;
-
-                        var odSched = db.ODSchedules
-                            .FirstOrDefault(d => d.Date == _NewDateDelivered);
-                        if (odSched != null)
+                        if (odSched.ODId == null)
                         {
-                            if (odSched.ODId == null)
-                            {
-                                _view.DeliveryDateODId = "0"; // (nobody yet)
-                            }
-                            else
-                            {
-                                _view.DeliveryDateODId = odSched.ODId;
-                            }
+                            _view.DeliveryDateODId = null; // (nobody yet)
                         }
-
-                        var driverSched = db.DriverSchedules
-                                .FirstOrDefault(d => d.Date == _NewDateDelivered);
-                        if (driverSched != null)
+                        else
                         {
-                            if (driverSched.DriverId == null)
-                            {
-                                _view.DriverId = "0"; // (nobody yet)
-                            }
-                            else
-                            {
-                                _view.DriverId = driverSched.DriverId;
-                            }
+                            _view.DeliveryDateODId = odSched.ODId;
                         }
-
-                        // Reset selected item in DeliveryDateODList
-                        foreach (var item in _view.DeliveryDateODList)
-                        {
-                            if (item.Value == _view.DeliveryDateODId)
-                            {
-                                item.Selected = true;
-                            }
-                            else
-                            {
-                                item.Selected = false;
-                            }
-                        }
-
-                        // Reset selected item in DriversList
-                        foreach (var item in _view.DriversList)
-                        {
-                            if (item.Value == _view.DriverId)
-                            {
-                                item.Selected = true;
-                            }
-                            else
-                            {
-                                item.Selected = false;
-                            }
-                        }
-
-                        // Reset selected item in ZipCodes
-                        foreach (var item in _view.ZipCodes)
-                        {
-                            if (item.Value == _view.Zip)
-                            { 
-                                item.Selected = true;
-                            }
-                            else
-                            {
-                                item.Selected = false;
-                            }
-                        }
-
-                        Session["CurrentDeliveryViewModel"] = _view;
-                        return View(_view);
-                    } //==============================================
-               
-                    Session["CurrentDeliveryId"] = id.ToString();
-                    var delivery = db.Deliveries.Find(id);
-                    if (delivery == null)
-                    {
-                        return HttpNotFound();
                     }
 
-                    var viewModel = new DeliveryViewModel
+                    var driverSched = AppRoutines.GetDriverSchedule((DateTime)_NewDateDelivered);
+                    if (driverSched != null)
                     {
-                        Id = delivery.Id,
-                        ClientId = delivery.ClientId,
-                        LogDate = delivery.LogDate,
-                        ODId = delivery.ODId,
-                        DeliveryDateODId = delivery.DeliveryDateODId,
-                        ODList = AppRoutines.GetODSelectList(),
-                        ZipCodes = AppRoutines.GetZipCodesSelectList(),
-                        ODNotes = delivery.ODNotes,
-                        DriverId = delivery.DriverId,
-                        DriverName = GetUserName(delivery.DriverId),
-                        DriverNotes = delivery.DriverNotes,
-                        DriversList = AppRoutines.GetDriversSelectList(),
-                        NamesAgesInHH = delivery.NamesAgesInHH,
-                        SnapshotFamily = GetSnapshotFamily(delivery.NamesAgesInHH),
-                        FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId),
-                        DatePriorDelivery = AppRoutines.GetPriorDeliveryDate(delivery.ClientId, delivery.LogDate),
-                        DateLastDelivery = GetLastGetDeliveryDate(delivery.Id),
-                        DateDelivered = delivery.DateDelivered,
-                        Status = delivery.Status,
-                        HistoryStartDate = Convert.ToDateTime(Session["CallLogStartDate"]),
-                        HistoryEndDate = Convert.ToDateTime(Session["CallLogEndDate"]),
-                        ReturnURL = returnURL
-                    };
-                    viewModel.DeliveryDateODList = viewModel.ODList;
-
-                    switch (delivery.Status)
-                    {
-                        case 0:
-                            viewModel.SelectedStatus = "Open";
-                            break;
-                        case 1:
-                            viewModel.SelectedStatus = "Delivered";
-                            break;
-                        case 2:
-                            viewModel.SelectedStatus = "Undelivered";
-                            break;
+                        if (driverSched.DriverId == null)
+                        {
+                            _view.DriverId = null; // (nobody yet)
+                        }
+                        else
+                        {
+                            _view.DriverId = driverSched.DriverId;
+                        }
                     }
 
-                    if (Request.UrlReferrer != null)
+                    // Reset selected item in DeliveryDateODList
+                    foreach (var item in _view.DeliveryDateODList)
                     {
-                        viewModel.ReturnURL = Request.UrlReferrer.ToString();
-                    }
-
-                    foreach (var item in viewModel.DriversList)
-                    {
-                        if (item.Value == viewModel.DriverId)
+                        if (item.Value == _view.DeliveryDateODId)
                         {
                             item.Selected = true;
-                            break;
+                        }
+                        else
+                        {
+                            item.Selected = false;
                         }
                     }
 
-                    foreach (var item in viewModel.ODList)
+                    // Reset selected item in DriversList
+                    foreach (var item in _view.DriversList)
                     {
-                        if (item.Value == viewModel.ODId)
+                        if (item.Value == _view.DriverId)
                         {
                             item.Selected = true;
-                            break;
+                        }
+                        else
+                        {
+                            item.Selected = false;
                         }
                     }
 
-                    foreach (var item in viewModel.ZipCodes)
+                    // Reset selected item in ZipCodes
+                    foreach (var item in _view.ZipCodes)
                     {
-                        if (item.Value == viewModel.Zip)
-                        {
+                        if (item.Value == _view.Zip)
+                        { 
                             item.Selected = true;
-                            break;
                         }
-                    }
-                    
-                    foreach (var item in viewModel.DeliveryDateODList)
-                    {
-                        if (item.Value == viewModel.DeliveryDateODId)
+                        else
                         {
-                            item.Selected = true;
-                            break;
+                            item.Selected = false;
                         }
                     }
 
-                    viewModel.KidsCount = delivery.Children;
-                    viewModel.AdultsCount = delivery.Adults;
-                    viewModel.SeniorsCount = delivery.Seniors;
+                    Session["CurrentDeliveryViewModel"] = _view;
+                    return View(_view);
+                } //===================== ( _NewDateDelivered != null) =============
+           
+                Session["CurrentDeliveryId"] = id.ToString();
+                var delivery = AppRoutines.GetDeliveryRecord((int)id);
+                if (delivery == null) return HttpNotFound();
 
-                    viewModel.FullBags = delivery.FullBags;
-                    viewModel.HalfBags = delivery.HalfBags;
-                    viewModel.KidSnacks = delivery.KidSnacks;
-                    viewModel.GiftCards = delivery.GiftCards;
-                    viewModel.GiftCardsEligible = delivery.GiftCardsEligible;
+                var viewModel = new DeliveryViewModel
+                {
+                    Id = delivery.Id,
+                    ClientId = delivery.ClientId,
+                    LogDate = delivery.LogDate,
+                    ODId = delivery.ODId,
+                    DeliveryDateODId = delivery.DeliveryDateODId,
+                    ODList = AppRoutines.GetODSelectList(),
+                    ZipCodes = AppRoutines.GetZipCodesSelectList(),
+                    ODNotes = delivery.ODNotes,
+                    DriverId = delivery.DriverId,
+                    DriverName = GetUserName(delivery.DriverId),
+                    DriverNotes = delivery.DriverNotes,
+                    DriversList = AppRoutines.GetDriversSelectList(),
+                    NamesAgesInHH = delivery.NamesAgesInHH,
+                    SnapshotFamily = GetSnapshotFamily(delivery.NamesAgesInHH),
+                    FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId),
+                    DatePriorDelivery = AppRoutines.GetPriorDeliveryDate(delivery.ClientId, delivery.LogDate),
+                    DateLastDelivery = GetLastGetDeliveryDate(delivery.Id),
+                    DateDelivered = delivery.DateDelivered,
+                    Status = delivery.Status,
+                    HistoryStartDate = Convert.ToDateTime(Session["CallLogStartDate"]),
+                    HistoryEndDate = Convert.ToDateTime(Session["CallLogEndDate"]),
+                    ReturnURL = returnURL
+                };
+                viewModel.DeliveryDateODList = viewModel.ODList;
 
-                    var client = db.Clients.Find(delivery.ClientId);
-                    if (client != null)
-                    {
-                        viewModel.Client = client;
-                        viewModel.ClientNameAddress = client.LastName + ", " + client.FirstName
-                                                      + " " + client.StreetNumber + " " + client.StreetName + " " +
-                                                      client.Zip;
-                        viewModel.Phone = client.Phone;
-                        viewModel.Email = client.Email;
-                        viewModel.Notes = client.Notes;
-                        viewModel.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
-                        viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
-                        if (client.Notes != null)
-                        {
-                            viewModel.NotesToolTip = client.Notes.Replace(" ", "\u00a0");
-                            var s = viewModel.Notes;
-                            s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
-                            viewModel.Notes = s;
-                        }
-                    }
-                    else
-                    {
-                        viewModel.FirstName = delivery.FirstName;
-                        viewModel.LastName = delivery.LastName;
-                        return RedirectToAction("ClientNotFound", viewModel);
-                    }
-
-                    viewModel.Zip = delivery.Zip;
-                    Session["CurrentDeliveryViewModel"] = viewModel; // save for returning with new DateDelivered
-                    return View(viewModel);
+                switch (delivery.Status)
+                {
+                    case 0:
+                        viewModel.SelectedStatus = "Open";
+                        break;
+                    case 1:
+                        viewModel.SelectedStatus = "Delivered";
+                        break;
+                    case 2:
+                        viewModel.SelectedStatus = "Undelivered";
+                        break;
                 }
+
+                if (Request.UrlReferrer != null)
+                {
+                    var retUrl = Request.UrlReferrer.ToString();
+                    if (retUrl.Contains('?'))
+                    {
+                        var i = retUrl.IndexOf('?');
+                        retUrl = retUrl.Substring(0, i);
+                    }
+                    viewModel.ReturnURL =retUrl;
+                }
+
+                foreach (var item in viewModel.DriversList)
+                {
+                    if (item.Value == viewModel.DriverId)
+                    {
+                        item.Selected = true;
+                        break;
+                    }
+                }
+
+                foreach (var item in viewModel.ODList)
+                {
+                    if (item.Value == viewModel.ODId)
+                    {
+                        item.Selected = true;
+                        break;
+                    }
+                }
+
+                foreach (var item in viewModel.ZipCodes)
+                {
+                    if (item.Value == viewModel.Zip)
+                    {
+                        item.Selected = true;
+                        break;
+                    }
+                }
+                
+                foreach (var item in viewModel.DeliveryDateODList)
+                {
+                    if (item.Value == viewModel.DeliveryDateODId)
+                    {
+                        item.Selected = true;
+                        break;
+                    }
+                }
+
+                viewModel.KidsCount = delivery.Children;
+                viewModel.AdultsCount = delivery.Adults;
+                viewModel.SeniorsCount = delivery.Seniors;
+
+                viewModel.FullBags = delivery.FullBags;
+                viewModel.HalfBags = delivery.HalfBags;
+                viewModel.KidSnacks = delivery.KidSnacks;
+                viewModel.GiftCards = delivery.GiftCards;
+                viewModel.GiftCardsEligible = delivery.GiftCardsEligible;
+
+                var client = AppRoutines.GetClientRecord(delivery.ClientId);
+                //db.Clients.Find(delivery.ClientId);
+                if (client != null)
+                {
+                    viewModel.Client = client;
+                    viewModel.ClientNameAddress = client.LastName + ", " + client.FirstName
+                                                  + " " + client.StreetNumber + " " + client.StreetName + " " +
+                                                  client.Zip;
+                    viewModel.Phone = client.Phone;
+                    viewModel.Email = client.Email;
+                    viewModel.Notes = client.Notes;
+                    viewModel.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
+                    viewModel.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
+                    if (client.Notes != null)
+                    {
+                        viewModel.NotesToolTip = client.Notes.Replace(" ", "\u00a0");
+                        var s = viewModel.Notes;
+                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                        viewModel.Notes = s;
+                    }
+                }
+                else
+                {
+                    viewModel.FirstName = delivery.FirstName;
+                    viewModel.LastName = delivery.LastName;
+                    return RedirectToAction("ClientNotFound", viewModel);
+                }
+
+                viewModel.Zip = delivery.Zip;
+                Session["CurrentDeliveryViewModel"] = viewModel; // save for returning with new DateDelivered
+                return View(viewModel);
             }
-        
+
             public ActionResult ClientNotFound (DeliveryViewModel view)
             {
                 using (var db = new BHelpContext())
@@ -1064,9 +1064,8 @@ namespace BHelp.Controllers
             public ActionResult EditPost(DeliveryViewModel delivery)
             {
                 // DriverId and DeliveryDateODId are used in Edit dropdowns and return a
-                // text value of '0' when 'nobody yet' is selected:
-                if (delivery.DriverId == "0") delivery.DriverId = null;
-                if (delivery.DeliveryDateODId == "0")
+                // text value of null when 'nobody yet' is selected:
+                if (delivery.DeliveryDateODId == null)
                 {  // Reminder error - ODId required: 
                     return RedirectToAction("AdviseODIdRequired", new { _id = delivery.Id });
                 }
@@ -1075,7 +1074,6 @@ namespace BHelp.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        if (delivery.Id == 0) delivery.Id = (Convert.ToInt32(Session["CurrentDeliveryId"]));
                         var updateData = db.Deliveries.Find(delivery.Id);
 
                         if (updateData != null)
@@ -1090,11 +1088,12 @@ namespace BHelp.Controllers
                             updateData.GiftCards = delivery.GiftCards;
                             updateData.GiftCardsEligible = delivery.GiftCardsEligible;
                             updateData.ODNotes = delivery.ODNotes;
-                            updateData.DriverId = updateData.DriverId == "0" ? null : delivery.DriverId;
+                            updateData.DriverId = updateData.DriverId;
                             updateData.ODId = delivery.ODId;
                             updateData.DeliveryDateODId = delivery.DeliveryDateODId;
                             updateData.DriverNotes = delivery.DriverNotes;
                             updateData.DateDelivered = delivery.DateDelivered;
+                            updateData.SelectedStatus = delivery.SelectedStatus;
                             updateData.Zip = delivery.Zip;
                             switch (delivery.SelectedStatus)
                             {
@@ -2244,11 +2243,35 @@ namespace BHelp.Controllers
             public ActionResult EditDateDeliveredChange(string parameters)
             {
                 var data = parameters.Split(Convert.ToChar("|"));
+                
                 var idData = data[0].Split(Convert.ToChar("="));
                 var newDateDelivered = data[1].Split(Convert.ToChar("="));
-                //var urlData = data[2].Split(Convert.ToChar("="));
-
-            return RedirectToAction("Edit", new{ id = idData[1], _NewDateDelivered = newDateDelivered[1] });
+                var urlData = data[2].Split(Convert.ToChar("="));
+                var odidData =data[3].Split(Convert.ToChar("="));
+                var deliverydateodidData = data[4].Split(Convert.ToChar("="));
+                var odnotesData = data[5].Split(Convert.ToChar("="));
+                var drivernotesData = data[6].Split(Convert.ToChar("="));
+                var zipData = data[7].Split(Convert.ToChar("="));
+                var statusData = data[8].Split(Convert.ToChar("="));
+                var fullbagsData = data[9].Split(Convert.ToChar("="));
+                var halfbagsData = data[10].Split(Convert.ToChar("="));
+                var kidsnacksData = data[11].Split(Convert.ToChar("="));
+                var giftcardsData = data[12].Split(Convert.ToChar("="));
+            
+                return RedirectToAction("Edit", new{ id = idData[1],
+                    _NewDateDelivered = newDateDelivered[1],
+                    returnUrl = urlData[1],
+                    _ODId = odidData[1], 
+                    _DeliveryDateOID = deliverydateodidData[1],
+                    _ODNotes = odnotesData[1],
+                    _DriverNotes = drivernotesData[1],
+                    _Zip = zipData[1],
+                    _Status = statusData[1],
+                    _FullBags = fullbagsData[1],
+                    _HalfBags = halfbagsData[1],
+                    _KidSnacks = kidsnacksData[1],
+                    _GiftCards = giftcardsData[1]
+                });
             }
     }
 }

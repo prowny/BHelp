@@ -100,11 +100,10 @@ namespace BHelp.ViewModels
         public IEnumerable<SelectListItem>ZipCodes { get; set; }
         public List<Delivery> DeliveryList { get; set; }
         public IEnumerable<SelectListItem> ClientSelectList { get; set; }
-        public DateTime HistoryStartDate { get; set; }
-        public DateTime HistoryEndDate { get; set; }
+        public DateTime? HistoryStartDate { get; set; }
+        public DateTime? HistoryEndDate { get; set; }
         public string ReturnURL { get; set; }
         public IEnumerable<SelectListItem> SnapshotFamily { get; set; }
-        //public HouseholdViewModel Household { get; set; }
         public string DateDeliveredString { get; set; }
         public string ReportTitle { get; set; }
         public DateTime NextDeliveryEligibleDate { get; set; }

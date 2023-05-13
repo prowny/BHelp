@@ -507,7 +507,7 @@ namespace BHelp
             using (var db = new BHelpContext())
             {
                 var userList = db.Users.OrderBy(u => u.LastName).Where(a => a.Active).ToList();
-                var selListItem = new SelectListItem() { Value = "0", Text = @"(nobody yet)" };
+                var selListItem = new SelectListItem() { Value =null, Text = @"(nobody yet)" };
                 driverList.Add(selListItem);
                 foreach (var user in userList)
                 {
@@ -528,7 +528,7 @@ namespace BHelp
             using (var db = new BHelpContext())
             {
                 var userList = db.Users.OrderBy(u => u.LastName).Where(a => a.Active).ToList();
-                var selListItem = new SelectListItem() { Value = "0", Text = @"(nobody yet)" };
+                var selListItem = new SelectListItem() { Value = null, Text = @"(nobody yet)" };
                 odList.Add(selListItem);
                 foreach (var user in userList)
                 {
@@ -1727,6 +1727,30 @@ namespace BHelp
 
                 return roleNameString;
             }
+        }
+
+        public static ODSchedule GetODSchedule(DateTime date)
+        {
+            using var _db = new BHelpContext();
+            return _db.ODSchedules.FirstOrDefault(d => d.Date == date);
+        }
+
+        public static DriverSchedule GetDriverSchedule(DateTime date)
+        {
+            using var _db = new BHelpContext();
+            return _db.DriverSchedules.FirstOrDefault(d => d.Date == date);
+        }
+
+        public static Client GetClientRecord(int id)
+        {
+            using var _db = new BHelpContext();
+            return _db.Clients.FirstOrDefault(i => i.Id == id);
+        }
+
+        public static Delivery GetDeliveryRecord(int id)
+        {
+            using var _db = new BHelpContext();
+            return _db.Deliveries.FirstOrDefault(i => i.Id == id);
         }
     }
 }
