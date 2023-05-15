@@ -570,157 +570,155 @@ namespace BHelp.Controllers
             var shortWeekdayList = AppRoutines.GetShortWeekdayArray();
             var holidays = HolidayRoutines.GetHolidays(monday.Year);
 
-            using (var db = new BHelpContext())
+            using var db = new BHelpContext();
+            for (var row = 0; row < 5; row++) // Mon - Fri
             {
-                for (var row = 0; row < 5; row++) // Mon - Fri
+                // First Column - Driver
+                var box = row * 3;
+                var boxDate = view.BeginDate.AddDays(row);
+                view.BoxDateDay[box] = shortWeekdayList[(int)boxDate.DayOfWeek] +
+                                       " " + shortMonthList[boxDate.Month] + " " + boxDate.Day;
+                var isHoliday = HolidayRoutines.IsHoliday(boxDate, holidays);
+                view.BoxHoliday[box] = isHoliday;
+                if (isHoliday)
                 {
-                    // First Column - Driver
-                    var box = row * 3;
-                    var boxDate = view.BeginDate.AddDays(row);
-                    view.BoxDateDay[box] = shortWeekdayList[(int)boxDate.DayOfWeek] +
-                                           " " + shortMonthList[boxDate.Month] + " " + boxDate.Day;
-                    var isHoliday = HolidayRoutines.IsHoliday(boxDate, holidays);
-                    view.BoxHoliday[box] = isHoliday;
-                    if (isHoliday)
+                    var holiday = GetHolidayData(boxDate);
+                    view.BoxHolidayDescription[box] = holiday.Description;
+                }
+
+                var drSched = db.DriverSchedules
+                    .SingleOrDefault(d => d.Date == boxDate);
+                if (drSched != null)
+                {
+                    if (drSched.DriverId != null)
                     {
-                        var holiday = GetHolidayData(boxDate);
-                        view.BoxHolidayDescription[box] = holiday.Description;
-                    }
-
-                    var drSched = db.DriverSchedules
-                        .SingleOrDefault(d => d.Date == boxDate);
-                    if (drSched != null)
-                    {
-                        if (drSched.DriverId != null)
+                        view.BoxDriverId[box] = drSched.DriverId;
+                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.DriverId);
+                        if (usr != null)
                         {
-                            view.BoxDriverId[box] = drSched.DriverId;
-                            var usr = db.Users.SingleOrDefault(d => d.Id == drSched.DriverId);
-                            if (usr != null)
-                            {
-                                view.BoxDriverName[box] = usr.FullName;
-                                view.BoxDriverPhone[box] = usr.PhoneNumber;
-                                view.BoxDriverEmail[box] = usr.Email;
-                            }
-                        }
-
-                        if (drSched.BackupDriverId != null)
-                        {
-                            view.BoxBackupDriverId[box] = drSched.BackupDriverId;
-                            var usr = db.Users.SingleOrDefault(d => d.Id == drSched.BackupDriverId);
-                            if (usr != null)
-                            {
-                                view.BoxBackupDriverName[box] = usr.FullName;
-                                view.BoxBackupDriverPhone[box] = usr.PhoneNumber;
-                                view.BoxBackupDriverEmail[box] = usr.Email;
-                            }
-                        }
-
-                        if (drSched.GroupDriverId != null)
-                        {
-                            view.BoxGroupDriverId[box] = drSched.GroupDriverId;
-                            var grp = db.GroupNames.SingleOrDefault(n => n.Id == drSched.GroupId);
-                            if (grp != null) view.BoxGroupName[box] = grp.Name;
-                            var usr = db.Users.SingleOrDefault(d => d.Id == drSched.GroupDriverId);
-                            if (usr != null)
-                            {
-                                view.BoxGroupDriverName[box] = usr.FullName;
-                                view.BoxGroupDriverPhone[box] = usr.PhoneNumber;
-                                view.BoxGroupDriverEmail[box] = usr.Email;
-                            }
+                            view.BoxDriverName[box] = usr.FullName;
+                            view.BoxDriverPhone[box] = usr.PhoneNumber;
+                            view.BoxDriverEmail[box] = usr.Email;
                         }
                     }
 
-                    // Second Column - OD
-                    box++;
-                    view.BoxDateDay[box] = view.BoxDateDay[box - 1]; // repeats first column date
-                    view.BoxHoliday[box] = view.BoxHoliday[box - 1]; // repeats first column date
-                    view.BoxHolidayDescription[box] = view.BoxHolidayDescription[box - 1];
-                    var odSched = db.ODSchedules
-                        .SingleOrDefault(d => d.Date == boxDate); // repeats first column date
-                    if (odSched != null)
+                    if (drSched.BackupDriverId != null)
                     {
-                        if (odSched.ODId != null)
+                        view.BoxBackupDriverId[box] = drSched.BackupDriverId;
+                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.BackupDriverId);
+                        if (usr != null)
                         {
-                            view.BoxODId[box] = odSched.ODId;
-                            var usr = db.Users.SingleOrDefault(d => d.Id == odSched.ODId);
-                            if (usr != null)
-                            {
-                                view.BoxODName[box] = usr.FullName;
-                                view.BoxODPhone[box] = usr.PhoneNumber;
-                                view.BoxODEmail[box] = usr.Email;
-                                if (boxDate.Day % 2 == 0)
-                                {
-                                    view.BoxODOddEvenMsg[box] = "Take Food Requests Only From EVEN Numbers";
-                                }
-                                else
-                                {
-                                    view.BoxODOddEvenMsg[box] = "Take Food Requests Only From ODD Numbers";
-                                }
-                            }
+                            view.BoxBackupDriverName[box] = usr.FullName;
+                            view.BoxBackupDriverPhone[box] = usr.PhoneNumber;
+                            view.BoxBackupDriverEmail[box] = usr.Email;
                         }
                     }
 
-                    // Third Column - next day Driver
-                    box++;
-                    if ((int)boxDate.DayOfWeek == 5)
+                    if (drSched.GroupDriverId != null)
                     {
-                        boxDate = boxDate.AddDays(3);
-                    }
-                    else
-                    {
-                        boxDate = boxDate.AddDays(1);
-                    }
-
-                    view.BoxDateDay[box] = shortWeekdayList[(int)boxDate.DayOfWeek] + " " +
-                                           shortMonthList[boxDate.Month] + " " + boxDate.Day;
-                    isHoliday = HolidayRoutines.IsHoliday(boxDate, holidays);
-                    view.BoxHoliday[box] = isHoliday;
-                    if (isHoliday)
-                    {
-                        var holiday = GetHolidayData(boxDate);
-                        view.BoxHolidayDescription[box] = holiday.Description;
-                    }
-
-                    drSched = db.DriverSchedules
-                        .SingleOrDefault(d => d.Date == boxDate);
-                    if (drSched != null)
-                    {
-                        if (drSched.DriverId != null)
+                        view.BoxGroupDriverId[box] = drSched.GroupDriverId;
+                        var grp = db.GroupNames.SingleOrDefault(n => n.Id == drSched.GroupId);
+                        if (grp != null) view.BoxGroupName[box] = grp.Name;
+                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.GroupDriverId);
+                        if (usr != null)
                         {
-                            view.BoxDriverId[box] = drSched.DriverId;
-                            var usr = db.Users.SingleOrDefault(d => d.Id == drSched.DriverId);
-                            if (usr != null)
+                            view.BoxGroupDriverName[box] = usr.FullName;
+                            view.BoxGroupDriverPhone[box] = usr.PhoneNumber;
+                            view.BoxGroupDriverEmail[box] = usr.Email;
+                        }
+                    }
+                }
+
+                // Second Column - OD
+                box++;
+                view.BoxDateDay[box] = view.BoxDateDay[box - 1]; // repeats first column date
+                view.BoxHoliday[box] = view.BoxHoliday[box - 1]; // repeats first column date
+                view.BoxHolidayDescription[box] = view.BoxHolidayDescription[box - 1];
+                var odSched = db.ODSchedules
+                    .SingleOrDefault(d => d.Date == boxDate); // repeats first column date
+                if (odSched != null)
+                {
+                    if (odSched.ODId != null)
+                    {
+                        view.BoxODId[box] = odSched.ODId;
+                        var usr = db.Users.SingleOrDefault(d => d.Id == odSched.ODId);
+                        if (usr != null)
+                        {
+                            view.BoxODName[box] = usr.FullName;
+                            view.BoxODPhone[box] = usr.PhoneNumber;
+                            view.BoxODEmail[box] = usr.Email;
+                            if (boxDate.Day % 2 == 0)
                             {
-                                view.BoxDriverName[box] = usr.FullName;
-                                view.BoxDriverPhone[box] = usr.PhoneNumber;
-                                view.BoxDriverEmail[box] = usr.Email;
+                                view.BoxODOddEvenMsg[box] = "Take Food Requests Only From EVEN Numbers";
+                            }
+                            else
+                            {
+                                view.BoxODOddEvenMsg[box] = "Take Food Requests Only From ODD Numbers";
                             }
                         }
+                    }
+                }
 
-                        if (drSched.BackupDriverId != null)
+                // Third Column - next day Driver
+                box++;
+                if ((int)boxDate.DayOfWeek == 5)
+                {
+                    boxDate = boxDate.AddDays(3);
+                }
+                else
+                {
+                    boxDate = boxDate.AddDays(1);
+                }
+
+                view.BoxDateDay[box] = shortWeekdayList[(int)boxDate.DayOfWeek] + " " +
+                                       shortMonthList[boxDate.Month] + " " + boxDate.Day;
+                isHoliday = HolidayRoutines.IsHoliday(boxDate, holidays);
+                view.BoxHoliday[box] = isHoliday;
+                if (isHoliday)
+                {
+                    var holiday = GetHolidayData(boxDate);
+                    view.BoxHolidayDescription[box] = holiday.Description;
+                }
+
+                drSched = db.DriverSchedules
+                    .SingleOrDefault(d => d.Date == boxDate);
+                if (drSched != null)
+                {
+                    if (drSched.DriverId != null)
+                    {
+                        view.BoxDriverId[box] = drSched.DriverId;
+                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.DriverId);
+                        if (usr != null)
                         {
-                            view.BoxBackupDriverId[box] = drSched.BackupDriverId;
-                            var usr = db.Users.SingleOrDefault(d => d.Id == drSched.BackupDriverId);
-                            if (usr != null)
-                            {
-                                view.BoxBackupDriverName[box] = usr.FullName;
-                                view.BoxBackupDriverPhone[box] = usr.PhoneNumber;
-                                view.BoxBackupDriverEmail[box] = usr.Email;
-                            }
+                            view.BoxDriverName[box] = usr.FullName;
+                            view.BoxDriverPhone[box] = usr.PhoneNumber;
+                            view.BoxDriverEmail[box] = usr.Email;
                         }
+                    }
 
-                        if (drSched.GroupDriverId != null)
+                    if (drSched.BackupDriverId != null)
+                    {
+                        view.BoxBackupDriverId[box] = drSched.BackupDriverId;
+                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.BackupDriverId);
+                        if (usr != null)
                         {
-                            view.BoxGroupDriverId[box] = drSched.GroupDriverId;
-                            var grp = db.GroupNames.SingleOrDefault(n => n.Id == drSched.GroupId);
-                            if (grp != null) view.BoxGroupName[box] = grp.Name;
-                            var usr = db.Users.SingleOrDefault(d => d.Id == drSched.GroupDriverId);
-                            if (usr != null)
-                            {
-                                view.BoxGroupDriverName[box] = usr.FullName;
-                                view.BoxGroupDriverPhone[box] = usr.PhoneNumber;
-                                view.BoxGroupDriverEmail[box] = usr.Email;
-                            }
+                            view.BoxBackupDriverName[box] = usr.FullName;
+                            view.BoxBackupDriverPhone[box] = usr.PhoneNumber;
+                            view.BoxBackupDriverEmail[box] = usr.Email;
+                        }
+                    }
+
+                    if (drSched.GroupDriverId != null)
+                    {
+                        view.BoxGroupDriverId[box] = drSched.GroupDriverId;
+                        var grp = db.GroupNames.SingleOrDefault(n => n.Id == drSched.GroupId);
+                        if (grp != null) view.BoxGroupName[box] = grp.Name;
+                        var usr = db.Users.SingleOrDefault(d => d.Id == drSched.GroupDriverId);
+                        if (usr != null)
+                        {
+                            view.BoxGroupDriverName[box] = usr.FullName;
+                            view.BoxGroupDriverPhone[box] = usr.PhoneNumber;
+                            view.BoxGroupDriverEmail[box] = usr.Email;
                         }
                     }
                 }
@@ -730,107 +728,105 @@ namespace BHelp.Controllers
         }
         private ReportsViewModel GetQORKReportView(DateTime endDate) // new QORK Report 02/22
         {
-            using (var db = new BHelpContext())
+            using var db = new BHelpContext();
+            DateTime startDate = endDate.AddDays(-6);
+            var view = new ReportsViewModel()
             {
-                DateTime startDate = endDate.AddDays(-6);
-                var view = new ReportsViewModel()
-                {
-                    BeginDate = startDate,
-                    EndDate = endDate
-                };
-                view.EndDateString = view.EndDate.ToString("M-d-yy");
-                view.DateRangeTitle = startDate.ToShortDateString() + " - " + endDate.ToShortDateString();
-                view.ReportTitle = view.EndDateString + " QORK Weekly Report";
-                view.ZipCodes = AppRoutines.GetZipCodesList();
-                // Load Counts - extra zip code is for totals row.
-                view.Counts = new int[1, 9, view.ZipCodes.Count + 1]; // 0 (unused), Counts, Zipcodes
-                view.ZipCount = view.ZipCodes.Count;
-                var deliveries = db.Deliveries
-                    .Where(d => d.Status == 1 && d.DateDelivered >= startDate
-                                              && d.DateDelivered < endDate).ToList();
+                BeginDate = startDate,
+                EndDate = endDate
+            };
+            view.EndDateString = view.EndDate.ToString("M-d-yy");
+            view.DateRangeTitle = startDate.ToShortDateString() + " - " + endDate.ToShortDateString();
+            view.ReportTitle = view.EndDateString + " QORK Weekly Report";
+            view.ZipCodes = AppRoutines.GetZipCodesList();
+            // Load Counts - extra zip code is for totals row.
+            view.Counts = new int[1, 9, view.ZipCodes.Count + 1]; // 0 (unused), Counts, Zipcodes
+            view.ZipCount = view.ZipCodes.Count;
+            var deliveries = db.Deliveries
+                .Where(d => d.Status == 1 && d.DateDelivered >= startDate
+                                          && d.DateDelivered < endDate).ToList();
 
-                foreach (var delivery in deliveries)
+            foreach (var delivery in deliveries)
+            {
+                var zipCount = view.ZipCodes.Count; // Extra zip code Row is for totals
+                for (var zip = 0; zip < view.ZipCodes.Count; zip++)
                 {
-                    var zipCount = view.ZipCodes.Count; // Extra zip code Row is for totals
-                    for (var zip = 0; zip < view.ZipCodes.Count; zip++)
+                    if (delivery.Zip == view.ZipCodes[zip]) // 0 (unused), Column, ZipCode
                     {
-                        if (delivery.Zip == view.ZipCodes[zip]) // 0 (unused), Column, ZipCode
-                        {
-                            var c = Convert.ToInt32(delivery.Children);
-                            var a = Convert.ToInt32(delivery.Adults);
-                            var s = Convert.ToInt32(delivery.Seniors);
-                            view.Counts[0, 1, zip] += c;
-                            view.Counts[0, 1, zipCount] += c; //# children
-                            view.Counts[0, 2, zip] += a;
-                            view.Counts[0, 2, zipCount] += a; //# adults
-                            view.Counts[0, 3, zip] += s;
-                            view.Counts[0, 3, zipCount] += s; //# seniors
-                            view.Counts[0, 4, zip]++;
-                            view.Counts[0, 4, zipCount]++; //#  households served
-                            var lbs = Convert.ToInt32(delivery.FullBags * 10 + delivery.HalfBags * 9);
-                            view.Counts[0, 5, zip] += lbs;
-                            view.Counts[0, 5, zipCount] += lbs; //pounds distributed
-                                                                // column 6 - prepared meals served
-                            view.Counts[0, 7, zip] += (a + c + s);
-                            view.Counts[0, 7, zipCount] += (a + c + s); //# individuals served
-                        }
+                        var c = Convert.ToInt32(delivery.Children);
+                        var a = Convert.ToInt32(delivery.Adults);
+                        var s = Convert.ToInt32(delivery.Seniors);
+                        view.Counts[0, 1, zip] += c;
+                        view.Counts[0, 1, zipCount] += c; //# children
+                        view.Counts[0, 2, zip] += a;
+                        view.Counts[0, 2, zipCount] += a; //# adults
+                        view.Counts[0, 3, zip] += s;
+                        view.Counts[0, 3, zipCount] += s; //# seniors
+                        view.Counts[0, 4, zip]++;
+                        view.Counts[0, 4, zipCount]++; //#  households served
+                        var lbs = Convert.ToInt32(delivery.FullBags * 10 + delivery.HalfBags * 9);
+                        view.Counts[0, 5, zip] += lbs;
+                        view.Counts[0, 5, zipCount] += lbs; //pounds distributed
+                        // column 6 - prepared meals served
+                        view.Counts[0, 7, zip] += (a + c + s);
+                        view.Counts[0, 7, zipCount] += (a + c + s); //# individuals served
                     }
                 }
-
-                // Section to add Volunteer Hours Summary ========================
-                var hoursList = db.VolunteerHours.Where(h => h.Date >= startDate && h.Date <= endDate).ToList();
-                double totalAHours = 0;
-                double totalFHours = 0;
-                double totalMHours = 0;
-                var totalAPeople = 0;
-                var totalFPeople = 0;
-                var totalMPeople = 0;
-                if (hoursList.Count != 0)
-                {
-                    foreach (var rec in hoursList)
-                    {
-                        switch (rec.Category)
-                        {
-                            case "A":
-                                totalAHours += rec.Hours + rec.Minutes / 60f;
-                                totalAPeople += rec.PeopleCount;
-                                break;
-                            case "F":
-                                totalFHours += rec.Hours + rec.Minutes / 60f;
-                                totalFPeople += rec.PeopleCount;
-                                break;
-                            case "M":
-                                totalMHours += rec.Hours + rec.Minutes / 60f;
-                                totalMPeople += rec.PeopleCount;
-                                break;
-                        }
-                    }
-
-                    view.HoursTotal = new string[3, 3]; // A-F-M, total volunteer hours 
-                    view.HoursTotal[0, 0] = "Administration";
-                    view.HoursTotal[0, 1] = totalAPeople.ToString();
-                    view.HoursTotal[0, 2] = totalAHours.ToString("#.00");
-                    view.HoursTotal[1, 0] = "Management";
-                    view.HoursTotal[1, 1] = totalMPeople.ToString();
-                    view.HoursTotal[1, 2] = totalMHours.ToString("#.00");
-                    view.HoursTotal[2, 0] = "Food Program";
-                    view.HoursTotal[2, 1] = totalFPeople.ToString();
-                    view.HoursTotal[2, 2] = totalFHours.ToString("#.00");
-                    view.ShowHoursTotals = true;
-                }
-
-                view.QORKTitles = new string[8];
-                view.QORKTitles[0] = "Zip Code";
-                view.QORKTitles[1] = "Children Served (<18)";
-                view.QORKTitles[2] = "Adult Non-seniors Served(18-59)";
-                view.QORKTitles[3] = "Seniors Served (60+)";
-                view.QORKTitles[4] = "Households Served";
-                view.QORKTitles[5] = "Pounds Distributed";
-                view.QORKTitles[6] = "Prepared Meals Served";
-                view.QORKTitles[7] = "Individuals Served";
-
-                return view;
             }
+
+            // Section to add Volunteer Hours Summary ========================
+            var hoursList = db.VolunteerHours.Where(h => h.Date >= startDate && h.Date <= endDate).ToList();
+            double totalAHours = 0;
+            double totalFHours = 0;
+            double totalMHours = 0;
+            var totalAPeople = 0;
+            var totalFPeople = 0;
+            var totalMPeople = 0;
+            if (hoursList.Count != 0)
+            {
+                foreach (var rec in hoursList)
+                {
+                    switch (rec.Category)
+                    {
+                        case "A":
+                            totalAHours += rec.Hours + rec.Minutes / 60f;
+                            totalAPeople += rec.PeopleCount;
+                            break;
+                        case "F":
+                            totalFHours += rec.Hours + rec.Minutes / 60f;
+                            totalFPeople += rec.PeopleCount;
+                            break;
+                        case "M":
+                            totalMHours += rec.Hours + rec.Minutes / 60f;
+                            totalMPeople += rec.PeopleCount;
+                            break;
+                    }
+                }
+
+                view.HoursTotal = new string[3, 3]; // A-F-M, total volunteer hours 
+                view.HoursTotal[0, 0] = "Administration";
+                view.HoursTotal[0, 1] = totalAPeople.ToString();
+                view.HoursTotal[0, 2] = totalAHours.ToString("#.00");
+                view.HoursTotal[1, 0] = "Management";
+                view.HoursTotal[1, 1] = totalMPeople.ToString();
+                view.HoursTotal[1, 2] = totalMHours.ToString("#.00");
+                view.HoursTotal[2, 0] = "Food Program";
+                view.HoursTotal[2, 1] = totalFPeople.ToString();
+                view.HoursTotal[2, 2] = totalFHours.ToString("#.00");
+                view.ShowHoursTotals = true;
+            }
+
+            view.QORKTitles = new string[8];
+            view.QORKTitles[0] = "Zip Code";
+            view.QORKTitles[1] = "Children Served (<18)";
+            view.QORKTitles[2] = "Adult Non-seniors Served(18-59)";
+            view.QORKTitles[3] = "Seniors Served (60+)";
+            view.QORKTitles[4] = "Households Served";
+            view.QORKTitles[5] = "Pounds Distributed";
+            view.QORKTitles[6] = "Prepared Meals Served";
+            view.QORKTitles[7] = "Individuals Served";
+
+            return view;
         }
         private static DateTime GetMondaysDate(DateTime date)
             {

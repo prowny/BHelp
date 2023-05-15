@@ -443,7 +443,7 @@ namespace BHelp.Controllers
             var plainTextContent = "Temporary New Credential: " + newPwd + " "
                 + Environment.NewLine + "  Use this to log into the website, and immediately change it to your desired value."
                 + Environment.NewLine + "  Please do not reply to this email.";
-            using (MailMessage msg = new MailMessage())
+            using (var msg = new MailMessage())
             {
                 msg.From = new MailAddress("Admin@BethesdaHelpFd.org", "Administrator, BHelp");
                 msg.To.Add(new MailAddress(user.Email, user.FullName));
@@ -451,7 +451,7 @@ namespace BHelp.Controllers
                 msg.Body = plainTextContent;
                 msg.IsBodyHtml = false;
                 msg.Priority = MailPriority.Normal;
-                using (SmtpClient mailClient = new SmtpClient("BethesdaHelpFd.org", 587))
+                using (var mailClient = new SmtpClient("BethesdaHelpFd.org", 587))
                 {
                     mailClient.Credentials = new NetworkCredential("Admin@BethesdaHelpFd.org", "Qo3YQoyYAghL*U.W-KEU");
                     await mailClient.SendMailAsync(msg);

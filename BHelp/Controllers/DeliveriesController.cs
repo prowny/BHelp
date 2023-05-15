@@ -21,186 +21,184 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay,PantryCoordinator")]
         public ActionResult Index()
         {
-            using (var db = new BHelpContext())
+            using var db = new BHelpContext();
+            var listDeliveries = new List<Delivery>(db.Deliveries)
+                .Where(d => d.Status == 0)
+                .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
+                .ThenBy(n => n.StreetNumber).ThenBy(s => s.StreetName).ToList();
+
+            var duplicateClientIds = from x in listDeliveries
+                group x by x.ClientId
+                into g
+                let count = g.Count()
+                select new { Count = count, Id = g.First().ClientId };
+
+            var listDeliveryViewModels = new List<DeliveryViewModel>();
+            foreach (var delivery in listDeliveries)
             {
-                var listDeliveries = new List<Delivery>(db.Deliveries)
-                    .Where(d => d.Status == 0)
-                    .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
-                    .ThenBy(n => n.StreetNumber).ThenBy(s => s.StreetName).ToList();
-
-                var duplicateClientIds = from x in listDeliveries
-                    group x by x.ClientId
-                    into g
-                    let count = g.Count()
-                    select new { Count = count, Id = g.First().ClientId };
-
-                var listDeliveryViewModels = new List<DeliveryViewModel>();
-                foreach (var delivery in listDeliveries)
+                var client = db.Clients.Find(delivery.ClientId);
+                if (client != null)
                 {
-                    var client = db.Clients.Find(delivery.ClientId);
-                    if (client != null)
+                    var deliveryView = new DeliveryViewModel
                     {
-                        var deliveryView = new DeliveryViewModel
+                        Id = delivery.Id,
+                        ClientId = client.Id,
+                        DriverId = delivery.DriverId,
+                        LogDate = delivery.LogDate,
+                        NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id),
+                        FamilyMembers = AppRoutines.GetFamilyMembers(client.Id),
+                        FamilySelectList = AppRoutines.GetFamilySelectList(client.Id),
+                        Kids = new List<FamilyMember>(),
+                        Adults = new List<FamilyMember>(),
+                        Seniors = new List<FamilyMember>()
+                    };
+                    foreach (var mbr in deliveryView.FamilyMembers)
+                    {
+                        mbr.Age = AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
+                        if (mbr.Age < 18)
                         {
-                            Id = delivery.Id,
-                            ClientId = client.Id,
-                            DriverId = delivery.DriverId,
-                            LogDate = delivery.LogDate,
-                            NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id),
-                            FamilyMembers = AppRoutines.GetFamilyMembers(client.Id),
-                            FamilySelectList = AppRoutines.GetFamilySelectList(client.Id),
-                            Kids = new List<FamilyMember>(),
-                            Adults = new List<FamilyMember>(),
-                            Seniors = new List<FamilyMember>()
-                        };
-                        foreach (var mbr in deliveryView.FamilyMembers)
-                        {
-                            mbr.Age = AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
-                            if (mbr.Age < 18)
-                            {
-                                deliveryView.Kids.Add(mbr);
-                                deliveryView.KidsCount += 1;
-                            }
-
-                            if (mbr.Age >= 18 && mbr.Age < 60)
-                            {
-                                deliveryView.Adults.Add(mbr);
-                                deliveryView.AdultsCount += 1;
-                            }
-
-                            if (mbr.Age >= 60)
-                            {
-                                deliveryView.Seniors.Add(mbr);
-                                deliveryView.SeniorsCount += 1;
-                            }
+                            deliveryView.Kids.Add(mbr);
+                            deliveryView.KidsCount += 1;
                         }
 
-                        deliveryView.KidsCount = deliveryView.Kids.Count();
-                        deliveryView.AdultsCount = deliveryView.Adults.Count();
-                        deliveryView.SeniorsCount = deliveryView.Seniors.Count();
-                        deliveryView.FullBags = delivery.FullBags;
-                        deliveryView.HalfBags = delivery.HalfBags;
-                        deliveryView.KidSnacks = delivery.KidSnacks;
-                        deliveryView.GiftCards = delivery.GiftCards;
-                        deliveryView.GiftCardsEligible = delivery.GiftCardsEligible;
-                        deliveryView.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
-                        deliveryView.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
-
-                        var dateDelivered = DateTime.Today.AddDays(-1);
-                        if (delivery.DateDelivered != null)
+                        if (mbr.Age is >= 18 and < 60)
                         {
-                            deliveryView.DateDelivered = delivery.DateDelivered;
-                            dateDelivered = delivery.DateDelivered.Value;
+                            deliveryView.Adults.Add(mbr);
+                            deliveryView.AdultsCount += 1;
                         }
 
-                        var since1 = new DateTime(dateDelivered.Year, dateDelivered.Month, 1);
-                        var thrudate = dateDelivered.AddDays(-1);
-                        deliveryView.GiftCardsThisMonth = GetGiftCardsSince(client.Id, since1, thrudate);
-
-                        if (delivery.DateDelivered != null)
+                        if (mbr.Age >= 60)
                         {
-                            deliveryView.DateDeliveredString = delivery.DateDelivered.Value.ToString("MM/dd/yyyy");
+                            deliveryView.Seniors.Add(mbr);
+                            deliveryView.SeniorsCount += 1;
                         }
-
-                        // Check for EligiibilityRulesException:
-                        deliveryView.NextDeliveryEligibleDate = AppRoutines.GetNextEligibleDeliveryDate
-                            (delivery.ClientId, DateTime.Today);
-                        if (deliveryView.DateDelivered < deliveryView.NextDeliveryEligibleDate)
-                            deliveryView.EligiibilityRulesException = true;
-
-                        // ReSharper disable once PossibleMultipleEnumeration
-                        var clientIds = duplicateClientIds.ToList();
-                        if (duplicateClientIds != null)
-                            foreach (var dup in clientIds)
-                            {
-                                if (dup.Id == deliveryView.ClientId && dup.Count > 1)
-                                {
-                                    deliveryView.EligiibilityRulesException = true;
-                                }
-                            }
-
-                        if (deliveryView.GiftCards > 0)
-                        {
-                            deliveryView.NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate
-                                (deliveryView.ClientId, deliveryView.DateLastGiftCard);
-                            if (deliveryView.DateDelivered < deliveryView.NextGiftCardEligibleDate
-                                || deliveryView.GiftCards > deliveryView.GiftCardsEligible)
-                                deliveryView.EligiibilityRulesException = true;
-                        }
-
-                        if (delivery.DriverId != null)
-                        {
-                            var driver = db.Users.Find(delivery.DriverId);
-                            deliveryView.DriverName = driver != null ? driver.FullName : "(nobody yet)";
-                        }
-
-                        var ODid = delivery.ODId;
-                        if (!ODid.IsNullOrEmpty() && ODid != "0")
-                        {
-                            var user = db.Users.Find(ODid);
-                            if (user != null) deliveryView.ODName = user.FullName;
-                        }
-
-                        ;
-                        deliveryView.FirstName = client.FirstName;
-                        deliveryView.LastName = client.LastName;
-                        deliveryView.StreetNumber = client.StreetNumber;
-                        deliveryView.StreetName = client.StreetName;
-                        // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
-                        deliveryView.StreetToolTip = client.StreetName.Replace(" ", "\u00a0");
-                        deliveryView.City = client.City;
-                        deliveryView.CityToolTip = client.City.Replace(" ", "\u00a0");
-                        deliveryView.Zip = client.Zip;
-                        deliveryView.Phone = client.Phone;
-                        deliveryView.PhoneToolTip = client.Phone.Replace(" ", "\u00a0");
-                        deliveryView.Email = client.Email;
-                        deliveryView.EmailToolTip = client.Email.Replace(" ", "\u00a0");
-                        string s;
-                        if (client.Notes != null)
-                        {
-                            deliveryView.Notes = client.Notes;
-                            deliveryView.NotesToolTip = client.Notes.Replace(" ", "\u00a0");
-                            s = deliveryView.Notes;
-                            s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
-                            deliveryView.Notes = s;
-                        }
-
-                        if (delivery.ODNotes != null)
-                        {
-                            deliveryView.ODNotes = delivery.ODNotes;
-                            deliveryView.ODNotesToolTip = delivery.ODNotes.Replace(" ", "\u00a0");
-                            s = deliveryView.ODNotes;
-                            s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
-                            deliveryView.ODNotes = s;
-                        }
-
-                        if (delivery.DriverNotes != null)
-                        {
-                            deliveryView.DriverNotes = delivery.DriverNotes;
-                            deliveryView.DriverNotesToolTip = deliveryView.DriverNotes.Replace(" ", "\u00a0");
-                            s = deliveryView.DriverNotes; // For display, abbreviate to 12 characters:           
-                            s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
-                            deliveryView.DriverNotes = s;
-                        }
-
-                        s = deliveryView.StreetName;
-                        s = s.Length <= 9 ? s : s.Substring(0, 9) + "...";
-                        deliveryView.StreetName = s;
-                        s = deliveryView.City; // For display, abbreviate to 11 characters:           
-                        s = s.Length <= 10 ? s : s.Substring(0, 10) + "...";
-                        deliveryView.City = s;
-                        s = deliveryView.Phone; // For display, abbreviate to 12 characters:           
-                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
-                        deliveryView.Phone = s;
-                        s = deliveryView.Email; // For display, abbreviate to 15 characters:           
-                        s = s.Length <= 15 ? s : s.Substring(0, 15) + "...";
-                        deliveryView.Email = s;
-                        listDeliveryViewModels.Add(deliveryView);
                     }
-                }
 
-                return View(listDeliveryViewModels);
+                    deliveryView.KidsCount = deliveryView.Kids.Count();
+                    deliveryView.AdultsCount = deliveryView.Adults.Count();
+                    deliveryView.SeniorsCount = deliveryView.Seniors.Count();
+                    deliveryView.FullBags = delivery.FullBags;
+                    deliveryView.HalfBags = delivery.HalfBags;
+                    deliveryView.KidSnacks = delivery.KidSnacks;
+                    deliveryView.GiftCards = delivery.GiftCards;
+                    deliveryView.GiftCardsEligible = delivery.GiftCardsEligible;
+                    deliveryView.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
+                    deliveryView.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
+
+                    var dateDelivered = DateTime.Today.AddDays(-1);
+                    if (delivery.DateDelivered != null)
+                    {
+                        deliveryView.DateDelivered = delivery.DateDelivered;
+                        dateDelivered = delivery.DateDelivered.Value;
+                    }
+
+                    var since1 = new DateTime(dateDelivered.Year, dateDelivered.Month, 1);
+                    var thrudate = dateDelivered.AddDays(-1);
+                    deliveryView.GiftCardsThisMonth = GetGiftCardsSince(client.Id, since1, thrudate);
+
+                    if (delivery.DateDelivered != null)
+                    {
+                        deliveryView.DateDeliveredString = delivery.DateDelivered.Value.ToString("MM/dd/yyyy");
+                    }
+
+                    // Check for EligiibilityRulesException:
+                    deliveryView.NextDeliveryEligibleDate = AppRoutines.GetNextEligibleDeliveryDate
+                        (delivery.ClientId, DateTime.Today);
+                    if (deliveryView.DateDelivered < deliveryView.NextDeliveryEligibleDate)
+                        deliveryView.EligiibilityRulesException = true;
+
+                    // ReSharper disable once PossibleMultipleEnumeration
+                    var clientIds = duplicateClientIds.ToList();
+                    if (duplicateClientIds != null)
+                        foreach (var dup in clientIds)
+                        {
+                            if (dup.Id == deliveryView.ClientId && dup.Count > 1)
+                            {
+                                deliveryView.EligiibilityRulesException = true;
+                            }
+                        }
+
+                    if (deliveryView.GiftCards > 0)
+                    {
+                        deliveryView.NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate
+                            (deliveryView.ClientId, deliveryView.DateLastGiftCard);
+                        if (deliveryView.DateDelivered < deliveryView.NextGiftCardEligibleDate
+                            || deliveryView.GiftCards > deliveryView.GiftCardsEligible)
+                            deliveryView.EligiibilityRulesException = true;
+                    }
+
+                    if (delivery.DriverId != null)
+                    {
+                        var driver = db.Users.Find(delivery.DriverId);
+                        deliveryView.DriverName = driver != null ? driver.FullName : "(nobody yet)";
+                    }
+
+                    var ODid = delivery.ODId;
+                    if (!ODid.IsNullOrEmpty() && ODid != "0")
+                    {
+                        var user = db.Users.Find(ODid);
+                        if (user != null) deliveryView.ODName = user.FullName;
+                    }
+
+                    ;
+                    deliveryView.FirstName = client.FirstName;
+                    deliveryView.LastName = client.LastName;
+                    deliveryView.StreetNumber = client.StreetNumber;
+                    deliveryView.StreetName = client.StreetName;
+                    // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
+                    deliveryView.StreetToolTip = client.StreetName.Replace(" ", "\u00a0");
+                    deliveryView.City = client.City;
+                    deliveryView.CityToolTip = client.City.Replace(" ", "\u00a0");
+                    deliveryView.Zip = client.Zip;
+                    deliveryView.Phone = client.Phone;
+                    deliveryView.PhoneToolTip = client.Phone.Replace(" ", "\u00a0");
+                    deliveryView.Email = client.Email;
+                    deliveryView.EmailToolTip = client.Email.Replace(" ", "\u00a0");
+                    string s;
+                    if (client.Notes != null)
+                    {
+                        deliveryView.Notes = client.Notes;
+                        deliveryView.NotesToolTip = client.Notes.Replace(" ", "\u00a0");
+                        s = deliveryView.Notes;
+                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                        deliveryView.Notes = s;
+                    }
+
+                    if (delivery.ODNotes != null)
+                    {
+                        deliveryView.ODNotes = delivery.ODNotes;
+                        deliveryView.ODNotesToolTip = delivery.ODNotes.Replace(" ", "\u00a0");
+                        s = deliveryView.ODNotes;
+                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                        deliveryView.ODNotes = s;
+                    }
+
+                    if (delivery.DriverNotes != null)
+                    {
+                        deliveryView.DriverNotes = delivery.DriverNotes;
+                        deliveryView.DriverNotesToolTip = deliveryView.DriverNotes.Replace(" ", "\u00a0");
+                        s = deliveryView.DriverNotes; // For display, abbreviate to 12 characters:           
+                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                        deliveryView.DriverNotes = s;
+                    }
+
+                    s = deliveryView.StreetName;
+                    s = s.Length <= 9 ? s : s.Substring(0, 9) + "...";
+                    deliveryView.StreetName = s;
+                    s = deliveryView.City; // For display, abbreviate to 11 characters:           
+                    s = s.Length <= 10 ? s : s.Substring(0, 10) + "...";
+                    deliveryView.City = s;
+                    s = deliveryView.Phone; // For display, abbreviate to 12 characters:           
+                    s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                    deliveryView.Phone = s;
+                    s = deliveryView.Email; // For display, abbreviate to 15 characters:           
+                    s = s.Length <= 15 ? s : s.Substring(0, 15) + "...";
+                    deliveryView.Email = s;
+                    listDeliveryViewModels.Add(deliveryView);
+                }
             }
+
+            return View(listDeliveryViewModels);
         }
 
         [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
@@ -221,100 +219,98 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult OpenFilters(string btnAllCheckAll)
         {
-            using (var db = new BHelpContext())
+            using var db = new BHelpContext();
+            var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0)
+                .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
+                .ThenBy(n => n.LastName).ToList(); // get all open deliveries
+            var view = new OpenDeliveryViewModel()
             {
-                var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0)
-                    .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
-                    .ThenBy(n => n.LastName).ToList(); // get all open deliveries
-                var view = new OpenDeliveryViewModel()
-                {
-                    OpenDeliveryCount = listAllOpenDeliveries.Count,
-                    DistinctDeliveryDatesList = new List<string>(),
-                    DistinctDeliveryDatesSelectList = new List<SelectListItem>(),
-                    SelectedDeliveriesList = new List<Delivery>(),
-                    DistinctDriverList = new List<string>(),
-                    DistinctDriversSelectList = new List<SelectListItem>(),
-                    DistinctDeliveryDatesODList = new List<SelectListItem>(),
-                    ReplacementDeliveryDate = DateTime.Today,
-                    DriversSelectList = new List<SelectListItem>(),
-                    ODSelectList = new List<SelectListItem>()
-                };
+                OpenDeliveryCount = listAllOpenDeliveries.Count,
+                DistinctDeliveryDatesList = new List<string>(),
+                DistinctDeliveryDatesSelectList = new List<SelectListItem>(),
+                SelectedDeliveriesList = new List<Delivery>(),
+                DistinctDriverList = new List<string>(),
+                DistinctDriversSelectList = new List<SelectListItem>(),
+                DistinctDeliveryDatesODList = new List<SelectListItem>(),
+                ReplacementDeliveryDate = DateTime.Today,
+                DriversSelectList = new List<SelectListItem>(),
+                ODSelectList = new List<SelectListItem>()
+            };
 
-                foreach (var openD in listAllOpenDeliveries)
+            foreach (var openD in listAllOpenDeliveries)
+            {
+                var del = db.Deliveries.Find(openD.Id);
+                if (del != null)
                 {
-                    var del = db.Deliveries.Find(openD.Id);
-                    if (del != null)
-                    {
-                        openD.DeliveryDateODName = del.FirstName + " " + del.LastName;
-                    }
+                    openD.DeliveryDateODName = del.FirstName + " " + del.LastName;
                 }
-
-                var distinctDatesList = listAllOpenDeliveries.Select(d => d.DateDelivered).Distinct().ToList();
-                foreach (var dt in distinctDatesList)
-                {
-                    int delThisDateCount = listAllOpenDeliveries.Count(d => d.DateDelivered == dt);
-                    view.DistinctDeliveryDatesList.Add(dt == null
-                        ? "-none-  (" + delThisDateCount + ")"
-                        : dt.Value.ToString("MM/dd/yyyy") + " (" + delThisDateCount + ")");
-
-                    if (dt != null)
-                    {
-                        // Get delDate ODIDs for each distinct del date
-                        foreach (var del in listAllOpenDeliveries)
-                        {
-                            if (del.DateDelivered == dt && del.DeliveryDateODName != null)
-                                view.DistinctDeliveryDatesODList.Add(new SelectListItem()
-                                    { Value = dt.Value.ToString("MM/dd/yyyy"), Text = del.DeliveryDateODName });
-                        }
-
-                        view.DistinctDeliveryDatesSelectList.Add(new SelectListItem()
-                            { Value = dt.Value.ToString("MM/dd/yyyy"), Text = dt.Value.ToString("MM/dd/yyyy") });
-                    }
-                }
-
-                Session["DistinctDeliveryDatesList"] = view.DistinctDeliveryDatesList;
-                Session["DistinctDeliveryDatesSelectList"] = view.DistinctDeliveryDatesSelectList;
-
-                var distinctDriverIdList = listAllOpenDeliveries.Select(d => d.DriverId).Distinct().ToList();
-                foreach (var drId in distinctDriverIdList)
-                {
-                    int delCountThisDriver = listAllOpenDeliveries.Count(d => d.DriverId == drId);
-
-                    var driver = db.Users.Find(drId);
-                    if (driver != null)
-                    {
-                        var driverName = driver.FullName + " (" + delCountThisDriver + ")";
-                        view.DistinctDriverList.Add(driverName);
-                        view.DistinctDriversSelectList.Add(new SelectListItem { Value = drId, Text = driverName });
-                    }
-                    else
-                    {
-                        var driverName = "(nobody yet)" + " (" + delCountThisDriver + ")";
-                        view.DistinctDriversSelectList.Add(new SelectListItem { Value = "0", Text = driverName });
-                    }
-                }
-
-                TempData["DistinctDriverList"] = view.DistinctDriverList;
-                TempData["DistinctDriversSelectList"] = view.DistinctDriversSelectList;
-
-                view.DriversSelectList = AppRoutines.GetDriversSelectList();
-                view.ReplacementDriverId = view.DriversSelectList[0].Value;
-                TempData["DriversSelectList"] = view.DriversSelectList;
-
-                view.ODSelectList = AppRoutines.GetODSelectList();
-                view.ReplacementDeliveryDateODId = view.ODSelectList[0].Value;
-                TempData["ODSelectList"] = view.ODSelectList;
-
-                if (btnAllCheckAll != "True") return View(view);
-                {
-                    var selectedDeliveries = db.Deliveries
-                        .Where(d => d.Status == 0).OrderBy(d => d.DateDelivered)
-                        .ThenBy(z => z.Zip).ThenBy(n => n.LastName).ToList();
-                    view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnAllCheckAll);
-                    view.ButtonGroupName = "All";
-                }
-                return View(view);
             }
+
+            var distinctDatesList = listAllOpenDeliveries.Select(d => d.DateDelivered).Distinct().ToList();
+            foreach (var dt in distinctDatesList)
+            {
+                int delThisDateCount = listAllOpenDeliveries.Count(d => d.DateDelivered == dt);
+                view.DistinctDeliveryDatesList.Add(dt == null
+                    ? "-none-  (" + delThisDateCount + ")"
+                    : dt.Value.ToString("MM/dd/yyyy") + " (" + delThisDateCount + ")");
+
+                if (dt != null)
+                {
+                    // Get delDate ODIDs for each distinct del date
+                    foreach (var del in listAllOpenDeliveries)
+                    {
+                        if (del.DateDelivered == dt && del.DeliveryDateODName != null)
+                            view.DistinctDeliveryDatesODList.Add(new SelectListItem()
+                                { Value = dt.Value.ToString("MM/dd/yyyy"), Text = del.DeliveryDateODName });
+                    }
+
+                    view.DistinctDeliveryDatesSelectList.Add(new SelectListItem()
+                        { Value = dt.Value.ToString("MM/dd/yyyy"), Text = dt.Value.ToString("MM/dd/yyyy") });
+                }
+            }
+
+            Session["DistinctDeliveryDatesList"] = view.DistinctDeliveryDatesList;
+            Session["DistinctDeliveryDatesSelectList"] = view.DistinctDeliveryDatesSelectList;
+
+            var distinctDriverIdList = listAllOpenDeliveries.Select(d => d.DriverId).Distinct().ToList();
+            foreach (var drId in distinctDriverIdList)
+            {
+                int delCountThisDriver = listAllOpenDeliveries.Count(d => d.DriverId == drId);
+
+                var driver = db.Users.Find(drId);
+                if (driver != null)
+                {
+                    var driverName = driver.FullName + " (" + delCountThisDriver + ")";
+                    view.DistinctDriverList.Add(driverName);
+                    view.DistinctDriversSelectList.Add(new SelectListItem { Value = drId, Text = driverName });
+                }
+                else
+                {
+                    var driverName = "(nobody yet)" + " (" + delCountThisDriver + ")";
+                    view.DistinctDriversSelectList.Add(new SelectListItem { Value = "0", Text = driverName });
+                }
+            }
+
+            TempData["DistinctDriverList"] = view.DistinctDriverList;
+            TempData["DistinctDriversSelectList"] = view.DistinctDriversSelectList;
+
+            view.DriversSelectList = AppRoutines.GetDriversSelectList();
+            view.ReplacementDriverId = view.DriversSelectList[0].Value;
+            TempData["DriversSelectList"] = view.DriversSelectList;
+
+            view.ODSelectList = AppRoutines.GetODSelectList();
+            view.ReplacementDeliveryDateODId = view.ODSelectList[0].Value;
+            TempData["ODSelectList"] = view.ODSelectList;
+
+            if (btnAllCheckAll != "True") return View(view);
+            {
+                var selectedDeliveries = db.Deliveries
+                    .Where(d => d.Status == 0).OrderBy(d => d.DateDelivered)
+                    .ThenBy(z => z.Zip).ThenBy(n => n.LastName).ToList();
+                view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnAllCheckAll);
+                view.ButtonGroupName = "All";
+            }
+            return View(view);
         }
 
         // POST: 
@@ -638,114 +634,110 @@ namespace BHelp.Controllers
             }
             private OpenDeliveryViewModel GetOpenDeliveryViewModel(OpenDeliveryViewModel view)
             {
-                using (var db = new BHelpContext())
+                using var db = new BHelpContext();
+                var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0)
+                    .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
+                    .ThenBy(n => n.StreetNumber).ThenBy(s => s.StreetName) // added 10/13/2022
+                    .ThenBy(n => n.LastName).ToList(); // get all open deliveries
+                if (view.ReplacementDriverId == "0") view.ReplacementDriverId = null;
+                var newView = new OpenDeliveryViewModel
                 {
-                    var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0)
-                        .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
-                        .ThenBy(n => n.StreetNumber).ThenBy(s => s.StreetName) // added 10/13/2022
-                        .ThenBy(n => n.LastName).ToList(); // get all open deliveries
-                    if (view.ReplacementDriverId == "0") view.ReplacementDriverId = null;
-                    var newView = new OpenDeliveryViewModel
-                    {
-                        OpenDeliveryCount = listAllOpenDeliveries.Count,
-                        DistinctDeliveryDatesList = Session["DistinctDeliveryDatesList"] as List<string>,
-                        SelectedDeliveriesList = new List<Delivery>(),
-                        DistinctDeliveryDatesSelectList =
-                            Session["DistinctDeliveryDatesSelectList"] as List<SelectListItem>,
-                        DistinctDriverList = TempData["DistinctDriverList"] as List<string>,
-                        DistinctDriversSelectList = TempData["DistinctDriversSelectList"] as List<SelectListItem>,
-                        ReplacementDeliveryDate = view.ReplacementDeliveryDate,
-                        ReplacementDriverId = view.ReplacementDriverId,
-                        DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>,
-                        ODSelectList = TempData["OdSelectList"] as List<SelectListItem>
-                    };
-                    if (view.ReplacementDeliveryDate == DateTime.MinValue)
-                    {
-                        newView.ReplacementDeliveryDate = DateTime.Today;
-                    }
-
-                    TempData.Keep("DistinctDeliveryDatesList");
-                    TempData.Keep("DistinctDriverList");
-                    TempData.Keep("DriversSelectList");
-                    TempData.Keep("ODSelectList");
-
-                    var newSort = false;
-                    if (newView.DistinctDeliveryDatesSelectList != null)
-
-                        foreach (var dt in newView.DistinctDeliveryDatesSelectList)
-                        {
-                            if (dt.Value == view.SelectedDistinctDeliveryDate.ToString("MM/dd/yyyy"))
-                            {
-                                dt.Selected = true;
-                                var dts = Convert.ToDateTime(dt.Value);
-                                newSort = true;
-                                newView.SelectedDistinctDeliveryDate = dts;
-                                break;
-                            }
-                        }
-
-                    if (newSort) // newSort needed because DropDownListFor doesn't respond to .Selected
-                    {
-                        // put selected value at top of list
-                        var newSortedList = new List<SelectListItem>();
-                        foreach (var dt in newView.DistinctDeliveryDatesSelectList)
-                        {
-                            if (dt.Selected)
-                            {
-                                newSortedList.Add(dt);
-                                break;
-                            }
-                        }
-
-                        foreach (var dt in newView.DistinctDeliveryDatesSelectList)
-                        {
-                            if (!dt.Selected)
-                            {
-                                newSortedList.Add(dt);
-                            }
-                        }
-
-                        newView.DistinctDeliveryDatesSelectList = newSortedList;
-                    }
-
-                    Session["DistinctDeliveryDatesSelectList"] = newView.DistinctDeliveryDatesSelectList;
-
-                    if (newView.DistinctDriversSelectList != null)
-                    {
-                        foreach (var dr in newView.DistinctDriversSelectList)
-                        {
-                            if (view.SelectedDistinctDriverId != null &&
-                                view.SelectedDistinctDriverId.Contains("nobody"))
-                            {
-                                view.SelectedDistinctDriverId = null;
-                            }
-
-                            if (dr.Value == view.SelectedDistinctDriverId)
-                            {
-                                dr.Selected = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    TempData["DistinctDriversSelectList"] = newView.DistinctDriversSelectList;
-
-                    return newView;
+                    OpenDeliveryCount = listAllOpenDeliveries.Count,
+                    DistinctDeliveryDatesList = Session["DistinctDeliveryDatesList"] as List<string>,
+                    SelectedDeliveriesList = new List<Delivery>(),
+                    DistinctDeliveryDatesSelectList =
+                        Session["DistinctDeliveryDatesSelectList"] as List<SelectListItem>,
+                    DistinctDriverList = TempData["DistinctDriverList"] as List<string>,
+                    DistinctDriversSelectList = TempData["DistinctDriversSelectList"] as List<SelectListItem>,
+                    ReplacementDeliveryDate = view.ReplacementDeliveryDate,
+                    ReplacementDriverId = view.ReplacementDriverId,
+                    DriversSelectList = TempData["DriversSelectList"] as List<SelectListItem>,
+                    ODSelectList = TempData["OdSelectList"] as List<SelectListItem>
+                };
+                if (view.ReplacementDeliveryDate == DateTime.MinValue)
+                {
+                    newView.ReplacementDeliveryDate = DateTime.Today;
                 }
+
+                TempData.Keep("DistinctDeliveryDatesList");
+                TempData.Keep("DistinctDriverList");
+                TempData.Keep("DriversSelectList");
+                TempData.Keep("ODSelectList");
+
+                var newSort = false;
+                if (newView.DistinctDeliveryDatesSelectList != null)
+
+                    foreach (var dt in newView.DistinctDeliveryDatesSelectList)
+                    {
+                        if (dt.Value == view.SelectedDistinctDeliveryDate.ToString("MM/dd/yyyy"))
+                        {
+                            dt.Selected = true;
+                            var dts = Convert.ToDateTime(dt.Value);
+                            newSort = true;
+                            newView.SelectedDistinctDeliveryDate = dts;
+                            break;
+                        }
+                    }
+
+                if (newSort) // newSort needed because DropDownListFor doesn't respond to .Selected
+                {
+                    // put selected value at top of list
+                    var newSortedList = new List<SelectListItem>();
+                    foreach (var dt in newView.DistinctDeliveryDatesSelectList)
+                    {
+                        if (dt.Selected)
+                        {
+                            newSortedList.Add(dt);
+                            break;
+                        }
+                    }
+
+                    foreach (var dt in newView.DistinctDeliveryDatesSelectList)
+                    {
+                        if (!dt.Selected)
+                        {
+                            newSortedList.Add(dt);
+                        }
+                    }
+
+                    newView.DistinctDeliveryDatesSelectList = newSortedList;
+                }
+
+                Session["DistinctDeliveryDatesSelectList"] = newView.DistinctDeliveryDatesSelectList;
+
+                if (newView.DistinctDriversSelectList != null)
+                {
+                    foreach (var dr in newView.DistinctDriversSelectList)
+                    {
+                        if (view.SelectedDistinctDriverId != null &&
+                            view.SelectedDistinctDriverId.Contains("nobody"))
+                        {
+                            view.SelectedDistinctDriverId = null;
+                        }
+
+                        if (dr.Value == view.SelectedDistinctDriverId)
+                        {
+                            dr.Selected = true;
+                            break;
+                        }
+                    }
+                }
+
+                TempData["DistinctDriversSelectList"] = newView.DistinctDriversSelectList;
+
+                return newView;
             }
             private string GetODName(string id)
             {
-                using (var db = new BHelpContext())
+                using var db = new BHelpContext();
+                if (id != null && id != "0")
                 {
-                    if (id != null && id != "0")
-                    {
-                        var _od = db.Users.Find(id);
-                        return _od.FullName;
-                    }
-                    else
-                    {
-                        return "(nobody yet)";
-                    }
+                    var _od = db.Users.Find(id);
+                    return _od.FullName;
+                }
+                else
+                {
+                    return "(nobody yet)";
                 }
             }
             private Client GetClientData(int id)
@@ -998,52 +990,48 @@ namespace BHelp.Controllers
 
             public ActionResult ClientNotFound (DeliveryViewModel view)
             {
-                using (var db = new BHelpContext())
+                using var db = new BHelpContext();
+                var clientSelectList = new List<SelectListItem>();
+                var clientList = db.Clients.OrderBy(c => c.LastName).ToList();
+                const int maxTextLength = 70;
+                foreach (var client in clientList)
                 {
-                    var clientSelectList = new List<SelectListItem>();
-                    var clientList = db.Clients.OrderBy(c => c.LastName).ToList();
-                    var maxTextLength = 70;
-                    foreach (var client in clientList)
-                    {
-                        var text = client.LastName + ", " + client.FirstName + " ";
-                        text += client.StreetNumber + " " + client.StreetName;
-                        if (text.Length > maxTextLength) text = text.Substring(0, maxTextLength) + "...";
-                        var selListItem = new SelectListItem()
-                            { Value = client.Id.ToString(), Text = text, Selected = false };
-                        clientSelectList.Add(selListItem);
-                    }
-
-                    view.ClientSelectList = clientSelectList;
-                    view.DateDeliveredString = $"{view.DateDelivered:MM/dd/yyyy}";
-                    return View(view);
+                    var text = client.LastName + ", " + client.FirstName + " ";
+                    text += client.StreetNumber + " " + client.StreetName;
+                    if (text.Length > maxTextLength) text = text.Substring(0, maxTextLength) + "...";
+                    var selListItem = new SelectListItem()
+                        { Value = client.Id.ToString(), Text = text, Selected = false };
+                    clientSelectList.Add(selListItem);
                 }
+
+                view.ClientSelectList = clientSelectList;
+                view.DateDeliveredString = $"{view.DateDelivered:MM/dd/yyyy}";
+                return View(view);
             }
 
             public ActionResult DeleteDelivery (int _id, string _returnURL)
             {
-                using (var db = new BHelpContext())
+                using var db = new BHelpContext();
+                var delivery = db.Deliveries.Find(_id);
+                if (delivery != null) db.Deliveries.Remove(delivery);
+                db.SaveChanges();
+
+                if (_returnURL.Contains("UpdateHousehold"))
                 {
-                    Delivery delivery = db.Deliveries.Find(_id);
-                    if (delivery != null) db.Deliveries.Remove(delivery);
-                    db.SaveChanges();
-
-                    if (_returnURL.Contains("UpdateHousehold"))
-                    {
-                        return RedirectToAction("Index", "OD");
-                    }
-
-                    if (_returnURL.Contains("CallLogByLogDate"))
-                    {
-                        return RedirectToAction("CallLogByLogDate");
-                    }
-
-                    if (_returnURL.Contains("CallLogIndividual"))
-                    {
-                        return RedirectToAction("CallLogIndividual");
-                    }
-
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", "OD");
                 }
+
+                if (_returnURL.Contains("CallLogByLogDate"))
+                {
+                    return RedirectToAction("CallLogByLogDate");
+                }
+
+                if (_returnURL.Contains("CallLogIndividual"))
+                {
+                    return RedirectToAction("CallLogIndividual");
+                }
+
+                return RedirectToAction("Index");
             }
         
             public ActionResult AdviseCannotSave(int _id)
@@ -1070,82 +1058,80 @@ namespace BHelp.Controllers
                     return RedirectToAction("AdviseODIdRequired", new { _id = delivery.Id });
                 }
 
-                using (var db = new BHelpContext())
+                using var db = new BHelpContext();
+                if (ModelState.IsValid)
                 {
-                    if (ModelState.IsValid)
+                    var updateData = db.Deliveries.Find(delivery.Id);
+
+                    if (updateData != null)
                     {
-                        var updateData = db.Deliveries.Find(delivery.Id);
-
-                        if (updateData != null)
+                        var client = db.Clients.Find(updateData.ClientId);
+                        if (client != null) updateData.Zip = client.Zip;
+                        updateData.DateDelivered = delivery.DateDelivered;
+                        updateData.LogDate = delivery.LogDate;
+                        updateData.FullBags = delivery.FullBags;
+                        updateData.HalfBags = delivery.HalfBags;
+                        updateData.KidSnacks = delivery.KidSnacks;
+                        updateData.GiftCards = delivery.GiftCards;
+                        updateData.GiftCardsEligible = delivery.GiftCardsEligible;
+                        updateData.ODNotes = delivery.ODNotes;
+                        updateData.DriverId = updateData.DriverId;
+                        updateData.ODId = delivery.ODId;
+                        updateData.DeliveryDateODId = delivery.DeliveryDateODId;
+                        updateData.DriverNotes = delivery.DriverNotes;
+                        updateData.DateDelivered = delivery.DateDelivered;
+                        updateData.SelectedStatus = delivery.SelectedStatus;
+                        updateData.Zip = delivery.Zip;
+                        switch (delivery.SelectedStatus)
                         {
-                            Client client = db.Clients.Find(updateData.ClientId);
-                            if (client != null) updateData.Zip = client.Zip;
-                            updateData.DateDelivered = delivery.LogDate;
-                            updateData.LogDate = delivery.LogDate;
-                            updateData.FullBags = delivery.FullBags;
-                            updateData.HalfBags = delivery.HalfBags;
-                            updateData.KidSnacks = delivery.KidSnacks;
-                            updateData.GiftCards = delivery.GiftCards;
-                            updateData.GiftCardsEligible = delivery.GiftCardsEligible;
-                            updateData.ODNotes = delivery.ODNotes;
-                            updateData.DriverId = updateData.DriverId;
-                            updateData.ODId = delivery.ODId;
-                            updateData.DeliveryDateODId = delivery.DeliveryDateODId;
-                            updateData.DriverNotes = delivery.DriverNotes;
-                            updateData.DateDelivered = delivery.DateDelivered;
-                            updateData.SelectedStatus = delivery.SelectedStatus;
-                            updateData.Zip = delivery.Zip;
-                            switch (delivery.SelectedStatus)
-                            {
-                                case "Open":
-                                    updateData.Status = 0;
-                                    break;
-                                case "Delivered":
-                                    updateData.Status = 1;
-                                    break;
-                                case "Undelivered":
-                                    updateData.Status = 2;
-                                    break;
-                            }
-
-                            if (updateData.Status == 1 && updateData.FullBags == 0 && updateData.HalfBags == 0
-                                && updateData.KidSnacks == 0 && updateData.GiftCards == 0)
-                            {
-                                // Cannot save delivery as completed with zero products: 
-                                return RedirectToAction("AdviseCannotSave", new { _id = delivery.Id });
-                            }
-
-                            db.Entry(updateData).State = EntityState.Modified;
-                            db.SaveChanges();
+                            case "Open":
+                                updateData.Status = 0;
+                                break;
+                            case "Delivered":
+                                updateData.Status = 1;
+                                break;
+                            case "Undelivered":
+                                updateData.Status = 2;
+                                break;
                         }
 
-                        if (delivery.ReturnURL.Contains("CallLogIndividual"))
+                        if (updateData.Status == 1 && updateData.FullBags == 0 && updateData.HalfBags == 0
+                            && updateData.KidSnacks == 0 && updateData.GiftCards == 0)
                         {
-                            if (updateData != null)
-                                return RedirectToAction("CallLogIndividual", new { clientId = updateData.ClientId });
+                            // Cannot save delivery as completed with zero products: 
+                            return RedirectToAction("AdviseCannotSave", new { _id = delivery.Id });
                         }
 
-                        if (delivery.ReturnURL.Contains("CallLogByLogDate"))
-                        {
-                            return RedirectToAction("CallLogByLogDate",
-                                new { startDate = Session["CallLogStartDate"], endDate = Session["CallLogEndDate"] });
-                        }
-
-                        if (delivery.ReturnURL.Contains("CallLogByDateDelivered"))
-                        {
-                            return RedirectToAction("CallLogByDateDelivered");
-                        }
-
-                        if (delivery.ReturnURL.Contains("UpdateHousehold"))
-                        {
-                            return RedirectToAction("Index", "OD");
-                        }
-
-                        return RedirectToAction("Index");
+                        db.Entry(updateData).State = EntityState.Modified;
+                        db.SaveChanges();
                     }
 
-                    return View(delivery);
+                    if (delivery.ReturnURL.Contains("CallLogIndividual"))
+                    {
+                        if (updateData != null)
+                            return RedirectToAction("CallLogIndividual", new { clientId = updateData.ClientId });
+                    }
+
+                    if (delivery.ReturnURL.Contains("CallLogByLogDate"))
+                    {
+                        return RedirectToAction("CallLogByLogDate",
+                            new { startDate = Session["CallLogStartDate"], endDate = Session["CallLogEndDate"] });
+                    }
+
+                    if (delivery.ReturnURL.Contains("CallLogByDateDelivered"))
+                    {
+                        return RedirectToAction("CallLogByDateDelivered");
+                    }
+
+                    if (delivery.ReturnURL.Contains("UpdateHousehold"))
+                    {
+                        return RedirectToAction("Index", "OD");
+                    }
+
+                    return RedirectToAction("Index");
                 }
+
+                return View(delivery);
             }
         
             // GET: Deliveries/Delete/5
@@ -1155,17 +1141,15 @@ namespace BHelp.Controllers
                 if (id == null)
                 { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
 
-                using (var db = new BHelpContext())
+                using var db = new BHelpContext();
+                var delivery = db.Deliveries.Find(id);
+                if (delivery == null)
                 {
-                    Delivery delivery = db.Deliveries.Find(id);
-                    if (delivery == null)
-                    {
-                        return HttpNotFound();
-                    }
-
-                    delivery.ReturnURL = returnURL;
-                    return View(delivery);
+                    return HttpNotFound();
                 }
+
+                delivery.ReturnURL = returnURL;
+                return View(delivery);
             }
 
             //public ActionResult Assign(int? id, string returnURL)
@@ -1176,35 +1160,33 @@ namespace BHelp.Controllers
                 if (_id == 0)
                 { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
 
-                using (var db = new BHelpContext())
+                using var db = new BHelpContext();
+                var delivery = db.Deliveries.Find(_id);
+
+                if (delivery == null)
                 {
-                    Delivery delivery = db.Deliveries.Find(_id);
-
-                    if (delivery == null)
-                    {
-                        return HttpNotFound();
-                    }
-
-                    delivery.ClientId = model.ClientId;
-                    db.SaveChanges();
-
-                    if (model.ReturnURL.Contains("UpdateHousehold"))
-                    {
-                        return RedirectToAction("Index", "OD");
-                    }
-
-                    if (model.ReturnURL.Contains("CallLogByLogDate"))
-                    {
-                        return RedirectToAction("CallLogByLogDate");
-                    }
-
-                    if (model.ReturnURL.Contains("CallLogIndividual"))
-                    {
-                        return RedirectToAction("CallLogIndividual");
-                    }
-
-                    return RedirectToAction("Index");
+                    return HttpNotFound();
                 }
+
+                delivery.ClientId = model.ClientId;
+                db.SaveChanges();
+
+                if (model.ReturnURL.Contains("UpdateHousehold"))
+                {
+                    return RedirectToAction("Index", "OD");
+                }
+
+                if (model.ReturnURL.Contains("CallLogByLogDate"))
+                {
+                    return RedirectToAction("CallLogByLogDate");
+                }
+
+                if (model.ReturnURL.Contains("CallLogIndividual"))
+                {
+                    return RedirectToAction("CallLogIndividual");
+                }
+
+                return RedirectToAction("Index");
             }
 
             // POST: Deliveries/Delete/5
@@ -1224,91 +1206,89 @@ namespace BHelp.Controllers
             [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
             public ActionResult CallLogIndividual(int? clientId)
             {
-                using (var db = new BHelpContext())
+                using var db = new BHelpContext();
+                var clientSelectList = new List<SelectListItem>();
+                var clientList = db.Clients.OrderBy(c => c.LastName).ToList();
+                foreach (var client in clientList)
                 {
-                    var clientSelectList = new List<SelectListItem>();
-                    var clientList = db.Clients.OrderBy(c => c.LastName).ToList();
-                    foreach (var client in clientList)
+                    if (!db.Deliveries.Any(d => d.ClientId == client.Id)) continue;
+                    var text = client.LastName + ", " + client.FirstName + " ";
+                    text += client.StreetNumber + " " + client.StreetName;
+                    var selListItem = new SelectListItem() { Value = client.Id.ToString(), Text = text };
+                    if (clientId == client.Id)
                     {
-                        if (!db.Deliveries.Any(d => d.ClientId == client.Id)) continue;
-                        var text = client.LastName + ", " + client.FirstName + " ";
-                        text += client.StreetNumber + " " + client.StreetName;
-                        var selListItem = new SelectListItem() { Value = client.Id.ToString(), Text = text };
-                        if (clientId == client.Id)
-                        {
-                            selListItem.Selected = true;
-                        }
-
-                        clientSelectList.Add(selListItem);
+                        selListItem.Selected = true;
                     }
 
-                    var callLogView = new DeliveryViewModel { ClientSelectList = clientSelectList };
-                    if (clientId == null)
-                    {
-                        return View(callLogView);
-                    }
+                    clientSelectList.Add(selListItem);
+                }
 
-                    var deliveryList = db.Deliveries.Where(d => d.ClientId == clientId)
-                        .OrderByDescending(d => d.DateDelivered).ToList();
-                    callLogView.DeliveryList = deliveryList;
-                    callLogView.ClientId = (int)clientId;
-
-                    foreach (var del in callLogView.DeliveryList)
-                    {
-                        del.ODName = GetUserName(del.ODId);
-                        del.DeliveryDateODName = GetUserName(del.DeliveryDateODId);
-                        del.DriverName = GetUserName(del.DriverId);
-                        if (del.Status == 1) // Show delivery date
-                        {
-                            if (del.DateDelivered.HasValue)
-                            {
-                                del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
-                            }
-                        } // Show delivery date
-
-                        del.LogDateString = $"{del.LogDate:MM/dd/yyyy}";
-                        switch (del.Status)
-                        {
-                            case 0:
-                                del.SelectedStatus = "Open";
-                                del.DateDeliveredString = "";
-                                break;
-                            case 1:
-                                del.SelectedStatus = "Delivered";
-                                break;
-                            case 2:
-                                del.SelectedStatus = "Undelivered";
-                                del.DateDeliveredString = "";
-                                break;
-                        }
-
-                        var familyList = AppRoutines.GetFamilyMembers(del.ClientId); // includes HH
-                        if (familyList != null)
-                        {
-                            del.Children = 0;
-                            del.Seniors = 0;
-                            del.Adults = 0;
-                            del.HouseoldCount = familyList.Count();
-                            foreach (var member in familyList)
-                            {
-                                if (member.Age <= 17) del.Children++;
-                                if (member.Age >= 60) del.Seniors++;
-                                if (member.Age >= 18 && member.Age <= 59) del.Adults++;
-                            }
-                        }
-
-                        var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
-                        del.PoundsOfFood = fullWeight;
-                    }
-
-                    if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
-                    {
-                        callLogView.OkToEdit = true;
-                    }
-
-                    Session["CallLogIndividualList"] = callLogView;
+                var callLogView = new DeliveryViewModel { ClientSelectList = clientSelectList };
+                if (clientId == null)
+                {
                     return View(callLogView);
                 }
+
+                var deliveryList = db.Deliveries.Where(d => d.ClientId == clientId)
+                    .OrderByDescending(d => d.DateDelivered).ToList();
+                callLogView.DeliveryList = deliveryList;
+                callLogView.ClientId = (int)clientId;
+
+                foreach (var del in callLogView.DeliveryList)
+                {
+                    del.ODName = GetUserName(del.ODId);
+                    del.DeliveryDateODName = GetUserName(del.DeliveryDateODId);
+                    del.DriverName = GetUserName(del.DriverId);
+                    if (del.Status == 1) // Show delivery date
+                    {
+                        if (del.DateDelivered.HasValue)
+                        {
+                            del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                        }
+                    } // Show delivery date
+
+                    del.LogDateString = $"{del.LogDate:MM/dd/yyyy}";
+                    switch (del.Status)
+                    {
+                        case 0:
+                            del.SelectedStatus = "Open";
+                            del.DateDeliveredString = "";
+                            break;
+                        case 1:
+                            del.SelectedStatus = "Delivered";
+                            break;
+                        case 2:
+                            del.SelectedStatus = "Undelivered";
+                            del.DateDeliveredString = "";
+                            break;
+                    }
+
+                    var familyList = AppRoutines.GetFamilyMembers(del.ClientId); // includes HH
+                    if (familyList != null)
+                    {
+                        del.Children = 0;
+                        del.Seniors = 0;
+                        del.Adults = 0;
+                        del.HouseoldCount = familyList.Count();
+                        foreach (var member in familyList)
+                        {
+                            if (member.Age <= 17) del.Children++;
+                            if (member.Age >= 60) del.Seniors++;
+                            if (member.Age is >= 18 and <= 59) del.Adults++;
+                        }
+                    }
+
+                    var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
+                    del.PoundsOfFood = fullWeight;
+                }
+
+                if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
+                {
+                    callLogView.OkToEdit = true;
+                }
+
+                Session["CallLogIndividualList"] = callLogView;
+                return View(callLogView);
             }
 
             [HttpPost, Authorize(Roles = "Reports,Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
@@ -1343,89 +1323,87 @@ namespace BHelp.Controllers
             [Authorize(Roles = "Reports,Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
             public ActionResult CallLogByLogDate(DateTime? startDate, DateTime? endDate )
             {
-                using (var db = new BHelpContext())
+                using var db = new BHelpContext();
+                Session["CallLogIndividualList"] = null;
+                if (!startDate.HasValue || !endDate.HasValue) // default to today and 1 week ago
                 {
-                    Session["CallLogIndividualList"] = null;
-                    if (!startDate.HasValue || !endDate.HasValue) // default to today and 1 week ago
-                    {
-                        startDate = DateTime.Today.AddDays(-7);
-                        endDate = DateTime.Today;
-                    }
-
-                    List<Delivery> deliveries = db.Deliveries
-                        .Where(d => d.LogDate >= startDate && d.LogDate <= endDate)
-                        .OrderByDescending(d => d.DateDelivered).ToList();
-                    var callLogView = new DeliveryViewModel
-                    {
-                        DeliveryList = deliveries,
-                        HistoryStartDate = Convert.ToDateTime(startDate),
-                        HistoryEndDate = Convert.ToDateTime(endDate)
-                    };
-
-                    Session["CallLogStartDate"] = callLogView.HistoryStartDate;
-                    Session["CallLogEndDate"] = callLogView.HistoryEndDate;
-
-                    foreach (var del in callLogView.DeliveryList)
-                    {
-                        del.DriverName = GetUserName(del.DriverId);
-                        if (del.DateDelivered.HasValue)
-                        {
-                            del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
-                        }
-
-                        del.LogDateString = $"{del.LogDate:MM/dd/yyyy}";
-                        switch (del.Status)
-                        {
-                            case 0:
-                                del.SelectedStatus = "Open";
-                                break;
-                            case 1:
-                                del.SelectedStatus = "Delivered";
-                                break;
-                            case 2:
-                                del.SelectedStatus = "Undelivered";
-                                break;
-                        }
-
-                        var familyList = AppRoutines.GetFamilyMembers(del.ClientId); // includes HH
-                        if (familyList != null)
-                        {
-                            del.Children = 0;
-                            del.Seniors = 0;
-                            del.Adults = 0;
-                            del.HouseoldCount = familyList.Count();
-                            foreach (var member in familyList)
-                            {
-                                if (member.Age <= 17) del.Children++;
-                                if (member.Age >= 60) del.Seniors++;
-                                if (member.Age >= 18 && member.Age <= 59) del.Adults++;
-                            }
-                        }
-
-                        if (del.Status == 2) //  kill any amounts if undelivered
-                        {
-                            del.FullBags = 0;
-                            del.HalfBags = 0;
-                            del.KidSnacks = 0;
-                            del.GiftCards = 0;
-                        }
-
-                        var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
-                        del.PoundsOfFood = fullWeight;
-                        callLogView.TotalHouseholdCount += del.HouseoldCount;
-                        callLogView.TotalChildren += del.Children;
-                        callLogView.TotalAdults += del.Adults;
-                        callLogView.TotalSeniors += del.Seniors;
-                        callLogView.TotalFullBags += del.FullBags;
-                        callLogView.TotalHalfBags += del.HalfBags;
-                        callLogView.TotalKidSnacks += del.KidSnacks;
-                        callLogView.TotalGiftCards += del.GiftCards;
-                        callLogView.TotalPoundsOfFood += del.PoundsOfFood;
-                    }
-
-                    Session["CallLogByLogDateList"] = callLogView;
-                    return View(callLogView);
+                    startDate = DateTime.Today.AddDays(-7);
+                    endDate = DateTime.Today;
                 }
+
+                var deliveries = db.Deliveries
+                    .Where(d => d.LogDate >= startDate && d.LogDate <= endDate)
+                    .OrderByDescending(d => d.DateDelivered).ToList();
+                var callLogView = new DeliveryViewModel
+                {
+                    DeliveryList = deliveries,
+                    HistoryStartDate = Convert.ToDateTime(startDate),
+                    HistoryEndDate = Convert.ToDateTime(endDate)
+                };
+
+                Session["CallLogStartDate"] = callLogView.HistoryStartDate;
+                Session["CallLogEndDate"] = callLogView.HistoryEndDate;
+
+                foreach (var del in callLogView.DeliveryList)
+                {
+                    del.DriverName = GetUserName(del.DriverId);
+                    if (del.DateDelivered.HasValue)
+                    {
+                        del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                    }
+
+                    del.LogDateString = $"{del.LogDate:MM/dd/yyyy}";
+                    switch (del.Status)
+                    {
+                        case 0:
+                            del.SelectedStatus = "Open";
+                            break;
+                        case 1:
+                            del.SelectedStatus = "Delivered";
+                            break;
+                        case 2:
+                            del.SelectedStatus = "Undelivered";
+                            break;
+                    }
+
+                    var familyList = AppRoutines.GetFamilyMembers(del.ClientId); // includes HH
+                    if (familyList != null)
+                    {
+                        del.Children = 0;
+                        del.Seniors = 0;
+                        del.Adults = 0;
+                        del.HouseoldCount = familyList.Count();
+                        foreach (var member in familyList)
+                        {
+                            if (member.Age <= 17) del.Children++;
+                            if (member.Age >= 60) del.Seniors++;
+                            if (member.Age >= 18 && member.Age <= 59) del.Adults++;
+                        }
+                    }
+
+                    if (del.Status == 2) //  kill any amounts if undelivered
+                    {
+                        del.FullBags = 0;
+                        del.HalfBags = 0;
+                        del.KidSnacks = 0;
+                        del.GiftCards = 0;
+                    }
+
+                    var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
+                    del.PoundsOfFood = fullWeight;
+                    callLogView.TotalHouseholdCount += del.HouseoldCount;
+                    callLogView.TotalChildren += del.Children;
+                    callLogView.TotalAdults += del.Adults;
+                    callLogView.TotalSeniors += del.Seniors;
+                    callLogView.TotalFullBags += del.FullBags;
+                    callLogView.TotalHalfBags += del.HalfBags;
+                    callLogView.TotalKidSnacks += del.KidSnacks;
+                    callLogView.TotalGiftCards += del.GiftCards;
+                    callLogView.TotalPoundsOfFood += del.PoundsOfFood;
+                }
+
+                Session["CallLogByLogDateList"] = callLogView;
+                return View(callLogView);
             }
             public void CallLogByLogDateToCSV( bool allData)
             {
@@ -1453,90 +1431,88 @@ namespace BHelp.Controllers
             }
             public ActionResult CallLogByDateDelivered(DateTime? startDate, DateTime? endDate)
             {
-                using (var db = new BHelpContext())
+                using var db = new BHelpContext();
+                if (!startDate.HasValue || !endDate.HasValue) // default to today and 1 week ago
                 {
-                    if (!startDate.HasValue || !endDate.HasValue) // default to today and 1 week ago
-                    {
-                        startDate = DateTime.Today.AddDays(-7);
-                        endDate = DateTime.Today;
-                    }
-
-                    Session["CallLogStartDate"] = startDate;
-                    Session["CallLogEndDate"] = endDate;
-
-                    List<Delivery> deliveries = db.Deliveries
-                        .Where(d => d.Status == 1 && d.DateDelivered >= startDate && d.DateDelivered <= endDate)
-                        .OrderByDescending(d => d.DateDelivered).ToList();
-                    var callLogView = new DeliveryViewModel
-                    {
-                        DeliveryList = deliveries,
-                        HistoryStartDate = Convert.ToDateTime(startDate),
-                        HistoryEndDate = Convert.ToDateTime(endDate),
-                    };
-
-                    foreach (var del in callLogView.DeliveryList)
-                    {
-                        del.DriverName = GetUserName(del.DriverId);
-                        if (del.DateDelivered.HasValue)
-                        {
-                            del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
-                        }
-
-                        switch (del.Status)
-                        {
-                            case 0:
-                                del.SelectedStatus = "Open";
-                                del.DateDeliveredString = "";
-                                break;
-                            case 1:
-                                del.SelectedStatus = "Delivered";
-                                break;
-                            case 2:
-                                del.SelectedStatus = "Undelivered";
-                                del.DateDeliveredString = "";
-                                break;
-                        }
-
-                        var familyList = AppRoutines.GetFamilyMembers(del.ClientId); // includes HH
-                        if (familyList != null)
-                        {
-                            del.Children = 0;
-                            del.Seniors = 0;
-                            del.Adults = 0;
-                            del.HouseoldCount = familyList.Count();
-                            foreach (var member in familyList)
-                            {
-                                if (member.Age <= 17) del.Children++;
-                                if (member.Age >= 60) del.Seniors++;
-                                if (member.Age >= 18 && member.Age <= 59) del.Adults++;
-                            }
-
-                            if (del.Status == 2) //  kill any amounts if undelivered
-                            {
-                                del.FullBags = 0;
-                                del.HalfBags = 0;
-                                del.KidSnacks = 0;
-                                del.GiftCards = 0;
-                            }
-
-                            var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
-                            del.PoundsOfFood = fullWeight;
-                        }
-
-                        callLogView.TotalHouseholdCount += del.HouseoldCount;
-                        callLogView.TotalChildren += del.Children;
-                        callLogView.TotalAdults += del.Adults;
-                        callLogView.TotalSeniors += del.Seniors;
-                        callLogView.TotalFullBags += del.FullBags;
-                        callLogView.TotalHalfBags += del.HalfBags;
-                        callLogView.TotalKidSnacks += del.KidSnacks;
-                        callLogView.TotalGiftCards += del.GiftCards;
-                        callLogView.TotalPoundsOfFood += del.PoundsOfFood;
-                    }
-
-                    Session["CallLogByDateDeliveredList"] = callLogView;
-                    return View(callLogView);
+                    startDate = DateTime.Today.AddDays(-7);
+                    endDate = DateTime.Today;
                 }
+
+                Session["CallLogStartDate"] = startDate;
+                Session["CallLogEndDate"] = endDate;
+
+                List<Delivery> deliveries = db.Deliveries
+                    .Where(d => d.Status == 1 && d.DateDelivered >= startDate && d.DateDelivered <= endDate)
+                    .OrderByDescending(d => d.DateDelivered).ToList();
+                var callLogView = new DeliveryViewModel
+                {
+                    DeliveryList = deliveries,
+                    HistoryStartDate = Convert.ToDateTime(startDate),
+                    HistoryEndDate = Convert.ToDateTime(endDate),
+                };
+
+                foreach (var del in callLogView.DeliveryList)
+                {
+                    del.DriverName = GetUserName(del.DriverId);
+                    if (del.DateDelivered.HasValue)
+                    {
+                        del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                    }
+
+                    switch (del.Status)
+                    {
+                        case 0:
+                            del.SelectedStatus = "Open";
+                            del.DateDeliveredString = "";
+                            break;
+                        case 1:
+                            del.SelectedStatus = "Delivered";
+                            break;
+                        case 2:
+                            del.SelectedStatus = "Undelivered";
+                            del.DateDeliveredString = "";
+                            break;
+                    }
+
+                    var familyList = AppRoutines.GetFamilyMembers(del.ClientId); // includes HH
+                    if (familyList != null)
+                    {
+                        del.Children = 0;
+                        del.Seniors = 0;
+                        del.Adults = 0;
+                        del.HouseoldCount = familyList.Count();
+                        foreach (var member in familyList)
+                        {
+                            if (member.Age <= 17) del.Children++;
+                            if (member.Age >= 60) del.Seniors++;
+                            if (member.Age >= 18 && member.Age <= 59) del.Adults++;
+                        }
+
+                        if (del.Status == 2) //  kill any amounts if undelivered
+                        {
+                            del.FullBags = 0;
+                            del.HalfBags = 0;
+                            del.KidSnacks = 0;
+                            del.GiftCards = 0;
+                        }
+
+                        var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
+                        del.PoundsOfFood = fullWeight;
+                    }
+
+                    callLogView.TotalHouseholdCount += del.HouseoldCount;
+                    callLogView.TotalChildren += del.Children;
+                    callLogView.TotalAdults += del.Adults;
+                    callLogView.TotalSeniors += del.Seniors;
+                    callLogView.TotalFullBags += del.FullBags;
+                    callLogView.TotalHalfBags += del.HalfBags;
+                    callLogView.TotalKidSnacks += del.KidSnacks;
+                    callLogView.TotalGiftCards += del.GiftCards;
+                    callLogView.TotalPoundsOfFood += del.PoundsOfFood;
+                }
+
+                Session["CallLogByDateDeliveredList"] = callLogView;
+                return View(callLogView);
             }
 
             public void  CallLogByDateDeliveredToCSV(bool allData)
@@ -1573,10 +1549,10 @@ namespace BHelp.Controllers
                 {
                     reportYear = Convert.ToInt32(DateTime.Now.Year.ToString());
                     var month = Convert.ToInt32(DateTime.Now.Month.ToString());
-                    if (month >= 1 && month <= 3) { reportQuarter = 1;}     
-                    if (month >= 4 && month <= 6) { reportQuarter = 2;}     
-                    if (month >= 7 && month <= 9) { reportQuarter = 3; }    
-                    if (month >= 10 && month <= 12) { reportQuarter = 4; }
+                    if (month is >= 1 and <= 3) { reportQuarter = 1;}     
+                    if (month is >= 4 and <= 6) { reportQuarter = 2;}     
+                    if (month is >= 7 and <= 9) { reportQuarter = 3; }    
+                    if (month is >= 10 and <= 12) { reportQuarter = 4; }
                 }
                 else
                 {
@@ -1658,7 +1634,7 @@ namespace BHelp.Controllers
                 }
 
                 ws.Columns().AdjustToContents();
-                MemoryStream ms = new MemoryStream();
+                var ms = new MemoryStream();
                 workbook.SaveAs(ms);
                 ms.Position = 0;
                 return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -1728,104 +1704,102 @@ namespace BHelp.Controllers
                 var totalHalfBags = 0;
                 var totalSnacks = 0;
                 var totalCards = 0;
-                using (var db = new BHelpContext())
+                using var db = new BHelpContext();
+                for (var zip = 0; zip < view.ZipCodes.Count; zip++)
                 {
-                    for (int zip = 0; zip < view.ZipCodes.Count; zip++)
-                    {
-                        var stringZip = view.ZipCodes[zip];
-                        var deliveryData = db.Deliveries.Where(d =>  d.Status == 1 
-                                                                     && d.Zip == stringZip && d.DateDelivered >= startDate
-                                                                     && d.DateDelivered <= thruDate).ToList();
-                        totalDeliveries += deliveryData.Count;
+                    var stringZip = view.ZipCodes[zip];
+                    var deliveryData = db.Deliveries.Where(d =>  d.Status == 1 
+                                                                 && d.Zip == stringZip && d.DateDelivered >= startDate
+                                                                 && d.DateDelivered <= thruDate).ToList();
+                    totalDeliveries += deliveryData.Count;
                     
-                        List<int> distinctList = new List<int>();
-                        var distinctChildren = 0; 
-                        var distinctAdults = 0;
-                        var distinctSeniors = 0;  
-                        foreach (var del in deliveryData)
+                    List<int> distinctList = new List<int>();
+                    var distinctChildren = 0; 
+                    var distinctAdults = 0;
+                    var distinctSeniors = 0;  
+                    foreach (var del in deliveryData)
+                    {
+                        for (var i = 0; i < deliveryData.Count; i++)
                         {
-                            for (var i = 0; i < deliveryData.Count; i++)
-                            {
-                                if (distinctList.Contains(del.ClientId))
-                                    continue;
-                                distinctChildren += del.Children;
-                                totalDistinctChildren += del.Children;
-                                distinctAdults += del.Adults;
-                                totalDistinctAdults += del.Adults; 
-                                distinctSeniors += del.Seniors;
-                                totalDistinctSeniors += del.Seniors;
-                                distinctList.Add(del.ClientId);
-                            }
+                            if (distinctList.Contains(del.ClientId))
+                                continue;
+                            distinctChildren += del.Children;
+                            totalDistinctChildren += del.Children;
+                            distinctAdults += del.Adults;
+                            totalDistinctAdults += del.Adults; 
+                            distinctSeniors += del.Seniors;
+                            totalDistinctSeniors += del.Seniors;
+                            distinctList.Add(del.ClientId);
                         }
-
-                        totalDistinctHouseholds += distinctList.Count;
-                        var totalRepeatDeliveries = deliveryData.Count - distinctList.Count;
-                        totalCumulativeRepeatDeliveries += totalRepeatDeliveries;
-
-                        var totalFirstDeliveries = 0;
-                        var cumulativeChildren = 0;
-                        var cumulativeAdults = 0;
-                        var cumulativeSeniors = 0;
-                        var households2GiftCards = 0;
-                        var fullBags = 0;
-                        var halfBags = 0;
-                        var snacks = 0;
-                        var cards = 0;
-                        foreach (var del in deliveryData)
-                        {
-                            if (del.FirstDelivery)
-                            {
-                                totalFirstDeliveries++;
-                                totalCumulativeFirstDeliveries++;
-                            }
-
-                            if (del.GiftCards >= 2)
-                            {
-                                households2GiftCards++;
-                                totalHouseholds2GiftCards++;
-                            }
-                          
-                            cumulativeChildren += del.Children;
-                            totalCumulativeChildren += del.Children;
-                            cumulativeAdults += del.Adults;
-                            totalCumulativeAdults += del.Adults;
-                            cumulativeSeniors += del.Seniors;
-                            totalCumulativeSeniors += del.Seniors;
-                            fullBags += del.FullBags;
-                            totalFullBags += del.FullBags;
-                            halfBags += del.HalfBags;
-                            totalHalfBags += del.HalfBags;
-                            snacks += del.KidSnacks;
-                            totalSnacks += del.KidSnacks;
-                            cards += del.GiftCards;
-                            totalCards += del.GiftCards;
-                        }
-
-                        var col = zip + 1; 
-                        view.ZipCounts[1, col] = fullBags * 10 + halfBags *9;  // Total Food Lbs
-                        view.ZipCounts[2, col] = deliveryData.Count;    // Total Deliveries
-                        view.ZipCounts[3, col] = cumulativeChildren + cumulativeAdults + cumulativeSeniors;
-                        view.ZipCounts[4, col] = cumulativeChildren;
-                        view.ZipCounts[5, col] = cumulativeAdults;
-                        view.ZipCounts[6, col] = cumulativeSeniors;
-                        view.ZipCounts[7, col] = fullBags;
-                        view.ZipCounts[8, col] = halfBags;
-                        view.ZipCounts[9, col] = snacks;
-                        view.ZipCounts[10, col] = cards;
-
-                        view.ZipCounts[11, col] = distinctList.Count;
-                        view.ZipCounts[12, col] = distinctChildren + distinctAdults + distinctSeniors; // Distinct Residents
-                        view.ZipCounts[13, col] = distinctChildren;
-                        view.ZipCounts[14, col] = distinctAdults;
-                        view.ZipCounts[15, col] = distinctSeniors;
-                        view.ZipCounts[16, col] = totalRepeatDeliveries; // Repeat Deliveries
-                        view.ZipCounts[17, col] = totalFirstDeliveries; // First-Time Deliveries
-                        view.ZipCounts[18, col] = households2GiftCards;
-                        view.ZipCounts[19, col] = fullBags * 10;
-                        view.ZipCounts[20, col] = halfBags * 9;
                     }
+
+                    totalDistinctHouseholds += distinctList.Count;
+                    var totalRepeatDeliveries = deliveryData.Count - distinctList.Count;
+                    totalCumulativeRepeatDeliveries += totalRepeatDeliveries;
+
+                    var totalFirstDeliveries = 0;
+                    var cumulativeChildren = 0;
+                    var cumulativeAdults = 0;
+                    var cumulativeSeniors = 0;
+                    var households2GiftCards = 0;
+                    var fullBags = 0;
+                    var halfBags = 0;
+                    var snacks = 0;
+                    var cards = 0;
+                    foreach (var del in deliveryData)
+                    {
+                        if (del.FirstDelivery)
+                        {
+                            totalFirstDeliveries++;
+                            totalCumulativeFirstDeliveries++;
+                        }
+
+                        if (del.GiftCards >= 2)
+                        {
+                            households2GiftCards++;
+                            totalHouseholds2GiftCards++;
+                        }
+                          
+                        cumulativeChildren += del.Children;
+                        totalCumulativeChildren += del.Children;
+                        cumulativeAdults += del.Adults;
+                        totalCumulativeAdults += del.Adults;
+                        cumulativeSeniors += del.Seniors;
+                        totalCumulativeSeniors += del.Seniors;
+                        fullBags += del.FullBags;
+                        totalFullBags += del.FullBags;
+                        halfBags += del.HalfBags;
+                        totalHalfBags += del.HalfBags;
+                        snacks += del.KidSnacks;
+                        totalSnacks += del.KidSnacks;
+                        cards += del.GiftCards;
+                        totalCards += del.GiftCards;
+                    }
+
+                    var col = zip + 1; 
+                    view.ZipCounts[1, col] = fullBags * 10 + halfBags *9;  // Total Food Lbs
+                    view.ZipCounts[2, col] = deliveryData.Count;    // Total Deliveries
+                    view.ZipCounts[3, col] = cumulativeChildren + cumulativeAdults + cumulativeSeniors;
+                    view.ZipCounts[4, col] = cumulativeChildren;
+                    view.ZipCounts[5, col] = cumulativeAdults;
+                    view.ZipCounts[6, col] = cumulativeSeniors;
+                    view.ZipCounts[7, col] = fullBags;
+                    view.ZipCounts[8, col] = halfBags;
+                    view.ZipCounts[9, col] = snacks;
+                    view.ZipCounts[10, col] = cards;
+
+                    view.ZipCounts[11, col] = distinctList.Count;
+                    view.ZipCounts[12, col] = distinctChildren + distinctAdults + distinctSeniors; // Distinct Residents
+                    view.ZipCounts[13, col] = distinctChildren;
+                    view.ZipCounts[14, col] = distinctAdults;
+                    view.ZipCounts[15, col] = distinctSeniors;
+                    view.ZipCounts[16, col] = totalRepeatDeliveries; // Repeat Deliveries
+                    view.ZipCounts[17, col] = totalFirstDeliveries; // First-Time Deliveries
+                    view.ZipCounts[18, col] = households2GiftCards;
+                    view.ZipCounts[19, col] = fullBags * 10;
+                    view.ZipCounts[20, col] = halfBags * 9;
                 }
-                
+
                 var totCol = view.ZipCodes.Count + 1;
                 view.ZipCounts[1, totCol] = totalFullBags * 10 + totalHalfBags *9;  // Total Food Lbs
                 view.ZipCounts[2, totCol] = totalDeliveries;    // Total Deliveries
@@ -1866,114 +1840,112 @@ namespace BHelp.Controllers
             }
             private ReportsViewModel GetCountyReportView(int yy, int qtr)
             {
-                using (var db = new BHelpContext())
+                using var db = new BHelpContext();
+                var view = new ReportsViewModel { Year = yy, Quarter = qtr };
+                if (qtr == 1)
                 {
-                    var view = new ReportsViewModel { Year = yy, Quarter = qtr };
-                    if (qtr == 1)
+                    view.Months = new[] { 1, 2, 3 };
+                }
+
+                if (qtr == 2)
+                {
+                    view.Months = new[] { 4, 5, 6 };
+                }
+
+                if (qtr == 3)
+                {
+                    view.Months = new[] { 7, 8, 9 };
+                }
+
+                if (qtr == 4)
+                {
+                    view.Months = new[] { 10, 11, 12 };
+                }
+
+                view.MonthYear = new string[3];
+                view.MonthYear[0] =
+                    DateTimeFormatInfo.CurrentInfo.GetMonthName(1 + 3 * (qtr - 1))
+                    + " " + view.Year.ToString();
+                view.MonthYear[1] =
+                    DateTimeFormatInfo.CurrentInfo.GetMonthName(2 + 3 * (qtr - 1))
+                    + " " + view.Year.ToString();
+                view.MonthYear[2] =
+                    DateTimeFormatInfo.CurrentInfo.GetMonthName(3 + 3 * (qtr - 1))
+                    + " " + view.Year.ToString();
+                view.DateRangeTitle = view.MonthYear[0] + " through " + view.MonthYear[2];
+                view.ReportTitle = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(1 + 3 * (qtr - 1))
+                                   + "-" + DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(3 + 3 * (qtr - 1))
+                                   + " " + view.Year.ToString() + " County Report";
+
+                view.ZipCodes = AppRoutines.GetZipCodesList();
+                // Load Counts - extra zip code is for totals column.
+                view.Counts = new int[13, view.ZipCodes.Count + 1, 6]; //Month, ZipCodes, Counts
+                for (int i = 0; i < 3; i++)
+                {
+                    var mY = view.MonthYear[i].Split(' ');
+                    var mo = DateTime.ParseExact(mY[0], "MMMM", CultureInfo.CurrentCulture).Month;
+                    var startDate = Convert.ToDateTime(mo.ToString() + "/01/" + mY[1]);
+                    DateTime endDate;
+                    if (mo == 12)
                     {
-                        view.Months = new[] { 1, 2, 3 };
+                        var enDt = Convert.ToDateTime("12/31/" + mY[1]);
+                        endDate = enDt.AddDays(1);
+                    }
+                    else
+                    {
+                        endDate = Convert.ToDateTime((mo + 1).ToString() + "/01/" + mY[1]);
                     }
 
-                    if (qtr == 2)
-                    {
-                        view.Months = new[] { 4, 5, 6 };
-                    }
+                    var deliveries = db.Deliveries
+                        .Where(d => d.Status == 1 && d.DateDelivered >= startDate
+                                                  && d.DateDelivered < endDate).ToList();
 
-                    if (qtr == 3)
+                    foreach (var delivery in deliveries)
                     {
-                        view.Months = new[] { 7, 8, 9 };
-                    }
-
-                    if (qtr == 4)
-                    {
-                        view.Months = new[] { 10, 11, 12 };
-                    }
-
-                    view.MonthYear = new string[3];
-                    view.MonthYear[0] =
-                        DateTimeFormatInfo.CurrentInfo.GetMonthName(1 + 3 * (qtr - 1))
-                        + " " + view.Year.ToString();
-                    view.MonthYear[1] =
-                        DateTimeFormatInfo.CurrentInfo.GetMonthName(2 + 3 * (qtr - 1))
-                        + " " + view.Year.ToString();
-                    view.MonthYear[2] =
-                        DateTimeFormatInfo.CurrentInfo.GetMonthName(3 + 3 * (qtr - 1))
-                        + " " + view.Year.ToString();
-                    view.DateRangeTitle = view.MonthYear[0] + " through " + view.MonthYear[2];
-                    view.ReportTitle = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(1 + 3 * (qtr - 1))
-                                       + "-" + DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(3 + 3 * (qtr - 1))
-                                       + " " + view.Year.ToString() + " County Report";
-
-                    view.ZipCodes = AppRoutines.GetZipCodesList();
-                    // Load Counts - extra zip code is for totals column.
-                    view.Counts = new int[13, view.ZipCodes.Count + 1, 6]; //Month, ZipCodes, Counts
-                    for (int i = 0; i < 3; i++)
-                    {
-                        var mY = view.MonthYear[i].Split(' ');
-                        var mo = DateTime.ParseExact(mY[0], "MMMM", CultureInfo.CurrentCulture).Month;
-                        var startDate = Convert.ToDateTime(mo.ToString() + "/01/" + mY[1]);
-                        DateTime endDate;
-                        if (mo == 12)
+                        var t = view.ZipCodes.Count; // Extra zip code column is for totals
+                        for (var j = 0; j < view.ZipCodes.Count; j++)
                         {
-                            var enDt = Convert.ToDateTime("12/31/" + mY[1]);
-                            endDate = enDt.AddDays(1);
-                        }
-                        else
-                        {
-                            endDate = Convert.ToDateTime((mo + 1).ToString() + "/01/" + mY[1]);
-                        }
-
-                        var deliveries = db.Deliveries
-                            .Where(d => d.Status == 1 && d.DateDelivered >= startDate
-                                                      && d.DateDelivered < endDate).ToList();
-
-                        foreach (var delivery in deliveries)
-                        {
-                            var t = view.ZipCodes.Count; // Extra zip code column is for totals
-                            for (var j = 0; j < view.ZipCodes.Count; j++)
+                            if (delivery.Zip == view.ZipCodes[j])
                             {
-                                if (delivery.Zip == view.ZipCodes[j])
-                                {
-                                    view.Counts[mo, j, 0]++;
-                                    view.Counts[mo, t, 0]++; // month, zip, # of families
-                                    var c = Convert.ToInt32(delivery.Children);
-                                    var a = Convert.ToInt32(delivery.Adults);
-                                    var s = Convert.ToInt32(delivery.Seniors);
-                                    view.Counts[mo, j, 1] += c;
-                                    view.Counts[mo, t, 1] += c;
-                                    view.Counts[mo, j, 2] += a;
-                                    view.Counts[mo, t, 2] += a;
-                                    view.Counts[mo, j, 3] += s;
-                                    view.Counts[mo, t, 3] += s;
-                                    view.Counts[mo, j, 4] += (a + c + s);
-                                    view.Counts[mo, t, 4] += (a + c + s); // # of residents
-                                    var lbs = Convert.ToInt32(delivery.FullBags * 10 + delivery.HalfBags * 9);
-                                    view.Counts[mo, j, 5] += lbs;
-                                    view.Counts[mo, t, 5] += lbs; // pounds of food
-                                }
+                                view.Counts[mo, j, 0]++;
+                                view.Counts[mo, t, 0]++; // month, zip, # of families
+                                var c = Convert.ToInt32(delivery.Children);
+                                var a = Convert.ToInt32(delivery.Adults);
+                                var s = Convert.ToInt32(delivery.Seniors);
+                                view.Counts[mo, j, 1] += c;
+                                view.Counts[mo, t, 1] += c;
+                                view.Counts[mo, j, 2] += a;
+                                view.Counts[mo, t, 2] += a;
+                                view.Counts[mo, j, 3] += s;
+                                view.Counts[mo, t, 3] += s;
+                                view.Counts[mo, j, 4] += (a + c + s);
+                                view.Counts[mo, t, 4] += (a + c + s); // # of residents
+                                var lbs = Convert.ToInt32(delivery.FullBags * 10 + delivery.HalfBags * 9);
+                                view.Counts[mo, j, 5] += lbs;
+                                view.Counts[mo, t, 5] += lbs; // pounds of food
                             }
                         }
                     }
-
-                    view.CountyTitles = new string[7];
-                    view.CountyTitles[0] = "Zip Code";
-                    view.CountyTitles[1] = "# of Families";
-                    view.CountyTitles[2] = "# of Children (<18)";
-                    view.CountyTitles[3] = "# of Adults (>=18 and <60)";
-                    view.CountyTitles[4] = "# of Seniors (>=60)";
-                    view.CountyTitles[5] = "# of Residents";
-                    view.CountyTitles[6] = "# of Pounds of Food";
-                    return view;
                 }
+
+                view.CountyTitles = new string[7];
+                view.CountyTitles[0] = "Zip Code";
+                view.CountyTitles[1] = "# of Families";
+                view.CountyTitles[2] = "# of Children (<18)";
+                view.CountyTitles[3] = "# of Adults (>=18 and <60)";
+                view.CountyTitles[4] = "# of Seniors (>=60)";
+                view.CountyTitles[5] = "# of Residents";
+                view.CountyTitles[6] = "# of Pounds of Food";
+                return view;
             }
 
             [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
             public ActionResult CountyReportToExcel(int yy, int qtr)
             {
                 var view = GetCountyReportView(yy, qtr);
-                XLWorkbook workbook = new XLWorkbook();
-                IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
-                int activeRow = 1;
+                var workbook = new XLWorkbook();
+                var ws = workbook.Worksheets.Add(view.ReportTitle);
+                var activeRow = 1;
                 ws.Cell(activeRow, 1).SetValue("Bethesda Help, Inc.");
                 activeRow ++;
                 ws.Cell(activeRow, 1).SetValue(view.DateRangeTitle);
@@ -1984,51 +1956,51 @@ namespace BHelp.Controllers
                     ws.Cell(activeRow, view.ZipCodes.Count + 2).SetValue("TOTAL");
                     activeRow ++;
                     ws.Cell(activeRow, 1).SetValue("Zip Code");
-                    for (int i = 0; i < view.ZipCodes.Count; i++)
+                    for (var i = 0; i < view.ZipCodes.Count; i++)
                     {
                         ws.Cell(activeRow, i +2).SetValue(view.ZipCodes[i]); ;
                     }
                     ws.Cell(activeRow, view.ZipCodes.Count + 2).SetValue("All Zip Codes");
                     activeRow ++;
                     ws.Cell(activeRow, 1).SetValue("# of Families");
-                    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                    for (var i = 0; i < view.ZipCodes.Count + 1; i++)
                     {
                         ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 0]);
                     }
                     activeRow ++;
                     ws.Cell(activeRow, 1).SetValue("# of Children (" + "<"+ "18)");
-                    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                    for (var i = 0; i < view.ZipCodes.Count + 1; i++)
                     {
                         ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 1]);
                     }
                     activeRow ++;
                     ws.Cell(activeRow, 1).SetValue("# of Adults(" + ">" + "=18 and " + "<" + "60)");
-                    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                    for (var i = 0; i < view.ZipCodes.Count + 1; i++)
                     {
                         ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 2]);
                     }
                     activeRow ++;
                     ws.Cell(activeRow, 1).SetValue("# of Seniors (" + ">" + "=60)");
-                    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                    for (var i = 0; i < view.ZipCodes.Count + 1; i++)
                     {
                         ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 3]);
                     }
                     activeRow ++;
                     ws.Cell(activeRow, 1).SetValue("# of Residents");
-                    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                    for (var i = 0; i < view.ZipCodes.Count + 1; i++)
                     {
                         ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 4]);
                     }
                     activeRow ++;
                     ws.Cell(activeRow, 1).SetValue("# of Pounds of Food");
-                    for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                    for (var i = 0; i < view.ZipCodes.Count + 1; i++)
                     {
                         ws.Cell(activeRow, i + 2).SetValue(view.Counts[view.Months[mo], i, 5]);
                     }
                     activeRow += 2;
                 }
                 ws.Columns().AdjustToContents();
-                MemoryStream ms = new MemoryStream();
+                var ms = new MemoryStream();
                 workbook.SaveAs(ms);
                 ms.Position = 0;
                 return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -2045,53 +2017,45 @@ namespace BHelp.Controllers
 
             private  DateTime? GetLastGetDeliveryDate(int id)
             {
-                using (var db = new BHelpContext())
-                {
-                    DateTime? dt = db.Deliveries.Where(d => d.DateDelivered != null
-                                                            && d.Id == id)
-                        .OrderByDescending(x => x.DateDelivered).Select(d => d.DateDelivered)
-                        .FirstOrDefault();
+                using var db = new BHelpContext();
+                var dt = db.Deliveries.Where(d => d.DateDelivered != null
+                                                  && d.Id == id)
+                    .OrderByDescending(x => x.DateDelivered).Select(d => d.DateDelivered)
+                    .FirstOrDefault();
 
-                    // ReSharper disable once UseNullPropagation
-                    if (dt == null)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        return (DateTime)dt;
-                    }
+                // ReSharper disable once UseNullPropagation
+                if (dt == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return (DateTime)dt;
                 }
             }
-            private int GetGiftCardsSince(int clientId, DateTime dt1, DateTime dt2)
+            private static int GetGiftCardsSince(int clientId, DateTime dt1, DateTime dt2)
             {
-                using (var db = new BHelpContext())
+                using var db = new BHelpContext();
+                var total = 0;
+                var dList = db.Deliveries.Where(d => d.ClientId == clientId
+                                                     && d.DateDelivered >= dt1 && d.DateDelivered <= dt2)
+                    .Select(g => g.GiftCards).ToList();
+                foreach (var i in dList)
                 {
-                    var total = 0;
-                    var dList = db.Deliveries.Where(d => d.ClientId == clientId
-                                                         && d.DateDelivered >= dt1 && d.DateDelivered <= dt2)
-                        .Select(g => g.GiftCards).ToList();
-                    foreach (var i in dList)
-                    {
-                        var gc = i;
-                        total += gc;
-                    }
-
-                    return total;
+                    var gc = i;
+                    total += gc;
                 }
+
+                return total;
             }
-            private string GetUserName(string id)
+            private static string GetUserName(string id)
             {
-                using (var db = new BHelpContext())
-                {
-                    if (id != null)
-                    {
-                        var driver = db.Users.Find(id);
-                        if (driver != null) return driver.FullName;
-                    }
+                using var db = new BHelpContext();
+                if (id == null) return "(nobody yet)";
+                var driver = db.Users.Find(id);
+                if (driver != null) return driver.FullName;
 
-                    return "(nobody yet)";
-                }
+                return "(nobody yet)";
             }
 
             [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
@@ -2107,7 +2071,7 @@ namespace BHelp.Controllers
                     { endDate = DateTime.Today.AddDays(6 - weekDay); }
                     else
                     {
-                        DateTime lastSaturday = DateTime.Now.AddDays(-1);
+                        var lastSaturday = DateTime.Now.AddDays(-1);
                         while (lastSaturday.DayOfWeek != DayOfWeek.Saturday) lastSaturday = lastSaturday.AddDays(-1);
                         endDate = lastSaturday;
                     }
@@ -2122,58 +2086,56 @@ namespace BHelp.Controllers
             }
             private ReportsViewModel GetQuorkReportView(DateTime endDate)
             {
-                using (var db = new BHelpContext())
+                using var db = new BHelpContext();
+                var startDate = endDate.AddDays(-6);
+                var view = new ReportsViewModel()
                 {
-                    DateTime startDate = endDate.AddDays(-6);
-                    var view = new ReportsViewModel()
-                    {
-                        BeginDate = startDate,
-                        EndDate = endDate
-                    };
-                    view.EndDateString = view.EndDate.ToString("M-d-yy");
-                    view.DateRangeTitle = startDate.ToShortDateString() + " - " + endDate.ToShortDateString();
-                    view.ReportTitle = view.EndDateString + " QORK Weekly Report";
+                    BeginDate = startDate,
+                    EndDate = endDate
+                };
+                view.EndDateString = view.EndDate.ToString("M-d-yy");
+                view.DateRangeTitle = startDate.ToShortDateString() + " - " + endDate.ToShortDateString();
+                view.ReportTitle = view.EndDateString + " QORK Weekly Report";
 
-                    view.ZipCodes = AppRoutines.GetZipCodesList();
-                    // Load Counts - extra zip code is for totals column.
-                    view.Counts = new int[1, view.ZipCodes.Count + 1, 8]; // 0 (unused), ZipCodes, Counts
-                    var deliveries = db.Deliveries
-                        .Where(d => d.Status == 1 && d.DateDelivered >= startDate
-                                                  && d.DateDelivered < endDate).ToList();
+                view.ZipCodes = AppRoutines.GetZipCodesList();
+                // Load Counts - extra zip code is for totals column.
+                view.Counts = new int[1, view.ZipCodes.Count + 1, 8]; // 0 (unused), ZipCodes, Counts
+                var deliveries = db.Deliveries
+                    .Where(d => d.Status == 1 && d.DateDelivered >= startDate
+                                              && d.DateDelivered < endDate).ToList();
 
-                    foreach (var delivery in deliveries)
+                foreach (var delivery in deliveries)
+                {
+                    var zipCount = view.ZipCodes.Count; // Extra zip code column is for totals
+                    for (var j = 0; j < view.ZipCodes.Count; j++)
                     {
-                        var zipCount = view.ZipCodes.Count; // Extra zip code column is for totals
-                        for (var j = 0; j < view.ZipCodes.Count; j++)
+                        if (delivery.Zip == view.ZipCodes[j])
                         {
-                            if (delivery.Zip == view.ZipCodes[j])
-                            {
-                                var lbs = Convert.ToInt32(delivery.FullBags * 10 + delivery.HalfBags * 9);
-                                view.Counts[0, j, 0] += lbs;
-                                view.Counts[0, zipCount, 0] += lbs; //pounds of food
-                                view.Counts[0, j, 1]++;
-                                view.Counts[0, zipCount, 1]++; //# unique households served
-                                var c = Convert.ToInt32(delivery.Children);
-                                var a = Convert.ToInt32(delivery.Adults);
-                                var s = Convert.ToInt32(delivery.Seniors);
-                                view.Counts[0, j, 2] += (a + c + s);
-                                view.Counts[0, zipCount, 2] += (a + c + s); //# residents served
-                                view.Counts[0, j, 3] += c;
-                                view.Counts[0, zipCount, 3] += c; //# children
-                                view.Counts[0, j, 4] += s;
-                                view.Counts[0, zipCount, 4] += s; //# seniors
-                                view.Counts[0, j, 5] = 0;
-                                view.Counts[0, zipCount, 5] = 0; //#staff worked  ZERO!!!
-                                view.Counts[0, j, 6] = 0;
-                                view.Counts[0, zipCount, 6] = 0; //# staff hours   ZERO!!!
-                                view.Counts[0, j, 7]++;
-                                view.Counts[0, zipCount, 7]++; //# deliveries
-                            }
+                            var lbs = Convert.ToInt32(delivery.FullBags * 10 + delivery.HalfBags * 9);
+                            view.Counts[0, j, 0] += lbs;
+                            view.Counts[0, zipCount, 0] += lbs; //pounds of food
+                            view.Counts[0, j, 1]++;
+                            view.Counts[0, zipCount, 1]++; //# unique households served
+                            var c = Convert.ToInt32(delivery.Children);
+                            var a = Convert.ToInt32(delivery.Adults);
+                            var s = Convert.ToInt32(delivery.Seniors);
+                            view.Counts[0, j, 2] += (a + c + s);
+                            view.Counts[0, zipCount, 2] += (a + c + s); //# residents served
+                            view.Counts[0, j, 3] += c;
+                            view.Counts[0, zipCount, 3] += c; //# children
+                            view.Counts[0, j, 4] += s;
+                            view.Counts[0, zipCount, 4] += s; //# seniors
+                            view.Counts[0, j, 5] = 0;
+                            view.Counts[0, zipCount, 5] = 0; //#staff worked  ZERO!!!
+                            view.Counts[0, j, 6] = 0;
+                            view.Counts[0, zipCount, 6] = 0; //# staff hours   ZERO!!!
+                            view.Counts[0, j, 7]++;
+                            view.Counts[0, zipCount, 7]++; //# deliveries
                         }
                     }
-
-                    return view;
                 }
+
+                return view;
             }
 
             [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
@@ -2182,9 +2144,9 @@ namespace BHelp.Controllers
                 var endDate = Convert.ToDateTime(endingDate);
                 var view = GetQuorkReportView(endDate);
                 var workbook = new XLWorkbook();
-                IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
+                var ws = workbook.Worksheets.Add(view.ReportTitle);
 
-                int activeRow = 1;
+                var activeRow = 1;
                 ws.Cell(activeRow, 1).SetValue("Bethesda Help, Inc. Quork Report");
                 activeRow++;
                 ws.Cell(activeRow, 1).SetValue("Time Period");
@@ -2192,30 +2154,30 @@ namespace BHelp.Controllers
                 ws.Cell(activeRow, 1).SetValue(view.DateRangeTitle);
                 activeRow++;
                 ws.Cell(activeRow, 1).SetValue("Zip Codes");
-                for (int i = 0; i < view.ZipCodes.Count; i++)
+                for (var i = 0; i < view.ZipCodes.Count; i++)
                 {
                     ws.Cell(activeRow, i + 2).SetValue(view.ZipCodes[i]);
                 }
                 ws.Cell(activeRow, view.ZipCodes.Count + 2).SetValue("Total Zip Codes");
                 activeRow++;
                 ws.Cell(activeRow, 1).SetValue("Total Food Lbs)");
-                for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                for (var i = 0; i < view.ZipCodes.Count + 1; i++)
                 { ws.Cell(activeRow, i + 2).SetValue(view.Counts[0, i, 0]); }
                 activeRow++;
                 ws.Cell(activeRow, 1).SetValue("# HH Served (No Repeat Clients in Time Period)");
-                for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                for (var i = 0; i < view.ZipCodes.Count + 1; i++)
                 { ws.Cell(activeRow, i + 2).SetValue(view.Counts[0,i,1]); }
                 activeRow++;
                 ws.Cell(activeRow, 1).SetValue("# Residents Served");   
-                for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                for (var i = 0; i < view.ZipCodes.Count + 1; i++)
                 { ws.Cell(activeRow, i + 2).SetValue(view.Counts[0, i, 2]); }
                 activeRow++;
                 ws.Cell(activeRow, 1).SetValue("# Residents <18");
-                for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                for (var i = 0; i < view.ZipCodes.Count + 1; i++)
                 { ws.Cell(activeRow, i + 2).SetValue(view.Counts[0, i, 3]); }
                 activeRow++;
                 ws.Cell(activeRow, 1).SetValue("# Residents >60");
-                for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                for (var i = 0; i < view.ZipCodes.Count + 1; i++)
                 { ws.Cell(activeRow, i + 2).SetValue(view.Counts[0, i, 4]); }
                 activeRow++;
                 ws.Cell(activeRow, 1).SetValue("# Staff Worked");
@@ -2223,11 +2185,11 @@ namespace BHelp.Controllers
                 ws.Cell(activeRow, 1).SetValue("/# Staff Hours");
                 activeRow++;
                 ws.Cell(activeRow, 1).SetValue("# Deliveries");
-                for (int i = 0; i < view.ZipCodes.Count + 1; i++)
+                for (var i = 0; i < view.ZipCodes.Count + 1; i++)
                 { ws.Cell(activeRow, i + 2).SetValue(view.Counts[0, i, 7]); }
 
                 ws.Columns().AdjustToContents();
-                MemoryStream ms = new MemoryStream();
+                var ms = new MemoryStream();
                 workbook.SaveAs(ms);
                 ms.Position = 0;
                 return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")

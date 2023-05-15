@@ -26,12 +26,11 @@
             <input type="hidden" name="HistoryStartDate" value="@Model.HistoryStartDate" />
             <input type="hidden" name="HistoryEndDate" value="@Model.HistoryEndDate" />
             <input type="hidden" name="GiftCardsEligible" value="@Model.GiftCardsEligible" />
-            <input type="hidden" name="ClientNameAddress" value="@Model.ClientNameAddress" />
+            @*<input type="hidden" name="ClientNameAddress" value="@Model.ClientNameAddress" />*@
             <input type="hidden" name="Phone" value="@Model.Phone" />
 
             @Html.AntiForgeryToken()
             @Html.HiddenFor(model => Model.Id, new { id = "DeliveryId" })
-            @Html.HiddenFor(model => Model.ReturnURL, new { id = "ReturnURL" })
             @Html.HiddenFor(model => Model.SelectedStatus, new { id = "SelectedStatus" })
 
             <h4>Edit Delivery</h4>
@@ -46,13 +45,11 @@
                         <td style="display: none" id="Id">@Html.Label(Model.Id.ToString())</td>
                     </tr>
                 </table>
-                <span>
-                    <b>Client:</b>&nbsp;@Html.Label(Model.ClientNameAddress)&nbsp;
-                    <b>Phone:</b>&nbsp;@Html.Label(Model.Phone)&nbsp;
-                    <b>Email:</b>&nbsp;@Model.Email
-                </span>
-                <b>Permanent Notes:</b>&nbsp;@Html.TextBoxFor(n => n.Notes,
-new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip })
+                <span><b>Client:</b>&nbsp;@Html.Label(Model.ClientNameAddress)&nbsp;</span>
+                <span><b>Phone:</b>&nbsp;@Html.Label(Model.Phone)&nbsp;</span>
+                <span><b>Email:</b>&nbsp;@Model.Email</span>
+                <span><b>Permanent Notes:</b>&nbsp;@Html.TextBoxFor(n => n.Notes,
+                                                         new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip })</span>
             </div>
             <span>
                 <b>Family:</b>&nbsp;
@@ -166,21 +163,20 @@ new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip 
                         </td>
                     </tr>
                 </table>
-            </div>
-            <div class="form-group">
-                &nbsp;@Html.Label("Status:")&nbsp;
-                @Html.Label("Open")
-                @*@Html.RadioButtonFor(m => m.SelectedStatus, "Open")&nbsp;&nbsp;*@
-                <input type="radio" name="statusRB" value="Open" />
-                @Html.Label("Delivered")
-                @*@Html.RadioButtonFor(m => m.SelectedStatus, "Delivered")&nbsp;&nbsp;*@
-                <input type="radio" name="statusRB" value="Delivered" />
-                @Html.Label("Undelivered")
-                @*@Html.RadioButtonFor(m => m.SelectedStatus, "Undelivered")*@
-                <input type="radio" name="statusRB" value="Undelivered" />
+                <table>
+                    <tr>
+                        <td>@Html.Label("Status:")&nbsp;</td>
+                        <td>@Html.Label("Open")</td>
+                        <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Open", new { @onchange = "ToggleStatus('Open');"})&nbsp;&nbsp;</td>
+                        <td>@Html.Label("Delivered")</td>
+                        <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Delivered", new { @onchange = "ToggleStatus('Delivered');"})&nbsp;&nbsp;</td>
+                        <td>@Html.Label("Undelivered")</td>
+                        <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Undelivered", new{ @onchange = "ToggleStatus('Undelivered');"})</td>
+                    </tr>
+                </table>
             </div>
             <br />
-            <div class="form-group">@*  *@
+            <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
                     @Html.ActionLink("Delete", "Delete", new { id = Model.Id, returnURL = Model.ReturnURL }, new { id = "DeleteButton" })
@@ -241,11 +237,6 @@ new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip 
     });
 </script>
 <script>
-    function buttonValue() {
-        if (window.$("#SelectedStatus") === "Delivered") window.$("#Status").valueOf = 1;
-    }
-</script>
-<script>
     window.$("#DateDelivered").change(function () {
         var Id = window.$("#DeliveryId").val();
         var newdatedelivered = window.$("#DateDelivered").val();
@@ -263,7 +254,7 @@ new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip 
 
         var data = "id=" + Id + "|" + "newdatedelivered=" + newdatedelivered + "|";
         data += "returnurl=" + returnurl + "|" + "odid=" + odid + "|";
-        data += "deliverydateodid =" + deliverydateodid + "|" + "odnotes=" + odnotes + "|";
+        data += "deliverydateodid=" + deliverydateodid + "|" + "odnotes=" + odnotes + "|";
         data += "drivernotes=" + drivernotes + "|" + "zip=" + zip + "|" + "status=" + status + "|";
         data += "fullbags =" + fullbags + "|" + "halfbags=" + halfbags + "|";
         data += "kidsnacks=" + kidsnacks + "|" + "giftcards=" + giftcards;
@@ -278,4 +269,10 @@ new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip 
             }
         });
     });
+</script>
+<script>
+    function ToggleStatus(status)
+    {
+        window.$("#SelectedStatus").val(status);
+    };
 </script>

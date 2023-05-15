@@ -5,7 +5,7 @@ using BHelp.Controllers;
 namespace BHelpTests
 {
     [TestClass]
-    public class ControllerTests
+    public class ReportsControllerTests
     {
         [TestMethod]
         public void TestActiveVolunteerDetails()

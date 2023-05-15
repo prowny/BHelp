@@ -13,22 +13,20 @@ namespace BHelp
         public static List<SelectListItem> GetActiveUsersSelectList()
         {
             var list = new List<SelectListItem>();
-            using (var db = new BHelpContext())
+            using var db = new BHelpContext();
+            var activeUsers = db.Users.OrderBy(n => n.LastName)
+                .Where(u => u.Active).ToList();
+            foreach (var user in activeUsers)
             {
-                var activeUsers = db.Users.OrderBy(n => n.LastName)
-                    .Where(u => u.Active).ToList();
-                foreach (var user in activeUsers)
-                {
-                    var usr = new SelectListItem() { Value = user.Id, Text = user.FullName };
-                    list.Add(usr);
-                }
-
-                return list;
+                var usr = new SelectListItem() { Value = user.Id, Text = user.FullName };
+                list.Add(usr);
             }
+
+            return list;
         }
         public static List<SelectListItem> GetHoursCategoriesSelectList(bool? IsNonFoodServiceAdministration, bool IsNonFoodServiceManagement)
         {
-            List<SelectListItem> getHoursCategories = new List<SelectListItem>();
+            var getHoursCategories = new List<SelectListItem>();
             var selListItem = new SelectListItem() { Value = "F", Text = @"Food Program" };
             getHoursCategories.Add(selListItem);    // Food Program
             selListItem = new SelectListItem() { Value = "A", Text = @"Administration" };
@@ -104,42 +102,36 @@ namespace BHelp
         }
         public static bool IsIndividual(string usrId)
         {
-            using (var db = new BHelpContext())
-            {
-                var usr = db.Users.Find(usrId);
-                bool IsNonFoodServiceAdministration =
-                    AppRoutines.UserIsInRole(usr.Id, "NonFoodServiceAdministrationHours");
-                if (IsNonFoodServiceAdministration) return true;
-                bool IsNonFoodServiceManagement = AppRoutines.UserIsInRole(usr.Id, "NonFoodServiceManagementHours");
-                if (IsNonFoodServiceManagement) return true;
-                bool isDeveloper = AppRoutines.UserIsInRole(usr.Id, "Developer");
-                if (isDeveloper) return false;
-                var isAdministrator = AppRoutines.UserIsInRole(usr.Id, "Administrator");
-                if (isAdministrator) return false;
-                var isStaff = AppRoutines.UserIsInRole(usr.Id, "Staff");
-                if (isStaff) return false;
-                var isPantryCoordinator = AppRoutines.UserIsInRole(usr.Id, "PantryCoordinator");
-                if (isPantryCoordinator) return false;
-                return true; // default unless in higher role
-            }
+            using var db = new BHelpContext();
+            var usr = db.Users.Find(usrId);
+            bool IsNonFoodServiceAdministration =
+                AppRoutines.UserIsInRole(usr.Id, "NonFoodServiceAdministrationHours");
+            if (IsNonFoodServiceAdministration) return true;
+            bool IsNonFoodServiceManagement = AppRoutines.UserIsInRole(usr.Id, "NonFoodServiceManagementHours");
+            if (IsNonFoodServiceManagement) return true;
+            bool isDeveloper = AppRoutines.UserIsInRole(usr.Id, "Developer");
+            if (isDeveloper) return false;
+            var isAdministrator = AppRoutines.UserIsInRole(usr.Id, "Administrator");
+            if (isAdministrator) return false;
+            var isStaff = AppRoutines.UserIsInRole(usr.Id, "Staff");
+            if (isStaff) return false;
+            var isPantryCoordinator = AppRoutines.UserIsInRole(usr.Id, "PantryCoordinator");
+            if (isPantryCoordinator) return false;
+            return true; // default unless in higher role
         }
 
         public static bool IsNonFoodServiceAdministration(string usrId)
         {
-            using (var db = new BHelpContext())
-            {
-                var usr = db.Users.Find(usrId);
-                return AppRoutines.UserIsInRole(usr.Id, "NonFoodServiceAdministrationHours");
-            }
+            using var db = new BHelpContext();
+            var usr = db.Users.Find(usrId);
+            return AppRoutines.UserIsInRole(usr.Id, "NonFoodServiceAdministrationHours");
         }
 
         public static bool IsNonFoodServiceManagement(string usrId)
         {
-            using (var db = new BHelpContext())
-            {
-                var usr = db.Users.Find(usrId);
-                return AppRoutines.UserIsInRole(usr.Id, "NonFoodServiceManagementHours");
-            }
+            using var db = new BHelpContext();
+            var usr = db.Users.Find(usrId);
+            return AppRoutines.UserIsInRole(usr.Id, "NonFoodServiceManagementHours");
         }
 
         public static List<SelectListItem> SetSelectedItem( List<SelectListItem> list, string text)

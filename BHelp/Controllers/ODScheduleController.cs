@@ -94,21 +94,19 @@ namespace BHelp.Controllers
                 view.ODList = (List<SelectListItem>)Session["NonSchedulerODSelectList"];
             }
             // Check for existing record
-            using (var db = new BHelpContext())
+            using var db = new BHelpContext();
+            var existingRec = db.ODSchedules.FirstOrDefault(r => r.Date == view.Date);
+            if (existingRec != null)
             {
-                var existingRec = db.ODSchedules.FirstOrDefault(r => r.Date == view.Date);
-                if (existingRec != null)
+                if (existingRec.ODId != null)
                 {
-                    if (existingRec.ODId != null)
-                    {
-                        view.ODId = existingRec.ODId;
-                        view.OldODId = existingRec.ODId;
-                        var odIdx = odList.FindIndex(d => d.Value == view.ODId);
-                        if (odIdx > 0) view.ODName = odDataList[odIdx].FullName;
-                    }
-
-                    view.Note = existingRec.Note;
+                    view.ODId = existingRec.ODId;
+                    view.OldODId = existingRec.ODId;
+                    var odIdx = odList.FindIndex(d => d.Value == view.ODId);
+                    if (odIdx > 0) view.ODName = odDataList[odIdx].FullName;
                 }
+
+                view.Note = existingRec.Note;
             }
 
             var schedules = new List<ODScheduleViewModel>();
@@ -162,56 +160,54 @@ namespace BHelp.Controllers
         {
             if (ModelState.IsValid)
             {
-                using (var db = new BHelpContext())
+                using var db = new BHelpContext();
+                // Check if date exists & update
+                var rec = db.ODSchedules
+                    .FirstOrDefault(d => d.Date == schedule.Date);
+                if (rec != null)
                 {
-                    // Check if date exists & update
-                    var rec = db.ODSchedules
-                        .FirstOrDefault(d => d.Date == schedule.Date);
-                    if (rec != null)
-                    {
-                        // Update record
-                        if (schedule.ODId == "0") schedule.ODId = null;
-                        rec.ODId = schedule.ODId;
-                        rec.Note = schedule.Note;
-                        db.SaveChanges();
-
-                        // update session variable:
-                        var msUpdate = (List<ODSchedule>)Session["MonthlyODSchedule"];
-                        foreach (var item in msUpdate.Where(s => s.Date == schedule.Date))
-                        {
-                            item.ODId = schedule.ODId;
-                            item.Note = schedule.Note;
-                        }
-
-                        Session["MonthlyODSchedule"] = msUpdate;
-
-                        return RedirectToAction("Edit", new { boxDate = schedule.Date, odid = schedule.ODId });
-                    }
-
-                    // Add new record
+                    // Update record
                     if (schedule.ODId == "0") schedule.ODId = null;
-                    var newRec = new ODSchedule()
-                    {
-                        Date = schedule.Date,
-                        ODId = schedule.ODId,
-                        Note = schedule.Note
-                    };
-                    db.ODSchedules.Add(newRec);
+                    rec.ODId = schedule.ODId;
+                    rec.Note = schedule.Note;
                     db.SaveChanges();
 
-
                     // update session variable:
-                    var msAdd = (List<ODSchedule>)Session["MonthlyODSchedule"];
-                    var newMsAdd = new ODSchedule()
+                    var msUpdate = (List<ODSchedule>)Session["MonthlyODSchedule"];
+                    foreach (var item in msUpdate.Where(s => s.Date == schedule.Date))
                     {
-                        ODId = schedule.ODId,
-                        Date = schedule.Date
-                    };
-                    msAdd.Add(newMsAdd);
-                    Session["MonthlyODSchedule"] = msAdd;
+                        item.ODId = schedule.ODId;
+                        item.Note = schedule.Note;
+                    }
 
-                    return RedirectToAction("Edit", new { boxDate = newRec.Date, odId = schedule.ODId });
+                    Session["MonthlyODSchedule"] = msUpdate;
+
+                    return RedirectToAction("Edit", new { boxDate = schedule.Date, odid = schedule.ODId });
                 }
+
+                // Add new record
+                if (schedule.ODId == "0") schedule.ODId = null;
+                var newRec = new ODSchedule()
+                {
+                    Date = schedule.Date,
+                    ODId = schedule.ODId,
+                    Note = schedule.Note
+                };
+                db.ODSchedules.Add(newRec);
+                db.SaveChanges();
+
+
+                // update session variable:
+                var msAdd = (List<ODSchedule>)Session["MonthlyODSchedule"];
+                var newMsAdd = new ODSchedule()
+                {
+                    ODId = schedule.ODId,
+                    Date = schedule.Date
+                };
+                msAdd.Add(newMsAdd);
+                Session["MonthlyODSchedule"] = msAdd;
+
+                return RedirectToAction("Edit", new { boxDate = newRec.Date, odId = schedule.ODId });
             }
             else
             {
