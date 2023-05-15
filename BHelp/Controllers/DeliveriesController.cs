@@ -786,29 +786,23 @@ namespace BHelp.Controllers
                     if (_HistoryEndDate != null) _view.HistoryEndDate = _HistoryEndDate;
 
                     var odSched = AppRoutines.GetODSchedule((DateTime)_NewDateDelivered);
-                    if (odSched != null)
+                    if (odSched == null)
                     {
-                        if (odSched.ODId == null)
-                        {
-                            _view.DeliveryDateODId = null; // (nobody yet)
-                        }
-                        else
-                        {
-                            _view.DeliveryDateODId = odSched.ODId;
-                        }
+                        _view.DeliveryDateODId = null; // (nobody yet)
+                    }
+                    else
+                    {
+                        _view.DeliveryDateODId = odSched.ODId;
                     }
 
                     var driverSched = AppRoutines.GetDriverSchedule((DateTime)_NewDateDelivered);
-                    if (driverSched != null)
+                    if (driverSched == null)
                     {
-                        if (driverSched.DriverId == null)
-                        {
-                            _view.DriverId = null; // (nobody yet)
-                        }
-                        else
-                        {
-                            _view.DriverId = driverSched.DriverId;
-                        }
+                        _view.DriverId = null; // (nobody yet)
+                    }
+                    else
+                    {
+                        _view.DriverId = driverSched.DriverId;
                     }
 
                     // Reset selected item in DeliveryDateODList
