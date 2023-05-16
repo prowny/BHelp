@@ -38,6 +38,7 @@ namespace BHelp
                 {
                     ODId = System.Web.HttpContext.Current.User.Identity.GetUserId(),
                     DeliveryDateODId = GetODIdForDate(delDate),
+                    DriverId = GetDriverIdForDate(delDate),
                     ClientId = clientId,
                     LogDate = DateTime.Today,
                     FirstName = client.FirstName,
@@ -86,17 +87,17 @@ namespace BHelp
                     delivery.FullBags = 1;
                 }
 
-                if (numberInHousehold >= 3 && numberInHousehold <= 4)
+                if (numberInHousehold is >= 3 and <= 4)
                 {
                     delivery.FullBags = 2;
                 }
 
-                if (numberInHousehold == 5 || numberInHousehold == 6)
+                if (numberInHousehold is 5 or 6)
                 {
                     delivery.FullBags = 3;
                 }
 
-                if (numberInHousehold == 7 || numberInHousehold == 8)
+                if (numberInHousehold is 7 or 8)
                 {
                     delivery.FullBags = 4;
                 }
@@ -112,7 +113,7 @@ namespace BHelp
                     delivery.HalfBags = 1;
                 }
 
-                if (numberInHousehold >= 5 && numberInHousehold <= 8)
+                if (numberInHousehold is >= 5 and <= 8)
                 {
                     delivery.HalfBags = 2;
                 }
@@ -416,6 +417,14 @@ namespace BHelp
             using var db = new BHelpContext();
             var rec = db.ODSchedules.FirstOrDefault(d => d.Date == delDate);
             if (rec != null) return rec.ODId;
+            return null;
+        }
+
+        private static string GetDriverIdForDate(DateTime delDate)
+        {
+            using var db = new BHelpContext();
+            var rec = db.DriverSchedules.FirstOrDefault(d => d.Date == delDate);
+            if (rec != null) return rec.DriverId;
             return null;
         }
 
