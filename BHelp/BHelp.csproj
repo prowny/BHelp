@@ -282,6 +282,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Controllers\LoginsController.cs" />
+    <Compile Include="Controllers\ODEmailController.cs" />
     <Compile Include="Controllers\ReportsController.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
@@ -401,6 +402,7 @@
     <Compile Include="ViewModels\AddEditUserRolesViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="ViewModels\ODEmailViewModel.cs" />
     <Compile Include="ViewModels\DocumentsViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -707,6 +709,9 @@
     <Content Include="Views\Reports\QORKReport.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Views\ODEmail\Index.cshtml" />
+    <Content Include="Views\ODEmail\ODEmailDisplay.cshtml" />
+    <Content Include="Views\ODEmail\MonthlySchedule.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

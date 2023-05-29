@@ -8,7 +8,17 @@ namespace BHelpTests
     public class ReportsControllerTests
     {
         [TestMethod]
-        public void TestActiveVolunteerDetails()
+        public void WeeklyCountyReport()
+        {
+            //Arrange
+            var controller = new ReportsController();
+            //Act
+            var result = controller.QORKReport() as ViewResult;
+            //Assert
+            Assert.IsNotNull(result);
+        }
+        [TestMethod]
+        public void ActiveVolunteerDetails()
         {
             //Arrange
             var controller = new ReportsController();

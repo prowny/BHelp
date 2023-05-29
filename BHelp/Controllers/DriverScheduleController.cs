@@ -515,7 +515,7 @@ namespace BHelp.Controllers
             {
                 CurrentUserId = User.Identity.GetUserId(), 
                 BoxDay = new DateTime[6, 6],
-                BoxDriverId = new string[26],
+                BoxODId = new string[26],
                 BoxDriverName = new string[26],
                 BoxDriverPhone = new string[26],
                 BoxDriverPhone2 = new string[26],
@@ -646,7 +646,7 @@ namespace BHelp.Controllers
                 SetMonthlyList(_month, _year);
             }
             
-            if (Session["GroupList"] == null)
+            if (Session["ODGroupList"] == null)
             {
                 var db = new BHelpContext(); 
                 var groupList = db.GroupNames.OrderBy(n => n.Name).ToList();
@@ -656,7 +656,7 @@ namespace BHelp.Controllers
                     items.Add(new SelectListItem { Text = item.Name, Value = item.Id.ToString() });
                 }
 
-                Session["GroupList"] = items;
+                Session["ODGroupList"] = items;
             }
 
             if (boxDate != null)

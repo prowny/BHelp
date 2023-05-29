@@ -48,7 +48,7 @@ namespace BHelp.ViewModels
         public DateTime[,] BoxDay { get; set; }
 
         public string[] BoxDriverName { get; set; }
-        public string[] BoxDriverId { get; set; }
+        public string[] BoxODId { get; set; }
         public string[] BoxDriverPhone { get; set; }
         public string[] BoxDriverPhone2 { get; set; }
         public string[] BoxDriverEmail { get; set; }

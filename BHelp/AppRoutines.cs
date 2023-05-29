@@ -38,7 +38,7 @@ namespace BHelp
                 {
                     ODId = System.Web.HttpContext.Current.User.Identity.GetUserId(),
                     DeliveryDateODId = GetODIdForDate(delDate),
-                    DriverId = GetDriverIdForDate(delDate),
+                    //DriverId = GetDriverIdForDate(delDate),  // Lave null for drivers to choose delivery
                     ClientId = clientId,
                     LogDate = DateTime.Today,
                     FirstName = client.FirstName,
@@ -65,7 +65,7 @@ namespace BHelp
                             delivery.Children += 1;
                         }
 
-                        if (mbr.Age >= 18 && mbr.Age < 60)
+                        if (mbr.Age is >= 18 and < 60)
                         {
                             delivery.Adults += 1;
                         }

@@ -29,14 +29,13 @@
 
     @if (User.IsInRole("Developer"))
     {
-<div>
-    <strong>Developer Menu</strong><br />
-    <a href="@Url.Action("Index", "DriverEmail")">Driver Email</a><br />
-    <a href="@Url.Action("Edit", "DriverSchedule")">Driver Schedule</a><br />
-    <a href="@Url.Action("Edit", "ODSchedule")">OD Schedule</a><br />
-    <a href="@Url.Action("Index", "Logins")">View Logins Log</a><br />
-    <a href="@Url.Action("WeeklyInfoReport", "Reports")">Weekly Info Report</a><br />
-</div>
+        <div>
+            <strong>Developer Menu</strong><br />
+            <a href="@Url.Action("Index", "DriverEmail")">Driver Email</a><br />
+            <a href="@Url.Action("Edit", "DriverSchedule")">Driver Schedule</a><br />
+            <a href="@Url.Action("Edit", "ODSchedule")">OD Schedule</a><br />
+            <a href="@Url.Action("Index", "Logins")">View Logins Log</a><br />
+        </div>
         <br />
     }
 
@@ -78,6 +77,15 @@
         </div>
     }
 
+    @if (User.IsInAnyRoles("Developer","Administrator", "Scheduler"))
+    {
+        <div>
+            <strong>Email Menu</strong><br />
+            <a href="@Url.Action("ReportsMenu", "Reports")">Reports</a><br />
+        </div>
+        <br />
+    }
+
     @if (User.IsInAnyRoles("Reports","Developer","Administrator"))
     {
         <div>
@@ -111,11 +119,11 @@
     <a href="@Url.Action("Edit", "DriverSchedule")">Maintain Driver Schedules</a><br />
     <a href="@Url.Action("Index", "DriverEmail")">Driver Email</a><br />
     <a href="@Url.Action("Edit", "ODSchedule")">Maintain OD Schedules</a><br />
+    <a href="@Url.Action("Index", "ODEmail")">OD Email</a><br />
     <a href="@Url.Action("Index", "Holidays")">Maintain Holidays</a><br />
 </div>
     <br />
-}    
-
+}
 
 @if (User.IsInAnyRoles("Developer","OfficerOfTheDay","Staff","Administrator"))
     {

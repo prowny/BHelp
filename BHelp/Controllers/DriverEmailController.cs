@@ -30,7 +30,7 @@ namespace BHelp.Controllers
                     items.Add(new SelectListItem { Text = item.Name, Value = item.Id.ToString() });
                 }
 
-                Session["GroupList"] = items;
+                Session["DriverGroupList"] = items;
             }
 
             var _dt = new DateTime(year, month, 1);
@@ -150,7 +150,7 @@ namespace BHelp.Controllers
             var view = new DriverScheduleViewModel
             {
                 BoxDay = new DateTime[6, 6],
-                BoxDriverId = new string[26],
+                BoxODId = new string[26],
                 BoxDriverName = new string[26],
                 BoxDriverPhone = new string[26],
                 BoxDriverPhone2 = new string[26],
@@ -406,7 +406,7 @@ namespace BHelp.Controllers
                         items.Add(new SelectListItem { Text = item.Name, Value = item.Id.ToString() });
                     }
 
-                    Session["GroupList"] = items;
+                    Session["DriverGroupList"] = items;
                 }
 
                 return driverList;

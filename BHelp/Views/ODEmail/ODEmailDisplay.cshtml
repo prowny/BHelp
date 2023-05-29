@@ -1,0 +1,28 @@
+﻿@model BHelp.ViewModels.ODEmailViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ODEmailDisplay</title>
+</head>
+<body>
+    <div>
+        @Html.Raw(Model.EmailText)
+    </div>
+
+    <div>
+        <span style="color: red"><strong>@Html.Label(Model.MonthYear)</strong></span>
+        @Html.Raw(Model.HtmlContent)
+    </div>
+    <div>
+        <br />
+        <span style="color: blue"><b>Send this to all ODs...</b></span>&nbsp;(not implemented yet)
+    </div>
+    <div>
+        <br />
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
+</body>
+</html>
