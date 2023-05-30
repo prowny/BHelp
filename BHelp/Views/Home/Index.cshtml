@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNet.Identity
-@model BHelp.Models.ApplicationUser
+﻿@model BHelp.Models.ApplicationUser
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -19,7 +18,6 @@
     <div>
         <table>
             @{ string userName = @User.Identity.Name + "!"; }
-            @{ string userid = @User.Identity.GetUserId(); }
             <tr><td>&nbsp;&nbsp; Welcome @userName</td></tr>
             <tr>
                 <td>
@@ -83,7 +81,7 @@
     {
         <div>
             <strong>Email Menu</strong><br />
-            <a href="@Url.Action("ReportsMenu", "Reports")">Bulk Emails</a><br />
+            <a href="@Url.Action("Index", "BulkEmail")">Bulk Emails</a><br />
         </div>
         <br />
     }

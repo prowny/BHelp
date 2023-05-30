@@ -281,6 +281,7 @@
     <Compile Include="Controllers\AddressChecksController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Controllers\BulkEmailController.cs" />
     <Compile Include="Controllers\LoginsController.cs" />
     <Compile Include="Controllers\ODEmailController.cs" />
     <Compile Include="Controllers\ReportsController.cs">
@@ -712,6 +713,7 @@
     <Content Include="Views\ODEmail\Index.cshtml" />
     <Content Include="Views\ODEmail\ODEmailDisplay.cshtml" />
     <Content Include="Views\ODEmail\MonthlySchedule.cshtml" />
+    <Content Include="Views\BulkEmail\Index.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
