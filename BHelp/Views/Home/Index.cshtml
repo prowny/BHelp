@@ -1,4 +1,5 @@
-﻿@model BHelp.Models.ApplicationUser
+﻿@using Microsoft.AspNet.Identity
+@model BHelp.Models.ApplicationUser
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -18,6 +19,7 @@
     <div>
         <table>
             @{ string userName = @User.Identity.Name + "!"; }
+            @{ string userid = @User.Identity.GetUserId(); }
             <tr><td>&nbsp;&nbsp; Welcome @userName</td></tr>
             <tr>
                 <td>
@@ -117,9 +119,9 @@
 <div>
     <strong>Scheduler Menu</strong><br />
     <a href="@Url.Action("Edit", "DriverSchedule")">Maintain Driver Schedules</a><br />
-    <a href="@Url.Action("Index", "DriverEmail")">Driver Email</a><br />
+    <a href="@Url.Action("Index", "DriverEmail")">Driver Schedule Email</a><br />
     <a href="@Url.Action("Edit", "ODSchedule")">Maintain OD Schedules</a><br />
-    <a href="@Url.Action("Index", "ODEmail")">OD Email</a><br />
+    <a href="@Url.Action("Index", "ODEmail")">OD Schedule Email</a><br />
     <a href="@Url.Action("Index", "Holidays")">Maintain Holidays</a><br />
 </div>
     <br />

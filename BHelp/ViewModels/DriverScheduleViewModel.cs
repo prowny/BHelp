@@ -46,7 +46,7 @@ namespace BHelp.ViewModels
         public List<SelectListItem> BackupDriver2List { get; set; }
         public List<DriverScheduleViewModel> DriversSchedule { get; set; }
         public DateTime[,] BoxDay { get; set; }
-
+        public string[] BoxDriverId { get; set; }
         public string[] BoxDriverName { get; set; }
         public string[] BoxODId { get; set; }
         public string[] BoxDriverPhone { get; set; }

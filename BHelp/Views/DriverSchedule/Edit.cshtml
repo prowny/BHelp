@@ -24,6 +24,7 @@
 <body>
     @using (Html.BeginForm("Edit", "DriverSchedule", FormMethod.Post))
     {
+        //var sessionUserId = @User.Identity.GetUserId(); 
         @Html.AntiForgeryToken()
         if (Model.AllowEdit)
         {
@@ -201,6 +202,13 @@
                                             @Model.BoxDriverEmail[i]
                                         </a>
                                     }
+
+                                    @*if (Model.BoxDriverId[i] == sessionUserId)
+                                    {
+                                        <br/>
+                                        @Html.Label( "Confirmed")
+                                        @Html.CheckBoxFor(c =>c.BoxDriverConfirmed[i])
+                                    }*@
                                 }
 
                                 if (Model.BoxBackupDriverName[i] == null)
@@ -365,15 +373,9 @@
 
                                 if (Model.BoxHolidayDescription[i] != null)
                                 {
-                                    @*<br/>
-                                    <span style="font-size: small">
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        @Html.Label("Notes")
-                                    </span>*@
                                     <br/>
                                     @Html.Raw(Model.BoxHolidayDescription[i].Replace(Environment.NewLine, "<br/>"))
                                 }
-
                             }
                         </td>
                         }
@@ -382,11 +384,6 @@
             </table>
         </div>
         <br />
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-
-            </div>
-        </div>
     }
     <br />
     <div>
@@ -431,7 +428,7 @@
 <script >
     $("#schedule td").click(function() {
         var celltext = (this).text();  
-        Test(celltext);
+        window.Test(celltext);
     });
 </script>
 
