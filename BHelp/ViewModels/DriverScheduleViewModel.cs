@@ -59,7 +59,6 @@ namespace BHelp.ViewModels
         public string[] BoxBackupDriverPhone { get; set; }
         public string[] BoxBackupDriverPhone2 { get; set; }
         public string[] BoxBackupDriverEmail { get; set; }
-
         public string[] BoxBackupDriver2Id { get; set; }
         public string[] BoxBackupDriver2Name { get; set; }
         public string[] BoxBackupDriver2Phone { get; set; }

@@ -203,11 +203,18 @@
                                         </a>
                                     }
 
-                                    @*if (Model.BoxDriverId[i] == sessionUserId)
+                                    @*if (Model.BoxDriverId[i] == Model.CurrentUserId)
                                     {
-                                        <br/>
-                                        @Html.Label( "Confirmed")
-                                        @Html.CheckBoxFor(c =>c.BoxDriverConfirmed[i])
+                                        <br />
+                                        if (Model.BoxDriverConfirmed[i])
+                                        {
+                                            @Html.Label("Confirmed")
+                                        }
+                                        else
+                                        {
+                                            <span style="color: red">@Html.Label("Confirmed")</span>
+                                        }
+                                        @Html.CheckBoxFor(c => c.BoxDriverConfirmed[i])
                                     }*@
                                 }
 
@@ -318,11 +325,11 @@
                                             <span style="text-decoration-color: red">
                                                 @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
                                             </span>
-                                              if (Model.BoxGroupDriverPhone[i] != null)
-                                    {
-                                        <br />
-                                        @Html.Label(Model.BoxGroupDriverPhone[i])
-                                    }
+                                            if (Model.BoxGroupDriverPhone[i] != null)
+                                            {
+                                                <br />
+                                                @Html.Label(Model.BoxGroupDriverPhone[i])
+                                            }
                                         }
                                     }
                                 }
@@ -362,18 +369,18 @@
 
                                 if (Model.BoxNote[i] != null)
                                 {
-                                    <br/>
+                                    <br />
                                     <span style="font-size: small">
                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                         @Html.Label("Notes")
                                     </span>
-                                    <br/>
+                                    <br />
                                     @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>"))
                                 }
 
                                 if (Model.BoxHolidayDescription[i] != null)
                                 {
-                                    <br/>
+                                    <br />
                                     @Html.Raw(Model.BoxHolidayDescription[i].Replace(Environment.NewLine, "<br/>"))
                                 }
                             }
