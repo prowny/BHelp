@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BHelp.Models;
 
 namespace BHelp.ViewModels
@@ -9,7 +10,7 @@ namespace BHelp.ViewModels
         public List<ApplicationUser> ODPlusInactiveList { get; set; }
         public List<ApplicationUser> ActiveDriverList { get; set; }
         public List<ApplicationUser> DriverPlusInactiveList { get; set; }
-        public List<ApplicationUser> ManagementList { get; set; }
+        public List<ApplicationUser> ActiveManagementList { get; set; }
         public List<ApplicationUser> ManagementPlusInactiveList { get; set; }
         public List<ApplicationUser> AllActiveUsersList { get; set; }
         public List<ApplicationUser> AllUsersPlusInactiveList { get; set; }
@@ -23,5 +24,8 @@ namespace BHelp.ViewModels
         public bool ManagementIncludeInactives { get; set; }
         public bool AllUsersSelect { get; set; }
         public bool AllUsersIncludeInactives { get; set; }
+
+        public string Subject { get; set; }
+        public string EmailText { get; set; } 
     }
 }

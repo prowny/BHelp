@@ -23,8 +23,14 @@ namespace BHelp.Controllers
                 ActiveODList = GetMasterList("OfficerOfTheDay",
                     AllUsersPlusInactiveList, true),
 
+                ManagementPlusInactiveList = GetMasterList("Management",
+                    AllUsersPlusInactiveList, false),
+                ActiveManagementList = GetMasterList("Management",
+                    AllUsersPlusInactiveList, true),
+
                 AllUsersPlusInactiveList = AllUsersPlusInactiveList,
-                AllActiveUsersList = new List<ApplicationUser>()
+                AllActiveUsersList = new List<ApplicationUser>(), 
+                Subject = "BHELP "
             };
 
             foreach (var _user in AllUsersPlusInactiveList)
