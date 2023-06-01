@@ -420,14 +420,6 @@ namespace BHelp
             return null;
         }
 
-        private static string GetDriverIdForDate(DateTime delDate)
-        {
-            using var db = new BHelpContext();
-            var rec = db.DriverSchedules.FirstOrDefault(d => d.Date == delDate);
-            if (rec != null) return rec.DriverId;
-            return null;
-        }
-
         public static string GetNamesAgesOfAllInHousehold(int clientId)
         {
             string NamesAges = "";
@@ -1647,14 +1639,20 @@ namespace BHelp
 
         public static List<ApplicationUser> GetActiveUserList()
         {
+            using var _db = new BHelpContext();
+            var activeVolunteersList = _db.Users
+                .Where(u => u.Active).OrderBy(u => u.LastName)
+                .ThenBy(u => u.FirstName).ToList();
+            return activeVolunteersList;
+        }
 
-            using (var _db = new BHelpContext())
-            {
-                var activeVolunteersList = _db.Users
-                    .Where(u => u.Active).OrderBy(u => u.LastName)
-                    .ThenBy(u => u.FirstName).ToList();
-                return activeVolunteersList;
-            }
+        public static List<ApplicationUser> GetAllUserList() // include inactive users
+        {
+            using var _db = new BHelpContext();
+            var allVolunteersList = _db.Users
+                .OrderBy(u => u.LastName)
+                .ThenBy(u => u.FirstName).ToList();
+            return allVolunteersList;
         }
 
         public static List<string> GetUserIdsInRole(string roleId)

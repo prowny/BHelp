@@ -403,6 +403,7 @@
     <Compile Include="ViewModels\AddEditUserRolesViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="ViewModels\BulkEmailViewModel.cs" />
     <Compile Include="ViewModels\ODEmailViewModel.cs" />
     <Compile Include="ViewModels\DocumentsViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
