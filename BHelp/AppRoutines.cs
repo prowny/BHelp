@@ -1133,12 +1133,16 @@ namespace BHelp
                 if (allData)
                 {
                     var _namesAges = "";
-                    if (d.NamesAgesInHH != null) _namesAges = d.NamesAgesInHH.Replace(",", " ");
-                    sb.Append("," + d.City + "," + d.Phone + "," + _namesAges + ",");
+                    if (d.NamesAgesInHH != null) _namesAges = "\"" + d.NamesAgesInHH.Replace("\"","'") + "\"";
+                    var _phone = "";
+                    if (d.Phone != null) _phone = "\"" + d.Phone.Replace("\"", "'") + "\"";
+                    var _city = "";
+                    if (d.City != null) _city = "\"" + d.City.Replace("\"", "'") + "\"";
+                    sb.Append("," +_city + "," + _phone + "," + _namesAges + ",");
                     if (d.ODId != null)
                     {
                         var _usr = db.Users.Find(d.ODId);
-                        if (_usr != null) d.ODName = _usr.FullName;
+                         if (_usr != null) d.ODName = _usr.FullName;
                     }
 
                     if (d.DeliveryDateODId != null)
@@ -1151,9 +1155,17 @@ namespace BHelp
                     var _firstDelivery = "false";
                     if (d.FirstDelivery) _firstDelivery = "true";
                     var _ODNotes = "";
-                    if (d.ODNotes != null) _ODNotes = d.ODNotes.Replace(",", ";");
+                    if (d.ODNotes != null)
+                    {
+                        _ODNotes = "\"" + d.ODNotes.Replace("\n", "")
+                            .Replace("\r","").Replace("\"", "'") + "\"";
+                    }
                     var _driverNotes = "";
-                    if (d.DriverNotes != null) _driverNotes = d.DriverNotes.Replace(",", ";");
+                    if (d.DriverNotes != null)
+                    {
+                        _driverNotes = "\"" + d.DriverNotes.Replace("\n", "")
+                            .Replace("\r", "").Replace("\"", "'") + "\"";
+                    }
                     sb.Append(_ODNotes + "," + _driverNotes + "," + _firstDelivery);
                 }
 
