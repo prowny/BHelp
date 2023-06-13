@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BHelp.Models;
 
 namespace BHelp.ViewModels
@@ -14,7 +13,6 @@ namespace BHelp.ViewModels
         public List<ApplicationUser> ManagementPlusInactiveList { get; set; }
         public List<ApplicationUser> AllActiveUsersList { get; set; }
         public List<ApplicationUser> AllUsersPlusInactiveList { get; set; }
-        public List<ApplicationUser> DonorList { get; set; }
 
         public bool ODSelect { get; set; }
         public bool ODIncludeInactives { get; set; }

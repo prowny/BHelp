@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -11,6 +12,8 @@ using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
 using ClosedXML.Excel;
+using CsvHelper;
+using Org.BouncyCastle.Utilities;
 
 namespace BHelp.Controllers
 {
@@ -504,5 +507,77 @@ namespace BHelp.Controllers
             }
             base.Dispose(disposing);
         }
+
+        public ActionResult BetaClientList()
+        {
+            var betaList = new List<Client>();
+            var matchList = new List<Client>();
+            var distinctList = new List<Client>();
+            var missingList = new List<Client>();
+            var distinctMissingList = new List<Client>();
+
+            var matches = 0;
+            var recCount = 0;
+            var j = 0;
+            var clientList = db.Clients.OrderBy(n => n.LastName)
+                .ThenBy(f => f.FirstName).ToList();
+            // Generate list names all caps
+            foreach (var client in clientList)
+            {
+                var betaClient = client;
+                betaClient.LastName = Strings.ToUpperCase(client.LastName);
+                betaClient.FirstName = Strings.ToUpperCase(client.FirstName);
+                betaList.Add(betaClient);
+            }
+            // get payments list
+            var assistanceList = new List<AssistanceViewModel>();
+            var reader = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/AssistancePayments.csv");
+            while (!reader.EndOfStream)
+            {
+                var line = reader.ReadLine();
+                if (line != null)
+                {
+                    var values = line.Split(',');
+                    if (values[0].Length > 0) recCount++;
+                    var search = betaList.FirstOrDefault(s => s.LastName == values[0]
+                                         && s.FirstName == values[1]);         //&& s.FirstName == values[1]);
+
+                    if (search == null)
+                    {
+                        if (values[0] != "")
+                        {
+                            j = j +1;
+                            if (j == 655)
+                            {
+                                j = j;
+                            }
+                            var missingClient = new Client()
+                                { LastName = values[0], FirstName = values[1] };
+                            missingList.Add(missingClient);
+                        }
+                    }
+                    else 
+                    {
+                        matches++;
+                        matchList.Add(search);
+                    }
+                    //var assistanceRecord = new AssistanceViewModel(); 
+                    //for (var i = 0; i < 9; i++)
+                    //{
+                    //    assistanceRecord.ClientId = Convert.ToInt32(values[i]);
+                    //}
+                }
+
+                distinctList = matchList.GroupBy(i => i.Id)
+                    .Select(s => s.FirstOrDefault()).ToList();
+
+                distinctMissingList = missingList.GroupBy(n => new { n.LastName, n.FirstName })
+                    .Select(n => n.First()).ToList();
+            }
+
+            var view = distinctMissingList;
+            return View(view);
+        }
+
     }
 }

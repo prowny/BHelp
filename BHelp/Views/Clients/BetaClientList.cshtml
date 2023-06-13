@@ -1,0 +1,33 @@
+﻿@model IEnumerable<BHelp.Models.Client>
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>BetaClientList</title>
+</head>
+<body>
+<div>
+    <table>
+
+        @{
+            int i = 0;
+        }
+        @foreach (var client in Model)
+        {
+            i = i + 1;
+            <tr>
+                <td>@i</td>
+                <td>@Html.DisplayFor(modelItem => client.LastName)</td>
+                <td>@Html.DisplayFor(modelItem => client.FirstName)</td>
+            </tr>
+        }
+    </table>
+</div>
+<br />
+<div>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
+</body>
+</html>

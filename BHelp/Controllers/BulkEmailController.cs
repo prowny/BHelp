@@ -30,14 +30,21 @@ namespace BHelp.Controllers
 
                 AllUsersPlusInactiveList = AllUsersPlusInactiveList,
                 AllActiveUsersList = new List<ApplicationUser>(), 
-                Subject = "BHELP "
+                Subject = "BHELP ",
+                EmailText = "(compose or paste your email text here)"
             };
 
             foreach (var _user in AllUsersPlusInactiveList)
             {
                 if(_user.Active) view.AllActiveUsersList.Add(_user);
             }
+
             return View(view);
+        }
+
+        public ActionResult Email()
+        {
+            return null; // not implemented yet
         }
 
         private static List<ApplicationUser> GetMasterList(string roleName, 
