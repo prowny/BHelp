@@ -12,15 +12,19 @@
     <table>
 
         @{
-            int i = 0;
+            var i = 0;
         }
         @foreach (var client in Model)
         {
             i = i + 1;
             <tr>
                 <td>@i</td>
+                <td>@Html.DisplayFor(modelItem => client.Id)</td>
                 <td>@Html.DisplayFor(modelItem => client.LastName)</td>
                 <td>@Html.DisplayFor(modelItem => client.FirstName)</td>
+                <td>@Html.DisplayFor(modelItem => client.StreetNumber)</td>
+                <td>@Html.DisplayFor(modelItem => client.StreetName)</td>
+                <td>@Html.DisplayFor(modelItem => client.Zip)</td>
             </tr>
         }
     </table>

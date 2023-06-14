@@ -54,6 +54,11 @@ namespace BHelp
 
             db.SaveChanges();
         }
+
+        public static bool CompareNoCase(string a, string b)
+        {
+            return string.Equals( a, b, StringComparison.CurrentCultureIgnoreCase);
+        }
     }
 }
 

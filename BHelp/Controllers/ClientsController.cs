@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -12,7 +11,6 @@ using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
 using ClosedXML.Excel;
-using CsvHelper;
 using Org.BouncyCastle.Utilities;
 
 namespace BHelp.Controllers
@@ -518,7 +516,6 @@ namespace BHelp.Controllers
 
             var matches = 0;
             var recCount = 0;
-            var j = 0;
             var clientList = db.Clients.OrderBy(n => n.LastName)
                 .ThenBy(f => f.FirstName).ToList();
             // Generate list names all caps
@@ -540,19 +537,43 @@ namespace BHelp.Controllers
                     var values = line.Split(',');
                     if (values[0].Length > 0) recCount++;
                     var search = betaList.FirstOrDefault(s => s.LastName == values[0]
-                                         && s.FirstName == values[1]);         //&& s.FirstName == values[1]);
+                                         && s.FirstName == values[1]);       
 
                     if (search == null)
                     {
                         if (values[0] != "")
                         {
-                            j = j +1;
-                            if (j == 655)
-                            {
-                                j = j;
-                            }
                             var missingClient = new Client()
-                                { LastName = values[0], FirstName = values[1] };
+                            {
+                                LastName = values[0],
+                                FirstName = values[1],
+                                StreetNumber = "",
+                                StreetName = values [2].Trim(),
+                                City = values[3],
+                                Zip = values[4]
+                            };
+
+                            if (missingClient.StreetName.Length > 0)
+                            {
+                                var stName = missingClient.StreetName;
+                                var stNumber = "";
+                                for (var i = 1; i < 6; i++)
+                                {
+                                    var _num = stName.Substring(0, i);
+                                    if (int.TryParse(_num, out var n))  // is string numeric integer?
+                                    {
+                                        stNumber = stName.Substring(0, i);
+                                    }
+                                }
+
+                                if (stNumber.Length > 0)
+                                {
+                                    missingClient.StreetNumber = stNumber.Trim();
+                                    missingClient.StreetName =
+                                        missingClient.StreetName.Substring(stNumber.Length).Trim();
+                                }
+                            }
+
                             missingList.Add(missingClient);
                         }
                     }
@@ -574,10 +595,36 @@ namespace BHelp.Controllers
                 distinctMissingList = missingList.GroupBy(n => new { n.LastName, n.FirstName })
                     .Select(n => n.First()).ToList();
             }
+            
+            // Insert New Clients
+            foreach (var cli in distinctMissingList)
+            {
+                cli.Active = true;
+                if (cli.StreetName.Length < 5)
+                {
+                    cli.StreetNumber = "10100";
+                    cli.StreetName = "Old Georgetown Road";
+                    cli.City = "Bethesda";
+                    cli.Zip = "20814";
+                }
+                if( cli.Zip.Length < 5) cli.Zip = "20184";
+                cli.Phone = "(none)";
+                cli.Email = "(none)";
+                cli.Notes = "Added fron Assistance List";
+            }
 
+            using (var context = new BHelpContext())
+            {
+                foreach (var item in distinctMissingList)
+                {
+                    context.Clients.Add(item);
+                    context.SaveChanges();
+                }
+            }
+          
             var view = distinctMissingList;
+            //var view = betaList;
             return View(view);
         }
-
     }
 }
