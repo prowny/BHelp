@@ -527,8 +527,9 @@ namespace BHelp.Controllers
                 betaList.Add(betaClient);
             }
             // get payments list
-            var assistanceList = new List<AssistanceViewModel>();
-            var reader = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/AssistancePayments.csv");
+            var assistanceList = new List<AssistancePayment>();
+            var reader = new StreamReader(AppDomain.CurrentDomain
+                .BaseDirectory + "/App_Data/AssistancePayments.csv");
             while (!reader.EndOfStream)
             {
                 var line = reader.ReadLine();
@@ -610,17 +611,17 @@ namespace BHelp.Controllers
                 if( cli.Zip.Length < 5) cli.Zip = "20184";
                 cli.Phone = "(none)";
                 cli.Email = "(none)";
-                cli.Notes = "Added fron Assistance List";
+                cli.Notes = "Added from Assistance List";
             }
 
-            using (var context = new BHelpContext())
-            {
-                foreach (var item in distinctMissingList)
-                {
-                    context.Clients.Add(item);
-                    context.SaveChanges();
-                }
-            }
+            //using (var context = new BHelpContext())
+            //{
+            //    foreach (var item in distinctMissingList)
+            //    {
+            //        context.Clients.Add(item);
+            //        context.SaveChanges();
+            //    }
+            //}
           
             var view = distinctMissingList;
             //var view = betaList;

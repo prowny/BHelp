@@ -414,7 +414,13 @@ namespace BHelp.Controllers
                 {
                     if (rec.IsChecked)
                     {
-                        if (view.ReplacementDriverId == "0") view.ReplacementDriverId = null;
+                        if (model.ReplacementDriverId != null)
+                        {
+                            if (model.ReplacementDriverId == "0" 
+                                || model.ReplacementDriverId.Contains("nobody"))
+                                view.ReplacementDriverId = null;
+                        }
+
                         db.SetDeliveryDriver(rec.Id, view.ReplacementDriverId);
                     }
                 }
@@ -438,8 +444,14 @@ namespace BHelp.Controllers
                 {
                     if (rec.IsChecked)
                     {
-                        if (view.ReplacementDriverId == "0") view.ReplacementDriverId = null;
-                        db.SetDeliveryDateODId(rec.Id, view.ReplacementDriverId);
+                        if (model.ReplacementDeliveryDateODId != null)
+                        {
+                            if (model.ReplacementDeliveryDateODId == "0"
+                                || model.ReplacementDeliveryDateODId.Contains("nobody"))
+                                model.ReplacementDeliveryDateODId = null;
+                        }
+
+                        db.SetDeliveryDateODId(rec.Id, model.ReplacementDeliveryDateODId);
                     }
                 }
 
@@ -724,16 +736,16 @@ namespace BHelp.Controllers
                 }
 
                 TempData["DistinctDriversSelectList"] = newView.DistinctDriversSelectList;
-
+            
                 return newView;
             }
             private string GetODName(string id)
             {
                 using var db = new BHelpContext();
-                if (id != null && id != "0")
+                if (id != null && id != "0" && !id.Contains("nobody"))
                 {
                     var _od = db.Users.Find(id);
-                    return _od.FullName;
+                      return _od.FullName;
                 }
                 else
                 {

@@ -41,7 +41,9 @@ namespace BHelp.DataAccessLayer
         public DbSet<Holiday> Holidays { get; set; }
 
         public DbSet<AddressCheck> AddressChecks { get; set; }
-        
+
+        public DbSet <AssistancePayment> AssistancePayments { get; set; }
+
         public void SetDeliveryStatus(int id, int status)
         {
             var rec = this.Deliveries.Find(id);
