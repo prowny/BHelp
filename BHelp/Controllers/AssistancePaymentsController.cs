@@ -1,5 +1,4 @@
-﻿using System.Data.Entity;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
@@ -17,38 +16,21 @@ namespace BHelp.Controllers
             return View(db.AssistancePayments.ToList());
         }
 
-        // GET: AssistancePayments/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            AssistancePayment assistancePayment = db.AssistancePayments.Find(id);
-            if (assistancePayment == null)
-            {
-                return HttpNotFound();
-            }
-            return View(assistancePayment);
-        }
-
         // GET: AssistancePayments/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: AssistancePayments/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: AssistancePayments/Create.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,ClientId,Action,AmountInCents,Note")] AssistancePayment assistancePayment)
         {
             if (ModelState.IsValid)
             {
-                db.AssistancePayments.Add(assistancePayment);
-                db.SaveChanges();
+                //db.AssistancePayments.Add(assistancePayment);
+                //db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
@@ -71,16 +53,14 @@ namespace BHelp.Controllers
         }
 
         // POST: AssistancePayments/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,ClientId,Action,AmountInCents,Note")] AssistancePayment assistancePayment)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(assistancePayment).State = EntityState.Modified;
-                db.SaveChanges();
+                //db.Entry(assistancePayment).State = EntityState.Modified;
+                //db.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(assistancePayment);
@@ -106,9 +86,9 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            var assistancePayment = db.AssistancePayments.Find(id);
-            if (assistancePayment != null) db.AssistancePayments.Remove(assistancePayment);
-            db.SaveChanges();
+            //var assistancePayment = db.AssistancePayments.Find(id);
+            //if (assistancePayment != null) db.AssistancePayments.Remove(assistancePayment);
+            //db.SaveChanges();
             return RedirectToAction("Index");
         }
 

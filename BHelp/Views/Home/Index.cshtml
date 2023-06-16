@@ -87,8 +87,17 @@
         </div>
         <br />
     }
+    
+    @if (User.IsInAnyRoles("Developer","Administrator"))
+    {
+        <div>
+            <strong>Financial Assistance</strong><br />
+            <a href="@Url.Action("Index", "AssistancePayments")">Financial Assistance (Beta Test)</a><br />
+        </div>
+        <br />
+    }
 
-    @if (User.IsInAnyRoles("Reports","Developer","Administrator"))
+@if (User.IsInAnyRoles("Reports","Developer","Administrator"))
     {
         <div>
             <strong>Reports Menu</strong><br />
