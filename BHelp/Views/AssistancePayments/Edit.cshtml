@@ -58,13 +58,10 @@
         </div>
     }
     
-<div>
-    <br/>
-    @Html.ActionLink("Back to List", "Index")
-</div>
-
-<div>
-    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
-</div>
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+        <br/>
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
 </body>
 </html>

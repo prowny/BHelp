@@ -1,9 +1,5 @@
 ﻿@model BHelp.Models.AssistancePayment
-
-@{
-    Layout = null;
-}
-
+@{ Layout = null; }
 <!DOCTYPE html>
 
 <html>
@@ -54,7 +50,8 @@
     
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Create" class="btn btn-default" />
+                    <br/>
+                    <input type="submit" value="Create" class="btn btn-default"/>
                 </div>
             </div>
         </div>
@@ -64,9 +61,9 @@
     <br/>
     @Html.ActionLink("Back to List", "Index")
 </div>
-
-<div>
-    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
-</div>
+    <div>
+        <br/>
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
 </body>
 </html>

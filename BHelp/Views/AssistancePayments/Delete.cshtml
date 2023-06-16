@@ -16,54 +16,49 @@
             <dt>
                 @Html.DisplayNameFor(model => model.ClientId)
             </dt>
-
+    
             <dd>
                 @Html.DisplayFor(model => model.ClientId)
             </dd>
-
+    
             <dt>
                 @Html.DisplayNameFor(model => model.Action)
             </dt>
-
+    
             <dd>
                 @Html.DisplayFor(model => model.Action)
             </dd>
-
+    
             <dt>
                 @Html.DisplayNameFor(model => model.AmountInCents)
             </dt>
-
+    
             <dd>
                 @Html.DisplayFor(model => model.AmountInCents)
             </dd>
-
+    
             <dt>
                 @Html.DisplayNameFor(model => model.Note)
             </dt>
-
+    
             <dd>
                 @Html.DisplayFor(model => model.Note)
             </dd>
-
+    
         </dl>
-
-        @using (Html.BeginForm())
-        {
+    
+        @using (Html.BeginForm()) {
             @Html.AntiForgeryToken()
-
-            <div class="form-actions no-color">
+    
+            <div>
                 <input type="submit" value="Delete" class="btn btn-default" /> |
                 @Html.ActionLink("Back to List", "Index")
             </div>
+            <div>
+                <br/>
+                @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+            </div>
         }
-    </div>
-<div>
-    <br/>
-    @Html.ActionLink("Back to List", "Index")
-</div>
-
-    <div>
-        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
     </div>
 </body>
 </html>

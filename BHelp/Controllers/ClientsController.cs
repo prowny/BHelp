@@ -538,91 +538,37 @@ namespace BHelp.Controllers
                     var values = line.Split(',');
                     if (values[0].Length > 0) recCount++;
                     var search = betaList.FirstOrDefault(s => s.LastName == values[0]
-                                         && s.FirstName == values[1]);       
+                                                              && s.FirstName == values[1]);
 
-                    if (search == null)
+                    if (search != null)
                     {
-                        if (values[0] != "")
+                        // Add w/client Id to Assistance rec
+                        var newRec = new AssistancePayment()
                         {
-                            var missingClient = new Client()
-                            {
-                                LastName = values[0],
-                                FirstName = values[1],
-                                StreetNumber = "",
-                                StreetName = values [2].Trim(),
-                                City = values[3],
-                                Zip = values[4]
-                            };
+                            ClientId = search.Id,
+                            Action = values[5],
+                        };
+                        var amt = values[7];
+                        amt = amt.Substring(1);
+                        var amt1 = Convert.ToSingle(amt) * 100;
+                        newRec.AmountInCents = (int)amt1;
 
-                            if (missingClient.StreetName.Length > 0)
-                            {
-                                var stName = missingClient.StreetName;
-                                var stNumber = "";
-                                for (var i = 1; i < 6; i++)
-                                {
-                                    var _num = stName.Substring(0, i);
-                                    if (int.TryParse(_num, out var n))  // is string numeric integer?
-                                    {
-                                        stNumber = stName.Substring(0, i);
-                                    }
-                                }
+                        var mdy = values[6].Split('/');
+                        newRec.Date = new DateTime(Convert.ToInt32(mdy[2]),Convert.ToInt32(mdy[0]),Convert.ToInt32( mdy[1]));
 
-                                if (stNumber.Length > 0)
-                                {
-                                    missingClient.StreetNumber = stNumber.Trim();
-                                    missingClient.StreetName =
-                                        missingClient.StreetName.Substring(stNumber.Length).Trim();
-                                }
-                            }
-
-                            missingList.Add(missingClient);
+                        using (var context = new BHelpContext())
+                        {
+                            context.AssistancePayments.Add(newRec);
+                            context.SaveChanges();
                         }
-                    }
-                    else 
-                    {
+
                         matches++;
                         matchList.Add(search);
                     }
-                    //var assistanceRecord = new AssistanceViewModel(); 
-                    //for (var i = 0; i < 9; i++)
-                    //{
-                    //    assistanceRecord.ClientId = Convert.ToInt32(values[i]);
-                    //}
                 }
-
-                distinctList = matchList.GroupBy(i => i.Id)
-                    .Select(s => s.FirstOrDefault()).ToList();
-
-                distinctMissingList = missingList.GroupBy(n => new { n.LastName, n.FirstName })
-                    .Select(n => n.First()).ToList();
-            }
-            
-            // Insert New Clients
-            foreach (var cli in distinctMissingList)
-            {
-                cli.Active = true;
-                if (cli.StreetName.Length < 5)
-                {
-                    cli.StreetNumber = "10100";
-                    cli.StreetName = "Old Georgetown Road";
-                    cli.City = "Bethesda";
-                    cli.Zip = "20814";
-                }
-                if( cli.Zip.Length < 5) cli.Zip = "20184";
-                cli.Phone = "(none)";
-                cli.Email = "(none)";
-                cli.Notes = "Added from Assistance List";
             }
 
-            //using (var context = new BHelpContext())
-            //{
-            //    foreach (var item in distinctMissingList)
-            //    {
-            //        context.Clients.Add(item);
-            //        context.SaveChanges();
-            //    }
-            //}
-          
+
             var view = distinctMissingList;
             //var view = betaList;
             return View(view);

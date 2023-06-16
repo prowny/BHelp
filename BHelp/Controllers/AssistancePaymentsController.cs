@@ -24,7 +24,7 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var assistancePayment = db.AssistancePayments.Find(id);
+            AssistancePayment assistancePayment = db.AssistancePayments.Find(id);
             if (assistancePayment == null)
             {
                 return HttpNotFound();
@@ -39,15 +39,20 @@ namespace BHelp.Controllers
         }
 
         // POST: AssistancePayments/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,ClientId,Action,AmountInCents,Note")] AssistancePayment assistancePayment)
         {
-            if (!ModelState.IsValid) return View(assistancePayment);
-            db.AssistancePayments.Add(assistancePayment);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                db.AssistancePayments.Add(assistancePayment);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
 
+            return View(assistancePayment);
         }
 
         // GET: AssistancePayments/Edit/5
@@ -57,7 +62,7 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var assistancePayment = db.AssistancePayments.Find(id);
+            AssistancePayment assistancePayment = db.AssistancePayments.Find(id);
             if (assistancePayment == null)
             {
                 return HttpNotFound();
@@ -66,14 +71,19 @@ namespace BHelp.Controllers
         }
 
         // POST: AssistancePayments/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,ClientId,Action,AmountInCents,Note")] AssistancePayment assistancePayment)
         {
-            if (!ModelState.IsValid) return View(assistancePayment);
-            db.Entry(assistancePayment).State = EntityState.Modified;
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                db.Entry(assistancePayment).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(assistancePayment);
         }
 
         // GET: AssistancePayments/Delete/5
@@ -83,7 +93,7 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var assistancePayment = db.AssistancePayments.Find(id);
+            AssistancePayment assistancePayment = db.AssistancePayments.Find(id);
             if (assistancePayment == null)
             {
                 return HttpNotFound();
