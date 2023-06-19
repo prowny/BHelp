@@ -12,11 +12,11 @@ namespace BHelp.ViewModels
         public int Id { get; set; }
         public bool Active { get; set; }
 
-        [DisplayName("Client First Name")]
+        [DisplayName("Head of Household First Name")]
         public string FirstName { get; set; }
 
         [Required]
-        [DisplayName("Client Last Name")]
+        [DisplayName("Head of Household Last Name")]
         public string LastName { get; set; }
 
         public DateTime DateOfBirth { get; set; }
@@ -39,7 +39,7 @@ namespace BHelp.ViewModels
 
         [Required]
         [EnforceTrue(ErrorMessage = @"Error Message")]
-        [DisplayName("Not On List or OK'd by Supervisor")]
+        [DisplayName("Not On List or OK'd by Supervisor / Administrator")]
         public bool AddressOK { get; set; }
 
         [Required]

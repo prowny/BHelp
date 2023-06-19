@@ -11,7 +11,6 @@ using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
 using ClosedXML.Excel;
-using Org.BouncyCastle.Utilities;
 
 namespace BHelp.Controllers
 {
@@ -73,7 +72,7 @@ namespace BHelp.Controllers
         }
 
         // GET: Clients/Create
-        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
+        [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay,FinancialStaff")]
         public ActionResult Create()
         {
             var viewModel = new ClientViewModel {FamilyMembers = new List<FamilyMember>()};
@@ -508,69 +507,69 @@ namespace BHelp.Controllers
 
         public ActionResult BetaClientList()
         {
-            var betaList = new List<Client>();
-            var matchList = new List<Client>();
-            var distinctList = new List<Client>();
-            var missingList = new List<Client>();
+            //var betaList = new List<Client>();
+            //var matchList = new List<Client>();
+            //var distinctList = new List<Client>();
+            //var missingList = new List<Client>();
             var distinctMissingList = new List<Client>();
 
-            var matches = 0;
-            var recCount = 0;
-            var clientList = db.Clients.OrderBy(n => n.LastName)
-                .ThenBy(f => f.FirstName).ToList();
-            // Generate list names all caps
-            foreach (var client in clientList)
-            {
-                var betaClient = client;
-                betaClient.LastName = Strings.ToUpperCase(client.LastName);
-                betaClient.FirstName = Strings.ToUpperCase(client.FirstName);
-                betaList.Add(betaClient);
-            }
-            // get payments list
-            var assistanceList = new List<AssistancePayment>();
-            var reader = new StreamReader(AppDomain.CurrentDomain
-                .BaseDirectory + "/App_Data/AssistancePayments.csv");
-            while (!reader.EndOfStream)
-            {
-                var line = reader.ReadLine();
-                if (line != null)
-                {
-                    var values = line.Split(',');
-                    if (values[0].Length > 0) recCount++;
-                    var search = betaList.FirstOrDefault(s => s.LastName == values[0]
-                                                              && s.FirstName == values[1]);
+            //var matches = 0;
+            //var recCount = 0;
+            //var clientList = db.Clients.OrderBy(n => n.LastName)
+            //    .ThenBy(f => f.FirstName).ToList();
+            //// Generate list names all caps
+            //foreach (var client in clientList)
+            //{
+            //    var betaClient = client;
+            //    betaClient.LastName = Strings.ToUpperCase(client.LastName);
+            //    betaClient.FirstName = Strings.ToUpperCase(client.FirstName);
+            //    betaList.Add(betaClient);
+            //}
+            //// get payments list
+            //var assistanceList = new List<AssistancePayment>();
+            //var reader = new StreamReader(AppDomain.CurrentDomain
+            //    .BaseDirectory + "/App_Data/AssistancePayments.csv");
+            //while (!reader.EndOfStream)
+            //{
+            //    var line = reader.ReadLine();
+            //    if (line != null)
+            //    {
+            //        var values = line.Split(',');
+            //        if (values[0].Length > 0) recCount++;
+            //        var search = betaList.FirstOrDefault(s => s.LastName == values[0]
+            //                                                  && s.FirstName == values[1]);
 
-                    if (search != null)
-                    {
-                        // Add w/client Id to Assistance rec
-                        var newRec = new AssistancePayment()
-                        {
-                            ClientId = search.Id,
-                            Action = values[5],
-                        };
-                        var amt = values[7];
-                        amt = amt.Substring(1);
-                        var amt1 = Convert.ToSingle(amt) * 100;
-                        newRec.AmountInCents = (int)amt1;
+            //        if (search != null)
+            //        {
+            //            // Add w/client Id to Assistance rec
+            //            var newRec = new AssistancePayment()
+            //            {
+            //                ClientId = search.Id,
+            //                Action = values[5],
+            //            };
+            //            var amt = values[7];
+            //            amt = amt.Substring(1);
+            //            var amt1 = Convert.ToSingle(amt) * 100;
+            //            newRec.AmountInCents = (int)amt1;
 
-                        var mdy = values[6].Split('/');
-                        newRec.Date = new DateTime(Convert.ToInt32(mdy[2]),Convert.ToInt32(mdy[0]),Convert.ToInt32( mdy[1]));
+            //            var mdy = values[6].Split('/');
+            //            newRec.Date = new DateTime(Convert.ToInt32(mdy[2]),Convert.ToInt32(mdy[0]),Convert.ToInt32( mdy[1]));
 
-                        using (var context = new BHelpContext())
-                        {
-                            context.AssistancePayments.Add(newRec);
-                            context.SaveChanges();
-                        }
+            //            using (var context = new BHelpContext())
+            //            {
+            //                context.AssistancePayments.Add(newRec);
+            //                context.SaveChanges();
+            //            }
 
-                        matches++;
-                        matchList.Add(search);
-                    }
-                }
-            }
-
+            //            matches++;
+            //            matchList.Add(search);
+            //        }
+            //    }
+            //}
 
             var view = distinctMissingList;
             //var view = betaList;
+            //var gu = Guid.NewGuid();
             return View(view);
         }
     }

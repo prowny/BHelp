@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Data.Entity;
+using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
@@ -13,7 +14,7 @@ namespace BHelp.Controllers
         // GET: AssistancePayments
         public ActionResult Index()
         {
-            return View(db.AssistancePayments.ToList());
+            return View(db.AssistancePayments.OrderBy(d => d.Date).ToList());
         }
 
         // GET: AssistancePayments/Create
@@ -55,7 +56,7 @@ namespace BHelp.Controllers
         // POST: AssistancePayments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,ClientId,Action,AmountInCents,Note")] AssistancePayment assistancePayment)
+        public ActionResult Edit([Bind(Include = "Id,ClientId,Date,Action,AmountInCents,Note")] AssistancePayment assistancePayment)
         {
             if (ModelState.IsValid)
             {
@@ -90,6 +91,11 @@ namespace BHelp.Controllers
             //if (assistancePayment != null) db.AssistancePayments.Remove(assistancePayment);
             //db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public ActionResult CreateNewClient()
+        {
+            return RedirectToAction("Create","Clients");
         }
 
         protected override void Dispose(bool disposing)
