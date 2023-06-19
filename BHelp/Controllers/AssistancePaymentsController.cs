@@ -1,5 +1,4 @@
-﻿using System.Data.Entity;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
@@ -12,9 +11,10 @@ namespace BHelp.Controllers
         private readonly BHelpContext db = new BHelpContext();
 
         // GET: AssistancePayments
-        public ActionResult Index()
+        public ActionResult Index(string searchString, int? selectedId)
         {
-            return View(db.AssistancePayments.OrderBy(d => d.Date).ToList());
+            return View(db.AssistancePayments
+                .OrderBy(d => d.Date).ToList());
         }
 
         // GET: AssistancePayments/Create

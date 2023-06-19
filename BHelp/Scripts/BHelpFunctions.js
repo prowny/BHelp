@@ -57,7 +57,6 @@ function UpdateDeliveryDateOD(json) {
     });
 }
 
-
 function UpdateDriverLogDate(callLogDate) {
     window.$.ajax({
         url: '/Driver/Index',
@@ -76,7 +75,7 @@ function UpdateDriverLogDate(callLogDate) {
 function SearchClients()
 {
     window.$.ajax({
-        url: "/OD/SearchHouseholds",
+        url: "/AssistancePayments/Index",
         data: { searchString: window.$("#SearchText").val() },
         type: "POST",
         success: function () {
