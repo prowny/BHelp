@@ -46,8 +46,11 @@
                     <td>
                         @Html.DropDownListFor(model => model.ClientId,
                             new SelectList(Model.ClientSelectList, "Value",
-                                "Text"), new { @class = "form-control" });
+                                "Text"), new { @class = "form-control" })
                         @Html.ValidationMessageFor(model => model.ClientId, "", new { @class = "text-danger" })
+                    </td>
+                    <td>
+                        @Html.ActionLink("Create New Client", "CreateNewClient")
                     </td>
                 </tr>
                 <tr>

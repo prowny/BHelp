@@ -148,7 +148,10 @@ namespace BHelp.Controllers
                 {
                     return RedirectToAction("Index", "OD");
                 }
-
+                if (client.ReturnURL.Contains("Payment"))
+                {
+                    return RedirectToAction("Create", "AssistancePayments");
+                }
                 return RedirectToAction("Index");
             }
 

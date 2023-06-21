@@ -161,7 +161,7 @@
             </div>
         }
 
-    @if (Model.ReturnURL.Contains("OD")) // Dont let OD into Maintain Clients
+    @if (Model.ReturnURL.Contains("OD")) // Don't let OD into Maintain Clients
     {
         <div>
             @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)

@@ -74,8 +74,17 @@ namespace BHelp.Controllers
         {
             if (ModelState.IsValid)
             {
-                //db.AssistancePayments.Add(assistancePayment);
-                //db.SaveChanges();
+                var newRec = new AssistancePayment()
+                {
+                    Date = assistancePayment.Date,
+                    ClientId = assistancePayment.ClientId, 
+                    Action = assistancePayment.Action,
+                    AmountInCents = (int)(assistancePayment.AmountDecimal * 100),
+                    Note = assistancePayment.Note 
+                };
+
+                db.AssistancePayments.Add(newRec);
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
@@ -119,11 +128,20 @@ namespace BHelp.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             AssistancePayment assistancePayment = db.AssistancePayments.Find(id);
-            if (assistancePayment == null)
+            if (assistancePayment == null) return HttpNotFound();
+            var view = new AssistanceViewModel()
             {
-                return HttpNotFound();
-            }
-            return View(assistancePayment);
+                Date = assistancePayment.Date,
+                Action = assistancePayment.Action,
+                AmountInCents =assistancePayment.AmountInCents, // auto fills StringDollarAmount
+                Note = assistancePayment.Note
+            };
+            var client = db.Clients.Find(assistancePayment.ClientId);
+            if (client == null) return View(view);
+            view.LastName = client.LastName;
+            view.FirstName = client.FirstName;
+
+            return View(view);
         }
 
         // POST: AssistancePayments/Delete/5
@@ -131,9 +149,9 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            //var assistancePayment = db.AssistancePayments.Find(id);
-            //if (assistancePayment != null) db.AssistancePayments.Remove(assistancePayment);
-            //db.SaveChanges();
+            var assistancePayment = db.AssistancePayments.Find(id);
+            if (assistancePayment != null) db.AssistancePayments.Remove(assistancePayment);
+            db.SaveChanges();
             return RedirectToAction("Index");
         }
 
