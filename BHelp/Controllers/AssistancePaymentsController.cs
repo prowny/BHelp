@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
+using BHelp.ViewModels;
 
 namespace BHelp.Controllers
 {
@@ -13,20 +16,61 @@ namespace BHelp.Controllers
         // GET: AssistancePayments
         public ActionResult Index(string searchString, int? selectedId)
         {
-            return View(db.AssistancePayments
-                .OrderBy(d => d.Date).ToList());
+            //if (searchString != null)
+            //{ TempData["SearchResults"] = SearchHouseholds(searchString); }
+            //var userIid = System.Web.HttpContext.Current.User.Identity.GetUserId();
+            //if (userIid != null)
+            //{
+            //    var user = db.Users.Find(userIid);
+            //    Session["CurrentUserFullName"] = user.FullName;Client
+            //};
+            var paymentView = new AssistanceViewModel()
+            {
+                ClientLookupList = db.Clients.ToList(),
+                PaymentList = db.AssistancePayments.OrderByDescending(d => d.Date).ToList()
+            };
+
+            foreach (var pymnt in paymentView.PaymentList)
+            {
+                // Add client Name to payment list
+                var cli = paymentView.ClientLookupList
+                    .FirstOrDefault(i => i.Id == pymnt.ClientId);
+                if (cli == null) continue;
+                pymnt.LastName = cli.LastName;
+                pymnt.FirstName = cli.FirstName;
+            }
+
+            //return View(houseHoldView);
+            return View(paymentView);
         }
 
         // GET: AssistancePayments/Create
         public ActionResult Create()
         {
-            return View();
+            var view = new AssistanceViewModel
+            {
+                ClientSelectList =new List<SelectListItem>(),
+                Date = DateTime.Today
+            };
+            
+            foreach (var cli in db.Clients.OrderBy(n => n.LastName)
+                         .ThenBy(f => f.FirstName).ToList())
+            {
+                view.ClientSelectList.Add(new SelectListItem
+                {
+                    Value = cli.Id.ToString(),
+                    Text = cli.LastName + ", " + cli.FirstName
+                });
+            }
+
+            return View(view);
         }
 
         // POST: AssistancePayments/Create.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,ClientId,Action,AmountInCents,Note")] AssistancePayment assistancePayment)
+        public ActionResult Create([Bind(Include = "Date,ClientId,Action,AmountDecimal,Note")]
+            AssistanceViewModel assistancePayment)
         {
             if (ModelState.IsValid)
             {
@@ -35,7 +79,7 @@ namespace BHelp.Controllers
                 return RedirectToAction("Index");
             }
 
-            return View(assistancePayment);
+            return View();
         }
 
         // GET: AssistancePayments/Edit/5

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BHelp.Models.AssistancePayment>
+﻿@model BHelp.ViewModels.AssistanceViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -17,35 +17,41 @@
         <b>Assistance Payments</b>
     </p>
     <p>
-        @Html.ActionLink("Create New Household", "CreateNewClient")&nbsp;&nbsp;
+        @Html.ActionLink("Create New Payment", "Create")&nbsp;&nbsp;
         @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
     </p>
-    <div>
-        <table>
-            <tr>
-                <td><b>Search for Existing Client:</b></td>
-                <td>
-                    @Html.TextBox("SearchText", "", new
-                    {
-                        id = "SearchText",
-                        style = "width: 50px;",
-                        onkeypress = "KeyPressHandler()",
-                        Title = "Tip: Enter full or partial Phone# OR Last Name OR Street Number",
-                        autofocus = true
-                    })
-                </td>
-                <td>
-                    <a href="#" id="SearchString"><span>Search</span></a>
-                    <span style="color: darkmagenta">&#8592; (Enter full or partial Phone# OR Last Name OR Street Number)</span>
-                </td>
-            </tr>
-        </table>
-    </div>
+    @*<div>
+            <table>
+                <tr>
+                    <td><b>Search for Existing Client:</b></td>
+                    <td>
+                        @Html.TextBox("SearchText", "", new
+                        {
+                            id = "SearchText",
+                            style = "width: 50px;",
+                            onkeypress = "KeyPressHandler()",
+                            Title = "Tip: Enter full or partial Phone# OR Last Name OR Street Number",
+                            autofocus = true
+                        })
+                    </td>
+                    <td>
+                        <a href="#" id="SearchString"><span>Search</span></a>
+                        <span style="color: darkmagenta">&#8592; (Enter full or partial Phone# OR Last Name OR Street Number)</span>
+                    </td>
+                </tr>
+            </table>
+        </div>*@
 
     <table class="table">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Action)
@@ -59,11 +65,17 @@
             <th></th>
         </tr>
 
-        @foreach (var item in Model)
+        @foreach (var item in Model.PaymentList)
         {
             <tr>
                 <td>
                     @item.Date.ToString("MM/dd/yyyy")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Action)
@@ -84,7 +96,7 @@
     </table>
     <div>
         <br />
-        @Html.ActionLink("Create New Household", "CreateNewClient")&nbsp;&nbsp;
+        @Html.ActionLink("Create New Payment", "Create")
         <br />
         @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
     </div>

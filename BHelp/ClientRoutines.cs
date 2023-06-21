@@ -342,5 +342,62 @@ namespace BHelp
             return checkList;
         }
 
+        public static List<HouseholdViewModel> SearchHouseholds(string searchString)
+        {
+            if (searchString == null) { return null; }
+
+            var householdView = new List<HouseholdViewModel>();
+            using var db = new BHelpContext();
+            List<Client> clientList;
+            if (searchString.Any(char.IsDigit))
+            {
+                clientList = db.Clients.Where(c => c.Phone.Contains(searchString)
+                                                   || c.StreetNumber.Contains(searchString)
+                                                   || c.Notes.Contains(searchString)
+                                                   && c.Active).OrderBy(c => c.LastName).ToList();
+            }
+            else
+            {
+                clientList = db.Clients.Where(c => c.Active && c.LastName.Contains(searchString))
+                    .OrderBy(c => c.LastName).ToList();
+            }
+
+            foreach (var client in clientList)
+            {
+                var household = new HouseholdViewModel()
+                {
+                    ClientId = client.Id,
+                    FirstName = client.FirstName,
+                    LastName = client.LastName,
+                    StreetNumber = client.StreetNumber,
+                    StreetName = client.StreetName,
+                    StreetToolTip = client.StreetName.Replace(" ", "\u00a0"),
+                    City = client.City,
+                    CityToolTip = client.City.Replace(" ", "\u00a0"),
+                    Zip = client.Zip,
+                    Phone = client.Phone,
+                    PhoneToolTip = client.Phone.Replace(" ", "\u00a0"),
+                    Notes = client.Notes,
+                    // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
+                    NotesToolTip = client.Notes.Replace(" ", "\u00a0")
+                };
+
+                var s = household.StreetName; // For display, abbreviate to 10 characters:           
+                s = s.Length <= 10 ? s : s.Substring(0, 10) + "...";
+                household.StreetName = s;
+                s = household.City; // For display, abbreviate to 11 characters:           
+                s = s.Length <= 11 ? s : s.Substring(0, 11) + "...";
+                household.City = s;
+                s = household.Phone; // For display, abbreviate to 12 characters:           
+                s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                household.Phone = s;
+                s = household.Notes; // For display, abbreviate to 12 characters:           
+                s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                household.Notes = s;
+                householdView.Add(household);
+            }
+
+            return (householdView);
+        }
     }
 }

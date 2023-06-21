@@ -88,14 +88,14 @@
         <br />
     }
     
-    @*@if (User.IsInAnyRoles("Developer","Administrator", "FinancialStaff"))
+    @if (User.IsInAnyRoles("Developer","Administrator", "FinancialStaff"))
     {
         <div>
-            <strong>Financial Assistance</strong><br />
-            <a href="@Url.Action("Index", "AssistancePayments")">Financial Assistance (Beta Test)</a><br />
+            <strong>Financial Assistance (Beta Test)</strong><br />
+            <a href="@Url.Action("Index", "AssistancePayments")">Maintain Payments</a><br />
         </div>
         <br />
-    }*@
+    }
 
 @if (User.IsInAnyRoles("Reports","Developer","Administrator"))
     {

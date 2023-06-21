@@ -53,7 +53,7 @@ namespace BHelp.Controllers
             return View();
         }
 
-        static List<HouseholdViewModel> SearchHouseholds(string searchString)
+        private static List<HouseholdViewModel> SearchHouseholds(string searchString)
         {
             if (searchString == null) { return null; }
 
