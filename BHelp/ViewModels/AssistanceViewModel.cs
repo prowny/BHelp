@@ -23,8 +23,10 @@ namespace BHelp.ViewModels
         public string Note { get; set; }
         public IEnumerable<Client> ClientLookupList { get; set; }
         public List<SelectListItem> ClientSelectList { get; set; }
+        public IEnumerable<SelectListItem> IEnumerableClientSelectList { get; set; }
+        public string SelectedClientId { get; set; }
         public List<AssistancePayment> PaymentList { get; set; }
-        public string ReturnUrl { get; set; }
+
         public string StringDollarAmount
         {
             get => $"${AmountInCents / 100}.{AmountInCents % 100:00}";

@@ -16,14 +16,6 @@ namespace BHelp.Controllers
         // GET: AssistancePayments
         public ActionResult Index(string searchString, int? selectedId)
         {
-            //if (searchString != null)
-            //{ TempData["SearchResults"] = SearchHouseholds(searchString); }
-            //var userIid = System.Web.HttpContext.Current.User.Identity.GetUserId();
-            //if (userIid != null)
-            //{
-            //    var user = db.Users.Find(userIid);
-            //    Session["CurrentUserFullName"] = user.FullName;Client
-            //};
             var paymentView = new AssistanceViewModel()
             {
                 ClientLookupList = db.Clients.ToList(),
@@ -39,8 +31,7 @@ namespace BHelp.Controllers
                 pymnt.LastName = cli.LastName;
                 pymnt.FirstName = cli.FirstName;
             }
-
-            //return View(houseHoldView);
+            
             return View(paymentView);
         }
 
@@ -99,25 +90,77 @@ namespace BHelp.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             AssistancePayment assistancePayment = db.AssistancePayments.Find(id);
-            if (assistancePayment == null)
+            if (assistancePayment == null) return HttpNotFound();
+            var view = new AssistanceViewModel()
             {
-                return HttpNotFound();
-            }
-            return View(assistancePayment);
+                ClientSelectList = new List<SelectListItem>(),
+                ClientId = assistancePayment .ClientId,
+                Date =assistancePayment .Date,
+                Action = assistancePayment.Action,
+                Note =assistancePayment.Note
+            };
+           
+            //foreach (var cli in db.Clients.OrderBy(n => n.LastName)
+            //             .ThenBy(f => f.FirstName).ToList())
+            //{
+            //    var item = new SelectListItem()
+            //    {
+            //        Value = cli.Id.ToString(),
+            //        Text = cli.LastName + ", " + cli.FirstName
+            //    };
+            //    if (cli.Id == assistancePayment.ClientId)
+            //    {
+            //        item.Selected = true;
+            //        view.SelectedClientId = cli.Id.ToString();
+            //    }
+            //    else
+            //    {
+            //        item.Selected = false;
+            //    }
+            //    view.ClientSelectList.Add(item);
+            //}
+
+            List<SelectListItem> clientList = (from c in db.Clients
+                    .OrderBy(n => n.LastName)
+                    .ThenBy(f => f.FirstName).AsEnumerable()
+                select new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.LastFirstName
+                }).ToList();
+            clientList.Find(c => c.Value == assistancePayment.ClientId.ToString()).Selected = true;
+            view.ClientSelectList = clientList;
+
+            var amt = Convert.ToSingle(assistancePayment.AmountInCents);
+            view.AmountDecimal = (decimal)(amt / 100);
+
+            return View(view);
         }
 
         // POST: AssistancePayments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,ClientId,Date,Action,AmountInCents,Note")] AssistancePayment assistancePayment)
+        public ActionResult Edit([Bind(Include = "Id,ClientId,Date,Action,AmountDecimal,Note")] 
+            AssistanceViewModel assistancePayment)
         {
             if (ModelState.IsValid)
             {
-                //db.Entry(assistancePayment).State = EntityState.Modified;
-                //db.SaveChanges();
+                var aRec = db.AssistancePayments.Single(p =>p.Id  == assistancePayment.Id);
+                if (aRec != null)
+                {
+                    aRec.Date = assistancePayment.Date;
+                    aRec.ClientId = assistancePayment.ClientId;
+                    aRec.Action = assistancePayment.Action;
+                    aRec.AmountInCents = (int)(assistancePayment.AmountDecimal * 100);
+                    aRec.Note = assistancePayment.Note;
+                    db.SaveChanges();
+                }
+
                 return RedirectToAction("Index");
             }
-            return View(assistancePayment);
+
+            var view = new AssistanceViewModel();
+            return View(view);
         }
 
         // GET: AssistancePayments/Delete/5
