@@ -100,6 +100,16 @@ namespace BHelp
                 lastMonday = lastMonday.AddDays(-1);
             return lastMonday;
         }
+        public static DateTime GetThisMonthStartDate() 
+        {
+            return new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+        }
+        public static DateTime GetThisMonthEndDate()
+        {
+            var dt = DateTime.Today;
+            var daysInMonth = DateTime.DaysInMonth(dt.Year, dt.Month);
+            return new DateTime(dt.Year, dt.Month, daysInMonth);
+        }
         public static bool IsIndividual(string usrId)
         {
             using var db = new BHelpContext();

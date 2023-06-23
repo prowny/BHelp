@@ -1068,8 +1068,10 @@ namespace BHelp
             using var db = new BHelpContext();
             // for adding OD names if allData
             var sb = new StringBuilder();
-            sb.Append(view.ReportTitle + ',');
-            sb.AppendLine();
+            //sb.Append(view.ReportTitle + ',');
+            sb.Append(view.ReportTitle);
+            sb.Append("\n");
+            //sb.AppendLine();
 
             sb.Append("Log Date,Name,Address,Driver,Delivery Date,ZipCode,Status,# in HH,#Children,");
             sb.Append("#Adults 18-59,# Seniors >=60,#Full Bags,#HalfBags,#Kid Snacks,");
@@ -1080,7 +1082,9 @@ namespace BHelp
                 sb.Append("OD Notes,Driver Notes,First Delivery");
             }
 
-            sb.AppendLine();
+
+            sb.Append("\n");
+            //sb.AppendLine();
 
             var totalHHCount = 0;
             var totalChildren = 0;
@@ -1095,8 +1099,12 @@ namespace BHelp
             {
                 if (d == null) continue;
                 sb.Append(d.LogDate.ToShortDateString() + ",");
-                sb.Append("\"" + d.LastName + ", " + d.FirstName + "\"" + ",");
-                sb.Append("\"" + d.StreetNumber + " " + d.StreetName + "\"" + ",");
+                var clientName = d.FirstName + " " + d.LastName;
+                sb.Append(clientName + ",");
+                //sb.Append("\"" + d.LastName + ", " + d.FirstName + "\"" + ",");
+                var address = (d.StreetNumber + " " + d.StreetName).Replace(",", " ");
+                sb.Append(address + ",");
+                //sb.Append("\"" + d.StreetNumber + " " + d.StreetName + "\"" + ",");
                 sb.Append(d.DriverName + ",");
                 var dtDel = "";
                 if (d.DateDelivered != null) dtDel = d.DateDelivered.Value.ToString("MM/dd/yyyy");
@@ -1133,11 +1141,17 @@ namespace BHelp
                 if (allData)
                 {
                     var _namesAges = "";
-                    if (d.NamesAgesInHH != null) _namesAges = "\"" + d.NamesAgesInHH.Replace("\"","'") + "\"";
+                    //if (d.NamesAgesInHH != null) _namesAges = "\"" + d.NamesAgesInHH.Replace("\"","'") + "\"";
+                    if (d.NamesAgesInHH != null) _namesAges = d.NamesAgesInHH.Replace("\n", "")
+                        .Replace("\r", "").Replace(",", " ");
                     var _phone = "";
-                    if (d.Phone != null) _phone = "\"" + d.Phone.Replace("\"", "'") + "\"";
+                    //if (d.Phone != null) _phone = "\"" + d.Phone.Replace("\"", "'") + "\"";
+                    if (d.Phone != null) _phone = d.Phone.Replace("\n", "")
+                        .Replace("\r", "").Replace(",", " ");
                     var _city = "";
-                    if (d.City != null) _city = "\"" + d.City.Replace("\"", "'") + "\"";
+                    if (d.City != null) _city = d.City.Replace("\n", "")
+                        .Replace("\r", "").Replace(",", " ");
+                    //if (d.City != null) _city = "\"" + d.City.Replace("\"", "'") + "\"";
                     sb.Append("," +_city + "," + _phone + "," + _namesAges + ",");
                     if (d.ODId != null)
                     {
@@ -1157,19 +1171,20 @@ namespace BHelp
                     var _ODNotes = "";
                     if (d.ODNotes != null)
                     {
-                        _ODNotes = "\"" + d.ODNotes.Replace("\n", "")
-                            .Replace("\r","").Replace("\"", "'") + "\"";
+                        _ODNotes = d.ODNotes.Replace("\n", "")
+                            .Replace("\r","").Replace(",", " ");
                     }
                     var _driverNotes = "";
                     if (d.DriverNotes != null)
                     {
-                        _driverNotes = "\"" + d.DriverNotes.Replace("\n", "")
-                            .Replace("\r", "").Replace("\"", "'") + "\"";
+                        _driverNotes = d.DriverNotes.Replace("\n", "")
+                            .Replace("\r", "").Replace(",", " ");
                     }
                     sb.Append(_ODNotes + "," + _driverNotes + "," + _firstDelivery);
                 }
 
-                sb.AppendLine();
+                sb.Append("\n");
+                //sb.AppendLine();
             }
 
             sb.Append("Totals,,,,,,,");

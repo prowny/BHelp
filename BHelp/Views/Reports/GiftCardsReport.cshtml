@@ -1,0 +1,76 @@
+﻿@using System.Web.Mvc.Html
+@using BHelp.ViewModels
+@model DeliveryViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>GiftCardsReport</title>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+</head>
+<body>
+    <div>
+        <b>Daily Gift Cards by Date Delivered Range</b>
+        <br />
+        <table>
+            <tr>
+                <td>Starting Date:</td>
+                <td>
+                    @Html.TextBox("Starting Date", @Model.HistoryStartDate, "{0:MM/dd/yyyy}",
+                        new { id = "StartDate", style = "width: 75px; text-align: center" })
+                    <span style="color: darkmagenta">&#8592;Click to change</span>
+                </td> @*Html left-arrow*@
+                <td>&nbsp;&nbsp; Ending Date:</td>
+                <td>
+                    @Html.TextBox("Ending Date:", @Model.HistoryEndDate, "{0:MM/dd/yyyy}",
+                        new { id = "EndDate", style = "width: 75px; text-align: center" })
+                    <span style="color: darkmagenta">&#8592;Click to change</span>
+                </td> @*Html left-arrow*@
+            </tr>
+        </table>
+    </div>
+    <div>
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
+</body>
+</html>
+
+<script>
+    $(function () {
+        window.$("#StartDate").datepicker();
+    });
+</script>
+<script>
+    $(function () {
+        window.$("#EndDate").datepicker();
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        window.$("#StartDate").change(function() {
+            var stDate = window.$('#StartDate').val();
+            var endDt = window.$('#EndDate').val();
+            window.location.href =
+                '@Url.Action("GiftCardsReport", "Reports")' + '?startDate=' + stDate + '&endDate=' + endDt;
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        window.$("#EndDate").change(function() {
+            var stDate = window.$('#StartDate').val();
+            window.$('#StartDate').val(stDate);
+            var endDt = window.$('#EndDate').val();
+            window.location.href =
+                '@Url.Action("GiftCardsReport", "Reports")' + '?startDate=' + stDate + '&endDate=' + endDt;
+        });
+    });
+</script>

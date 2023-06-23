@@ -372,6 +372,30 @@ namespace BHelp.Controllers
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 { FileDownloadName = "Active Volunteers" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
          }
+        public ActionResult GiftCardsReport(DateTime? startDate, DateTime? endDate)
+        {
+            using var db = new BHelpContext();
+            var view = new DeliveryViewModel();
+
+            if (startDate == null)
+            {
+                view.HistoryStartDate= HoursRoutines.GetThisMonthStartDate();
+                view.HistoryEndDate = HoursRoutines.GetThisMonthEndDate();
+            }
+            else
+            {
+                view.HistoryStartDate = startDate;
+                view.HistoryEndDate = endDate;
+            }
+
+            List<Delivery> deliveries = db.Deliveries
+                .Where(d => d.Status == 1 && d.DateDelivered >= startDate && d.DateDelivered <= endDate)
+                .OrderBy(d => d.DateDelivered).ToList();
+            // get giftcard totals by day
+            
+            view.DeliveryList = deliveries;
+            return View(view);
+        }
 
         [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
         public ActionResult QORKReport(string endingDate = "") // New QORK Report 02/22
