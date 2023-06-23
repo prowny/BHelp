@@ -24,13 +24,13 @@
             <tr>
                 <td>Starting Date:</td>
                 <td>
-                    @Html.TextBox("Starting Date", @Model.HistoryStartDate, "{0:MM/dd/yyyy}",
+                    @Html.TextBox("Starting Date", Model.HistoryStartDate, "{0:MM/dd/yyyy}",
                         new { id = "StartDate", style = "width: 75px; text-align: center" })
                     <span style="color: darkmagenta">&#8592;Click to change</span>
                 </td> @*Html left-arrow*@
                 <td>&nbsp;&nbsp; Ending Date:</td>
                 <td>
-                    @Html.TextBox("Ending Date:", @Model.HistoryEndDate, "{0:MM/dd/yyyy}",
+                    @Html.TextBox("Ending Date:", Model.HistoryEndDate, "{0:MM/dd/yyyy}",
                         new { id = "EndDate", style = "width: 75px; text-align: center" })
                     <span style="color: darkmagenta">&#8592;Click to change</span>
                 </td> @*Html left-arrow*@
