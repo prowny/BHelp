@@ -372,15 +372,16 @@ namespace BHelp.Controllers
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 { FileDownloadName = "Active Volunteers" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
          }
-        public ActionResult GiftCardsReport(DateTime? startDate, DateTime? endDate)
+        public ActionResult GiftCardsReport( DateTime? startDate, DateTime? endDate)
         {
             using var db = new BHelpContext();
             var view = new DeliveryViewModel();
 
             if (startDate == null)
             {
-                view.HistoryStartDate= HoursRoutines.GetThisMonthStartDate();
-                view.HistoryEndDate = HoursRoutines.GetThisMonthEndDate();
+                //default to last month
+                view.HistoryStartDate = HoursRoutines.GetPreviousMonthStartDate(DateTime.Today);
+                view.HistoryEndDate = HoursRoutines.GetPreviousMonthEndDate(DateTime.Today);
             }
             else
             {
@@ -902,5 +903,19 @@ namespace BHelp.Controllers
             sunday = sunday.AddDays(-7);
             return RedirectToAction("QORKReport", new { endingDate = sunday.ToShortDateString() });
         }
+        public ActionResult GiftCardsSetNextMonth(DateTime dt)
+        {
+            var startDate = HoursRoutines.GetNextMonthStartDate(dt);
+            var endDate = HoursRoutines.GetNextMonthEndDate(startDate);
+            return RedirectToAction("GiftCardsReport", new {startDate, endDate});
+        }
+
+        public ActionResult GiftCardsSetPreviousMonth(DateTime dt)
+        {
+            var startDate = HoursRoutines.GetPreviousMonthStartDate(dt);
+            var endDate = HoursRoutines.GetPreviousMonthEndDate(dt);
+            return RedirectToAction("GiftCardsReport", routeValues: new {startDate, endDate});
+        }
+
     }
 }
