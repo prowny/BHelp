@@ -1740,5 +1740,19 @@ namespace BHelp
             using var _db = new BHelpContext();
             return _db.Deliveries.FirstOrDefault(i => i.Id == id);
         }
+
+        public static string GetDriverName(string id)
+        {
+            using var _db = new BHelpContext();
+            var driver = _db.Users.Find(id);
+            if (driver != null)
+            {
+                return driver.FirstName + " " + driver.LastName;
+            }
+            else
+            {
+                return "(unknown)";
+            }
+        }
     }
 }

@@ -17,31 +17,64 @@
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
 </head>
 <body>
-    <div>
-        <b>Daily Gift Cards by Date Delivered Range</b>
-        <br />
-        <table>
+<div>
+    <b>Daily Gift Cards by Date Delivered Range</b>
+    <br />
+    <table>
+        <tr>
+            <td>Starting Date:</td>
+            <td>
+                @Html.TextBox("Starting Date", Model.HistoryStartDate, "{0:MM/dd/yyyy}",
+                    new { id = "StartDate", style = "width: 75px; text-align: center" })
+                <span style="color: darkmagenta">&#8592;Click to change</span>@*Html left-arrow*@
+            </td>
+            <td>&nbsp;&nbsp; Ending Date:</td>
+            <td>
+                @Html.TextBox("Ending Date:", Model.HistoryEndDate, "{0:MM/dd/yyyy}",
+                    new { id = "EndDate", style = "width: 75px; text-align: center" })
+                <span style="color: darkmagenta">&#8592;Click to change</span>@*Html left-arrow*@
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("Previous Month", "GiftCardsSetPreviousMonth", new { dt = Model.HistoryStartDate})</td>
+            <td>&nbsp;&nbsp;@Html.ActionLink("Next Month", "GiftCardsSetNextMonth", new { dt = Model.HistoryEndDate})</td>
+        </tr>
+    </table>
+</div>
+    <br/>
+<div>
+    <table >
+        <tr>
+            <td style="text-align: center"><b>Date</b></td>
+            <td style="text-align: center"><b>Driver</b></td>
+            <td style="text-align: center"><b>Deliveries</b></td>
+            <td style="text-align: center"><b>Gift Cards</b></td>
+        </tr>
+    
+        @foreach (var delivery in Model.GiftCardReportDeliveries)
+        {
             <tr>
-                <td>Starting Date:</td>
-                <td>
-                    @Html.TextBox("Starting Date", Model.HistoryStartDate, "{0:MM/dd/yyyy}",
-                        new { id = "StartDate", style = "width: 75px; text-align: center" })
-                    <span style="color: darkmagenta">&#8592;Click to change</span>@*Html left-arrow*@
+                <td >
+                    @if (delivery.DateDelivered != null)
+                    {
+                        @delivery.DateDelivered.Value.ToString("MM/dd/yyyy")
+                    }
                 </td>
-                <td>&nbsp;&nbsp; Ending Date:</td>
                 <td>
-                    @Html.TextBox("Ending Date:", Model.HistoryEndDate, "{0:MM/dd/yyyy}",
-                        new { id = "EndDate", style = "width: 75px; text-align: center" })
-                    <span style="color: darkmagenta">&#8592;Click to change</span>@*Html left-arrow*@
+                    @delivery.DriverName
                 </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("Previous Month", "GiftCardsSetPreviousMonth", new { dt = Model.HistoryStartDate})</td>
-                <td>&nbsp;&nbsp;@Html.ActionLink("Next Month", "GiftCardsSetNextMonth", new { dt = Model.HistoryEndDate})</td>
+                <td style="text-align: center">
+                    @delivery.DeliveryCount
+                </td>
+                <td style="text-align: center">
+                    @delivery.GiftCards
+                </td>
             </tr>
-        </table>
-    </div>
-    <div>
-        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
-    </div>
+        }
+     </table>
+</div>
+
+<div>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
 </body>
 </html>
 

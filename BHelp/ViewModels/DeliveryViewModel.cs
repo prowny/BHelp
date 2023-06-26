@@ -123,5 +123,9 @@ namespace BHelp.ViewModels
         // For change in Edit DateDelivered
         // which calls Ajax Function UpdateDeliveryDateOD
         public DateTime? NewDeliveryDate { get; set; }
+
+        // for GiftCard report:
+        public int DeliveryCount { get; set; }
+        public List<DeliveryViewModel> GiftCardReportDeliveries { get; set; }
     }
 }
