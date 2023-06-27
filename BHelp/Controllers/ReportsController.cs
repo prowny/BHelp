@@ -382,224 +382,112 @@ namespace BHelp.Controllers
             {
                 //default to last month
                 startDate = HoursRoutines.GetPreviousMonthStartDate(DateTime.Today);
+            }
+
+            if (endDate == null)
+            {
+                //default to last month
                 endDate = HoursRoutines.GetPreviousMonthEndDate(DateTime.Today);
             }
-           
+
             view.HistoryStartDate = startDate;
             view.HistoryEndDate = endDate;
             List<Delivery> deliveries = db.Deliveries
-                .Where(d => d.Status == 1 
-                    && d.DateDelivered >= view.HistoryStartDate
-                    & d.DateDelivered <= view.HistoryEndDate)
+                .Where(d => d.Status == 1
+                            && d.DateDelivered >= view.HistoryStartDate
+                            & d.DateDelivered <= view.HistoryEndDate)
                 .OrderBy(d => d.DateDelivered)
                 .ThenBy(d => d.DriverId).ToList();
 
             // Seed the report loops:
-            var currentDateDelivered = deliveries[0].DateDelivered;
-            var currentDriverId = deliveries[0].DriverId;
             var dateCardCount = 0;
             var dateDeliveryCount = 0;
             var driverDeliveryCount = 0;
             var driverCardCount = 0;
             var totalDeliveryCount = 0;
             var totalCardCount = 0;
-            //var latestDelivery = new DeliveryViewModel();
-            var reportDeliveryList = new List<DeliveryViewModel >(); // get giftcard totals by day/driver
-            
+            var reportDeliveryList = new List<DeliveryViewModel>(); // get giftcard totals by day/driver
+
             //===================================
-            foreach (var delivery in deliveries)
+
+            var start = (DateTime)startDate;
+            var end = (DateTime)endDate;
+            // Get group of deliveries by date:
+            for (var date = start; date <= end; date = date.AddDays(1))
             {
-                if (delivery.DateDelivered == currentDateDelivered
-                    && delivery.DriverId == currentDriverId)
+                var singleDateList = deliveries.Where(d => d.DateDelivered == date).ToList();
+                if (singleDateList.Count != 0)
                 {
-                    driverDeliveryCount += 1;
-                    dateDeliveryCount += 1;
-                    totalDeliveryCount += 1;
-                    driverCardCount += delivery.GiftCards;
-                    dateCardCount += delivery.GiftCards;
-                    totalCardCount += delivery.GiftCards;
-                    continue;
-                }
-
-                if (delivery.DateDelivered == currentDateDelivered
-                    && delivery.DriverId != currentDriverId)
-                {
-                    // Summarize current driver:
-                    var newDel = new DeliveryViewModel()
+                    var currentDateDelivered = singleDateList[0].DateDelivered;
+                    
+                    var distinctDriverList = singleDateList.Select(d => d.DriverId).Distinct();
+                    foreach (var dtDrvId in distinctDriverList)
                     {
-                        DateDelivered = currentDateDelivered,
-                        DriverName = AppRoutines.GetDriverName(currentDriverId),
-                        DeliveryCount = driverDeliveryCount,
-                        GiftCardCount = driverCardCount
-                    };
-                    reportDeliveryList.Add(newDel);
-                    currentDateDelivered = delivery.DateDelivered;
-                    currentDriverId = delivery.DriverId;
-                    driverDeliveryCount = 1;
-                    driverCardCount = delivery.GiftCards;
-                    continue;
-                }
+                        var driverList = singleDateList
+                            .Where(d => d.DriverId == dtDrvId);
+                        foreach (var del in driverList)
+                        {
+                            driverDeliveryCount += 1;
+                            dateDeliveryCount += 1;
+                            totalDeliveryCount += 1;
+                            driverCardCount += del.GiftCards;
+                            dateCardCount += del.GiftCards;
+                            totalCardCount += del.GiftCards;
+                        }
 
-                if (delivery.DateDelivered != currentDateDelivered)
-                {
-                    // Summarize curent driver:
-                    var newDel = new DeliveryViewModel()
-                    {
-                        DateDelivered = currentDateDelivered,
-                        DriverName = AppRoutines.GetDriverName(currentDriverId),
-                        DeliveryCount = driverDeliveryCount,
-                        GiftCardCount = driverCardCount
-                    };
-                    reportDeliveryList.Add(newDel);
-                    currentDriverId = delivery.DriverId;
-                    driverDeliveryCount = 0;
-                    driverCardCount = 0;
+                        // Summarize driver:
+                        var newDrv = new DeliveryViewModel
+                        {
+                            DateDelivered = currentDateDelivered,
+                            DriverName = AppRoutines.GetDriverName(dtDrvId),
+                            DeliveryCount = driverDeliveryCount,
+                            GiftCardCount = driverCardCount
+                        };
+                        reportDeliveryList.Add(newDrv);
+                        driverDeliveryCount = 0;
+                        driverCardCount = 0;
+                    }
 
-                    // Summarize date: 
-                    newDel = new DeliveryViewModel()
+                    // Summarize the date:
+                    var newDt = new DeliveryViewModel
                     {
                         DateDelivered = null,
                         DriverName = "Totals for " + currentDateDelivered?.ToString("MM/dd/yyyy"),
                         DeliveryCount = dateDeliveryCount,
                         GiftCardCount = dateCardCount
                     };
-                    reportDeliveryList.Add(newDel);
-                    currentDateDelivered = delivery.DateDelivered;
-                    currentDriverId = delivery.DriverId;
+                    reportDeliveryList.Add(newDt);
+                    newDt = new DeliveryViewModel() // blank line
+                        { DriverName = "", DeliveryCount = null, GiftCardCount = null };
+                    reportDeliveryList.Add(newDt); // add blank line
                     dateDeliveryCount = 0;
                     dateCardCount = 0;
-                    newDel = new DeliveryViewModel() // blank line
-                    { DriverName = "", DeliveryCount = null, GiftCardCount = null };
-                    reportDeliveryList.Add(newDel);  // add blank line
                 }
-
-                //    if (delivery.DateDelivered == currentDateDelivered)
-                //    {
-                //        if (delivery.DriverId == currentDriverId)
-                //        {
-                //            driverDeliveryCount += 1;
-                //            driverCardCount += delivery.GiftCards;
-                //            dateDeliveryCount += 1;
-                //            dateCardCount += delivery.GiftCards;
-                //            totalDeliveryCount += 1;
-                //            totalCardCount += delivery.GiftCards;
-                //        }
-                //        else   // change in driver:
-                //        {
-                //            // summarize previous driver
-                //            var newDel = new DeliveryViewModel()
-                //            {
-                //                DateDelivered = currentDateDelivered,
-                //                DriverName = AppRoutines.GetDriverName(currentDriverId),
-                //                DeliveryCount = driverDeliveryCount,
-                //                GiftCardCount  = driverCardCount
-                //            };
-                //            reportDeliveryList.Add(newDel);
-
-                //            currentDriverId = delivery.DriverId;
-                //            driverDeliveryCount = 1;
-                //            driverCardCount = delivery.GiftCards;
-                //            dateCardCount += delivery.GiftCards;
-                //            latestDelivery = new DeliveryViewModel()
-                //            {
-                //                GiftCardCount = delivery.GiftCards 
-                //            };
-                //        }
-                //    }
-                //    else // change in delivery date:
-                //    {
-                //        //summarize latest driver:
-                //        //driverDeliveryCount += 1;
-                //        //if (latestDelivery.GiftCardCount != null)
-                //        //{ driverCardCount += (int)latestDelivery.GiftCardCount; }
-                //        //var newDel = new DeliveryViewModel()
-                //        //{
-                //        //    DateDelivered = currentDateDelivered,
-                //        //    DriverName = AppRoutines.GetDriverName(currentDriverId),
-                //        //    DeliveryCount = driverDeliveryCount,
-                //        //    GiftCardCount = driverCardCount 
-                //        //};
-                //        //reportDeliveryList.Add(newDel);
-
-                //        //// change in delivery date, summarize latest date:
-                //        //dateDeliveryCount += 1;
-                //        ////dateCardCount += delivery.GiftCards;
-                //        //newDel = new DeliveryViewModel()
-                //        //{
-                //        //    DateDelivered = null,
-                //        //    DriverName = "Totals for " + currentDateDelivered?.ToString("MM/dd/yyyy"),
-                //        //    DeliveryCount = dateDeliveryCount, GiftCardCount = dateCardCount
-                //        //};
-                //        //reportDeliveryList.Add(newDel);
-
-                //        //dateDeliveryCount = 0;
-                //        //dateCardCount = 0;
-                //        //currentDateDelivered = delivery.DateDelivered;
-
-                //        //newDel = new DeliveryViewModel() // blank line
-                //        //    { DriverName = "", DeliveryCount = null, GiftCardCount = null };
-                //        //reportDeliveryList.Add(newDel);  // add blank line
-
-                //        currentDateDelivered = delivery.DateDelivered;
-                //        driverDeliveryCount = 1;
-                //        driverCardCount = delivery.GiftCards;
-                //        dateDeliveryCount = 1;
-                //        dateCardCount = delivery.GiftCards;
-                //        totalDeliveryCount += 1;
-                //        totalCardCount += delivery.GiftCards;
-                //    }
-                //}
-
-                // final line, summarize latest driver:
-                //var newD = new DeliveryViewModel()
-                //{
-                //    DateDelivered = currentDateDelivered,
-                //    DriverName = AppRoutines.GetDriverName(currentDriverId),
-                //    DeliveryCount = driverDeliveryCount,
-                //    GiftCardCount = driverCardCount
-                //};
-                //reportDeliveryList.Add(newD);
-                //dateDeliveryCount += 1;
-                //if (latestDelivery.GiftCardCount != null)
-                //{
-                //    dateCardCount += (int)latestDelivery.GiftCardCount;
-                //    totalDeliveryCount += 1;
-                //    totalCardCount += (int)latestDelivery.GiftCardCount;
-
-                //    // final line, summarize latest date:
-                //    newD = new DeliveryViewModel()
-                //    {
-                //        DateDelivered = null,
-                //        DriverName = "Totals for " + currentDateDelivered?.ToString("MM/dd/yyyy"),
-                //        DeliveryCount = dateDeliveryCount,
-                //        GiftCardCount = dateCardCount
-                //    };
-                //    reportDeliveryList.Add(newD);
-
-                //    newD = new DeliveryViewModel()
-                //    {
-                //        DriverName = "",
-                //        DeliveryCount = null,
-                //        GiftCardCount = null
-                //    };
-                //    reportDeliveryList.Add(newD); // add blank line
-
-                //    var totalDel = new DeliveryViewModel()
-                //    {
-                //        DateDelivered = null,
-                //        DriverName = "Grand Totals",
-                //        GiftCardCount = totalCardCount,
-                //        DeliveryCount = totalDeliveryCount
-                //    };
-                //    reportDeliveryList.Add(totalDel);
-                //}
             }
+
+            var newD = new DeliveryViewModel()
+            {
+                DriverName = "",
+                DeliveryCount = null,
+                GiftCardCount = null
+            };
+            reportDeliveryList.Add(newD); // add blank line
+
+            var totalDel = new DeliveryViewModel()
+            {
+                DateDelivered = null,
+                DriverName = "Grand Totals",
+                GiftCardCount = totalCardCount,
+                DeliveryCount = totalDeliveryCount
+            };
+            reportDeliveryList.Add(totalDel);
 
             view.GiftCardReportDeliveries = reportDeliveryList;
-                return View(view);
-            }
+            return View(view);
+        }
 
-            [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
+
+        [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
             public ActionResult QORKReport(string endingDate = "") // New QORK Report 02/22
             {
                 DateTime endDate;
