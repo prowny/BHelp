@@ -36,6 +36,7 @@
             </td>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("Previous Month", "GiftCardsSetPreviousMonth", new { dt = Model.HistoryStartDate})</td>
             <td>&nbsp;&nbsp;@Html.ActionLink("Next Month", "GiftCardsSetNextMonth", new { dt = Model.HistoryEndDate})</td>
+            <td>&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)</td>
         </tr>
     </table>
 </div>
@@ -65,7 +66,7 @@
                     @delivery.DeliveryCount
                 </td>
                 <td style="text-align: center">
-                    @delivery.GiftCards
+                    @delivery.GiftCardCount 
                 </td>
             </tr>
         }

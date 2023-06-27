@@ -27,16 +27,14 @@
                 {
                     <tr>
                         <td>
-                            @Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByDateDeliveredToCSV", new { allData = false })&nbsp;&nbsp;
-                            &nbsp; &nbsp;@Html.ActionLink("Download to CSV File (ALL data)", "CallLogByDateDeliveredToCSV", new { allData = true })
+                            @Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByDateDeliveredToCSV", new { allData = false })
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            @Html.ActionLink("Download to CSV File (ALL data)", "CallLogByDateDeliveredToCSV", new { allData = true })
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null) 
                         </td>
                     </tr>
                 }
-                <tr>
-                    <td>
-                        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null) 
-                    </td>
-                </tr>
             </table>
         </div>
         <table>
@@ -135,7 +133,7 @@
             if (Model.DeliveryList.Count > 0)
             {
                 @Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByDateDeliveredToCSV", new { allData = false })
-                <br />
+                <br/>
                 @Html.ActionLink("Download to CSV File (ALL data)", "CallLogByDateDeliveredToCSV", new { allData = true })
                 <br/>
             }

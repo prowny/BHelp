@@ -125,7 +125,8 @@ namespace BHelp.ViewModels
         public DateTime? NewDeliveryDate { get; set; }
 
         // for GiftCard report:
-        public int DeliveryCount { get; set; }
+        public int? DeliveryCount { get; set; }
+        public int? GiftCardCount { get; set; }
         public List<DeliveryViewModel> GiftCardReportDeliveries { get; set; }
     }
 }
