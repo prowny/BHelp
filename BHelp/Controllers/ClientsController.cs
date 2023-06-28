@@ -121,7 +121,8 @@ namespace BHelp.Controllers
                     Email = client .Email + "",
                     City = client.City,
                     Zip = client.Zip,
-                    Notes = client.Notes + ""
+                    Notes = client.Notes + "",
+                    DateCreated = DateTime.Today
                 };
                 db.Clients.Add(newClient);
                 db.SaveChanges();
@@ -526,6 +527,18 @@ namespace BHelp.Controllers
             }
 
             return View(view);
+        }
+
+        public ActionResult  AddDateCreatedToClients()
+        {
+            var uniqueClientIdList = db.Deliveries.Select(r => r.ClientId).Distinct().ToList();
+            foreach (var cli in uniqueClientIdList)
+            {
+                var x = db.Deliveries.Where(r => r.ClientId == cli)
+                    .Select(d => d.DateDelivered).Min();
+                var y = "dummy";
+            }
+            return null;
         }
     }
 }

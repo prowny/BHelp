@@ -44,6 +44,7 @@ namespace BHelp.Models
 
         [DataType(DataType.MultilineText)]
         public string Notes { get; set; }
+        public DateTime DateCreated { get; set; }
 
         [NotMapped]
         public string FullName
