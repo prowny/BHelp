@@ -78,11 +78,12 @@ function SearchClients()
         url: "/AssistancePayments/Index",
         data: { searchString: window.$("#SearchText").val() },
         type: "POST",
-        success: function () {
+        success: function (result) {
             //var dummy = "";
+            window.$('body').html(result);
         },
         error: function (jqxhr, status, exception) {
-            alert('Exception:', exception);
+            //alert('Exception:', exception);
             //var dummy = "";       
         }
     });

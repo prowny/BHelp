@@ -29,7 +29,7 @@ namespace BHelp.Controllers
             { Session["CallLogDate"] = callLogDate; }
 
             if (searchString != null)
-            { TempData["SearchResults"] = SearchHouseholds(searchString); }
+            {TempData["SearchResults"] = SearchHouseholds(searchString); }
             var userIid = System.Web.HttpContext.Current.User.Identity.GetUserId();
             if (userIid != null)
             {

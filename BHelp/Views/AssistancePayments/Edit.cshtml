@@ -44,7 +44,7 @@
                     </tr>
                     <tr>
                         <td>
-                            @Html.DropDownListFor( model => model.ClientId,
+                            @Html.DropDownListFor(model => model.ClientId,
                                 new SelectList(Model.ClientSelectList, "Value", "Text"),
                                 new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.ClientId, "", new { @class = "text-danger" })
@@ -57,6 +57,15 @@
                         <td>
                             @Html.TextBoxFor(model => model.Action, new { style = "width: 300px;", htmlAttributes = new { @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.Action, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(model => model.Payee, htmlAttributes: new { @class = "control-label col-md-2" })</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.TextBoxFor(model => model.Payee, new { style = "width: 300px;", htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Payee, "", new { @class = "text-danger" })
                         </td>
                     </tr>
                     <tr>

@@ -8,6 +8,7 @@ namespace BHelp.Models
         public int Id { get; set; }
         public int ClientId { get; set; }
         public string Action { get; set; }
+        public string Payee { get; set; }
         public int AmountInCents { get; set; }
         public DateTime Date { get; set; }
         public string Note { get; set; }

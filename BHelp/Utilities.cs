@@ -9,8 +9,6 @@ using BHelp.DataAccessLayer;
 using BHelp.Models;
 using Org.BouncyCastle.Utilities;
 
-
-
 namespace BHelp
 {
     public static class Utilities
@@ -195,7 +193,7 @@ namespace BHelp
             //var view = betaList;
             //return View(view);
         }
-
+        
     }
 }
 

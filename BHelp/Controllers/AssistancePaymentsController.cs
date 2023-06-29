@@ -16,6 +16,11 @@ namespace BHelp.Controllers
         // GET: AssistancePayments
         public ActionResult Index(string searchString, int? selectedId)
         {
+            //var cats = AppRoutines.GetAssistanceCategoriesList();
+            //var selCats = AppRoutines.GetAssistanceCategoriesSelectList();
+            if (searchString != null)
+            { TempData["SearchResults"] = AppRoutines.SearchClients(searchString); }
+
             var paymentView = new AssistanceViewModel()
             {
                 ClientLookupList = db.Clients.ToList(),
@@ -31,7 +36,8 @@ namespace BHelp.Controllers
                 pymnt.LastName = cli.LastName;
                 pymnt.FirstName = cli.FirstName;
             }
-            
+
+            //paymentView = new AssistanceViewModel();
             return View(paymentView);
         }
 
@@ -60,7 +66,7 @@ namespace BHelp.Controllers
         // POST: AssistancePayments/Create.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Date,ClientId,Action,AmountDecimal,Note")]
+        public ActionResult Create([Bind(Include = "Date,ClientId,Action,Payee,AmountDecimal,Note")]
             AssistanceViewModel assistancePayment)
         {
             if (ModelState.IsValid)
@@ -70,6 +76,7 @@ namespace BHelp.Controllers
                     Date = assistancePayment.Date,
                     ClientId = assistancePayment.ClientId, 
                     Action = assistancePayment.Action,
+                    Payee =assistancePayment.Payee,
                     AmountInCents = (int)(assistancePayment.AmountDecimal * 100),
                     Note = assistancePayment.Note 
                 };
@@ -97,6 +104,7 @@ namespace BHelp.Controllers
                 ClientId = assistancePayment .ClientId,
                 Date =assistancePayment .Date,
                 Action = assistancePayment.Action,
+                Payee = assistancePayment.Payee, 
                 Note =assistancePayment.Note
             };
            
@@ -140,7 +148,7 @@ namespace BHelp.Controllers
         // POST: AssistancePayments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,ClientId,Date,Action,AmountDecimal,Note")] 
+        public ActionResult Edit([Bind(Include = "Id,ClientId,Date,Action,Payee,AmountDecimal,Note")] 
             AssistanceViewModel assistancePayment)
         {
             if (ModelState.IsValid)
@@ -151,6 +159,7 @@ namespace BHelp.Controllers
                     aRec.Date = assistancePayment.Date;
                     aRec.ClientId = assistancePayment.ClientId;
                     aRec.Action = assistancePayment.Action;
+                    aRec.Payee = assistancePayment.Payee;
                     aRec.AmountInCents = (int)(assistancePayment.AmountDecimal * 100);
                     aRec.Note = assistancePayment.Note;
                     db.SaveChanges();

@@ -63,6 +63,15 @@
                     </td>
                 </tr>
                 <tr>
+                    <td>@Html.Label("Payee")</td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.TextBoxFor(model => model.Payee, new { style = "width:50px;", htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Payee, "", new { @class = "text-danger" })
+                    </td>
+                </tr>
+                <tr>
                     <td>@Html.Label("Amount")</td>
                 </tr>
                 <tr>

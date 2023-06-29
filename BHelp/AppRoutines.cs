@@ -192,6 +192,22 @@ namespace BHelp
             return eligible;
         }
 
+        public static List<string> GetZipCodesList()
+        {
+            List<string> getZipCodesList = new List<string>();
+            string[] lines =
+                File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/BHelpZipCodes.txt");
+            foreach (var line in lines)
+            {
+                if (line.Substring(0, 1) != "/")
+                {
+                    getZipCodesList.Add(line);
+                }
+            }
+
+            return getZipCodesList;
+        }
+
         public static List<SelectListItem> GetZipCodesSelectList()
         {
             List<SelectListItem> getZipCodesSelectList = new List<SelectListItem>();
@@ -207,6 +223,93 @@ namespace BHelp
             }
 
             return getZipCodesSelectList;
+        }
+
+        public static List<string> GetAssistanceCategoriesList()
+        {
+            List<string> GetAssistanceCategoriesList = new List<string>
+            {
+                "Rent",
+                "Utilities",
+                "Other - Medical",
+                "Prescriptions"
+            };
+
+            return GetAssistanceCategoriesList;
+        }
+
+        public static List<SelectListItem> GetAssistanceCategoriesSelectList()
+        {
+            List<SelectListItem> GetAssistanceCategoriesSelectList = new List<SelectListItem>();
+
+            var selListItem = new SelectListItem() { Value = "Rent", Text = "Rent" };
+            GetAssistanceCategoriesSelectList.Add(selListItem);
+            selListItem = new SelectListItem() { Value = "Utilities", Text = "Utilities" };
+            GetAssistanceCategoriesSelectList.Add(selListItem);
+            selListItem = new SelectListItem() { Value = "Other - Medical", Text = "Other - Medical" };
+            GetAssistanceCategoriesSelectList.Add(selListItem);
+            selListItem = new SelectListItem() { Value = "Prescriptions", Text = "Prescriptions" };
+            GetAssistanceCategoriesSelectList.Add(selListItem);
+
+            return GetAssistanceCategoriesSelectList;
+        }
+
+        public static List<AssistanceViewModel> SearchClients(string searchString)
+        {
+            if (searchString == null) { return null; }
+
+            var assistanceView = new List<AssistanceViewModel>();
+            using var db = new BHelpContext();
+            List<Client> clientList;
+            if (searchString.Any(char.IsDigit))
+            {
+                clientList = db.Clients.Where(c => c.Phone.Contains(searchString)
+                                                   || c.StreetNumber.Contains(searchString)
+                                                   || c.Notes.Contains(searchString)
+                                                   && c.Active).OrderBy(c => c.LastName).ToList();
+            }
+            else
+            {
+                clientList = db.Clients.Where(c => c.Active && c.LastName.Contains(searchString))
+                    .OrderBy(c => c.LastName).ToList();
+            }
+
+            foreach (var client in clientList)
+            {
+                var household = new AssistanceViewModel()
+                {
+                    ClientId = client.Id,
+                    FirstName = client.FirstName,
+                    LastName = client.LastName,
+                    StreetNumber = client.StreetNumber,
+                    StreetName = client.StreetName,
+                    StreetToolTip = client.StreetName.Replace(" ", "\u00a0"),
+                    City = client.City,
+                    CityToolTip = client.City.Replace(" ", "\u00a0"),
+                    Zip = client.Zip,
+                    Phone = client.Phone,
+                    PhoneToolTip = client.Phone.Replace(" ", "\u00a0"),
+                    Notes = client.Notes,
+                    // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
+                    NotesToolTip = client.Notes.Replace(" ", "\u00a0")
+                };
+
+                var s = household.StreetName; // For display, abbreviate to 10 characters:           
+                s = s.Length <= 10 ? s : s.Substring(0, 10) + "...";
+                household.StreetName = s;
+                s = household.City; // For display, abbreviate to 11 characters:           
+                s = s.Length <= 11 ? s : s.Substring(0, 11) + "...";
+                household.City = s;
+                s = household.Phone; // For display, abbreviate to 12 characters:           
+                s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                household.Phone = s;
+                s = household.Notes; // For display, abbreviate to 12 characters:           
+                s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                household.Notes = s;
+                assistanceView.Add(household);
+            }
+
+            return (assistanceView);
         }
 
         public static int GetDeliveriesCountThisMonth(int clientId, DateTime dt)
@@ -355,22 +458,6 @@ namespace BHelp
             }
 
             return nextEligibleGiftCardDate;
-        }
-
-        public static List<string> GetZipCodesList()
-        {
-            List<string> getZipCodesList = new List<string>();
-            string[] lines =
-                File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/BHelpZipCodes.txt");
-            foreach (var line in lines)
-            {
-                if (line.Substring(0, 1) != "/")
-                {
-                    getZipCodesList.Add(line);
-                }
-            }
-
-            return getZipCodesList;
         }
 
         public static string GetVoicemailPassword()
