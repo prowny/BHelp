@@ -66,9 +66,9 @@ namespace BHelp.ViewModels
         public List<SelectListItem> ClientSelectList { get; set; }
         public IEnumerable<SelectListItem> IEnumerableClientSelectList { get; set; }
         public string SelectedClientId { get; set; }
+        public string ActionCategory { get; set; }
         public List<AssistancePayment> PaymentList { get; set; }
         public IEnumerable<SelectListItem> AssistanceCategoriesSelectList { get; set; }
-        
         public string StringDollarAmount
         {
             get => $"${AmountInCents / 100}.{AmountInCents % 100:00}";

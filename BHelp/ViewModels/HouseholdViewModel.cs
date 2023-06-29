@@ -49,7 +49,7 @@ namespace BHelp.ViewModels
         public int Age { get; set; }
 
         [DisplayName("Family Members")]
-        public List<SelectListItem> FamilySelectList { get; set; }  // For display onlly
+        public List<SelectListItem> FamilySelectList { get; set; }  // For display only
         [DisplayName("Family Members")]
         public List<FamilyMember> FamilyMembers { get; set; }  // For editing
         public IEnumerable<SelectListItem> ZipCodes { get; set; }

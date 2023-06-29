@@ -16,48 +16,45 @@ namespace BHelp.Controllers
         // GET: AssistancePayments
         public ActionResult Index(string searchString, int? selectedId)
         {
-            //var cats = AppRoutines.GetAssistanceCategoriesList();
-            //var selCats = AppRoutines.GetAssistanceCategoriesSelectList();
             if (searchString != null)
             { TempData["SearchResults"] = AppRoutines.SearchClients(searchString); }
-
-            var paymentView = new AssistanceViewModel()
-            {
-                ClientLookupList = db.Clients.ToList(),
-                PaymentList = db.AssistancePayments.OrderByDescending(d => d.Date).ToList()
-            };
-
-            foreach (var pymnt in paymentView.PaymentList)
-            {
-                // Add client Name to payment list
-                var cli = paymentView.ClientLookupList
-                    .FirstOrDefault(i => i.Id == pymnt.ClientId);
-                if (cli == null) continue;
-                pymnt.LastName = cli.LastName;
-                pymnt.FirstName = cli.FirstName;
-            }
-
-            //paymentView = new AssistanceViewModel();
+           
+            var paymentView = new AssistanceViewModel();
             return View(paymentView);
         }
 
         // GET: AssistancePayments/Create
-        public ActionResult Create()
+        public ActionResult Create(int? clientId)
         {
+            //var cats = AppRoutines.GetAssistanceCategoriesList();
+            //var selCats = AppRoutines.GetAssistanceCategoriesSelectList();
             var view = new AssistanceViewModel
             {
                 ClientSelectList =new List<SelectListItem>(),
-                Date = DateTime.Today
+                Date = DateTime.Today,
+                AssistanceCategoriesSelectList= AppRoutines.GetAssistanceCategoriesSelectList()
             };
             
             foreach (var cli in db.Clients.OrderBy(n => n.LastName)
                          .ThenBy(f => f.FirstName).ToList())
             {
-                view.ClientSelectList.Add(new SelectListItem
+                if (clientId != null && clientId == cli.Id)
                 {
-                    Value = cli.Id.ToString(),
-                    Text = cli.LastName + ", " + cli.FirstName
-                });
+                    view.ClientSelectList.Add(new SelectListItem
+                    {
+                        Value = cli.Id.ToString(),
+                        Text = cli.LastName + ", " + cli.FirstName,
+                        Selected = true
+                    });
+                }
+                else
+                {
+                    view.ClientSelectList.Add(new SelectListItem
+                    {
+                    Value = cli.Id.ToString(), Text = cli.LastName + ", " + cli.FirstName,
+                    Selected = false
+                    });
+                }
             }
 
             return View(view);

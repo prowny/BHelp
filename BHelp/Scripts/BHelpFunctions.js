@@ -72,18 +72,17 @@ function UpdateDriverLogDate(callLogDate) {
     });
 }
 
-function SearchClients()
+function SearchClients(text)
 {
     window.$.ajax({
         url: "/AssistancePayments/Index",
-        data: { searchString: window.$("#SearchText").val() },
+        data: { searchString: text },
         type: "POST",
         success: function (result) {
             //var dummy = "";
             window.$('body').html(result);
         },
-        error: function (jqxhr, status, exception) {
-            //alert('Exception:', exception);
+        error: function () {
             //var dummy = "";       
         }
     });
