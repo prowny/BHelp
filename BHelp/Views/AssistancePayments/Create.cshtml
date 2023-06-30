@@ -51,14 +51,14 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>@Html.Label("Category")</td>
+                    <td>@Html.Label("CategoryId")</td>
                 </tr>
                 <tr>
                     <td>
-                        @Html.DropDownListFor(model => model.ActionCategory,
+                        @Html.DropDownListFor(model => model.CategoryId,
                             new SelectList(Model.AssistanceCategoriesSelectList,
                                 "Value", "Text"), new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.ActionCategory, "", new { @class = "text-danger" })
+                        @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
                     </td>
                 </tr>
                 <tr>

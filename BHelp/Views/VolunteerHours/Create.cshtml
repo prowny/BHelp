@@ -24,7 +24,7 @@
 {
     <div id="HeaderDiv">
         @Html.Hidden("IsIndividual", Model.IsIndividual)
-        @Html.Hidden("Category", Model.Category)
+        @Html.Hidden("CategoryId", Model.Category)
         @Html.Hidden(".IsNonFoodServiceAdministration", Model.IsNonFoodServiceAdministration)
         @Html.Hidden("IsNonFoodServiceManagement", Model.IsNonFoodServiceManagement)
         @Html.AntiForgeryToken()
@@ -37,7 +37,7 @@
         @if (Model.IsIndividual && !Model.IsNonFoodServiceAdministration && !Model.IsNonFoodServiceManagement)
         { /* this section for individuals (no dropdown boxes) */
             <table>
-                <tr><td>Volunteer</td><td>Category</td><td>Subcategory</td></tr>
+                <tr><td>Volunteer</td><td>CategoryId</td><td>Subcategory</td></tr>
                 <tr>
                     <td>
                         @Html.TextBoxFor(m => m.VolunteerName,
@@ -180,7 +180,7 @@
                 <tr>
                     <td></td>
                     <td><b>Volunteer</b></td>
-                    <td><b>Category</b></td>
+                    <td><b>CategoryId</b></td>
                     <td><b>Subcategory</b></td>
                     <td style="text-align: center"><b>Date</b></td>
                     <td><b>Hours</b></td>
@@ -206,7 +206,7 @@
             <table>
                 <tr>
                     <td><b>Summary:&nbsp;</b></td>
-                    <td><b>Category</b></td>
+                    <td><b>CategoryId</b></td>
                     <td><b>People Count</b></td>
                     <td><b>Total Hours</b></td>
                 </tr>

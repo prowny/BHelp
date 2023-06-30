@@ -45,21 +45,22 @@
                     <tr>
                         <td>
                             @Html.DropDownListFor(model => model.ClientId,
-                                new SelectList(Model.ClientSelectList, "Value", "Text"),
+                                new SelectList(Model.ClientSelectList,
+                                    "Value", "Text"),
                                 new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.ClientId, "", new { @class = "text-danger" })
                         </td>
                     </tr>
                     <tr>
-                        <td>@Html.Label( "Category", new { @class = "control-label col-md-2" })</td>
+                        <td>@Html.Label( "CategoryId", new { @class = "control-label col-md-2" })</td>
                     </tr>
                     <tr>
                         <td>
-                            @Html.DropDownListFor(model => model.ActionCategory ,
+                            @Html.DropDownListFor(model => model.CategoryId,
                                 new SelectList(Model.AssistanceCategoriesSelectList,
                                     "Value", "Text"), 
                                 new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.ActionCategory, 
+                            @Html.ValidationMessageFor(model => model.CategoryId, 
                                 "", new { @class = "text-danger" })
                         </td>
                     </tr>

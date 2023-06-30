@@ -252,7 +252,7 @@ namespace BHelp
             GetAssistanceCategoriesSelectList.Add(selListItem);
             selListItem = new SelectListItem() { Value = "2", Text = "Rent" };
             GetAssistanceCategoriesSelectList.Add(selListItem);
-            selListItem = new SelectListItem() { Value = "3 - Medical", Text = "Other - Medical" };
+            selListItem = new SelectListItem() { Value = "3", Text = "Other - Medical" };
             GetAssistanceCategoriesSelectList.Add(selListItem);
             selListItem = new SelectListItem() { Value = "4", Text = "Prescriptions" };
             GetAssistanceCategoriesSelectList.Add(selListItem);

@@ -222,7 +222,7 @@ namespace BHelp.Controllers
 
         //POST: Volunteer Hours Create 
         [HttpPost, AllowAnonymous]
-                public ActionResult Create([Bind(Include = "UserId,Category,Subcategory,"
+                public ActionResult Create([Bind(Include = "UserId,CategoryId,Subcategory,"
             + "Date,Hours,Minutes,PeopleCount,IsIndividual,IsNonFoodServiceAdministration,"
             + "IsNonFoodServiceManagement")] VolunteerHoursViewModel model)
         {
@@ -244,7 +244,7 @@ namespace BHelp.Controllers
                     if (model.Category == "F" && model.Subcategory == "(none)"
                         || (model.Category == "(none)" && model.Subcategory == "(none)"))
                         {
-                            TempData["SubmitError"] = "Invalid Category/Subcategory setup. Contact Administrator.";
+                            TempData["SubmitError"] = "Invalid CategoryId/Subcategory setup. Contact Administrator.";
                             return RedirectToAction("Create", new { userId = model.UserId });
                         }
                 }
@@ -336,7 +336,7 @@ namespace BHelp.Controllers
 
         //POST: Volunteer Hours Edit 
         [HttpPost, AllowAnonymous]
-        public ActionResult Edit([Bind(Include = "Id,UserId,OriginatorUserId,Category,Subcategory,"
+        public ActionResult Edit([Bind(Include = "Id,UserId,OriginatorUserId,CategoryId,Subcategory,"
                                                  + "Date,Hours,Minutes,PeopleCount,btnSave,btnDelete")]
             VolunteerHoursViewModel model)
         {

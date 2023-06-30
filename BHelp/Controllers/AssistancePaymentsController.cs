@@ -100,7 +100,7 @@ namespace BHelp.Controllers
         // POST: AssistancePayments/Create.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Date,ClientId,Action,Category,Payee,AmountDecimal,Note")]
+        public ActionResult Create([Bind(Include = "Date,ClientId,Action,CategoryId,Payee,AmountDecimal,Note")]
             AssistanceViewModel assistancePayment)
         {
             if (ModelState.IsValid)
@@ -108,7 +108,8 @@ namespace BHelp.Controllers
                 var newRec = new AssistancePayment()
                 {
                     Date = assistancePayment.Date,
-                    ClientId = assistancePayment.ClientId, 
+                    ClientId = assistancePayment.ClientId,
+                    Category = Convert .ToByte(assistancePayment .CategoryId),
                     Action = assistancePayment.Action,
                     Payee =assistancePayment.Payee,
                     AmountInCents = (int)(assistancePayment.AmountDecimal * 100),
@@ -133,7 +134,7 @@ namespace BHelp.Controllers
             AssistancePayment assistancePayment = db.AssistancePayments.Find(id);
             if (assistancePayment == null) return HttpNotFound();
 
-            List<SelectListItem> clientList = (from c in db.Clients
+            var clientList = (from c in db.Clients
                     .OrderBy(n => n.LastName)
                     .ThenBy(f => f.FirstName).AsEnumerable()
                 select new SelectListItem
@@ -144,24 +145,19 @@ namespace BHelp.Controllers
             clientList.Find(c => c.Value == assistancePayment.ClientId.ToString())
                 .Selected = true;
             
-            List<SelectListItem> actionList = AppRoutines.GetAssistanceCategoriesSelectList();
-            foreach (var a in actionList)
-            {
-                var c = Convert.ToString(assistancePayment.Category);
-                if (a.Value == c)
-                {
-                    a.Selected = true;
-                }
-            }
-            
+            var actionList = AppRoutines.GetAssistanceCategoriesSelectList();
+            actionList.Find(c => c.Value == assistancePayment.Category.ToString())
+                .Selected = true;
+
             var amt = Convert.ToSingle(assistancePayment.AmountInCents);
            
             var view = new AssistanceViewModel()
             {
                 ClientSelectList = clientList,
-                ClientId = assistancePayment .ClientId,
+                ClientId = assistancePayment.ClientId,
                 Date = assistancePayment .Date,
                 Action = assistancePayment.Action,
+                CategoryId =assistancePayment.Category,
                 AssistanceCategoriesSelectList = actionList,
                 AmountDecimal = (decimal)(amt / 100),
                 Payee = assistancePayment.Payee, 
@@ -174,7 +170,7 @@ namespace BHelp.Controllers
         // POST: AssistancePayments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,ClientId,Date,ActionCategory,Payee,AmountDecimal,Note")] 
+        public ActionResult Edit([Bind(Include = "Id,ClientId,Date,CategoryId,Action,Payee,AmountDecimal,Note")] 
             AssistanceViewModel assistancePayment)
         {
             if (ModelState.IsValid)
@@ -184,6 +180,7 @@ namespace BHelp.Controllers
                 {
                     aRec.Date = assistancePayment.Date;
                     aRec.ClientId = assistancePayment.ClientId;
+                    aRec.Category = Convert.ToByte( assistancePayment.CategoryId);
                     aRec.Action = assistancePayment.Action;
                     aRec.Payee = assistancePayment.Payee;
                     aRec.AmountInCents = (int)(assistancePayment.AmountDecimal * 100);

@@ -90,7 +90,9 @@ namespace BHelp.Controllers
                     PhoneToolTip = client.Phone.Replace(" ", "\u00a0"),
                     Notes = client.Notes,
                     // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
-                    NotesToolTip = client.Notes.Replace(" ", "\u00a0")
+                    NotesToolTip = client.Notes.Replace(" ", "\u00a0"),
+                    DateCreated = client .DateCreated,
+                    DateCreatedString = client .DateCreated.ToString( "MM/dd/yyyy") 
                 };
 
                 var s = household.StreetName; // For display, abbreviate to 10 characters:           

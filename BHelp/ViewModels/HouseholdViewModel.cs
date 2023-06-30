@@ -41,6 +41,10 @@ namespace BHelp.ViewModels
 
         public string Email { get; set; }
 
+        [DisplayName("Date Created")]
+        public DateTime DateCreated { get; set; }
+        public string DateCreatedString { get; set; }
+
         [DisplayName("Permanent Notes")]
         [DataType(DataType.MultilineText)]
         public string Notes { get; set; }

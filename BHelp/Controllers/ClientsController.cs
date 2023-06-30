@@ -534,9 +534,12 @@ namespace BHelp.Controllers
             var uniqueClientIdList = db.Deliveries.Select(r => r.ClientId).Distinct().ToList();
             foreach (var cli in uniqueClientIdList)
             {
-                var x = db.Deliveries.Where(r => r.ClientId == cli)
+                var dt = db.Deliveries.Where(r => r.ClientId == cli)
                     .Select(d => d.DateDelivered).Min();
-                var y = "dummy";
+                if (dt != null)
+                {
+                    var x = Utilities.UpdateClientDateCreated(cli, (DateTime)dt);
+                }
             }
             return null;
         }

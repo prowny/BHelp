@@ -11,13 +11,8 @@
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
     <style>
-        p.indent {
-            padding-left: 1em
-        }
-
-        div {
-            padding-left: 5px
-        }
+        p.indent {padding-left: 1em}
+        div {padding-left: 5px}
     </style>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
@@ -81,9 +76,10 @@
                     <div style="width: 25px", align="left">@Html.DisplayNameFor(model => model.Zip)</div></th>
                 <th>
                     <div style="width: 60px", align="left"> @Html.DisplayNameFor(model => model.Phone)</div></th>
-                @*<th>@Html.DisplayNameFor(model => model.FamilyMembers)</th>*@
                 <th>
                     <div style="width: 60px", align="left"> @Html.DisplayNameFor(model => model.Notes)</div></th>
+                <th>
+                    <div style="width: 60px", align="left"> @Html.DisplayNameFor(model => model.DateCreated)</div></th>
                 <th></th>
             </tr>
 
@@ -109,6 +105,9 @@
                         </td>*@
                     <td title=@item.NotesToolTip>
                         @Html.DisplayFor(modelItem => item.Notes)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateCreatedString)
                     </td>
                     <td>
                         @Html.ActionLink("Select", "UpdateHousehold", new {id = item.ClientId})

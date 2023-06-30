@@ -67,7 +67,7 @@ namespace BHelp.ViewModels
         public List<SelectListItem> ClientSelectList { get; set; }
         public IEnumerable<SelectListItem> IEnumerableClientSelectList { get; set; }
         public string SelectedClientId { get; set; }
-        public string ActionCategory { get; set; }
+        public int CategoryId { get; set; }
         public List<AssistancePayment> PaymentList { get; set; }
         public string FullName { get; set; } // for client name in financial assistance list
         public IEnumerable<SelectListItem> AssistanceCategoriesSelectList { get; set; }

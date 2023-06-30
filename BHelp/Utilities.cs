@@ -193,7 +193,19 @@ namespace BHelp
             //var view = betaList;
             //return View(view);
         }
-        
+
+        public static string UpdateClientDateCreated(int clientId, DateTime date)
+        {
+            var db = new BHelpContext();
+            var client = db.Clients.Find(clientId);
+            if (client != null)
+            {
+                client.DateCreated = date;
+                db.SaveChanges();
+            }
+            return String.Empty;
+        }
+       
     }
 }
 

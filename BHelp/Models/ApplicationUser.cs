@@ -29,7 +29,7 @@ namespace BHelp.Models
         [JsonProperty, DisplayName("Notes")]
         public String Notes { get; set; }    // Added PER 07/06/2021
 
-        [JsonProperty, StringLength(1), DisplayName("Volunteer Hours Category")]
+        [JsonProperty, StringLength(1), DisplayName("Volunteer Hours CategoryId")]
         public string VolunteerCategory { get; set; }    // Added PER 01/13/2022
 
         [JsonProperty, DisplayName("Volunteer Hours Subcategory")]

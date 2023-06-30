@@ -174,7 +174,7 @@
                 <td>
                     @Html.DropDownListFor(m => m.VolunteerSubcategory,
                         new SelectList(Model.VolunteerSubcategories, "Value", "Text"))
-                    <span style="font-style: italic; color: darkmagenta">&nbsp;(*Subcategory required for Food Service Category)</span>
+                    <span style="font-style: italic; color: darkmagenta">&nbsp;(*Subcategory required for Food Service CategoryId)</span>
                     @Html.ValidationMessageFor(model => model.VolunteerSubcategory, "", new { @class = "text-danger" })
                 </td>
             </tr>
