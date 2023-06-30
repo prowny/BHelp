@@ -7,6 +7,7 @@ namespace BHelp.Models
     {
         public int Id { get; set; }
         public int ClientId { get; set; }
+        public byte Category { get; set; }
         public string Action { get; set; }
         public string Payee { get; set; }
         public int AmountInCents { get; set; }
@@ -28,6 +29,17 @@ namespace BHelp.Models
 
         [NotMapped]
         public string FirstName { get; set; }
+        
+        [NotMapped]
+        public string NoteToolTip { get; set; }
 
+        [NotMapped]
+        public string DateString { get; set; }
+
+        [NotMapped]
+        public string FullName { get; set; } 
+
+        [NotMapped]
+        public string ActionCategory { get; set; }
     }
 }

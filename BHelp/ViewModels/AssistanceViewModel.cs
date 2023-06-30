@@ -25,6 +25,7 @@ namespace BHelp.ViewModels
         public decimal AmountDecimal { get; set; }
         
         public string Note { get; set; }
+
         [DisplayName("Date of Birth")]
         [Column(TypeName = "Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
@@ -68,7 +69,9 @@ namespace BHelp.ViewModels
         public string SelectedClientId { get; set; }
         public string ActionCategory { get; set; }
         public List<AssistancePayment> PaymentList { get; set; }
+        public string FullName { get; set; } // for client name in financial assistance list
         public IEnumerable<SelectListItem> AssistanceCategoriesSelectList { get; set; }
+        public string DateString { get; set; } 
         public string StringDollarAmount
         {
             get => $"${AmountInCents / 100}.{AmountInCents % 100:00}";

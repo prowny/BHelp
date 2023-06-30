@@ -51,12 +51,29 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>@Html.LabelFor(model => model.Action, htmlAttributes: new { @class = "control-label col-md-2" })</td>
+                        <td>@Html.Label( "Category", new { @class = "control-label col-md-2" })</td>
                     </tr>
                     <tr>
                         <td>
-                            @Html.TextBoxFor(model => model.Action, new { style = "width: 300px;", htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.Action, "", new { @class = "text-danger" })
+                            @Html.DropDownListFor(model => model.ActionCategory ,
+                                new SelectList(Model.AssistanceCategoriesSelectList,
+                                    "Value", "Text"), 
+                                new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.ActionCategory, 
+                                "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.Label("Action")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @Html.TextBoxFor(model => model.Action,
+                               new { style = "width: 300px;" })  
+                                @Html.ValidationMessageFor(model => model.Action,
+                                "", new { @class = "text-danger" })
                         </td>
                     </tr>
                     <tr>
@@ -64,7 +81,8 @@
                     </tr>
                     <tr>
                         <td>
-                            @Html.TextBoxFor(model => model.Payee, new { style = "width: 300px;", htmlAttributes = new { @class = "form-control" } })
+                            @Html.TextBoxFor(model => model.Payee, 
+                                new { style = "width: 300px;", htmlAttributes = new { @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.Payee, "", new { @class = "text-danger" })
                         </td>
                     </tr>

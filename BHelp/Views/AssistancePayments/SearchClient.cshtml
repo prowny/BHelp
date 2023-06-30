@@ -1,0 +1,155 @@
+﻿@using BHelp.ViewModels
+@model BHelp.ViewModels.AssistanceViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+@{ var searchResults = (IEnumerable<AssistanceViewModel>)TempData["SearchResults"]; }
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>SearchClient</title>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+</head>
+
+<body>
+    <p>
+        <b>Assistance Payments Entry</b>
+    </p>
+    <p>
+        @Html.ActionLink("Create New Payment", "Create")&nbsp;&nbsp;
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </p>
+    <div>
+        <table>
+            <tr>
+                <td><b>Search for Existing Client:</b></td>
+                <td>
+                    @Html.TextBox("SearchText", "", new
+                    {
+                        id = "SearchText",
+                        style = "width: 50px;",
+                        onkeypress = "KeyPressHandler()",
+                        Title = "Tip: Enter full or partial Phone# OR Last Name OR Street Number",
+                        autofocus = true
+                    })
+                </td>
+                <td>
+                    <a href="#" id="SearchString"><span>Search</span></a>
+                    <span style="color: darkmagenta">&#8592; (Enter full or partial Phone# OR Last Name OR Street Number)</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br />
+
+    <div id="SearchResults">
+        @if (searchResults != null)
+        {
+            <table>
+                <tr>
+                    <td>
+                        found:
+                        @{
+                            var assistanceViewModels = searchResults as AssistanceViewModel[] ?? searchResults.ToArray();
+                        }
+                        @assistanceViewModels.Count()
+                    </td>
+                </tr>
+                <tr id="Column Headers">
+                    <th>
+                        <div style="width: 100px" , align="left">@Html.DisplayNameFor(model => model.LastName)</div>
+                    </th>
+                    <th>
+                        <div style="width: 100px" , align="left">@Html.DisplayNameFor(model => model.FirstName)</div>
+                    </th>
+                    <th>
+                        <div style="width: 40px" , align="left">@Html.DisplayNameFor(model => model.StreetNumber)</div>
+                    </th>
+                    <th>
+                        <div style="width: 50px" , align="left">@Html.DisplayNameFor(model => model.StreetName)</div>
+                    </th>
+                    <th>
+                        <div style="width: 50px" , align="left"> @Html.DisplayNameFor(model => model.City)</div>
+                    </th>
+                    <th>
+                        <div style="width: 25px" , align="left">@Html.DisplayNameFor(model => model.Zip)</div>
+                    </th>
+                    <th>
+                        <div style="width: 60px" , align="left"> @Html.DisplayNameFor(model => model.Phone)</div>
+                    </th>
+                    @*<th>@Html.DisplayNameFor(model => model.FamilyMembers)</th>*@
+                    <th>
+                        <div style="width: 60px" , align="left"> @Html.DisplayNameFor(model => model.Notes)</div>
+                    </th>
+                    <th></th>
+                </tr>
+                @foreach (var item in assistanceViewModels)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.StreetNumber)</td>
+                        <td title=@item.StreetToolTip>
+                            @Html.DisplayFor(modelItem => item.StreetName)
+                        </td>
+                        <td title=@item.CityToolTip>
+                            @Html.DisplayFor(modelItem => item.City)
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.Zip)</td>
+                        <td title=@item.PhoneToolTip>
+                            @Html.DisplayFor(modelItem => item.Phone)
+                        </td>
+                        @*<td>
+                                @Html.DropDownListFor(modelitem => item.Phone, item.FamilySelectList)
+                                (@item.FamilyMembers.Count)
+                            </td>*@
+                        <td title=@item.NotesToolTip>
+                            @Html.DisplayFor(modelItem => item.Notes)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Select", "Create", new { clientId = item.ClientId })
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+    </div>
+    <div>
+        <br />
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    $("#SearchString").click(function () {
+        var text = window.$("#SearchText").val();
+        SearchClients(text);
+    });
+</script> @*SearchClientss*@
+
+<script type=text/javascript>
+    function KeyPressHandler(SearchText, e) {
+        //the purpose of this function is to allow the enter key to
+        //point to the correct button to click.
+        var key;
+
+        if (window.event)
+            key = window.event.keyCode;     //IE
+        else
+            key = e.which;     //firefox
+
+        if (key === 13) {
+            //Get the button the user wants to have clicked
+            var btn = document.getElementById("SearchString");
+            if (btn != null) { //If we find the button click it
+                btn.click();
+                event.keyCode = 0;
+            }
+        }
+    }
+</script> @*KeyPressHandler*@

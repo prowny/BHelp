@@ -91,10 +91,12 @@
     
     @if (User.IsInAnyRoles("Developer","Administrator", "FinancialStaff"))
     {
-        <div>
-            <strong>Financial Assistance (Beta Test)</strong><br />
-            <a href="@Url.Action("Index", "AssistancePayments")">Maintain Payments</a><br />
-        </div>
+<div>
+    <strong>Financial Assistance</strong><br />
+    <a href="@Url.Action("SearchClient", "AssistancePayments")">Enter New Payment</a><br />
+
+    <a href="@Url.Action("Index", "AssistancePayments")">Maintain Payments</a><br />
+</div>
         <br />
     }
 

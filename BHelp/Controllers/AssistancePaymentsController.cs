@@ -14,13 +14,50 @@ namespace BHelp.Controllers
         private readonly BHelpContext db = new BHelpContext();
 
         // GET: AssistancePayments
-        public ActionResult Index(string searchString, int? selectedId)
+        public ActionResult SearchClient(string searchString, int? selectedId)
         {
             if (searchString != null)
-            { TempData["SearchResults"] = AppRoutines.SearchClients(searchString); }
-           
+            {
+                TempData["SearchResults"] = AppRoutines.SearchClients(searchString);
+            }
+
             var paymentView = new AssistanceViewModel();
             return View(paymentView);
+        }
+
+        // GET: AssistancePayments
+        public ActionResult Index()
+        {
+            var payments = db.AssistancePayments
+                .OrderByDescending(d => d.Date).ToList();
+            var clientList = AppRoutines.GetAllClientsList();
+            var categoryList = AppRoutines.GetAssistanceCategoriesList();
+            foreach (var pymt in payments)
+            {
+                var rec = clientList.SingleOrDefault(obj => obj.Id == pymt.ClientId);
+                if (rec != null) pymt.FullName = rec.FirstName + " " + rec.LastName;
+
+                if (pymt.Note != null)
+                {
+                    // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
+                    pymt.NoteToolTip = pymt.Note.Replace(" ", "\u00a0");
+                    var s = pymt.Note; // For display, abbreviate to 12 characters:           
+                    s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                    pymt.Note = s;
+                }
+
+                pymt.DateString = pymt.Date.ToString("MM/dd/yyyy");
+
+                var c = Convert.ToByte(pymt.Category);
+                pymt.ActionCategory = categoryList[c- 1];
+            }
+
+            var paymentsView = new AssistanceViewModel
+            {
+                PaymentList = payments
+            };
+
+            return View(paymentsView);
         }
 
         // GET: AssistancePayments/Create
@@ -63,7 +100,7 @@ namespace BHelp.Controllers
         // POST: AssistancePayments/Create.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Date,ClientId,Action,Payee,AmountDecimal,Note")]
+        public ActionResult Create([Bind(Include = "Date,ClientId,Action,Category,Payee,AmountDecimal,Note")]
             AssistanceViewModel assistancePayment)
         {
             if (ModelState.IsValid)
@@ -80,7 +117,7 @@ namespace BHelp.Controllers
 
                 db.AssistancePayments.Add(newRec);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("SearchClient");
             }
 
             return View();
@@ -95,35 +132,6 @@ namespace BHelp.Controllers
             }
             AssistancePayment assistancePayment = db.AssistancePayments.Find(id);
             if (assistancePayment == null) return HttpNotFound();
-            var view = new AssistanceViewModel()
-            {
-                ClientSelectList = new List<SelectListItem>(),
-                ClientId = assistancePayment .ClientId,
-                Date =assistancePayment .Date,
-                Action = assistancePayment.Action,
-                Payee = assistancePayment.Payee, 
-                Note =assistancePayment.Note
-            };
-           
-            //foreach (var cli in db.Clients.OrderBy(n => n.LastName)
-            //             .ThenBy(f => f.FirstName).ToList())
-            //{
-            //    var item = new SelectListItem()
-            //    {
-            //        Value = cli.Id.ToString(),
-            //        Text = cli.LastName + ", " + cli.FirstName
-            //    };
-            //    if (cli.Id == assistancePayment.ClientId)
-            //    {
-            //        item.Selected = true;
-            //        view.SelectedClientId = cli.Id.ToString();
-            //    }
-            //    else
-            //    {
-            //        item.Selected = false;
-            //    }
-            //    view.ClientSelectList.Add(item);
-            //}
 
             List<SelectListItem> clientList = (from c in db.Clients
                     .OrderBy(n => n.LastName)
@@ -133,11 +141,32 @@ namespace BHelp.Controllers
                     Value = c.Id.ToString(),
                     Text = c.LastFirstName
                 }).ToList();
-            clientList.Find(c => c.Value == assistancePayment.ClientId.ToString()).Selected = true;
-            view.ClientSelectList = clientList;
-
+            clientList.Find(c => c.Value == assistancePayment.ClientId.ToString())
+                .Selected = true;
+            
+            List<SelectListItem> actionList = AppRoutines.GetAssistanceCategoriesSelectList();
+            foreach (var a in actionList)
+            {
+                var c = Convert.ToString(assistancePayment.Category);
+                if (a.Value == c)
+                {
+                    a.Selected = true;
+                }
+            }
+            
             var amt = Convert.ToSingle(assistancePayment.AmountInCents);
-            view.AmountDecimal = (decimal)(amt / 100);
+           
+            var view = new AssistanceViewModel()
+            {
+                ClientSelectList = clientList,
+                ClientId = assistancePayment .ClientId,
+                Date = assistancePayment .Date,
+                Action = assistancePayment.Action,
+                AssistanceCategoriesSelectList = actionList,
+                AmountDecimal = (decimal)(amt / 100),
+                Payee = assistancePayment.Payee, 
+                Note =assistancePayment.Note
+            };
 
             return View(view);
         }
@@ -145,7 +174,7 @@ namespace BHelp.Controllers
         // POST: AssistancePayments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,ClientId,Date,Action,Payee,AmountDecimal,Note")] 
+        public ActionResult Edit([Bind(Include = "Id,ClientId,Date,ActionCategory,Payee,AmountDecimal,Note")] 
             AssistanceViewModel assistancePayment)
         {
             if (ModelState.IsValid)

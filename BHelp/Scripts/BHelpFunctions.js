@@ -75,7 +75,7 @@ function UpdateDriverLogDate(callLogDate) {
 function SearchClients(text)
 {
     window.$.ajax({
-        url: "/AssistancePayments/Index",
+        url: "/AssistancePayments/SearchClient",
         data: { searchString: text },
         type: "POST",
         success: function (result) {

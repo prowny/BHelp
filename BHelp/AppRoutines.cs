@@ -17,6 +17,12 @@ namespace BHelp
 {
     public static class AppRoutines
     {
+        public static List<Client> GetAllClientsList()
+        {
+            using var db = new BHelpContext();
+            return db.Clients.ToList();
+        }
+
         public static Delivery NewDeliveryRecord(int clientId)
         {
             using var context = new BHelpContext();
@@ -229,8 +235,8 @@ namespace BHelp
         {
             List<string> GetAssistanceCategoriesList = new List<string>
             {
-                "Rent",
                 "Utilities",
+                "Rent",
                 "Other - Medical",
                 "Prescriptions"
             };
@@ -242,13 +248,13 @@ namespace BHelp
         {
             List<SelectListItem> GetAssistanceCategoriesSelectList = new List<SelectListItem>();
 
-            var selListItem = new SelectListItem() { Value = "Rent", Text = "Rent" };
+            var selListItem = new SelectListItem() { Value = "1", Text = "Utilities" };
             GetAssistanceCategoriesSelectList.Add(selListItem);
-            selListItem = new SelectListItem() { Value = "Utilities", Text = "Utilities" };
+            selListItem = new SelectListItem() { Value = "2", Text = "Rent" };
             GetAssistanceCategoriesSelectList.Add(selListItem);
-            selListItem = new SelectListItem() { Value = "Other - Medical", Text = "Other - Medical" };
+            selListItem = new SelectListItem() { Value = "3 - Medical", Text = "Other - Medical" };
             GetAssistanceCategoriesSelectList.Add(selListItem);
-            selListItem = new SelectListItem() { Value = "Prescriptions", Text = "Prescriptions" };
+            selListItem = new SelectListItem() { Value = "4", Text = "Prescriptions" };
             GetAssistanceCategoriesSelectList.Add(selListItem);
 
             return GetAssistanceCategoriesSelectList;
