@@ -69,19 +69,12 @@
                 <td style="text-align: center"><b>#GC</b></td>
                 <td style="text-align: center"><b>Lbs.</b></td>
             </tr>
-            @foreach (var delivery in Model.DeliveryList)
+            @foreach (var delivery  in Model.DeliveryList)
             {
                 <tr>
-                    @if (Model.OkToEdit)
-                    {
-                        <td>
-                            @Html.ActionLink("Edit", "Edit", new { id = delivery.Id })
-                        </td>
-                    }
-                    else
-                    {
-                        <td></td>
-                    }
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = delivery.Id })
+                    </td>
                     <td>@delivery.LogDateString</td>
                     @{ string name = delivery.LastName + ", " + delivery.FirstName; }
                     @{ string addr = delivery.StreetNumber + " " + delivery.StreetName; }

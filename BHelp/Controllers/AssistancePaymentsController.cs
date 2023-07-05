@@ -6,12 +6,19 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
+using Microsoft.Ajax.Utilities;
 
 namespace BHelp.Controllers
 {
     public class AssistancePaymentsController : Controller
     {
         private readonly BHelpContext db = new BHelpContext();
+
+        //GET: AssistancePayments
+        public ActionResult AssistancePaymentsMenu()
+        {
+            return View();
+        }
 
         // GET: AssistancePayments
         public ActionResult SearchClient(string searchString, int? selectedId)
@@ -24,6 +31,55 @@ namespace BHelp.Controllers
             var paymentView = new AssistanceViewModel();
             return View(paymentView);
         }
+
+        // GET: Payments by Individual
+        public ActionResult PaymentsByIndividual(int? clientId)
+        {
+            var clientLookupList = db.Clients.ToList();
+            var rawList = new List<Client>(); // unsorted payment clients
+            var view = new AssistanceViewModel {ClientSelectList = new List<SelectListItem>() };
+            
+            var clientIdList = db.AssistancePayments
+                .DistinctBy(i => i.ClientId).ToList();
+
+            foreach (var pymnt in clientIdList) // get client data for each client id
+            {
+                var client = clientLookupList.FirstOrDefault(i => i.Id == pymnt.ClientId);
+                rawList.Add(client);
+            }
+
+            rawList = new List<Client>(rawList.OrderBy(n => n.LastName)
+                .ThenBy(f => f.FirstName)); // rewList now contains sorted clients
+
+            foreach (var client in rawList)  // now create selectlist items
+            {
+                var newItem = new SelectListItem
+                {
+                    Value = client.Id.ToString(),
+                    Text =client.FullName
+                };
+                view.ClientSelectList.Add(newItem);
+            }
+
+            if (clientId  == null) return View(view);  // else load client's payment history below 
+
+            var _paymentList = db.AssistancePayments.Where(d => d.ClientId == clientId)
+                .OrderByDescending(d => d.Date).ToList();
+
+            var categoryList = AppRoutines.GetAssistanceCategoriesList();
+            foreach (var pymt in _paymentList)
+            {
+                pymt.DateString = pymt.Date.ToString("MM/dd/yyyy");
+                var c = Convert.ToByte(pymt.Category);
+                pymt.ActionCategory = categoryList[c - 1];
+            }
+
+            view.PaymentList = _paymentList;
+            view.ClientId = (int)clientId;
+
+            return View(view);
+        }
+
 
         // GET: AssistancePayments
         public ActionResult Index()
@@ -235,6 +291,10 @@ namespace BHelp.Controllers
             return RedirectToAction("Create","Clients");
         }
 
+        public ActionResult PaymentsByIndividualToCSV()
+        {
+            return null;
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

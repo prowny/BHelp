@@ -811,6 +811,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\AssistancePayments\SearchClient.cshtml" />
+    <Content Include="Views\AssistancePayments\AssistancePaymentsMenu.cshtml" />
+    <Content Include="Views\AssistancePayments\PaymentsByIndividual.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

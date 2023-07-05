@@ -89,18 +89,16 @@
         <br />
     }
     
-    @if (User.IsInAnyRoles("Developer","Administrator", "FinancialStaff"))
+    @if (User.IsInAnyRoles("FinancialStaff","Developer", "Administrator"))
     {
-<div>
-    <strong>Financial Assistance</strong><br />
-    <a href="@Url.Action("SearchClient", "AssistancePayments")">Enter New Payment</a><br />
-
-    <a href="@Url.Action("Index", "AssistancePayments")">Maintain Payments</a><br />
-</div>
+        <div>
+            <strong>Financial Assistance</strong><br/>
+            <a href="@Url.Action("AssistancePaymentsMenu", "AssistancePayments")">Maintain Payments</a><br/>
+        </div>
         <br />
     }
 
-@if (User.IsInAnyRoles("Reports","Developer","Administrator"))
+    @if (User.IsInAnyRoles("Reports","Developer","Administrator"))
     {
         <div>
             <strong>Reports Menu</strong><br />

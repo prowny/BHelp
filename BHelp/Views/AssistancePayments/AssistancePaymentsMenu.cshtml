@@ -1,0 +1,23 @@
+﻿@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>FinancialAssistanceMenu</title>
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+</head>
+<body>
+    <div>
+        <b>Financial Assistance Payments</b>
+        <br />
+        <a href="@Url.Action("PaymentsByIndividual", "AssistancePayments")">History by Individual Client</a><br />
+        <a href="@Url.Action("CallLogByDateDelivered", "Deliveries")">History by Payment Date</a><br />
+        <a href="@Url.Action("CallLogByDateDelivered", "Deliveries")">Enter New Client</a><br />
+        </div>
+    <br />
+    <div>
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
+</body>
+</html>

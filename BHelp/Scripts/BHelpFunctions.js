@@ -161,11 +161,28 @@ function EditCallLog()
             //var dummy =xx;
         },
         error: function (jqxhr, status, exception) {
-            alert('Exception:', exception);
+            alert("Exception:", exception);
             //var dummy = "";       
         }
     });
 }
+
+function EditPayments() {
+    window.$.ajax({
+        url: "/AssistancePayments/PaymentsByIndividual",
+        data: { clientId: window.$("#clientList").val() },
+        type: "POST",
+        success: function (data) {
+            window.$("body").html(data); // to refresh the page
+            //var dummy =xx;
+        },
+        error: function (jqxhr, status, exception) {
+            alert("Exception:", exception);
+            //var dummy = "";       
+        }
+    });
+}
+
 
 function flagChanges() {
     window.$.ajax({

@@ -1,0 +1,103 @@
+﻿@model BHelp.ViewModels.AssistanceViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AssistancePaymentsIndividual</title>
+    <meta name="viewport" content="width=device-width" />
+    <title>CallLogIndividual</title>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    @*Put page javascript in a separate .js file where breaks can be set during debugging:*@
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+</head>
+<body>
+    <div>
+        <b>Assistance Payments History by Individual Client</b>
+        <div>
+            <br />
+            <table>
+                @if (Model.ClientId > 0)
+                {
+                    <tr>
+                        <td>
+                            @Html.ActionLink("Download to CSV File", "PaymentsByIndividualToCSV", new { allData = true })
+                            &nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+        <table>
+            <tr>
+                <td>Select Client:</td>
+                <td>
+                    @Html.DropDownListFor(model => model.ClientId,
+                        new SelectList(Model.ClientSelectList, "Value", "Text"),
+                        "--Select--", new { @id = "clientList", @class = "form-control" })
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <div id="paymentsDiv">
+        @if (Model.PaymentList != null)
+        {
+            <table>
+                <tr >
+                    <td>  </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td></td>
+                    <td style="text-align: center"><b>Date</b></td>
+                    <td style="text-align: center"><b>Category</b></td>
+                    <td style="text-align: center"><b>Action</b></td>
+                    <td style="text-align: center"><b>Payee</b></td>
+                    <td style="text-align: center"><b>Amount</b></td>
+                    <td style="text-align: center"><b>Notes</b></td>
+                </tr>
+                @foreach (var payment in Model.PaymentList)
+                {
+            <tr>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = payment.Id })
+                </td>
+                <td>@payment.DateString</td>
+                <td style="text-align: center">@payment.ActionCategory</td>
+                <td style="text-align: center">@payment.Action</td>
+                <td style="text-align: center">@payment.Payee</td>
+                <td style="text-align: center">@payment.StringDollarAmount</td>
+                <td style="text-align: center">@payment.Note</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = payment.Id })
+                </td>
+            </tr>
+                }
+            </table>
+            if (Model.PaymentList.Count > 0)
+            {
+                @*@Html.ActionLink("Back to Select List", "CallLogIndividual", new { })
+                <br />
+                @Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByIndividualToCSV", new { allData = false })
+                <br />
+                @Html.ActionLink("Download to CSV File (ALL data)", "CallLogByIndividualToCSV", new { allData = true })*@
+                <br />
+            }
+        }
+    </div>
+<div>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
+
+    <script type="text/javascript">
+        $("#clientList").change(EditPayments);
+    </script>
+</body>
+</html>

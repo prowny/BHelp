@@ -536,11 +536,13 @@ namespace BHelp.Controllers
             {
                 var dt = db.Deliveries.Where(r => r.ClientId == cli)
                     .Select(d => d.DateDelivered).Min();
+                
                 if (dt != null)
                 {
                     var x = Utilities.UpdateClientDateCreated(cli, (DateTime)dt);
                 }
             }
+            
             return null;
         }
     }
