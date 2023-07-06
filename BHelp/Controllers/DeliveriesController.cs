@@ -596,8 +596,8 @@ namespace BHelp.Controllers
                     del.IsChecked = btnCheckAll != null;
 
                     del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
-                    del.DeliveryDateODName = GetODName(del.DeliveryDateODId);
-                    del.DriverName = GetUserName(del.DriverId);
+                    del.DeliveryDateODName = AppRoutines.GetUserFullName(del.DeliveryDateODId);
+                    del.DriverName = AppRoutines.GetUserFullName(del.DriverId);
                     del.Client = GetClientData(del.ClientId);
                     del.EligiibilityRulesException = false;
 
@@ -739,19 +739,7 @@ namespace BHelp.Controllers
             
                 return newView;
             }
-            private string GetODName(string id)
-            {
-                using var db = new BHelpContext();
-                if (id != null && id != "0" && !id.Contains("nobody"))
-                {
-                    var _od = db.Users.Find(id);
-                      return _od.FullName;
-                }
-                else
-                {
-                    return "(nobody yet)";
-                }
-            }
+
             private Client GetClientData(int id)
             {
                 var _client = AppRoutines.GetClientRecord(id);
@@ -875,7 +863,7 @@ namespace BHelp.Controllers
                     ZipCodes = AppRoutines.GetZipCodesSelectList(),
                     ODNotes = delivery.ODNotes,
                     DriverId = delivery.DriverId,
-                    DriverName = GetUserName(delivery.DriverId),
+                    DriverName = AppRoutines.GetUserFullName(delivery.DriverId),
                     DriverNotes = delivery.DriverNotes,
                     DriversList = AppRoutines.GetDriversSelectList(),
                     NamesAgesInHH = delivery.NamesAgesInHH,
@@ -1242,9 +1230,9 @@ namespace BHelp.Controllers
 
                 foreach (var del in callLogView.DeliveryList)
                 {
-                    del.ODName = GetUserName(del.ODId);
-                    del.DeliveryDateODName = GetUserName(del.DeliveryDateODId);
-                    del.DriverName = GetUserName(del.DriverId);
+                    del.ODName = AppRoutines.GetUserFullName(del.ODId);
+                    del.DeliveryDateODName = AppRoutines.GetUserFullName(del.DeliveryDateODId);
+                    del.DriverName = AppRoutines.GetUserFullName(del.DriverId);
                     if (del.Status == 1) // Show delivery date
                     {
                         if (del.DateDelivered.HasValue)
@@ -1352,7 +1340,7 @@ namespace BHelp.Controllers
 
                 foreach (var del in callLogView.DeliveryList)
                 {
-                    del.DriverName = GetUserName(del.DriverId);
+                    del.DriverName = AppRoutines.GetUserFullName(del.DriverId);
                     if (del.DateDelivered.HasValue)
                     {
                         del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
@@ -1459,7 +1447,7 @@ namespace BHelp.Controllers
 
                 foreach (var del in callLogView.DeliveryList)
                 {
-                    del.DriverName = GetUserName(del.DriverId);
+                    del.DriverName = AppRoutines.GetUserFullName( del.DriverId);
                     if (del.DateDelivered.HasValue)
                     {
                         del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
@@ -2053,15 +2041,6 @@ namespace BHelp.Controllers
                 }
 
                 return total;
-            }
-            private static string GetUserName(string id)
-            {
-                using var db = new BHelpContext();
-                if (id == null) return "(nobody yet)";
-                var driver = db.Users.Find(id);
-                if (driver != null) return driver.FullName;
-
-                return "(nobody yet)";
             }
 
             [Authorize(Roles = "Administrator,Staff,Developer,Reports")]

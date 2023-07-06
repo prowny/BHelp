@@ -29,7 +29,16 @@ namespace BHelp.Models
 
         [NotMapped]
         public string FirstName { get; set; }
-        
+
+        [NotMapped]
+        public string StreetNumber { get; set; }
+
+        [NotMapped]
+        public string StreetName { get; set; }
+
+        [NotMapped]
+        public string City { get; set; }
+
         [NotMapped]
         public string NoteToolTip { get; set; }
 

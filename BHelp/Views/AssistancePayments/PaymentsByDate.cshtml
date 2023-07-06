@@ -1,5 +1,6 @@
 ﻿@using System.Web.Mvc.Html
-@model BHelp.ViewModels.AssistanceViewModel
+@using BHelp.ViewModels
+@model AssistanceViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -18,7 +19,7 @@
 </head>
 <body>
     <div>
-        <b>Sssisstance Payments History by Date Paid Range</b>
+        <b>Assisstance Payments History by Date Paid Range</b>
         <br />
         <div>
             <table>
@@ -27,9 +28,9 @@
                     <tr>
                         <td>
                             @*@Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByDateDeliveredToCSV", new { allData = false })
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                            @Html.ActionLink("Download to CSV File (ALL data)", "CallLogByDateDeliveredToCSV", new { allData = true })
-                            &nbsp;&nbsp;&nbsp;&nbsp;*@
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                @Html.ActionLink("Download to CSV File (ALL data)", "CallLogByDateDeliveredToCSV", new { allData = true })
+                                &nbsp;&nbsp;&nbsp;&nbsp;*@
                             @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
                         </td>
                     </tr>
@@ -41,13 +42,13 @@
                 <td>Starting Date:</td>
                 <td>
                     @Html.TextBox("Starting Date", @Model.StartDate, "{0:MM/dd/yyyy}",
-                        new { id = "StartDate", style = "width: 75px;" })
+                        new { id = "StartDate", style = "width: 75px; text-align:center"})
                     <span style="color: darkmagenta">&#8592;Click to change</span>
                 </td> @*Html left-arrow*@
                 <td>&nbsp;&nbsp; Ending Date:</td>
                 <td>
                     @Html.TextBox("Ending Date:", @Model.EndDate, "{0:MM/dd/yyyy}",
-                        new { id = "EndDate", style = "width: 75px;" })
+                        new { id = "EndDate", style = "width: 75px; text-align: center"})
                     <span style="color: darkmagenta">&#8592;Click to change</span>
                 </td> @*Html left-arrow*@
             </tr>
@@ -59,44 +60,27 @@
             <table>
                 <tr>
                     <td></td>  @*// for Edit button*@
-                    <td><b>DelivDate</b></td>
+                    <td style ="text-align:center"><b>Date</b></td>
                     <td><b>Client Name</b></td>
                     <td><b>Address</b></td>
-                    <td><b>City</b></td>
-                    <td><b>Driver</b></td>
-                    <td><b>Status</b></td>
-                    <td style="text-align: center"><b>#HH</b></td>
-                    <td style="text-align: center"><b>#C</b></td>
-                    <td style="text-align: center"><b>#A</b></td>
-                    <td style="text-align: center"><b>#S</b></td>
-                    <td style="text-align: center"><b>#F</b></td>
-                    <td style="text-align: center"><b>#H</b></td>
-                    <td style="text-align: center"><b>#KS</b></td>
-                    <td style="text-align: center"><b>#GC</b></td>
-                    <td style="text-align: center"><b>Lbs.</b></td>
+                    <td><b>Category</b></td>
+                    <td><b>Action</b></td>
+                    <td><b>Amount</b></td>
                 </tr>
-                @foreach (var payment in Model.PaymentList )
+                @foreach (var payment in Model.PaymentList)
                 {
                     <tr>
                         <td>@Html.ActionLink("Edit", "Edit", new { id = payment.Id })</td>
-                       
+
                         <td>@payment.DateString</td>
                         @{ var name = payment.LastName + ", " + payment.FirstName; }
-                        @*@{ var addr = payment.StreetNumber + " " + payment.StreetName; }*@
+                        @{ var addr = payment.StreetNumber  + " " + payment.StreetName + " " + payment.City; }
                         <td>@name</td>
-                        @*<td>@addr</td>*@
-                        @*<td>@delivery.City</td>
-                        <td>@delivery.DriverName</td>
-                        <td>@delivery.SelectedStatus</td>
-                        <td style="text-align: center">@delivery.HouseoldCount</td>
-                        <td style="text-align: center">@delivery.Children</td>
-                        <td style="text-align: center">@delivery.Adults</td>
-                        <td style="text-align: center">@delivery.Seniors</td>
-                        <td style="text-align: center">@delivery.FullBags</td>
-                        <td style="text-align: center">@delivery.HalfBags</td>
-                        <td style="text-align: center">@delivery.KidSnacks</td>
-                        <td style="text-align: center">@delivery.GiftCards</td>
-                        <td style="text-align: center">@delivery.PoundsOfFood</td>*@
+                        <td>@addr</td>
+                        <td>@payment.ActionCategory</td>
+                        <td>@payment.Action</td>
+                        <td style="text-align: center">@payment.StringDollarAmount</td>
+                        <td style="text-align: center">@payment.Note</td>
                         <td>@Html.ActionLink("Edit", "Edit", new { id = payment.Id })</td>
                     </tr>
                 }
@@ -109,14 +93,14 @@
                     <td></td>
                     <td></td>
                     @*<td style="text-align: center">@Model.TotalHouseholdCount</td>
-                    <td style="text-align: center">@Model.TotalChildren</td>
-                    <td style="text-align: center">@Model.TotalAdults</td>
-                    <td style="text-align: center">@Model.TotalSeniors</td>
-                    <td style="text-align: center">@Model.TotalFullBags</td>
-                    <td style="text-align: center">@Model.TotalHalfBags</td>
-                    <td style="text-align: center">@Model.TotalKidSnacks</td>
-                    <td style="text-align: center">@Model.TotalGiftCards</td>
-                    <td style="text-align: center">@Model.TotalPoundsOfFood</td>*@
+                        <td style="text-align: center">@Model.TotalChildren</td>
+                        <td style="text-align: center">@Model.TotalAdults</td>
+                        <td style="text-align: center">@Model.TotalSeniors</td>
+                        <td style="text-align: center">@Model.TotalFullBags</td>
+                        <td style="text-align: center">@Model.TotalHalfBags</td>
+                        <td style="text-align: center">@Model.TotalKidSnacks</td>
+                        <td style="text-align: center">@Model.TotalGiftCards</td>
+                        <td style="text-align: center">@Model.TotalPoundsOfFood</td>*@
                 </tr>
             </table>
             <br />

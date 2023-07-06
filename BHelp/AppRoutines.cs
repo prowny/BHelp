@@ -23,6 +23,16 @@ namespace BHelp
             return db.Clients.ToList();
         }
 
+        public static string GetUserFullName(string id)
+        {
+            using var db = new BHelpContext();
+            if (id == null) return "(nobody yet)";
+            var user = db.Users.Find(id);
+            if (user != null) return user.FullName;
+
+            return "(nobody yet)";
+        }
+
         public static Delivery NewDeliveryRecord(int clientId)
         {
             using var context = new BHelpContext();
