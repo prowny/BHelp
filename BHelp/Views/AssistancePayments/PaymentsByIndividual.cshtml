@@ -26,7 +26,7 @@
                 {
                     <tr>
                         <td>
-                            @Html.ActionLink("Download to CSV File", "PaymentsByIndividualToCSV", new { allData = true })
+                            @Html.ActionLink("Download to CSV File", "PaymentsByIndividualToCSV")
                             &nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
                         </td>
                     </tr>
@@ -55,7 +55,6 @@
             </table>
             <table>
                 <tr>
-                    <td></td>
                     <td style="text-align: center"><b>Date</b></td>
                     <td style="text-align: center"><b>Category</b></td>
                     <td style="text-align: center"><b>Action</b></td>
@@ -65,20 +64,17 @@
                 </tr>
                 @foreach (var payment in Model.PaymentList)
                 {
-            <tr>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = payment.Id })
-                </td>
-                <td>@payment.DateString</td>
-                <td style="text-align: center">@payment.ActionCategory</td>
-                <td style="text-align: center">@payment.Action</td>
-                <td style="text-align: center">@payment.Payee</td>
-                <td style="text-align: center">@payment.StringDollarAmount</td>
-                <td style="text-align: center">@payment.Note</td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = payment.Id })
-                </td>
-            </tr>
+                <tr>
+                    <td>@payment.DateString</td>
+                    <td style="text-align: center">@payment.ActionCategory</td>
+                    <td style="text-align: center">@payment.Action</td>
+                    <td style="text-align: center">@payment.Payee</td>
+                    <td style="text-align: center">@payment.StringDollarAmount</td>
+                    <td style="text-align: center">@payment.Note</td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = payment.Id , returnURL = "Individual"})
+                    </td>
+                </tr>
                 }
             </table>
             if (Model.PaymentList.Count > 0)
@@ -92,9 +88,11 @@
             }
         }
     </div>
-<div>
-    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
-</div>
+    <div>
+        @Html.ActionLink("Return to Assistance Menu", "AssistancePaymentsMenu")
+        <br />
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
 
     <script type="text/javascript">
         $("#clientList").change(EditPayments);

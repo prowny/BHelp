@@ -71,7 +71,11 @@ namespace BHelp.ViewModels
         public List<AssistancePayment> PaymentList { get; set; }
         public string FullName { get; set; } // for client name in financial assistance list
         public IEnumerable<SelectListItem> AssistanceCategoriesSelectList { get; set; }
-        public string DateString { get; set; } 
+        public string DateString { get; set; }
+        public string ReturnURL { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+
         public string StringDollarAmount
         {
             get => $"${AmountInCents / 100}.{AmountInCents % 100:00}";

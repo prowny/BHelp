@@ -34,13 +34,16 @@ namespace BHelp.Controllers
 
         // GET: Payments by Individual
         public ActionResult PaymentsByIndividual(int? clientId)
-        {
-            var clientLookupList = db.Clients.ToList();
-            var rawList = new List<Client>(); // unsorted payment clients
-            var view = new AssistanceViewModel {ClientSelectList = new List<SelectListItem>() };
-            
-            var clientIdList = db.AssistancePayments
-                .DistinctBy(i => i.ClientId).ToList();
+        {  
+             var clientLookupList = db.Clients.ToList();
+             var rawList = new List<Client>(); // unsorted payment clients
+             var view = new AssistanceViewModel
+             {
+                 ClientSelectList = new List<SelectListItem>(),
+                 ReturnURL = "PaymentsByIndividual"
+             };
+             var clientIdList = db.AssistancePayments
+                        .DistinctBy(i => i.ClientId).ToList();
 
             foreach (var pymnt in clientIdList) // get client data for each client id
             {
@@ -51,18 +54,20 @@ namespace BHelp.Controllers
             rawList = new List<Client>(rawList.OrderBy(n => n.LastName)
                 .ThenBy(f => f.FirstName)); // rewList now contains sorted clients
 
-            foreach (var client in rawList)  // now create selectlist items
+            foreach (var client in rawList) // now create selectlist items
             {
                 var newItem = new SelectListItem
                 {
                     Value = client.Id.ToString(),
-                    Text =client.FullName
+                    Text = client.FullName + "  " + client.StreetNumber + " " + client.StreetName
+                    + " " + client.City 
                 };
                 view.ClientSelectList.Add(newItem);
             }
+            if (clientId == null) return View(view);
+                
 
-            if (clientId  == null) return View(view);  // else load client's payment history below 
-
+            //=== clientId != null; load client's payment history:
             var _paymentList = db.AssistancePayments.Where(d => d.ClientId == clientId)
                 .OrderByDescending(d => d.Date).ToList();
 
@@ -73,11 +78,16 @@ namespace BHelp.Controllers
                 var c = Convert.ToByte(pymt.Category);
                 pymt.ActionCategory = categoryList[c - 1];
             }
-
             view.PaymentList = _paymentList;
             view.ClientId = (int)clientId;
 
             return View(view);
+        }
+
+        // GET: AssistancePaymentsByDate
+        public ActionResult PaymentsByDate()
+        {
+            return null;
         }
 
 
@@ -181,7 +191,7 @@ namespace BHelp.Controllers
         }
 
         // GET: AssistancePayments/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(int? id, string returnURL)
         {
             if (id == null)
             {
@@ -217,7 +227,8 @@ namespace BHelp.Controllers
                 AssistanceCategoriesSelectList = actionList,
                 AmountDecimal = (decimal)(amt / 100),
                 Payee = assistancePayment.Payee, 
-                Note =assistancePayment.Note
+                Note =assistancePayment.Note, 
+                ReturnURL = returnURL 
             };
 
             return View(view);
@@ -226,7 +237,8 @@ namespace BHelp.Controllers
         // POST: AssistancePayments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,ClientId,Date,CategoryId,Action,Payee,AmountDecimal,Note")] 
+        public ActionResult Edit([Bind(Include = "Id,ClientId,Date,CategoryId,Action,Payee," +
+                                                 "AmountDecimal,Note,ReturnURL")] 
             AssistanceViewModel assistancePayment)
         {
             if (ModelState.IsValid)
@@ -244,7 +256,12 @@ namespace BHelp.Controllers
                     db.SaveChanges();
                 }
 
-                return RedirectToAction("Index");
+                if (assistancePayment.ReturnURL.Contains("Individual"))
+                {
+                    return RedirectToAction("PaymentsByIndividual");
+                }
+
+                RedirectToAction("Index");
             }
 
             var view = new AssistanceViewModel();
@@ -292,6 +309,11 @@ namespace BHelp.Controllers
         }
 
         public ActionResult PaymentsByIndividualToCSV()
+        {
+            return null;
+        }
+
+        public ActionResult PaymentsByDateToCSV()
         {
             return null;
         }

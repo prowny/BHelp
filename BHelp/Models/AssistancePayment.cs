@@ -41,5 +41,6 @@ namespace BHelp.Models
 
         [NotMapped]
         public string ActionCategory { get; set; }
+
     }
 }

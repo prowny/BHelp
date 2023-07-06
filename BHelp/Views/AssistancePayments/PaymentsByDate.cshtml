@@ -1,0 +1,165 @@
+﻿@using System.Web.Mvc.Html
+@model BHelp.ViewModels.AssistanceViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>PaymentsByDate</title>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
+    @*Put page javascript in a separate .js file where breaks can be set during debugging:*@
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+</head>
+<body>
+    <div>
+        <b>Sssisstance Payments History by Date Paid Range</b>
+        <br />
+        <div>
+            <table>
+                @if (Model.PaymentList != null)
+                {
+                    <tr>
+                        <td>
+                            @*@Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByDateDeliveredToCSV", new { allData = false })
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            @Html.ActionLink("Download to CSV File (ALL data)", "CallLogByDateDeliveredToCSV", new { allData = true })
+                            &nbsp;&nbsp;&nbsp;&nbsp;*@
+                            @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+        <table>
+            <tr>
+                <td>Starting Date:</td>
+                <td>
+                    @Html.TextBox("Starting Date", @Model.StartDate, "{0:MM/dd/yyyy}",
+                        new { id = "StartDate", style = "width: 75px;" })
+                    <span style="color: darkmagenta">&#8592;Click to change</span>
+                </td> @*Html left-arrow*@
+                <td>&nbsp;&nbsp; Ending Date:</td>
+                <td>
+                    @Html.TextBox("Ending Date:", @Model.EndDate, "{0:MM/dd/yyyy}",
+                        new { id = "EndDate", style = "width: 75px;" })
+                    <span style="color: darkmagenta">&#8592;Click to change</span>
+                </td> @*Html left-arrow*@
+            </tr>
+        </table>
+    </div>
+    <div id="callLogsDiv">
+        @if (Model.PaymentList != null)
+        {
+            <table>
+                <tr>
+                    <td></td>  @*// for Edit button*@
+                    <td><b>DelivDate</b></td>
+                    <td><b>Client Name</b></td>
+                    <td><b>Address</b></td>
+                    <td><b>City</b></td>
+                    <td><b>Driver</b></td>
+                    <td><b>Status</b></td>
+                    <td style="text-align: center"><b>#HH</b></td>
+                    <td style="text-align: center"><b>#C</b></td>
+                    <td style="text-align: center"><b>#A</b></td>
+                    <td style="text-align: center"><b>#S</b></td>
+                    <td style="text-align: center"><b>#F</b></td>
+                    <td style="text-align: center"><b>#H</b></td>
+                    <td style="text-align: center"><b>#KS</b></td>
+                    <td style="text-align: center"><b>#GC</b></td>
+                    <td style="text-align: center"><b>Lbs.</b></td>
+                </tr>
+                @foreach (var payment in Model.PaymentList )
+                {
+                    <tr>
+                        <td>@Html.ActionLink("Edit", "Edit", new { id = payment.Id })</td>
+                       
+                        <td>@payment.DateString</td>
+                        @{ var name = payment.LastName + ", " + payment.FirstName; }
+                        @*@{ var addr = payment.StreetNumber + " " + payment.StreetName; }*@
+                        <td>@name</td>
+                        @*<td>@addr</td>*@
+                        @*<td>@delivery.City</td>
+                        <td>@delivery.DriverName</td>
+                        <td>@delivery.SelectedStatus</td>
+                        <td style="text-align: center">@delivery.HouseoldCount</td>
+                        <td style="text-align: center">@delivery.Children</td>
+                        <td style="text-align: center">@delivery.Adults</td>
+                        <td style="text-align: center">@delivery.Seniors</td>
+                        <td style="text-align: center">@delivery.FullBags</td>
+                        <td style="text-align: center">@delivery.HalfBags</td>
+                        <td style="text-align: center">@delivery.KidSnacks</td>
+                        <td style="text-align: center">@delivery.GiftCards</td>
+                        <td style="text-align: center">@delivery.PoundsOfFood</td>*@
+                        <td>@Html.ActionLink("Edit", "Edit", new { id = payment.Id })</td>
+                    </tr>
+                }
+                <tr>
+                    <td>Totals</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    @*<td style="text-align: center">@Model.TotalHouseholdCount</td>
+                    <td style="text-align: center">@Model.TotalChildren</td>
+                    <td style="text-align: center">@Model.TotalAdults</td>
+                    <td style="text-align: center">@Model.TotalSeniors</td>
+                    <td style="text-align: center">@Model.TotalFullBags</td>
+                    <td style="text-align: center">@Model.TotalHalfBags</td>
+                    <td style="text-align: center">@Model.TotalKidSnacks</td>
+                    <td style="text-align: center">@Model.TotalGiftCards</td>
+                    <td style="text-align: center">@Model.TotalPoundsOfFood</td>*@
+                </tr>
+            </table>
+            <br />
+            if (Model.PaymentList.Count > 0)
+            {
+                @Html.ActionLink("Download to CSV File", "PaymentsByDateToCSV", new { allData = false })
+                <br />
+            }
+        }
+    </div>
+    <div>
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
+</body>
+</html>
+<script>
+    $(function () {
+        window.$("#StartDate").datepicker();
+    });
+</script>
+<script>
+    $(function () {
+        window.$("#EndDate").datepicker();
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        window.$("#StartDate").change(function() {
+            var stDate = window.$('#StartDate').val();
+            var endDt = window.$('#EndDate').val();
+            window.location.href =
+                '@Url.Action("PaymentsByDate", "AssistancePayments")' + '?startDate=' + stDate + '&endDate=' + endDt;
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        window.$("#EndDate").change(function() {
+            var stDate = window.$('#StartDate').val();
+            window.$('#StartDate').val(stDate);
+            var endDt = window.$('#EndDate').val();
+            window.location.href =
+                '@Url.Action("PaymentsByDate", "AssistancePayments")' + '?startDate=' + stDate + '&endDate=' + endDt;
+        });
+    });
+</script>
