@@ -59,49 +59,33 @@
         {
             <table>
                 <tr>
-                    <td></td>  @*// for Edit button*@
-                    <td style ="text-align:center"><b>Date</b></td>
+                    <!--<td></td>-->  @*// for Edit button*@
+                    <td style="text-align:center"><b>Date</b></td>
                     <td><b>Client Name</b></td>
                     <td><b>Address</b></td>
                     <td><b>Category</b></td>
                     <td><b>Action</b></td>
                     <td><b>Amount</b></td>
+                    <td><b>Payee</b></td>
+                    <td><b>Notes</b></td>
                 </tr>
                 @foreach (var payment in Model.PaymentList)
                 {
                     <tr>
-                        <td>@Html.ActionLink("Edit", "Edit", new { id = payment.Id })</td>
+                        @*<td>@Html.ActionLink("Edit", "Edit", new { id = payment.Id })</td>*@
 
                         <td>@payment.DateString</td>
                         @{ var name = payment.LastName + ", " + payment.FirstName; }
-                        @{ var addr = payment.StreetNumber  + " " + payment.StreetName + " " + payment.City; }
                         <td>@name</td>
-                        <td>@addr</td>
+                        <td title = @payment.AddressToolTip>@payment.AddressString</td>
                         <td>@payment.ActionCategory</td>
-                        <td>@payment.Action</td>
+                        <td title = @payment.ActionToolTip>@payment.Action</td>
                         <td style="text-align: center">@payment.StringDollarAmount</td>
-                        <td style="text-align: center">@payment.Note</td>
-                        <td>@Html.ActionLink("Edit", "Edit", new { id = payment.Id })</td>
+                        <td title ="@payment.PayeeToolTip">@payment.Payee</td>
+                        <td title ="@payment.NoteToolTip">@payment.Note</td>
+                        <td>@Html.ActionLink("Edit", "Edit", new { id = payment.Id, returnURL = Model.ReturnURL })</td>
                     </tr>
                 }
-                <tr>
-                    <td>Totals</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    @*<td style="text-align: center">@Model.TotalHouseholdCount</td>
-                        <td style="text-align: center">@Model.TotalChildren</td>
-                        <td style="text-align: center">@Model.TotalAdults</td>
-                        <td style="text-align: center">@Model.TotalSeniors</td>
-                        <td style="text-align: center">@Model.TotalFullBags</td>
-                        <td style="text-align: center">@Model.TotalHalfBags</td>
-                        <td style="text-align: center">@Model.TotalKidSnacks</td>
-                        <td style="text-align: center">@Model.TotalGiftCards</td>
-                        <td style="text-align: center">@Model.TotalPoundsOfFood</td>*@
-                </tr>
             </table>
             <br />
             if (Model.PaymentList.Count > 0)
@@ -111,9 +95,11 @@
             }
         }
     </div>
-    <div>
-        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
-    </div>
+<div>
+    @Html.ActionLink("Return to Assistance Menu", "AssistancePaymentsMenu")
+    <br />
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
 </body>
 </html>
 <script>

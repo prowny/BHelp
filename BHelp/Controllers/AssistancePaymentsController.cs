@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
-using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
+using BHelp.DataAccessLayer;
 using Microsoft.Ajax.Utilities;
 
 namespace BHelp.Controllers
@@ -59,7 +59,7 @@ namespace BHelp.Controllers
                 var newItem = new SelectListItem
                 {
                     Value = client.Id.ToString(),
-                    Text = client.FullName + "  " + client.StreetNumber + " " + client.StreetName
+                    Text = client.LastName + ", " + client.FirstName + "  " + client.StreetNumber + " " + client.StreetName
                     + " " + client.City 
                 };
                 view.ClientSelectList.Add(newItem);
@@ -80,6 +80,7 @@ namespace BHelp.Controllers
             }
             view.PaymentList = _paymentList;
             view.ClientId = (int)clientId;
+            view.ReturnURL = "PaymentsByIndividual";
 
             return View(view);
         }
@@ -104,6 +105,7 @@ namespace BHelp.Controllers
                 PaymentList = payments,
                 StartDate = Convert.ToDateTime(startDate),
                 EndDate = Convert.ToDateTime(endDate),
+                ReturnURL ="PaymentsByDate"
             };
 
             var categoryList = AppRoutines.GetAssistanceCategoriesList();
@@ -117,9 +119,41 @@ namespace BHelp.Controllers
                 {
                     pymnt.LastName = client.LastName;
                     pymnt.FirstName = client.FirstName;
-                    pymnt.StreetNumber = client.StreetNumber;
-                    pymnt.StreetName = client.StreetName;
-                    pymnt.City = client.City;
+                    pymnt.AddressString = client.StreetNumber + " " + client.StreetName + " "
+                        + client.City + client.Zip;
+                    pymnt.AddressToolTip = (client.StreetNumber + " " + client.StreetName + " "
+                                           + client.City + client.Zip).Replace(" ", "\u00a0");
+
+                    if (pymnt.Note != null)
+                    {
+                        pymnt.NoteToolTip = pymnt.Note.Replace(" ", "\u00a0");
+                        var s = pymnt.Note; // For display, abbreviate to 11 characters:           
+                        s = s.Length <= 11 ? s : s.Substring(0, 11) + "...";
+                        pymnt.Note = s;
+                    }
+
+                    if (pymnt.Payee != null)
+                    {
+                        pymnt.PayeeToolTip = pymnt.Payee.Replace(" ", "\u00a0");
+                        var s = pymnt.Payee; // For display, abbreviate to 15 characters:           
+                        s = s.Length <= 11 ? s : s.Substring(0, 15) + "...";
+                        pymnt.Payee = s;
+                    }
+
+                    if (pymnt.Action != null)
+                    {
+                        pymnt.ActionToolTip = pymnt.Action.Replace(" ", "\u00a0");
+                        var s = pymnt.Action; // For display, abbreviate to 20 characters:           
+                        s = s.Length <= 20 ? s : s.Substring(0, 20) + "...";
+                        pymnt.Action = s;
+                    }
+
+                    if (pymnt.AddressString != null)
+                    {
+                        var s = pymnt.AddressString;  // For display, abbreviate to 20 characters:       
+                        s = s.Length <= 20 ? s : s.Substring(0, 20) + "...";
+                        pymnt.AddressString = s;
+                    }
                 }
             }
 
@@ -155,7 +189,8 @@ namespace BHelp.Controllers
 
                 var paymentsView = new AssistanceViewModel
                 {
-                    PaymentList = payments
+                    PaymentList = payments,
+                    ReturnURL = "PaymentsByIndividual"
                 };
 
                 return View(paymentsView);
@@ -232,7 +267,7 @@ namespace BHelp.Controllers
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
-                AssistancePayment assistancePayment = db.AssistancePayments.Find(id);
+                var assistancePayment = db.AssistancePayments.Find(id);
                 if (assistancePayment == null) return HttpNotFound();
 
                 var clientList = (from c in db.Clients
@@ -291,12 +326,19 @@ namespace BHelp.Controllers
                         db.SaveChanges();
                     }
 
+                    if (assistancePayment.ReturnURL == null) return RedirectToAction("PaymentsByIndividual");
+                    
                     if (assistancePayment.ReturnURL.Contains("Individual"))
                     {
                         return RedirectToAction("PaymentsByIndividual");
                     }
 
-                    RedirectToAction("Index");
+                    if (assistancePayment.ReturnURL.Contains("Date"))
+                    {
+                        return RedirectToAction("PaymentsByDate");
+                    }
+
+                    return RedirectToAction("PaymentsByIndividual");
                 }
 
                 var view = new AssistanceViewModel();

@@ -77,7 +77,7 @@ namespace BHelp.Controllers
         {
             var viewModel = new ClientViewModel {FamilyMembers = new List<FamilyMember>()};
             // Add Empty family members:  
-            for (int i = 0; i < 10; i++)
+            for (var i = 0; i < 10; i++)
             {
                 var newMember = new FamilyMember
                 { Id = i };

@@ -39,17 +39,15 @@ namespace BHelp.Models
         [NotMapped]
         public string City { get; set; }
 
-        [NotMapped]
-        public string NoteToolTip { get; set; }
+        [NotMapped] public string NoteToolTip { get; set; }
 
-        [NotMapped]
-        public string DateString { get; set; }
+        [NotMapped] public string DateString { get; set; }
 
-        [NotMapped]
-        public string FullName { get; set; } 
-
-        [NotMapped]
-        public string ActionCategory { get; set; }
-
+        [NotMapped] public string FullName { get; set; }
+        [NotMapped] public string ActionCategory { get; set; }
+        [NotMapped] public string ActionToolTip { get; set; }
+        [NotMapped] public string AddressString { get; set; }
+        [NotMapped] public string AddressToolTip { get; set; }
+        [NotMapped] public string PayeeToolTip { get; set; }
     }
 }

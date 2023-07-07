@@ -168,10 +168,10 @@
         </div>
     }
 
-    @if (Model.ReturnURL.Contains("Payments")) 
+    @if (Model.ReturnURL.Contains("Assistance")) 
     {
         <div>
-            @Html.ActionLink("Back to List", "Index", "AssistancePayments", new { }, null)
+            @Html.ActionLink("Back to List", "AssistancePaymentsMenu", "AssistancePayments", new { }, null)
         </div>
     }
     else
