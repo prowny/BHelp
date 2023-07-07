@@ -9,7 +9,7 @@ namespace BHelp.Models
         public int ClientId { get; set; }
         public byte Category { get; set; }
         public string Action { get; set; }
-        public string Payee { get; set; }
+        public string Payee { get; set; }  // unused 07/07/2023
         public int AmountInCents { get; set; }
         public DateTime Date { get; set; }
         public string Note { get; set; }
@@ -48,6 +48,6 @@ namespace BHelp.Models
         [NotMapped] public string ActionToolTip { get; set; }
         [NotMapped] public string AddressString { get; set; }
         [NotMapped] public string AddressToolTip { get; set; }
-        [NotMapped] public string PayeeToolTip { get; set; }
+        [NotMapped] public string PayeeToolTip { get; set; } // unused 07/07/2023
     }
 }

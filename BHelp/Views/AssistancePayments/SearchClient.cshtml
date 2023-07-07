@@ -20,7 +20,8 @@
         <b>Assistance Payments Entry</b>
     </p>
     <p>
-        @Html.ActionLink("Create New Payment", "Create")&nbsp;&nbsp;
+        @Html.ActionLink("Return to Assistance Menu", "AssistancePaymentsMenu")
+        &nbsp;&nbsp;
         @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
     </p>
     <div>
@@ -118,10 +119,12 @@
             </table>
         }
     </div>
-    <div>
-        <br />
-        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
-    </div>
+<div>
+    <br />
+    @Html.ActionLink("Return to Assistance Menu", "AssistancePaymentsMenu")
+    <br/>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
 </body>
 </html>
 

@@ -80,16 +80,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>@Html.LabelFor(model => model.Payee, htmlAttributes: new { @class = "control-label col-md-2" })</td>
-                </tr>
-                <tr>
-                    <td>
-                        @Html.TextBoxFor(model => model.Payee,
-                            new { style = "width: 500px;", htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Payee, "", new { @class = "text-danger" })
-                    </td>
-                </tr>
-                <tr>
                     <td>@Html.Label("Amount")</td>
                 </tr>
                 <tr>

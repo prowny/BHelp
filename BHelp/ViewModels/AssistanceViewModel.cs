@@ -17,7 +17,7 @@ namespace BHelp.ViewModels
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public string Action { get; set; }
-        public string Payee { get; set; }
+        public string Payee { get; set; }  // unused 07/07/2023
         public DateTime Date { get; set; }
         public int AmountInCents { get; set; }
 

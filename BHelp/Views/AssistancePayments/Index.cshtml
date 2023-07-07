@@ -24,7 +24,6 @@
                 <td style="alignment: center"><b>Client</b></td>
                 <td style="alignment: center; width: 110px"><b>Category</b></td>
                 <td style="alignment: center"><b>Action</b></td>
-                <td style="alignment: center"><b>Payee</b></td>
                 <td style="alignment: center"><b>Amount</b></td>
                 <td style="alignment: center"><b>&nbsp;&nbsp;Notes</b></td>
             </tr>
@@ -35,7 +34,6 @@
             <td>@payment.FullName</td>
             <td>@payment.ActionCategory</td>
             <td>@payment.Action</td>
-            <td>@payment.Payee</td>
             <td style="text-align: right">@payment.StringDollarAmount</td>
             <td title=@payment.NoteToolTip>&nbsp;&nbsp;@payment.Note</td>
             <td>@Html.ActionLink("Edit", "Edit", new { id = payment.Id })</td>

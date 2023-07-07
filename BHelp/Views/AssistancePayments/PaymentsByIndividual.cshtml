@@ -26,7 +26,7 @@
                 {
                     <tr>
                         <td>
-                            @Html.ActionLink("Download to CSV File", "PaymentsByIndividualToCSV")
+                            @Html.ActionLink("Return to Assistance Menu", "AssistancePaymentsMenu")
                             &nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
                         </td>
                     </tr>
@@ -58,7 +58,6 @@
                     <td style="text-align: center"><b>Date</b></td>
                     <td style="text-align: center"><b>Category</b></td>
                     <td style="text-align: center"><b>Action</b></td>
-                    <td style="text-align: center"><b>Payee</b></td>
                     <td style="text-align: center"><b>Amount</b></td>
                     <td style="text-align: center"><b>Notes</b></td>
                 </tr>
@@ -68,7 +67,6 @@
                     <td>@payment.DateString</td>
                     <td style="text-align: center">@payment.ActionCategory</td>
                     <td style="text-align: center">@payment.Action</td>
-                    <td style="text-align: center">@payment.Payee</td>
                     <td style="text-align: center">@payment.StringDollarAmount</td>
                     <td style="text-align: center">@payment.Note</td>
                     <td>
@@ -83,16 +81,17 @@
                 <br />
                 @Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByIndividualToCSV", new { allData = false })
                 <br />
-                @Html.ActionLink("Download to CSV File (ALL data)", "CallLogByIndividualToCSV", new { allData = true })*@
-                <br />
+                @Html.ActionLink("Download to CSV File (ALL data)", "CallLogByIndividualToCSV", new { allData = true })
+                <br />*@
             }
         }
     </div>
-    <div>
-        @Html.ActionLink("Return to Assistance Menu", "AssistancePaymentsMenu")
-        <br />
-        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
-    </div>
+<div>
+    <br />
+    @Html.ActionLink("Return to Assistance Menu", "AssistancePaymentsMenu")
+    <br/>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
 
     <script type="text/javascript">
         $("#clientList").change(EditPayments);

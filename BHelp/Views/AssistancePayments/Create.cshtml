@@ -13,6 +13,9 @@
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
     <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+    <style >
+        #CreateButton {background-color: blue;color: white}
+    </style>
 </head>
 <body>
     @using (Html.BeginForm())
@@ -71,15 +74,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>@Html.Label("Payee")</td>
-                </tr>
-                <tr>
-                    <td>
-                        @Html.TextBoxFor(model => model.Payee, new { style = "width:250px;", htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Payee, "", new { @class = "text-danger" })
-                    </td>
-                </tr>
-                <tr>
                     <td>@Html.Label("Amount")</td>
                 </tr>
                 <tr>
@@ -102,7 +96,7 @@
 
         <div class="form-group">
             <br />
-            <input type="submit" value="Create" class="btn btn-default" />
+            <input type="submit" value="Create" class="btn btn-default" id="CreateButton"/>
         </div>
 
         <div>
