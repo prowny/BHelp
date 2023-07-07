@@ -13,8 +13,9 @@
         <br />
         <a href="@Url.Action("PaymentsByIndividual", "AssistancePayments")">History by Individual Client</a><br />
         <a href="@Url.Action("PaymentsByDate", "AssistancePayments")">History by Payment Date</a><br />
+        <a href="@Url.Action("Create", "AssistancePayments")">Create New Payment</a><br />
         <a href="@Url.Action("Create", "Clients")">Enter New Client</a><br />
-        </div>
+    </div>
     <br />
     <div>
         @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
