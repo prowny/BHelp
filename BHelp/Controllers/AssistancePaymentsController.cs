@@ -7,6 +7,7 @@ using BHelp.Models;
 using BHelp.ViewModels;
 using BHelp.DataAccessLayer;
 using Microsoft.Ajax.Utilities;
+using System.Text;
 
 namespace BHelp.Controllers
 {
@@ -93,13 +94,12 @@ namespace BHelp.Controllers
                 startDate = DateTime.Today.AddDays(-7);
                 endDate = DateTime.Today;
             }
-
-            Session["PaymentStartDate"] = startDate;
-            Session["PaymentEndDate"] = endDate;
-
-            List<AssistancePayment> payments = db.AssistancePayments
+            TempData["PaymentStartDate"] = startDate;
+            TempData["PaymentEndDate"] = endDate;
+            var payments = db.AssistancePayments
                 .Where(d => d.Date >= startDate && d.Date <= endDate)
                 .OrderByDescending(d => d.Date).ToList();
+            
             var paymentView = new AssistanceViewModel()
             {
                 PaymentList = payments,
@@ -120,15 +120,15 @@ namespace BHelp.Controllers
                     pymnt.LastName = client.LastName;
                     pymnt.FirstName = client.FirstName;
                     pymnt.AddressString = client.StreetNumber + " " + client.StreetName + " "
-                        + client.City + client.Zip;
+                        + client.City + " "  + client.Zip;
                     pymnt.AddressToolTip = (client.StreetNumber + " " + client.StreetName + " "
-                                           + client.City + client.Zip).Replace(" ", "\u00a0");
+                                           + client.City + " " + client.Zip).Replace(" ", "\u00a0");
 
                     if (pymnt.Note != null)
                     {
                         pymnt.NoteToolTip = pymnt.Note.Replace(" ", "\u00a0");
-                        var s = pymnt.Note; // For display, abbreviate to 11 characters:           
-                        s = s.Length <= 11 ? s : s.Substring(0, 11) + "...";
+                        var s = pymnt.Note; // For display, abbreviate to 20 characters:           
+                        s = s.Length <= 20 ? s : s.Substring(0, 20) + "...";
                         pymnt.Note = s;
                     }
 
@@ -381,7 +381,108 @@ namespace BHelp.Controllers
 
             public ActionResult PaymentsByDateToCSV()
             {
-                return null;
+                var startDate = Convert.ToDateTime(TempData["PaymentStartDate"]);
+                var endDate = Convert.ToDateTime(TempData["PaymentEndDate"]);
+                var payments = db.AssistancePayments
+                    .Where(d => d.Date >= startDate && d.Date <= endDate)
+                    .OrderByDescending(d => d.Date).ToList();
+
+            var categoryList = AppRoutines.GetAssistanceCategoriesList();
+            var clientLookupList = db.Clients.ToList();
+            
+            foreach (var pymnt in payments)
+            {
+                pymnt.DateString = pymnt.Date.ToString("MM/dd/yyyy");
+                pymnt.ActionCategory = categoryList[pymnt.Category - 1];
+                var client = clientLookupList.FirstOrDefault(i => i.Id == pymnt.ClientId);
+                if (client != null)
+                {
+                    pymnt.LastName = client.LastName;
+                    pymnt.FirstName = client.FirstName;
+                    pymnt.AddressString = client.StreetNumber + " " + client.StreetName;
+                    pymnt.ActionCategory = categoryList[pymnt.Category - 1];
+                    pymnt.City = client.City;
+                    pymnt.Zip = client.Zip;
+
+                }
+            }
+
+            var TotalInCents = 0;
+            var sb = new StringBuilder();
+            
+            sb.Append("Payment Dates:" + ',' + ',' + startDate.ToShortDateString()
+                    + " - " + endDate .ToShortDateString());
+            sb.AppendLine();
+            sb.Append("Last Name" + ',');
+            sb.Append("First Name" + ',');
+            sb.Append("Street Address" + ',');
+            sb.Append("City" + ',');
+            sb.Append("Zip Code" + ',');
+            sb.Append("Category" + ',');
+            sb.Append("Action" + ',');
+            sb.Append("Date" + ',');
+            sb.Append("Amount  Paid" + ',');
+            sb.Append("Notes");
+            sb.AppendLine();
+
+            foreach (var pymnt in payments)
+            {
+                sb.Append(pymnt.LastName + ',');
+                sb.Append(pymnt.FirstName + ',');
+                if (pymnt.AddressString.Contains(","))
+                {
+                    sb.Append("\"" + pymnt.AddressString + "\"" + ",");
+                }
+                else
+                {
+                    sb.Append(pymnt.AddressString  + ",");
+                }
+                sb.Append(pymnt.City + ',');
+                sb.Append(pymnt.Zip + ',');
+                sb.Append(pymnt.ActionCategory + ',');
+                if (pymnt.Action == null)
+                {sb.Append(',');}
+                else
+                {
+                    if (pymnt.Action.Contains(","))
+                    {
+                        sb.Append("\"" + pymnt.Action + "\"" + ",");
+                    }
+                    else
+                    {
+                        sb.Append(pymnt.Action + ",");
+                    }
+                }
+
+                sb.Append(pymnt.Date.ToString("MM/dd/yyyy") + ',');
+                sb.Append(pymnt.StringDollarAmount + ',');
+                TotalInCents += pymnt.AmountInCents;
+                if (pymnt.Note == null)
+                { sb.Append(',');}
+                else
+                if (pymnt.Note .Contains(","))
+                {
+                    sb.Append("\"" + pymnt.Note + "\"" + ",");
+                }
+                else
+                {
+                    sb.Append(pymnt.Note + ",");
+                }
+                sb.AppendLine();
+            }
+            sb.Append(",,,,,,TOTAL,");
+            sb.Append($"${TotalInCents / 100}.{TotalInCents % 100:00}");
+            var response = System.Web.HttpContext.Current.Response;
+            response.BufferOutput = true;
+            response.Clear();
+            response.ClearHeaders();
+            response.ContentEncoding = Encoding.Unicode;
+            response.AddHeader("content-disposition", "attachment;filename="
+                                                      + "PaymentList" + DateTime.Today.ToString("MM-dd-yy") + ".csv");
+            response.ContentType = "text/plain";
+            response.Write(sb);
+            response.End();
+            return RedirectToAction("PaymentsByDate", new{startDate = startDate, endDate = endDate});
             }
         protected override void Dispose(bool disposing)
         {

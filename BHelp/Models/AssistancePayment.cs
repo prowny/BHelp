@@ -24,21 +24,12 @@ namespace BHelp.Models
         // means format with $sign amount/100, amount modulo 100
         // where modulo is 'the remainder when divided by'  100
 
-        [NotMapped]
-        public string LastName { get; set; }
-
-        [NotMapped]
-        public string FirstName { get; set; }
-
-        [NotMapped]
-        public string StreetNumber { get; set; }
-
-        [NotMapped]
-        public string StreetName { get; set; }
-
-        [NotMapped]
-        public string City { get; set; }
-
+        [NotMapped] public string LastName { get; set; }
+        [NotMapped] public string FirstName { get; set; }
+        [NotMapped] public string StreetNumber { get; set; }
+        [NotMapped] public string StreetName { get; set; }
+        [NotMapped] public string City { get; set; }
+        [NotMapped] public string Zip { get; set; }
         [NotMapped] public string NoteToolTip { get; set; }
 
         [NotMapped] public string DateString { get; set; }
