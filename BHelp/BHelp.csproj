@@ -810,10 +810,18 @@
     <Content Include="Views\Reports\GiftCardsReport.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\AssistancePayments\SearchClient.cshtml" />
-    <Content Include="Views\AssistancePayments\AssistancePaymentsMenu.cshtml" />
-    <Content Include="Views\AssistancePayments\PaymentsByIndividual.cshtml" />
-    <Content Include="Views\AssistancePayments\PaymentsByDate.cshtml" />
+    <Content Include="Views\AssistancePayments\SearchClient.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\AssistancePayments\AssistancePaymentsMenu.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\AssistancePayments\PaymentsByIndividual.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\AssistancePayments\PaymentsByDate.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
