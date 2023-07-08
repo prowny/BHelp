@@ -470,7 +470,7 @@ namespace BHelp.Controllers
                 }
                 sb.AppendLine();
             }
-            sb.Append(",,,,,,TOTAL,");
+            sb.Append(",,,,,,,TOTAL,");
             sb.Append($"${TotalInCents / 100}.{TotalInCents % 100:00}");
             var response = System.Web.HttpContext.Current.Response;
             response.BufferOutput = true;
