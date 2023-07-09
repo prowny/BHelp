@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 
 namespace BHelp.ViewModels
@@ -18,15 +19,16 @@ namespace BHelp.ViewModels
         public string WeekEndingDateString { get; set; }
         public string Category { get; set; }  // A, F, or M
         public string CategoryName { get; set; }
+        public string CategoryId { get; set; }
         public string Subcategory { get; set; }
         public string SubcategoryName { get; set; }
         public int Hours { get; set; }
         public int Minutes { get; set; }
         public int PeopleCount { get; set; }
         public string SubmitError { get; set; }
-        public List<SelectListItem> UserList { get; set; }
-        public List<SelectListItem> CategoryList { get; set; }
-        public List<SelectListItem> SubcategoryList { get; set; }
+        public List<SelectListItem> UserSelectList { get; set; }
+        public List<SelectListItem> CategorySelectList { get; set; }
+        public List<SelectListItem> SubcategorySelectList { get; set; }
         public List<VolunteerHoursViewModel> HoursList { get; set; }
         public List<VolunteerHoursTotalsViewModel> TotalsList { get; set; }
         public Boolean IsIndividual { get; set; }  // Individual sees only defaults (User, Cat, Subcat)

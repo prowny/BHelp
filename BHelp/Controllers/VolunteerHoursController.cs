@@ -106,12 +106,12 @@ namespace BHelp.Controllers
                 IsNonFoodServiceAdministration = _isNonFoodServiceAdministration,
                 IsNonFoodServiceManagement = _isNonFoodServiceManagement,
                 HoursList = new List<VolunteerHoursViewModel>(),
-                CategoryList =HoursRoutines.GetHoursCategoriesSelectList(_isNonFoodServiceAdministration, _isNonFoodServiceManagement),
-                SubcategoryList =HoursRoutines.GetHoursSubcategoriesSelectList(_hoursUser),
+                CategorySelectList =HoursRoutines.GetHoursCategoriesSelectList(_isNonFoodServiceAdministration, _isNonFoodServiceManagement),
+                SubcategorySelectList =HoursRoutines.GetHoursSubcategoriesSelectList(_hoursUser),
                 PeopleCount = 1
             };
 
-            if (a_mCat == "A") view.Category = "Administration";
+            if (a_mCat == "A") view.Category = "A";
             if (a_mCat == "M") view.Category = "Management";
             if ((view.Category == "A" || view.Category == "M") && view.IsIndividual )
             {
@@ -134,7 +134,7 @@ namespace BHelp.Controllers
                 if (a_mCat != null)  // error-catch 08/02/2022
                 {
                     view.Category = a_mCat;
-                    view.CategoryList = HoursRoutines.SetSelectedItem(view.CategoryList, a_mCat);
+                    view.CategorySelectList = HoursRoutines.SetSelectedItem(view.CategorySelectList, a_mCat);
                 }
             }
            
@@ -172,13 +172,13 @@ namespace BHelp.Controllers
             {
                 if (Session["ActiveUsers"] == null)
                 {
-                    var activeUsers = HoursRoutines.GetActiveUsersSelectList();
-                    Session["ActiveUsers"] = activeUsers;
-                    view.UserList = activeUsers;
+                    var activeUsersSelectList = HoursRoutines.GetActiveUsersSelectList();
+                    Session["ActiveUsers"] = activeUsersSelectList;
+                    view.UserSelectList = activeUsersSelectList;
                 }
                 else
                 {
-                    view.UserList = (List<SelectListItem>)Session["ActiveUsers"];
+                    view.UserSelectList = (List<SelectListItem>)Session["ActiveUsers"];
                 }
 
                 var recs = db.VolunteerHours
@@ -211,9 +211,9 @@ namespace BHelp.Controllers
                     }
                 }
                 
-                view.UserList = HoursRoutines.SetSelectedItem(view.UserList, _hoursUser.FullName);
-                view.CategoryList = HoursRoutines.SetSelectedItem(view.CategoryList, _hoursUser.VolunteerCategory);
-                view.SubcategoryList = HoursRoutines.SetSelectedItem(view.SubcategoryList, _hoursUser.VolunteerSubcategory);
+                view.UserSelectList = HoursRoutines.SetSelectedItem(view.UserSelectList, _hoursUser.FullName);
+                view.CategorySelectList = HoursRoutines.SetSelectedItem(view.CategorySelectList, _hoursUser.VolunteerCategory);
+                view.SubcategorySelectList = HoursRoutines.SetSelectedItem(view.SubcategorySelectList, _hoursUser.VolunteerSubcategory);
                 view.TotalsList = HoursRoutines.GetSummaryTotalsList(view.HoursList);
             }
 
@@ -243,13 +243,14 @@ namespace BHelp.Controllers
                     // Check for invalid Food Service/(none) pair or(none)/(none) pair
                     if (model.Category == "F" && model.Subcategory == "(none)"
                         || (model.Category == "(none)" && model.Subcategory == "(none)"))
-                        {
-                            TempData["SubmitError"] = "Invalid CategoryId/Subcategory setup. Contact Administrator.";
-                            return RedirectToAction("Create", new { userId = model.UserId });
-                        }
+                    {
+                        TempData["SubmitError"] = "Invalid CategoryId/Subcategory setup. Contact Administrator.";
+                        return RedirectToAction("Create", new { userId = model.UserId });
+                    }
                 }
             }
 
+            // model.IsIndividual = false:
             if (model.Hours == 0 && model.Minutes == 0)
             {
                 TempData["SubmitError"] = "No time was submitted!";
@@ -261,11 +262,12 @@ namespace BHelp.Controllers
                 TempData["SubmitError"] = "Select Food Program Subcategory!";
                 return RedirectToAction("Create");
             }
+
             // Look for duplicate record:
             var oldRec = db.VolunteerHours
                 .FirstOrDefault(r => r.UserId == model.UserId
                                      && r.Date == model.Date
-                                     && r.Category == model.Category
+                                     && r.Category == model.CategoryId
                                      && r.Subcategory == model.Subcategory);
             if (oldRec != null)
             {
@@ -279,7 +281,7 @@ namespace BHelp.Controllers
             {
                 UserId = model.UserId,
                 OriginatorUserId = System.Web.HttpContext.Current.User.Identity.GetUserId(),
-                Category = model.Category,
+                Category = model.CategoryId,
                 Subcategory = model.Subcategory,
                 Date = model.Date,
                 Hours = model.Hours,
@@ -326,8 +328,8 @@ namespace BHelp.Controllers
                 Minutes = rec.Minutes,
                 MinutesString = rec.Minutes.ToString(),
                 PeopleCount = rec.PeopleCount,
-                CategoryList = HoursRoutines.GetHoursCategoriesSelectList(_isNonFoodServiceAdministration, _isNonFoodServiceManagement),
-                SubcategoryList = HoursRoutines.GetHoursSubcategoriesSelectList(hoursUser),
+                CategorySelectList = HoursRoutines.GetHoursCategoriesSelectList(_isNonFoodServiceAdministration, _isNonFoodServiceManagement),
+                SubcategorySelectList = HoursRoutines.GetHoursSubcategoriesSelectList(hoursUser),
                 SubmitError = submitError
             };
 
@@ -336,9 +338,9 @@ namespace BHelp.Controllers
 
         //POST: Volunteer Hours Edit 
         [HttpPost, AllowAnonymous]
-        public ActionResult Edit([Bind(Include = "Id,UserId,OriginatorUserId,CategoryId,Subcategory,"
-                                                 + "Date,Hours,Minutes,PeopleCount,btnSave,btnDelete")]
-            VolunteerHoursViewModel model)
+        public ActionResult Edit([Bind(Include = "Id,UserId,OriginatorUserId,CategoryId," +
+                            "CategoryName,Subcategory,Date,Hours,Minutes," +
+                            "PeopleCount,btnSave,btnDelete")] VolunteerHoursViewModel model)
         {
             if (!ModelState.IsValid) return RedirectToAction("Index", "Home");
 

@@ -237,7 +237,7 @@ namespace BHelp.Controllers
                     {
                         Date = assistancePayment.Date,
                         ClientId = assistancePayment.ClientId,
-                        Category = Convert .ToByte(assistancePayment .CategoryId),
+                        Category = Convert .ToByte(assistancePayment.CategoryId),
                         Action = assistancePayment.Action,
                         AmountInCents = (int)(assistancePayment.AmountDecimal * 100),
                         Note = assistancePayment.Note 

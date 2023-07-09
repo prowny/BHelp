@@ -37,7 +37,7 @@
         @if (Model.IsIndividual && !Model.IsNonFoodServiceAdministration && !Model.IsNonFoodServiceManagement)
         { /* this section for individuals (no dropdown boxes) */
             <table>
-                <tr><td>Volunteer</td><td>CategoryId</td><td>Subcategory</td></tr>
+                <tr><td>Volunteer</td><td>Category</td><td>Subcategory</td></tr>
                 <tr>
                     <td>
                         @Html.TextBoxFor(m => m.VolunteerName,
@@ -64,19 +64,19 @@
                 <tr>
                     <td>
                         @Html.DropDownListFor(model => model.UserId,
-                            new SelectList(Model.UserList, "Value", "Text"),
+                            new SelectList(Model.UserSelectList, "Value", "Text"),
                             new { id = "UserDDL" })
                     </td>
                     <td>
                         @Html.DropDownListFor(m => m.Category,
-                            new SelectList(Model.CategoryList, "Value", "Text"),
+                            new SelectList(Model.CategorySelectList, "Value", "Text"),
                             new { id = "CategoryDDL" })
                     </td>
                     @if (string.IsNullOrEmpty(Model.A_MCategory))
                     {
                         <td>
                             @Html.DropDownListFor(m => m.Subcategory,
-                                new SelectList(Model.SubcategoryList, "Value", "Text"),
+                                new SelectList(Model.SubcategorySelectList, "Value", "Text"),
                                 new { id = "SubcategoryDDL" })
                         </td>
                     }
@@ -94,14 +94,14 @@
                     </td>
                     <td>
                         @Html.DropDownListFor(m => m.Category,
-                            new SelectList(Model.CategoryList, "Value", "Text"),
+                            new SelectList(Model.CategorySelectList, "Value", "Text"),
                             new { id = "NFSCategoryDDL" })
                     </td>
                 @if (string.IsNullOrEmpty(Model.A_MCategory))
                 {
                     <td>
                         @Html.DropDownListFor(m => m.Subcategory,
-                            new SelectList(Model.SubcategoryList, "Value", "Text"),
+                            new SelectList(Model.SubcategorySelectList, "Value", "Text"),
                             new { id = "NFSSubcategoryDDL" })
                     </td>
                 }
@@ -207,16 +207,16 @@
                 <tr>
                     <td><b>Summary:&nbsp;</b></td>
                     <td><b>CategoryId</b></td>
-                    <td><b>People Count</b></td>
                     <td><b>Total Hours</b></td>
+                    <td><b>People Count</b></td>
                 </tr>
                 @foreach (var item in Model.TotalsList)
                 {
                     <tr>
                         <td></td>
                         <td>@item.CategoryName</td>
-                        <td style="text-align: center">@item.PeopleCount.ToString()</td>
                         <td style="text-align: center">@item.TotalHours.ToString("0.00")</td>
+                        <td style="text-align: center">@item.PeopleCount.ToString()</td>
                     </tr>
                 }
             </table>
