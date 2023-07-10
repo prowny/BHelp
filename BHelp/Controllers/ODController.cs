@@ -294,7 +294,8 @@ namespace BHelp.Controllers
                 DeliveriesThisMonth = AppRoutines.GetDeliveriesCountThisMonth( Id,DateTime.Today) ,
                 NextDeliveryEligibleDate =AppRoutines.GetNextEligibleDeliveryDate(Id,dtLastDelivery),
                 NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate(Id, dtLastGiftCard),
-                OpenDeliveryExists = false
+                OpenDeliveryExists = false,
+                DateCreated = client.DateCreated 
             };
 
             foreach (var item in houseHold.ZipCodes)
