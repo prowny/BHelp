@@ -31,7 +31,7 @@ namespace BHelp.ViewModels
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DateOfBirth { get; set; }
 
-        [DisplayName("Street No.")]
+        [DisplayName("Street #")]
         public string StreetNumber { get; set; }
 
         [DisplayName("Street Name")]
@@ -40,7 +40,7 @@ namespace BHelp.ViewModels
         [DisplayName("City")]
         public string City { get; set; }
 
-        [DisplayName("Zip Code")]
+        [DisplayName("Zip")]
         public string Zip { get; set; }
 
         public string Phone { get; set; }
@@ -76,6 +76,7 @@ namespace BHelp.ViewModels
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string ActionCategory { get; set; }
+        public string BtnDelete { get; set; }
 
         public string StringDollarAmount
         {

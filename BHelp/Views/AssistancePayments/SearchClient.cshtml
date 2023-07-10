@@ -62,29 +62,28 @@
                 </tr>
                 <tr id="Column Headers">
                     <th>
-                        <div style="width: 100px" , align="left">@Html.DisplayNameFor(model => model.LastName)</div>
+                        <div style="width:100px", align="left">@Html.DisplayNameFor(model => model.LastName)</div>
                     </th>
                     <th>
-                        <div style="width: 100px" , align="left">@Html.DisplayNameFor(model => model.FirstName)</div>
+                        <div style="width:100px", align="left">@Html.DisplayNameFor(model => model.FirstName)</div>
                     </th>
                     <th>
-                        <div style="width: 40px" , align="left">@Html.DisplayNameFor(model => model.StreetNumber)</div>
+                        <div style="width:60px", align="left">@Html.DisplayNameFor(model => model.StreetNumber)</div>
                     </th>
                     <th>
-                        <div style="width: 50px" , align="left">@Html.DisplayNameFor(model => model.StreetName)</div>
+                        <div style="width:150px", align="left">@Html.DisplayNameFor(model => model.StreetName)</div>
                     </th>
                     <th>
-                        <div style="width: 50px" , align="left"> @Html.DisplayNameFor(model => model.City)</div>
+                        <div style="width:50px", align="left"> @Html.DisplayNameFor(model => model.City)</div>
                     </th>
                     <th>
-                        <div style="width: 25px" , align="left">@Html.DisplayNameFor(model => model.Zip)</div>
+                        <div style="width:25px", align="left">&nbsp;@Html.DisplayNameFor(model => model.Zip)</div>
                     </th>
                     <th>
-                        <div style="width: 60px" , align="left"> @Html.DisplayNameFor(model => model.Phone)</div>
+                        <div style="width:60px", align="left">&nbsp;@Html.DisplayNameFor(model => model.Phone)</div>
                     </th>
-                    @*<th>@Html.DisplayNameFor(model => model.FamilyMembers)</th>*@
                     <th>
-                        <div style="width: 60px" , align="left"> @Html.DisplayNameFor(model => model.Notes)</div>
+                        <div style="width:200px", align="left"> @Html.DisplayNameFor(model => model.Notes)</div>
                     </th>
                     <th></th>
                 </tr>
@@ -100,14 +99,10 @@
                         <td title=@item.CityToolTip>
                             @Html.DisplayFor(modelItem => item.City)
                         </td>
-                        <td>@Html.DisplayFor(modelItem => item.Zip)</td>
+                        <td>&nbsp;@Html.DisplayFor(modelItem => item.Zip)</td>
                         <td title=@item.PhoneToolTip>
-                            @Html.DisplayFor(modelItem => item.Phone)
+                            &nbsp;@Html.DisplayFor(modelItem => item.Phone)
                         </td>
-                        @*<td>
-                                @Html.DropDownListFor(modelitem => item.Phone, item.FamilySelectList)
-                                (@item.FamilyMembers.Count)
-                            </td>*@
                         <td title=@item.NotesToolTip>
                             @Html.DisplayFor(modelItem => item.Notes)
                         </td>
@@ -117,12 +112,14 @@
                     </tr>
                 }
             </table>
+            <br />
         }
     </div>
 <div>
+    <a href="@Url.Action("Create", "Clients")">Create New Client</a>
     <br />
     @Html.ActionLink("Return to Assistance Menu", "AssistancePaymentsMenu")
-    <br/>
+    <br />
     @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
 </div>
 </body>

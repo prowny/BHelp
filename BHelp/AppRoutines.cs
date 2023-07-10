@@ -310,8 +310,8 @@ namespace BHelp
                     NotesToolTip = client.Notes.Replace(" ", "\u00a0")
                 };
 
-                var s = household.StreetName; // For display, abbreviate to 10 characters:           
-                s = s.Length <= 10 ? s : s.Substring(0, 10) + "...";
+                var s = household.StreetName; // For display, abbreviate to 20 characters:           
+                s = s.Length <= 20 ? s : s.Substring(0, 20) + "...";
                 household.StreetName = s;
                 s = household.City; // For display, abbreviate to 11 characters:           
                 s = s.Length <= 11 ? s : s.Substring(0, 11) + "...";
@@ -319,8 +319,8 @@ namespace BHelp
                 s = household.Phone; // For display, abbreviate to 12 characters:           
                 s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
                 household.Phone = s;
-                s = household.Notes; // For display, abbreviate to 12 characters:           
-                s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                s = household.Notes; // For display, abbreviate to 30 characters:           
+                s = s.Length <= 30 ? s : s.Substring(0, 30) + "...";
                 household.Notes = s;
                 assistanceView.Add(household);
             }

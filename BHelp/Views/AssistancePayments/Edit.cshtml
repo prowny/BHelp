@@ -13,6 +13,10 @@
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
     <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+    <style>
+        #SaveButton {background-color: blue;color: white}
+        #btnDelete {background-color: red;color: white}
+    </style>
 </head>
 <body>
     @using (Html.BeginForm())
@@ -102,7 +106,9 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <br />
+                <input type="submit" value="Save" id="SaveButton" class="btn btn-default"/>
+                <input name ="btnDelete" type="submit" value="Delete" id="btnDelete" class="btn btn-default" id="btnDelete"/>
             </div>
         </div>
     </div>
@@ -114,6 +120,10 @@
         if (Model.ReturnURL.Contains("Individual"))
         {
             @Html.ActionLink("Back to List", "PaymentsByIndividual")
+        }
+        if (Model.ReturnURL.Contains("Date"))
+        {
+            @Html.ActionLink("Back to List", "PaymentsByDate")
         }
     }
     <br/>

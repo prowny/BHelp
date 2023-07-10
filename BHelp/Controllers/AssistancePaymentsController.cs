@@ -298,12 +298,33 @@ namespace BHelp.Controllers
             [HttpPost]
             [ValidateAntiForgeryToken]
             public ActionResult Edit([Bind(Include = "Id,ClientId,Date,CategoryId,Action," +
-                                                     "AmountDecimal,Note,ReturnURL")] 
+                                                     "AmountDecimal,Note,btnDelete,ReturnURL")] 
                 AssistanceViewModel assistancePayment)
             {
                 if (ModelState.IsValid)
                 {
-                    var aRec = db.AssistancePayments.Single(p =>p.Id  == assistancePayment.Id);
+                    if (assistancePayment.BtnDelete != null)
+                    {
+                        var pymntRec = db.AssistancePayments.Find(assistancePayment.Id);
+                        if (pymntRec == null) return RedirectToAction("Edit", new { recId = assistancePayment.Id });
+                        db.AssistancePayments.Remove(pymntRec);
+                        db.SaveChanges();
+
+                        if (assistancePayment.ReturnURL.Contains("Individual"))
+                        {
+                            return RedirectToAction("PaymentsByIndividual");
+
+                        }
+                        if (assistancePayment.ReturnURL.Contains("Date"))
+                        {
+                            return RedirectToAction("PaymentsByDate");
+                        }
+
+                    return RedirectToAction("Index");
+                    }
+
+
+                var aRec = db.AssistancePayments.Single(p =>p.Id  == assistancePayment.Id);
                     if (aRec != null)
                     {
                         aRec.Date = assistancePayment.Date;
@@ -482,7 +503,7 @@ namespace BHelp.Controllers
             response.ContentType = "text/plain";
             response.Write(sb);
             response.End();
-            return RedirectToAction("PaymentsByDate", new{startDate = startDate, endDate = endDate});
+            return RedirectToAction("PaymentsByDate", new{ startDate, endDate});
             }
         protected override void Dispose(bool disposing)
         {
