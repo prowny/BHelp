@@ -400,11 +400,28 @@ namespace BHelp.Controllers
                 .ThenBy(d => d.DriverId).ToList();
 
             // Seed the report loops:
-            var dateCardCount = 0;
-            var dateDeliveryCount = 0;
             var driverDeliveryCount = 0;
+            var driverResidentsCount = 0;
+            var driverFullBagCount = 0;
+            var driverHalfBagCount = 0;
+            var driverKidSnackCount = 0;
+            var driverPounds = 0;
             var driverCardCount = 0;
+            
+            var dateDeliveryCount = 0;
+            var dateResidentsCount = 0;
+            var dateFullBagCount = 0;
+            var dateHalfBagCount = 0;
+            var dateKidSnackCount = 0;
+            var datePounds = 0;
+            var dateCardCount = 0;
+
             var totalDeliveryCount = 0;
+            var totalResidentsCount = 0;
+            var totalFullBagCount = 0;
+            var totalHalfBagCount = 0;
+            var totalKidSnackCount = 0;
+            var totalPounds = 0;
             var totalCardCount = 0;
             var reportDeliveryList = new List<DeliveryViewModel>(); // get giftcard totals by day/driver
 
@@ -416,11 +433,17 @@ namespace BHelp.Controllers
             for (var date = start; date <= end; date = date.AddDays(1))
             {
                 var singleDateList = deliveries.Where(d => d.DateDelivered == date).ToList();
-                if (singleDateList.Count != 0)
+                if (singleDateList.Count == 0) continue;
                 {
+                    // Get # of Residents for each delivery
+                    foreach (var del in singleDateList)
+                    {
+                        del.HouseoldCount = del.Children + del.Adults + del.Seniors;
+                    }
                     var currentDateDelivered = singleDateList[0].DateDelivered;
                     
-                    var distinctDriverList = singleDateList.Select(d => d.DriverId).Distinct();
+                    var distinctDriverList = singleDateList
+                        .Select(d => d.DriverId).Distinct();
                     foreach (var dtDrvId in distinctDriverList)
                     {
                         var driverList = singleDateList
@@ -428,10 +451,27 @@ namespace BHelp.Controllers
                         foreach (var del in driverList)
                         {
                             driverDeliveryCount += 1;
-                            dateDeliveryCount += 1;
-                            totalDeliveryCount += 1;
+                            driverResidentsCount += del.HouseoldCount;
+                            driverFullBagCount += del.FullBags;
+                            driverHalfBagCount += del.HalfBags;
+                            driverKidSnackCount += del.KidSnacks;
+                            driverPounds += Convert.ToInt32(del.FullBags * 10 + del.HalfBags * 9);
                             driverCardCount += del.GiftCards;
+
+                            dateDeliveryCount += 1;
+                            dateResidentsCount += del.HouseoldCount;
+                            dateFullBagCount += del.FullBags;
+                            dateHalfBagCount += del.HalfBags;
+                            dateKidSnackCount += del.KidSnacks; 
+                            datePounds += Convert.ToInt32(del.FullBags * 10 + del.HalfBags * 9);
                             dateCardCount += del.GiftCards;
+
+                            totalDeliveryCount += 1;
+                            totalResidentsCount += del.HouseoldCount;
+                            totalFullBagCount += del.FullBags;
+                            totalHalfBagCount += del.HalfBags;
+                            totalKidSnackCount += del.KidSnacks;
+                            totalPounds += Convert.ToInt32(del.FullBags * 10 + del.HalfBags * 9);
                             totalCardCount += del.GiftCards;
                         }
 
@@ -441,10 +481,20 @@ namespace BHelp.Controllers
                             DateDelivered = currentDateDelivered,
                             DriverName = AppRoutines.GetDriverName(dtDrvId),
                             DeliveryCount = driverDeliveryCount,
+                            HouseholdCount = driverResidentsCount,
+                            FullBagCount =driverFullBagCount,
+                            HalfBagCount = driverHalfBagCount,
+                            KidSnackCount  =driverKidSnackCount,
+                            PoundsOfFood = driverPounds, 
                             GiftCardCount = driverCardCount
                         };
                         reportDeliveryList.Add(newDrv);
                         driverDeliveryCount = 0;
+                        driverResidentsCount = 0;
+                        driverFullBagCount = 0;
+                        driverHalfBagCount = 0;
+                        driverKidSnackCount = 0;
+                        driverPounds = 0;
                         driverCardCount = 0;
                     }
 
@@ -454,38 +504,98 @@ namespace BHelp.Controllers
                         DateDelivered = null,
                         DriverName = "Totals for " + currentDateDelivered?.ToString("MM/dd/yyyy"),
                         DeliveryCount = dateDeliveryCount,
+                        HouseholdCount = dateResidentsCount,
+                        FullBagCount = dateFullBagCount, 
+                        HalfBagCount = dateHalfBagCount,
+                        KidSnackCount =dateKidSnackCount, 
+                        PoundsOfFood = datePounds, 
                         GiftCardCount = dateCardCount
                     };
                     reportDeliveryList.Add(newDt);
                     newDt = new DeliveryViewModel() // blank line
-                        { DriverName = "", DeliveryCount = null, GiftCardCount = null };
+                        { DateDelivered = null, DriverName = "", DeliveryCount = null, GiftCardCount = null };
                     reportDeliveryList.Add(newDt); // add blank line
                     dateDeliveryCount = 0;
+                    dateResidentsCount = 0;
+                    dateFullBagCount = 0;
+                    dateHalfBagCount = 0;
+                    dateKidSnackCount =0;
+                    datePounds = 0;
                     dateCardCount = 0;
                 }
             }
-
-            var newD = new DeliveryViewModel()
-            {
-                DriverName = "",
-                DeliveryCount = null,
-                GiftCardCount = null
-            };
-            reportDeliveryList.Add(newD); // add blank line
 
             var totalDel = new DeliveryViewModel()
             {
                 DateDelivered = null,
                 DriverName = "Grand Totals",
-                GiftCardCount = totalCardCount,
-                DeliveryCount = totalDeliveryCount
+                DeliveryCount = totalDeliveryCount,
+                HouseholdCount = totalResidentsCount,
+                FullBagCount = totalFullBagCount,
+                HalfBagCount = totalHalfBagCount,
+                KidSnackCount = totalKidSnackCount, 
+                PoundsOfFood = totalPounds, 
+                GiftCardCount = totalCardCount
             };
             reportDeliveryList.Add(totalDel);
 
             view.GiftCardReportDeliveries = reportDeliveryList;
+            TempData["StartDate"] = startDate; TempData["EndDate"] = endDate;
+            TempData["GiftCardsReport"] = reportDeliveryList;
             return View(view);
         }
 
+        public ActionResult GiftCardsReportToCSV()
+        {
+            var reportDeliveryList = (List<DeliveryViewModel>)(TempData["GiftCardsReport"]);
+            if (reportDeliveryList == null) return RedirectToAction("GiftCardsReport");
+            var sb = new StringBuilder();
+            var startDate = (DateTime)(TempData["StartDate"]);
+            var endDate = (DateTime)(TempData["EndDate"]);
+            sb.Append("Start Date:" + "," + Convert .ToDateTime( startDate).ToShortDateString());
+            sb.AppendLine();
+            sb.Append("End Date:" + "," + Convert .ToDateTime( endDate).ToShortDateString());
+            sb.AppendLine();
+
+            // Headers
+            sb.Append("Date,Driver,Deliveries,Residents,Full Bags, Half Bags, Kid Snacks," +
+                      "Pounds of Food, Gift Cards");
+            sb.AppendLine();
+
+            foreach (var del in reportDeliveryList)
+            {
+                if (del.DateDelivered == null)
+                {
+                    sb.Append(",");
+                }
+                else
+                {
+                    sb.Append(Convert.ToDateTime(del.DateDelivered).ToString("MM/dd/yyyy") + ",");
+                }
+
+                sb.Append(del.DriverName + ",");
+                sb.Append(del.DeliveryCount + ",");
+                sb.Append(del.HouseholdCount + ",");
+                sb.Append(del.FullBagCount + ",");
+                sb.Append(del.HalfBagCount + ",");
+                sb.Append(del.KidSnackCount + ",");
+                sb.Append(del.PoundsOfFood + ","); 
+                sb.Append(del.GiftCardCount  + ",");
+                sb.AppendLine();
+            }
+
+            var response = System.Web.HttpContext.Current.Response;
+            response.BufferOutput = true;
+            response.Clear();
+            response.ClearHeaders();
+            response.ContentEncoding = Encoding.Unicode;
+            response.AddHeader("content-disposition", "attachment;filename="
+                                                      + "GiftCards" + DateTime.Today.ToString("MM-dd-yy") + ".csv");
+            response.ContentType = "text/plain";
+            response.Write(sb);
+            response.End();
+            return null;
+        }
 
         [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
             public ActionResult QORKReport(string endingDate = "") // New QORK Report 02/22

@@ -47,13 +47,18 @@
             <td style="text-align: center"><b>Date</b></td>
             <td style="text-align: center"><b>Driver</b></td>
             <td style="text-align: center"><b>Deliveries</b></td>
+            <td style="text-align: center"><b>Residents</b></td>
+            <td style="text-align: center"><b>Full Bags</b></td>
+            <td style="text-align: center"><b>Hallf Bags</b></td>
+            <td style="text-align: center"><b>Kid Snacks</b></td>
+            <td style="text-align: center"><b>Pounds of Food</b></td>
             <td style="text-align: center"><b>Gift Cards</b></td>
         </tr>
     
         @foreach (var delivery in Model.GiftCardReportDeliveries)
         {
             <tr>
-                <td >
+                <td>
                     @if (delivery.DateDelivered != null)
                     {
                         @delivery.DateDelivered.Value.ToString("MM/dd/yyyy")
@@ -66,14 +71,31 @@
                     @delivery.DeliveryCount
                 </td>
                 <td style="text-align: center">
-                    @delivery.GiftCardCount 
+                    @delivery.HouseholdCount
+                </td>
+                <td style="text-align: center">
+                    @delivery.FullBagCount 
+                </td>
+                <td style="text-align: center">
+                    @delivery.HalfBagCount 
+                </td>
+                <td style="text-align: center">
+                    @delivery.KidSnackCount 
+                </td>
+                <td style="text-align: center">
+                    @delivery.PoundsOfFood 
+                </td>
+                <td style="text-align: center">
+                    @delivery.GiftCardCount
                 </td>
             </tr>
+           
         }
      </table>
 </div>
 
 <div>
+    @Html.ActionLink("Download to CSV", "GiftCardsReportToCSV")<br/>
     @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
 </div>
 </body>

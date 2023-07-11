@@ -69,7 +69,7 @@ namespace BHelp.ViewModels
         public int AdultsCount { get; set; }
         public List<FamilyMember> Seniors { get; set; }
         public int SeniorsCount { get; set; }
-        public int HouseholdCount { get; set; }
+        public int? HouseholdCount { get; set; }
         public DateTime? DateLastDelivery { get; set; }
         public DateTime DateLastGiftCard { get; set; }
         public int GiftCardsThisMonth { get; set; }
@@ -124,9 +124,13 @@ namespace BHelp.ViewModels
         // which calls Ajax Function UpdateDeliveryDateOD
         public DateTime? NewDeliveryDate { get; set; }
 
-        // for GiftCard report:
+        // for GiftCard report: (with nullable counts, to print blank lines)
         public int? DeliveryCount { get; set; }
         public int? GiftCardCount { get; set; }
+        public int? FullBagCount { get; set; }
+        public int? HalfBagCount { get; set; }
+        public int? KidSnackCount { get; set; }
+        public int? PoundsOfFood { get; set; }
         public List<DeliveryViewModel> GiftCardReportDeliveries { get; set; }
     }
 }
