@@ -15,7 +15,7 @@ namespace BHelp
             // Get Clients, Family, and Delieries in 3 single database queries
             // with no further hits to the database
             var view = new ClientViewModel { ReportTitle = "BH Client List" };
-            const int columns = 24;
+            const int columns = 25;
 
             using var db = new BHelpContext();
             var clientList = db.Clients.OrderBy(c => c.LastName)
@@ -100,6 +100,7 @@ namespace BHelp
 
                 view.ClientStrings[i, 23] = GetDeliveriesCountThisMonth(deliverySubList).ToString();
                 view.ClientStrings[i, 24] = cli.Id.ToString();
+                view.ClientStrings[i, 25] = cli.DateCreated.ToString("MM/dd/yyyy");
             }
 
             return view;

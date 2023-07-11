@@ -258,7 +258,7 @@ namespace BHelp.Controllers
         public ActionResult ClientListToCSV()
         {
             var view = ClientRoutines.GetAllClientsListModel();
-            const int columns = 24;
+            const int columns = 25;
             var curMonth = DateTime.Now.ToString("MMMM");
             var curYear = DateTime.Now.Year.ToString();
 
@@ -272,7 +272,7 @@ namespace BHelp.Controllers
             sb.Append("Seniors Names/Ages,# In HH,Notes,Date Last Delivery,Date Last Gift Card,");
             sb.Append("Next Eligeble for Food on,Next Eligible for Gift Card(s) on,");
             sb.Append("# Deliveries " + curMonth + " " + curYear + ",");
-            sb.Append("Internal Client ID");
+            sb.Append("Internal Client ID" + "," + "Date Created");
             sb.AppendLine();
 
             for (var i = 0; i < view.ClientCount; i++)
@@ -529,21 +529,21 @@ namespace BHelp.Controllers
             return View(view);
         }
 
-        public ActionResult  AddDateCreatedToClients()
-        {
-            var uniqueClientIdList = db.Deliveries.Select(r => r.ClientId).Distinct().ToList();
-            foreach (var cli in uniqueClientIdList)
-            {
-                var dt = db.Deliveries.Where(r => r.ClientId == cli)
-                    .Select(d => d.DateDelivered).Min();
+        //public ActionResult  AddDateCreatedToClients()
+        //{
+        //    var uniqueClientIdList = db.Deliveries.Select(r => r.ClientId).Distinct().ToList();
+        //    foreach (var cli in uniqueClientIdList)
+        //    {
+        //        var dt = db.Deliveries.Where(r => r.ClientId == cli)
+        //            .Select(d => d.DateDelivered).Min();
                 
-                if (dt != null)
-                {
-                    var x = Utilities.UpdateClientDateCreated(cli, (DateTime)dt);
-                }
-            }
+        //        if (dt != null)
+        //        {
+        //            var x = Utilities.UpdateClientDateCreated(cli, (DateTime)dt);
+        //        }
+        //    }
             
-            return null;
-        }
+        //    return null;
+        //}
     }
 }
