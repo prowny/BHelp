@@ -13,8 +13,11 @@
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
     <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
-    <style >
-        #CreateButton {background-color: blue;color: white}
+    <style>
+        #CreateButton {
+            background-color: blue;
+            color: white
+        }
     </style>
 </head>
 <body>
@@ -27,25 +30,40 @@
             <hr />
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         </div>
-
+        <div>
+            <table>
+                <tr><td><b>Client Payment Data</b></td></tr>
+            </table>
+            <table>
+                <tr>
+                    <td>Begin Date:</td>
+                    <td>
+                        @Html.TextBox("Start Date", @Model.StartDate, "{0:MM/dd/yyyy}",
+                            new { id = "StartDate", style = "width: 70px;text-align:center" })
+                        <span style="color: darkmagenta">&#8592;Click to change</span>  @*Html left-arrow*@
+                    </td>
+                    <td>&nbsp;&nbsp;Ending Date:</td>
+                    <td>
+                        @Html.TextBox("End Date:", @Model.EndDate, "{0:MM/dd/yyyy}",
+                            new { id = "EndDate", style = "width:70px; text-align:center" })
+                        <span style="color: darkmagenta">&#8592;Click to change</span>  @*Html left-arrow*@
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <hr />
         <div class="form-group">
             <table>
                 <tr>
-                    <td>@Html.Label("Date") </td>
-                </tr>
-                <tr>
+                    <td style="text-align:right">@Html.Label("Date") </td>
                     <td>
                         @Html.TextBoxFor(model => model.Date, "{0:MM/dd/yyyy}",
-                             new { id = "PaymentDate", style = "width: 75px; text-align: center" })
+                            new { id = "PaymentDate", style = "width: 75px; text-align: center" })
                         <span style="color: darkmagenta"> &#8592;Click to change</span>
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        @Html.Label("Client")
-                    </td>
-                </tr>
-                <tr>
+                    <td style="text-align:right">@Html.Label("Client")</td>
                     <td>
                         @Html.DropDownListFor(model => model.ClientId,
                             new SelectList(Model.ClientSelectList, "Value",
@@ -54,9 +72,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>@Html.Label("CategoryId")</td>
-                </tr>
-                <tr>
+                    <td style="text-align:right">@Html.Label("Category:")</td>
                     <td>
                         @Html.DropDownListFor(model => model.CategoryId,
                             new SelectList(Model.AssistanceCategoriesSelectList,
@@ -65,27 +81,21 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>@Html.Label("Action")</td>
-                </tr>
-                <tr>
+                    <td style="text-align:right">@Html.Label("Action:")</td>
                     <td>
                         @Html.TextBoxFor(model => model.Action, new { style = "width:250px;", htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.Action, "", new { @class = "text-danger" })
                     </td>
                 </tr>
                 <tr>
-                    <td>@Html.Label("Amount")</td>
-                </tr>
-                <tr>
+                    <td style="text-align:right">@Html.Label("Amount:")</td>
                     <td>
                         @Html.TextBoxFor(model => model.AmountDecimal, new { style = "width:50px;", htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.AmountDecimal, "", new { @class = "text-danger" })
                     </td>
                 </tr>
                 <tr>
-                    <td> @Html.LabelFor(model => model.Note, htmlAttributes: new { @class = "control-label col-md-2" })</td>
-                </tr>
-                <tr>
+                    <td style="text-align:right">@Html.Label("Notes:")</td>
                     <td>
                         @Html.TextAreaFor(model => model.Note, new { style = "width: 250px;", htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.Note, "", new { @class = "text-danger" })
@@ -96,7 +106,7 @@
 
         <div class="form-group">
             <br />
-            <input type="submit" value="Create" class="btn btn-default" id="CreateButton"/>
+            <input type="submit" value="Create" class="btn btn-default" id="CreateButton" />
         </div>
 
         <div>
@@ -127,3 +137,36 @@
         window.$("#PaymentDate").datepicker();
     });
 </script>
+<script>
+    $(function () {
+        window.$("#StartDate").datepicker();
+    });
+</script>
+<script>
+    $(function () {
+        window.$("#EndDate").datepicker();
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        window.$("#StartDate").change(function() {
+            var stDate = window.$('#StartDate').val();
+            var endDt = window.$('#EndDate').val();
+            //if ($('#StartDate').val() > $('#EndDate').val()) { endDt = stDate; }
+            window.location.href =
+                '@Url.Action("CallLogByLogDate", "Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        window.$("#EndDate").change(function() {
+            var stDate = window.$('#StartDate').val();
+            window.$('#StartDate').val(stDate);
+            var endDt = window.$('#EndDate').val();
+            window.location.href =
+                '@Url.Action("CallLogByLogDate", "Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
+        });
+    });
+</script>
+
