@@ -17,6 +17,26 @@ namespace BHelp
 {
     public static class AppRoutines
     {
+        public static string GetPaymentHistoryList(int clientId, DateTime startDate, DateTime endDate)
+        {
+            var catList = GetAssistanceCategoriesList(); 
+            using var db = new BHelpContext();
+            var payments = db.AssistancePayments
+                        .Where(i => i.ClientId == clientId 
+                        && i.Date >= startDate && i.Date <= endDate) 
+                           .OrderByDescending( d => d.Date).ToList();
+            var historyList = "";
+            foreach (var pymnt in payments)
+            {
+                var strDt = pymnt.Date.ToString("MM/dd/yyyy");
+                var cat = catList[pymnt.Category - 1];
+                var amt = pymnt.StringDollarAmount;
+                //var act = pymnt.Action.Substring(0, 20);
+                historyList += strDt + " " + cat + " " + amt + Environment.NewLine;
+            }
+            return historyList;
+        }
+
         public static List<Client> GetAllClientsList()
         {
             using var db = new BHelpContext();

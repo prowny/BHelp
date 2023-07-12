@@ -77,9 +77,7 @@ namespace BHelp.ViewModels
         public DateTime EndDate { get; set; }
         public string ActionCategory { get; set; }
         public string BtnDelete { get; set; }
-        public string BtnStart { get; set; }
-        public String BtnEnd { get; set; }
-        public List<string> PaymentHistoryList { get; set; }
+        public string PaymentHistoryList { get; set; }
         public string StringDollarAmount
         {
             get => $"${AmountInCents / 100}.{AmountInCents % 100:00}";

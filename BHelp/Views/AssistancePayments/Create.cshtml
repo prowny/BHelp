@@ -54,6 +54,12 @@
                     </td> @*Html left-arrow*@
                 </tr>
             </table>
+            <table >
+                <tr >
+                    <td >Payments in Date Range:</td>
+                    <td >@(Html.TextAreaFor(m => m.PaymentHistoryList,
+                             new{style="width: 300px;"}))</td> </tr>
+            </table>
         </div>
         <hr />
         <div id="PaymentEntry" class="form-group">

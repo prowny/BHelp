@@ -68,7 +68,7 @@ namespace BHelp.Controllers
             if (clientId == null) return View(view);
                 
 
-            //=== clientId != null; load client's payment history:
+            // clientId != null; load client's payment history:
             var _paymentList = db.AssistancePayments.Where(d => d.ClientId == clientId)
                 .OrderByDescending(d => d.Date).ToList();
 
@@ -223,30 +223,9 @@ namespace BHelp.Controllers
                     view.FullName = client.FirstName + " " + client.LastName;
                 }
 
-                //foreach (var cli in db.Clients.OrderBy(n => n.LastName)
-                //             .ThenBy(f => f.FirstName).ToList())
-                //{
-                //    if (clientId != null && clientId == cli.Id)
-                //    {
-                //        view.ClientSelectList.Add(new SelectListItem
-                //        {
-                //            Value = cli.Id.ToString(),
-                //            Text = cli.LastName + ", " + cli.FirstName,
-                //            Selected = true
-                //        });
-
-                //    }
-                //    else
-                //    {
-                //        view.ClientSelectList.Add(new SelectListItem
-                //        {
-                //            Value = cli.Id.ToString(), Text = cli.LastName + ", " + cli.FirstName,
-                //            Selected = false
-                //        });
-                //    }
-                //}
-
-            return View(view);
+                // Load view PaymentHistoryList 
+                view.PaymentHistoryList = AppRoutines.GetPaymentHistoryList((int)clientId, view.StartDate, view.EndDate);
+                return View(view);
             }
 
             // POST: AssistancePayments/Create.
