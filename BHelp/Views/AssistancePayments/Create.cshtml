@@ -23,39 +23,43 @@
 <body>
     @using (Html.BeginForm())
     {
-        @Html.AntiForgeryToken()
+         @Html.AntiForgeryToken()
 
         <div class="form-horizontal">
+            @Html.HiddenFor(a => a.ClientId, new { @id = "ClientId" })
             <h4>Create Assistance Payment</h4>
             <hr />
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         </div>
-        <div>
+        <div id="PaymentHistory">
             <table>
-                <tr><td><b>Client Payment Data</b></td></tr>
+                <tr>
+                    <td><b>Client Payment Data</b></td>&nbsp;&nbsp;
+                    <td>&nbsp;&nbsp;&nbsp;for client</td>
+                    <td>@Html.Label(@Model.FullName)</td>
+                </tr>
             </table>
             <table>
                 <tr>
-                    <td>Begin Date:</td>
+                    <td>Starting Date:</td>
                     <td>
-                        @Html.TextBox("Start Date", @Model.StartDate, "{0:MM/dd/yyyy}",
-                            new { id = "StartDate", style = "width: 70px;text-align:center" })
-                        <span style="color: darkmagenta">&#8592;Click to change</span>  @*Html left-arrow*@
-                    </td>
+                        @Html.TextBox("Start Date", Model.StartDate, "{0:MM/dd/yyyy}",
+                            new { id = "StartDate", style = "width: 75px;text-align:center" })
+                        <span style="color: darkmagenta">&#8592;Click to change</span>
+                    </td> @*Html left-arrow*@
                     <td>&nbsp;&nbsp;Ending Date:</td>
                     <td>
-                        @Html.TextBox("End Date:", @Model.EndDate, "{0:MM/dd/yyyy}",
-                            new { id = "EndDate", style = "width:70px; text-align:center" })
-                        <span style="color: darkmagenta">&#8592;Click to change</span>  @*Html left-arrow*@
-                    </td>
+                        @Html.TextBox("End Date:", Model.EndDate, "{0:MM/dd/yyyy}",
+                            new { id = "EndDate", style = "width:75px; text-align:center" })
+                        <span style="color: darkmagenta">&#8592;Click to change</span>
+                    </td> @*Html left-arrow*@
                 </tr>
             </table>
         </div>
         <hr />
-        <div class="form-group">
+        <div id="PaymentEntry" class="form-group">
             <table>
                 <tr>
-                    <td style="text-align:right">@Html.Label("Date") </td>
+                    <td style="text-align: right">@Html.Label("Date:") </td>
                     <td>
                         @Html.TextBoxFor(model => model.Date, "{0:MM/dd/yyyy}",
                             new { id = "PaymentDate", style = "width: 75px; text-align: center" })
@@ -63,16 +67,19 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="text-align:right">@Html.Label("Client")</td>
+                    <td style="text-align: right">@Html.Label("Client:")</td>
                     <td>
-                        @Html.DropDownListFor(model => model.ClientId,
+                        @Html.TextBoxFor(m => m.FullName,
+                            new { @readonly = "readonly" })
+
+                        @*@Html.DropDownListFor(model => model.ClientId,
                             new SelectList(Model.ClientSelectList, "Value",
-                                "Text"), new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.ClientId, "", new { @class = "text-danger" })
+                                "Text"), new { id = "ClientId", @class = "form-control" })*@
+                        @*@Html.ValidationMessageFor(model => model.ClientId,*@
                     </td>
                 </tr>
                 <tr>
-                    <td style="text-align:right">@Html.Label("Category:")</td>
+                    <td style="text-align: right">@Html.Label("Category:")</td>
                     <td>
                         @Html.DropDownListFor(model => model.CategoryId,
                             new SelectList(Model.AssistanceCategoriesSelectList,
@@ -81,21 +88,21 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="text-align:right">@Html.Label("Action:")</td>
+                    <td style="text-align: right">@Html.Label("Action:")</td>
                     <td>
                         @Html.TextBoxFor(model => model.Action, new { style = "width:250px;", htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.Action, "", new { @class = "text-danger" })
                     </td>
                 </tr>
                 <tr>
-                    <td style="text-align:right">@Html.Label("Amount:")</td>
+                    <td style="text-align: right">@Html.Label("Amount:")</td>
                     <td>
                         @Html.TextBoxFor(model => model.AmountDecimal, new { style = "width:50px;", htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.AmountDecimal, "", new { @class = "text-danger" })
                     </td>
                 </tr>
                 <tr>
-                    <td style="text-align:right">@Html.Label("Notes:")</td>
+                    <td style="text-align: right">@Html.Label("Notes:")</td>
                     <td>
                         @Html.TextAreaFor(model => model.Note, new { style = "width: 250px;", htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.Note, "", new { @class = "text-danger" })
@@ -104,26 +111,25 @@
             </table>
         </div>
 
-        <div class="form-group">
+        <div>
             <br />
             <input type="submit" value="Create" class="btn btn-default" id="CreateButton" />
         </div>
-
-        <div>
-            <br />
-            @Html.ActionLink("Back to Search List", "SearchClient")
-            <br />
-            @Html.ActionLink("Return to Assistance Menu", "AssistancePaymentsMenu")
-        </div>
-        <div>
-            @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
-        </div>
     }
+    <div>
+        <br />
+        @Html.ActionLink("Back to Search List", "SearchClient")
+        <br />
+        @Html.ActionLink("Return to Assistance Menu", "AssistancePaymentsMenu")
+    </div>
+    <div>
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
 
 </body>
 </html>
 
-<script>
+@*<script>
     $(document).ready(function () {
         ".datepicker".datepicker({
             dateFormat: "dd-mm-yy",
@@ -131,7 +137,7 @@
             changeyear: true
         });
     });
-</script>
+</script>*@
 <script>
     $(function () {
         window.$("#PaymentDate").datepicker();
@@ -150,23 +156,33 @@
 <script type="text/javascript">
     $(document).ready(function() {
         window.$("#StartDate").change(function() {
-            var stDate = window.$('#StartDate').val();
+            var stDate = window.$(this).val();
             var endDt = window.$('#EndDate').val();
-            //if ($('#StartDate').val() > $('#EndDate').val()) { endDt = stDate; }
             window.location.href =
-                '@Url.Action("CallLogByLogDate", "Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
+                '@Url.Action("Create", "AssistancePayments")' + '?startDate=' + stDate + '&endDate=' + endDt;
         });
     });
 </script>
 <script type="text/javascript">
     $(document).ready(function() {
-        window.$("#EndDate").change(function() {
+        window.$("#EndDate").change(function () {
             var stDate = window.$('#StartDate').val();
             window.$('#StartDate').val(stDate);
             var endDt = window.$('#EndDate').val();
             window.location.href =
-                '@Url.Action("CallLogByLogDate", "Deliveries")' + '?startDate=' + stDate + '&endDate=' + endDt;
+                '@Url.Action("Create", "AssistancePayments")' + '?startDate=' + stDate + '&endDate=' + endDt;
         });
     });
 </script>
-
+@*<script type="text/javascript">
+    $(document).ready(function() {
+        window.$("#ClientId").change(function() {
+            var stDate = window.$('#StartDate').val();
+            var endDt = window.$('#EndDate').val();
+            var cliId = window.$("ClientId").val();
+            window.location.href =
+                '@Url.Action("Create", "AssistancePayments")' + '?clientId=' + cliId;
+            /* + '&startDate=' + stDate + '&endDate=' + endDt;*/
+        });
+    });
+</script>*@

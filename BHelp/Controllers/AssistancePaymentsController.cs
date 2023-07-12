@@ -188,41 +188,65 @@ namespace BHelp.Controllers
                 return View(paymentsView);
             }
 
-            // GET: AssistancePayments/Create
-            public ActionResult Create(int? clientId)
+        // GET: AssistancePayments/Create
+        public ActionResult Create(int? clientId, DateTime? startDate, DateTime? endDate   )
             {
-                //var cats = AppRoutines.GetAssistanceCategoriesList();
-                //var selCats = AppRoutines.GetAssistanceCategoriesSelectList();
+                if (clientId != null) 
+                { Session["AssistanceClientId"] = clientId; }
+                else
+
+                { clientId = (int)Session["AssistanceClientId"]; }
                 var view = new AssistanceViewModel
                 {
-                    ClientSelectList =new List<SelectListItem>(),
+                    //ClientSelectList =new List<SelectListItem>(),
+                    ClientId = (int)clientId,
                     Date = DateTime.Today,
                     AssistanceCategoriesSelectList= AppRoutines.GetAssistanceCategoriesSelectList()
                 };
-            
-                foreach (var cli in db.Clients.OrderBy(n => n.LastName)
-                             .ThenBy(f => f.FirstName).ToList())
+
+                var nullDate = new DateTime(1, 1, 1);
+                if (startDate == null || startDate == nullDate)
                 {
-                    if (clientId != null && clientId == cli.Id)
-                    {
-                        view.ClientSelectList.Add(new SelectListItem
-                        {
-                            Value = cli.Id.ToString(),
-                            Text = cli.LastName + ", " + cli.FirstName,
-                            Selected = true
-                        });
-                    }
-                    else
-                    {
-                        view.ClientSelectList.Add(new SelectListItem
-                        {
-                            Value = cli.Id.ToString(), Text = cli.LastName + ", " + cli.FirstName,
-                            Selected = false
-                        });
-                    }
+                    // Default to this year YTD
+                    view.EndDate = DateTime.Today;
+                    view.StartDate = new DateTime(DateTime.Today.Year, 1, 1);
+                }
+                else
+                {
+                    if (endDate != null) view.EndDate = (DateTime)endDate;
+                    view.StartDate = (DateTime)startDate;
+                }
+                
+                var client = AppRoutines.GetClientRecord(view.ClientId);
+                if (client != null)
+                {
+                    view.FullName = client.FirstName + " " + client.LastName;
                 }
 
-                return View(view);
+                //foreach (var cli in db.Clients.OrderBy(n => n.LastName)
+                //             .ThenBy(f => f.FirstName).ToList())
+                //{
+                //    if (clientId != null && clientId == cli.Id)
+                //    {
+                //        view.ClientSelectList.Add(new SelectListItem
+                //        {
+                //            Value = cli.Id.ToString(),
+                //            Text = cli.LastName + ", " + cli.FirstName,
+                //            Selected = true
+                //        });
+
+                //    }
+                //    else
+                //    {
+                //        view.ClientSelectList.Add(new SelectListItem
+                //        {
+                //            Value = cli.Id.ToString(), Text = cli.LastName + ", " + cli.FirstName,
+                //            Selected = false
+                //        });
+                //    }
+                //}
+
+            return View(view);
             }
 
             // POST: AssistancePayments/Create.
@@ -320,11 +344,11 @@ namespace BHelp.Controllers
                             return RedirectToAction("PaymentsByDate");
                         }
 
-                    return RedirectToAction("Index");
+                        return RedirectToAction("Index");
                     }
 
 
-                var aRec = db.AssistancePayments.Single(p =>p.Id  == assistancePayment.Id);
+                    var aRec = db.AssistancePayments.Single(p =>p.Id  == assistancePayment.Id);
                     if (aRec != null)
                     {
                         aRec.Date = assistancePayment.Date;
@@ -408,110 +432,110 @@ namespace BHelp.Controllers
                     .Where(d => d.Date >= startDate && d.Date <= endDate)
                     .OrderByDescending(d => d.Date).ToList();
 
-            var categoryList = AppRoutines.GetAssistanceCategoriesList();
-            var clientLookupList = db.Clients.ToList();
+                var categoryList = AppRoutines.GetAssistanceCategoriesList();
+                var clientLookupList = db.Clients.ToList();
             
-            foreach (var pymnt in payments)
-            {
-                pymnt.DateString = pymnt.Date.ToString("MM/dd/yyyy");
-                pymnt.ActionCategory = categoryList[pymnt.Category - 1];
-                var client = clientLookupList.FirstOrDefault(i => i.Id == pymnt.ClientId);
-                if (client != null)
+                foreach (var pymnt in payments)
                 {
-                    pymnt.LastName = client.LastName;
-                    pymnt.FirstName = client.FirstName;
-                    pymnt.AddressString = client.StreetNumber + " " + client.StreetName;
+                    pymnt.DateString = pymnt.Date.ToString("MM/dd/yyyy");
                     pymnt.ActionCategory = categoryList[pymnt.Category - 1];
-                    pymnt.City = client.City;
-                    pymnt.Zip = client.Zip;
-
-                }
-            }
-
-            var TotalInCents = 0;
-            var sb = new StringBuilder();
-            
-            sb.Append("Payment Dates:" + ',' + ',' + startDate.ToShortDateString()
-                    + " - " + endDate .ToShortDateString());
-            sb.AppendLine();
-            sb.Append("Last Name" + ',');
-            sb.Append("First Name" + ',');
-            sb.Append("Street Address" + ',');
-            sb.Append("City" + ',');
-            sb.Append("Zip Code" + ',');
-            sb.Append("Category" + ',');
-            sb.Append("Action" + ',');
-            sb.Append("Date" + ',');
-            sb.Append("Amount  Paid" + ',');
-            sb.Append("Notes");
-            sb.AppendLine();
-
-            foreach (var pymnt in payments)
-            {
-                sb.Append(pymnt.LastName + ',');
-                sb.Append(pymnt.FirstName + ',');
-                if (pymnt.AddressString.Contains(","))
-                {
-                    sb.Append("\"" + pymnt.AddressString + "\"" + ",");
-                }
-                else
-                {
-                    sb.Append(pymnt.AddressString  + ",");
-                }
-                sb.Append(pymnt.City + ',');
-                sb.Append(pymnt.Zip + ',');
-                sb.Append(pymnt.ActionCategory + ',');
-                if (pymnt.Action == null)
-                {sb.Append(',');}
-                else
-                {
-                    if (pymnt.Action.Contains(","))
+                    var client = clientLookupList.FirstOrDefault(i => i.Id == pymnt.ClientId);
+                    if (client != null)
                     {
-                        sb.Append("\"" + pymnt.Action + "\"" + ",");
+                        pymnt.LastName = client.LastName;
+                        pymnt.FirstName = client.FirstName;
+                        pymnt.AddressString = client.StreetNumber + " " + client.StreetName;
+                        pymnt.ActionCategory = categoryList[pymnt.Category - 1];
+                        pymnt.City = client.City;
+                        pymnt.Zip = client.Zip;
+
+                    }
+                }
+
+                var TotalInCents = 0;
+                var sb = new StringBuilder();
+            
+                sb.Append("Payment Dates:" + ',' + ',' + startDate.ToShortDateString()
+                          + " - " + endDate .ToShortDateString());
+                sb.AppendLine();
+                sb.Append("Last Name" + ',');
+                sb.Append("First Name" + ',');
+                sb.Append("Street Address" + ',');
+                sb.Append("City" + ',');
+                sb.Append("Zip Code" + ',');
+                sb.Append("Category" + ',');
+                sb.Append("Action" + ',');
+                sb.Append("Date" + ',');
+                sb.Append("Amount  Paid" + ',');
+                sb.Append("Notes");
+                sb.AppendLine();
+
+                foreach (var pymnt in payments)
+                {
+                    sb.Append(pymnt.LastName + ',');
+                    sb.Append(pymnt.FirstName + ',');
+                    if (pymnt.AddressString.Contains(","))
+                    {
+                        sb.Append("\"" + pymnt.AddressString + "\"" + ",");
                     }
                     else
                     {
-                        sb.Append(pymnt.Action + ",");
+                        sb.Append(pymnt.AddressString  + ",");
                     }
-                }
+                    sb.Append(pymnt.City + ',');
+                    sb.Append(pymnt.Zip + ',');
+                    sb.Append(pymnt.ActionCategory + ',');
+                    if (pymnt.Action == null)
+                    {sb.Append(',');}
+                    else
+                    {
+                        if (pymnt.Action.Contains(","))
+                        {
+                            sb.Append("\"" + pymnt.Action + "\"" + ",");
+                        }
+                        else
+                        {
+                            sb.Append(pymnt.Action + ",");
+                        }
+                    }
 
-                sb.Append(pymnt.Date.ToString("MM/dd/yyyy") + ',');
-                sb.Append(pymnt.StringDollarAmount + ',');
-                TotalInCents += pymnt.AmountInCents;
-                if (pymnt.Note == null)
-                { sb.Append(',');}
-                else
-                if (pymnt.Note .Contains(","))
-                {
-                    sb.Append("\"" + pymnt.Note + "\"" + ",");
+                    sb.Append(pymnt.Date.ToString("MM/dd/yyyy") + ',');
+                    sb.Append(pymnt.StringDollarAmount + ',');
+                    TotalInCents += pymnt.AmountInCents;
+                    if (pymnt.Note == null)
+                    { sb.Append(',');}
+                    else
+                    if (pymnt.Note .Contains(","))
+                    {
+                        sb.Append("\"" + pymnt.Note + "\"" + ",");
+                    }
+                    else
+                    {
+                        sb.Append(pymnt.Note + ",");
+                    }
+                    sb.AppendLine();
                 }
-                else
-                {
-                    sb.Append(pymnt.Note + ",");
-                }
-                sb.AppendLine();
+                sb.Append(",,,,,,,TOTAL,");
+                sb.Append($"${TotalInCents / 100}.{TotalInCents % 100:00}");
+                var response = System.Web.HttpContext.Current.Response;
+                response.BufferOutput = true;
+                response.Clear();
+                response.ClearHeaders();
+                response.ContentEncoding = Encoding.Unicode;
+                response.AddHeader("content-disposition", "attachment;filename="
+                                                          + "PaymentList" + DateTime.Today.ToString("MM-dd-yy") + ".csv");
+                response.ContentType = "text/plain";
+                response.Write(sb);
+                response.End();
+                return RedirectToAction("PaymentsByDate", new{ startDate, endDate});
             }
-            sb.Append(",,,,,,,TOTAL,");
-            sb.Append($"${TotalInCents / 100}.{TotalInCents % 100:00}");
-            var response = System.Web.HttpContext.Current.Response;
-            response.BufferOutput = true;
-            response.Clear();
-            response.ClearHeaders();
-            response.ContentEncoding = Encoding.Unicode;
-            response.AddHeader("content-disposition", "attachment;filename="
-                                                      + "PaymentList" + DateTime.Today.ToString("MM-dd-yy") + ".csv");
-            response.ContentType = "text/plain";
-            response.Write(sb);
-            response.End();
-            return RedirectToAction("PaymentsByDate", new{ startDate, endDate});
-            }
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
+            protected override void Dispose(bool disposing)
             {
-                db.Dispose();
+                if (disposing)
+                {
+                    db.Dispose();
+                }
+                base.Dispose(disposing);
             }
-            base.Dispose(disposing);
-        }
     }
 }
