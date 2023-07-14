@@ -28,11 +28,16 @@ namespace BHelp
             var historyList = "";
             foreach (var pymnt in payments)
             {
-                var strDt = pymnt.Date.ToString("MM/dd/yyyy");
+                var strDt = pymnt.Date.ToString("MM/dd/yyyy ");  // space after the date
                 var cat = catList[pymnt.Category - 1];
                 var amt = pymnt.StringDollarAmount;
                 //var act = pymnt.Action.Substring(0, 20);
-                historyList += strDt + " " + cat + " " + amt + Environment.NewLine;
+                cat = cat.PadRight(14 - cat.Length);
+                amt = amt.PadLeft(10 - amt.Length);
+                //var item = string.Format({0}, {1}, {2})  // formatting not working
+                //var item = $"{strDt,-11} {cat,14} {amt,10}";
+                //historyList += item + Environment.NewLine;
+                historyList += strDt + cat + " " + amt + Environment.NewLine;
             }
             return historyList;
         }
@@ -58,12 +63,32 @@ namespace BHelp
                 var grandTotal = 0;
                 foreach (var pymnt in payments)
                 {
-                    var strDt = pymnt.Date.ToString("MM/dd/yyyy");
+                    var strDt = pymnt.Date.ToString("MM/dd/yyyy "); // space after date
                     var cat = catList[pymnt.Category - 1];
-                    //var cat = "{catList[pymnt.Category - 1], -24}";
+                    cat = (cat + "          ").Substring(0, 14);
                     var amt = pymnt.StringDollarAmount;
-                    //amt = $"{amt,10}";
-                    historyList += strDt + " " + cat + " " + amt + Environment.NewLine;
+                    switch (pymnt.StringDollarAmount.Length)
+                    {
+                        case 4:
+                            amt = "      " + amt;
+                            break;
+                        case 5:
+                            amt = "     " + amt;
+                            break;
+                        case 6:
+                            amt = "    " + amt;
+                            break;
+                        case 7:
+                            amt = "   " + amt;
+                            break;
+                        case 8:
+                            amt = "  " + amt;
+                            break;
+                        case 9:
+                            amt = " " + amt;
+                            break;
+                    }
+                    historyList += strDt + cat +  amt + Environment.NewLine;
                     catTotals[pymnt.Category - 1] += pymnt.AmountInCents;
                     grandTotal += pymnt.AmountInCents;
                     numberOfPayments += 1;
@@ -71,8 +96,9 @@ namespace BHelp
 
                 var paymentData = new AssistanceDataViewModel()
                 {
-                    StartDate = payments[0].Date,
-                    EarliestPaymentDate = payments[0].Date,  
+                    StartDate = payments[payments.Count -1].Date,
+                    //StartDate = (DateTime)startDate,
+                    EarliestPaymentDate = payments[payments.Count - 1].Date,  
                     EndDate = (DateTime)endDate,
                     PaymentHistoryList = historyList,
                     TotalsByCategoryInCents = catTotals, 

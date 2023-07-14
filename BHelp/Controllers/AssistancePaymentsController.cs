@@ -194,7 +194,6 @@ namespace BHelp.Controllers
                 if (clientId != null) 
                 { Session["AssistanceClientId"] = clientId; }
                 else
-
                 { clientId = (int)Session["AssistanceClientId"]; }
                 var view = new AssistanceViewModel
                 {

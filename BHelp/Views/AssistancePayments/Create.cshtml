@@ -40,16 +40,16 @@
             </table>
             <table>
                 <tr>
-                    <td>Starting Date:</td>
+                    <td>Earliest Date:</td>
                     <td>
                         @Html.TextBox("Start Date", Model.PaymentData.StartDate, "{0:MM/dd/yyyy}",
-                            new { id = "StartDate", style = "width: 75px;text-align:center" })
+                            new { id = "StartDate", style = "width: 75px;text-align:center", @readonly = true })
                         <span style="color: darkmagenta">&#8592;Click to change</span>
                     </td> @*Html left-arrow*@
                     <td>&nbsp;&nbsp;Ending Date:</td>
                     <td>
                         @Html.TextBox("End Date:", Model.PaymentData.EndDate, "{0:MM/dd/yyyy}",
-                            new { id = "EndDate", style = "width:75px; text-align:center" })
+                            new { id = "EndDate", style = "width:75px; text-align:center", @readonly = true })
                         <span style="color: darkmagenta">&#8592;Click to change</span>
                     </td> @*Html left-arrow*@
                 </tr>
@@ -158,15 +158,16 @@
 </body>
 </html>
 
-@*<script>
+<script>
     $(document).ready(function () {
         ".datepicker".datepicker({
-            dateFormat: "dd-mm-yy",
+            dateFormat: "mm-dd-yyyy",
             changemonth: true,
-            changeyear: true
+            changeyear: true,
+            yearRange: "2000:2050"
         });
     });
-</script>*@
+</script>
 <script>
     $(function () {
         window.$("#PaymentDate").datepicker();
