@@ -17,7 +17,7 @@ namespace BHelp
 {
     public static class AppRoutines
     {
-        public static string GetPaymentHistoryList(int clientId, DateTime startDate, DateTime endDate)
+        public static string GetAssistancePaymentHistoryList(int clientId, DateTime startDate, DateTime endDate)
         {
             var catList = GetAssistanceCategoriesList(); 
             using var db = new BHelpContext();
@@ -35,6 +35,68 @@ namespace BHelp
                 historyList += strDt + " " + cat + " " + amt + Environment.NewLine;
             }
             return historyList;
+        }
+
+        public static AssistanceDataViewModel GetAssistancePaymentData(int clientId, DateTime? startDate, DateTime? endDate)
+        {
+            if (startDate == null) startDate = DateTime.MinValue;
+            if (endDate == null) endDate = DateTime.Today;
+            var catList = GetAssistanceCategoriesList();
+            using var db = new BHelpContext();
+            var payments = db.AssistancePayments
+                .Where(i => i.ClientId == clientId
+                            && i.Date >= startDate && i.Date <= endDate)
+                .OrderByDescending(d => d.Date).ToList();
+            if (payments.Count > 0)
+            {
+                var historyList = "";
+                List<int> catTotals = new List<int>();
+                var numberOfPayments = 0;
+                for (var i = 0; i < catList.Count; i++)
+                { catTotals.Add(0); }
+
+                var grandTotal = 0;
+                foreach (var pymnt in payments)
+                {
+                    var strDt = pymnt.Date.ToString("MM/dd/yyyy");
+                    var cat = catList[pymnt.Category - 1];
+                    //var cat = "{catList[pymnt.Category - 1], -24}";
+                    var amt = pymnt.StringDollarAmount;
+                    //amt = $"{amt,10}";
+                    historyList += strDt + " " + cat + " " + amt + Environment.NewLine;
+                    catTotals[pymnt.Category - 1] += pymnt.AmountInCents;
+                    grandTotal += pymnt.AmountInCents;
+                    numberOfPayments += 1;
+                }
+
+                var paymentData = new AssistanceDataViewModel()
+                {
+                    StartDate = payments[0].Date,
+                    EarliestPaymentDate = payments[0].Date,  
+                    EndDate = (DateTime)endDate,
+                    PaymentHistoryList = historyList,
+                    TotalsByCategoryInCents = catTotals, 
+                    GrandTotalString  = $"${grandTotal / 100}.{grandTotal % 100:00}", 
+                    NumberOfPayments = numberOfPayments,
+                    CategoryList = catList,
+                    TotalsByCategoryString = new List<string>()
+                };
+                foreach (var total in catTotals)
+                {
+                    paymentData.TotalsByCategoryString.Add($"${total / 100}.{total % 100:00}");
+                }
+                return paymentData;
+            }
+
+            var noPaymentData = new AssistanceDataViewModel()
+            {
+                StartDate = (DateTime)startDate,
+                EndDate = (DateTime)endDate,
+                CategoryList = catList,
+                NumberOfPayments = 0,
+                GrandTotalString  = "$0"
+            };
+            return noPaymentData; 
         }
 
         public static List<Client> GetAllClientsList()

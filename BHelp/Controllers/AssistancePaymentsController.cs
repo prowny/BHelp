@@ -198,24 +198,10 @@ namespace BHelp.Controllers
                 { clientId = (int)Session["AssistanceClientId"]; }
                 var view = new AssistanceViewModel
                 {
-                    //ClientSelectList =new List<SelectListItem>(),
                     ClientId = (int)clientId,
                     Date = DateTime.Today,
                     AssistanceCategoriesSelectList= AppRoutines.GetAssistanceCategoriesSelectList()
                 };
-
-                var nullDate = new DateTime(1, 1, 1);
-                if (startDate == null || startDate == nullDate)
-                {
-                    // Default to this year YTD
-                    view.EndDate = DateTime.Today;
-                    view.StartDate = new DateTime(DateTime.Today.Year, 1, 1);
-                }
-                else
-                {
-                    if (endDate != null) view.EndDate = (DateTime)endDate;
-                    view.StartDate = (DateTime)startDate;
-                }
                 
                 var client = AppRoutines.GetClientRecord(view.ClientId);
                 if (client != null)
@@ -223,8 +209,10 @@ namespace BHelp.Controllers
                     view.FullName = client.FirstName + " " + client.LastName;
                 }
 
-                // Load view PaymentHistoryList 
-                view.PaymentHistoryList = AppRoutines.GetPaymentHistoryList((int)clientId, view.StartDate, view.EndDate);
+                // Load view PaymentData
+                //view.PaymentHistoryList = AppRoutines.GetAssistancePaymentHistoryList((int)clientId, view.StartDate, view.EndDate);
+                view.PaymentData = AppRoutines.GetAssistancePaymentData((int)clientId, startDate, endDate);
+
                 return View(view);
             }
 

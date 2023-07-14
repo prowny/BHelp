@@ -42,13 +42,13 @@
                 <tr>
                     <td>Starting Date:</td>
                     <td>
-                        @Html.TextBox("Start Date", Model.StartDate, "{0:MM/dd/yyyy}",
+                        @Html.TextBox("Start Date", Model.PaymentData.StartDate, "{0:MM/dd/yyyy}",
                             new { id = "StartDate", style = "width: 75px;text-align:center" })
                         <span style="color: darkmagenta">&#8592;Click to change</span>
                     </td> @*Html left-arrow*@
                     <td>&nbsp;&nbsp;Ending Date:</td>
                     <td>
-                        @Html.TextBox("End Date:", Model.EndDate, "{0:MM/dd/yyyy}",
+                        @Html.TextBox("End Date:", Model.PaymentData.EndDate, "{0:MM/dd/yyyy}",
                             new { id = "EndDate", style = "width:75px; text-align:center" })
                         <span style="color: darkmagenta">&#8592;Click to change</span>
                     </td> @*Html left-arrow*@
@@ -56,9 +56,32 @@
             </table>
             <table >
                 <tr >
-                    <td >Payments in Date Range:</td>
-                    <td >@(Html.TextAreaFor(m => m.PaymentHistoryList,
-                             new{style="width: 300px;"}))</td> </tr>
+                    <td >Payments in Date Range</td><td >(@Model.PaymentData.NumberOfPayments):</td>
+                    <td >@(Html.TextAreaFor(m => m.PaymentData.PaymentHistoryList,
+                             new{style="width: 300px;"}))</td>
+
+                    @if (Model.PaymentData.NumberOfPayments > 0)
+                    {
+                        <td >&nbsp;&nbsp;</td>
+                        for (var i = 0; i < Model.AssistanceCategoriesSelectList.Count(); i++)
+                        {
+                            <td ><b>@Model.PaymentData.CategoryList[i]</b></td>
+                        }
+                        <td ><b >Total</b></td>
+                    }
+                </tr>
+
+                @if (Model.PaymentData.NumberOfPayments > 0)
+                {
+                    <tr >
+                        <td ></td><td ></td><td ></td><td ></td>
+                        @for (var i = 0; i < Model.AssistanceCategoriesSelectList.Count(); i++)
+                        {
+                            <td style="text-align: center">@Model.PaymentData.TotalsByCategoryString[i]</td>
+                        }
+                        <td style="text-align: center">@Model.PaymentData.GrandTotalString</td>
+                    </tr>
+                }
             </table>
         </div>
         <hr />
