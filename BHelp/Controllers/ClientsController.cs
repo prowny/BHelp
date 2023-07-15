@@ -197,8 +197,9 @@ namespace BHelp.Controllers
         // POST: Clients/Edit/5
         [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Active,FirstName,LastName,Age," +
-                           "StreetNumber,StreetName,City,Zip,Phone,Email,Notes,ReturnURL")] Client client)
+        public ActionResult Edit([Bind(Include = "Id,Active,FirstName,LastName,Age," 
+                  + "StreetNumber,StreetName,City,Zip,Phone,Email,Notes,DateCreated,"
+                  + "ReturnURL")] Client client)
         {
             if (ModelState.IsValid)
             {

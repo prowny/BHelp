@@ -116,7 +116,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Email , htmlAttributes: new {@class = "control-label col-md-2"})
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Email , new {htmlAttributes = new {@class = "form-control"}})
+                @Html.EditorFor(model => model.Email , new {htmlAttributes = new { size = 50, @class = "form-control"}})
                 @Html.ValidationMessageFor(model => model.Email, "", new {@class = "text-danger"})
             </div>
         </div>
@@ -129,8 +129,19 @@
                 @Html.ValidationMessageFor(model => model.Notes, "", new {@class = "text-danger"})
             </div>
         </div>
+            
+        <div class="form-group">
+            @Html.LabelFor(model => model.DateCreated, htmlAttributes: new { @class = "control-label col-md-2", type = "date" })
+            <div class="col-md-10">
+                @Html.TextBoxFor( model => model.DateCreated,
+                    "{0: MM/dd/yyyy}",
+                    new { htmlAttributes = new { style = "width: 25px", @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DateCreated, "", new { @class = "text-danger" })
+            </div>
+        </div>
 
         <div class="form-group">
+            <br />
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" id="SaveButton"/>
             </div>

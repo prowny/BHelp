@@ -1069,7 +1069,7 @@ namespace BHelp.Controllers
                         updateData.GiftCards = delivery.GiftCards;
                         updateData.GiftCardsEligible = delivery.GiftCardsEligible;
                         updateData.ODNotes = delivery.ODNotes;
-                        updateData.DriverId = updateData.DriverId;
+                        updateData.DriverId = delivery.DriverId;
                         updateData.ODId = delivery.ODId;
                         updateData.DeliveryDateODId = delivery.DeliveryDateODId;
                         updateData.DriverNotes = delivery.DriverNotes;
