@@ -55,44 +55,48 @@ namespace BHelp
             if (payments.Count > 0)
             {
                 var historyList = "";
-                List<int> catTotals = new List<int>();
+                var currentYear = payments[0].Date.Year;
+                decimal currentYTDTotal = 0;
+                //var catTotals = new List<int>();
                 var numberOfPayments = 0;
-                for (var i = 0; i < catList.Count; i++)
-                { catTotals.Add(0); }
+                //for (var i = 0; i < catList.Count; i++)
+                //{ catTotals.Add(0); }
 
-                var grandTotal = 0;
+                decimal grandTotal = 0;
                 foreach (var pymnt in payments)
                 {
-                    var strDt = pymnt.Date.ToString("MM/dd/yyyy "); // space after date
+                    if (pymnt.Date.Year != currentYear)  // Yearly subtotal
+                    {
+                        var curTotal = "           Total for " + currentYear.ToString();
+                        var strAmt = currentYTDTotal.ToString("C");   //$"${currentYTDTotal / 100}.{currentYTDTotal % 100:00}";
+                        //strAmt = strAmt.Replace(".-", "."); // replace negative modulus
+                        curTotal += GetPaddedDollarAmount(strAmt);
+
+                        historyList += curTotal + Environment.NewLine + Environment.NewLine;
+
+                        currentYear = pymnt.Date.Year;
+                        currentYTDTotal = 0;
+                    }
+                    var strDt = pymnt.Date.ToString("MM/dd/yyyy "); // note space after date
                     var cat = catList[pymnt.Category - 1];
                     cat = (cat + "          ").Substring(0, 14);
-                    var amt = pymnt.StringDollarAmount;
-                    switch (pymnt.StringDollarAmount.Length)
-                    {
-                        case 4:
-                            amt = "      " + amt;
-                            break;
-                        case 5:
-                            amt = "     " + amt;
-                            break;
-                        case 6:
-                            amt = "    " + amt;
-                            break;
-                        case 7:
-                            amt = "   " + amt;
-                            break;
-                        case 8:
-                            amt = "  " + amt;
-                            break;
-                        case 9:
-                            amt = " " + amt;
-                            break;
-                    }
-                    historyList += strDt + cat +  amt + Environment.NewLine;
-                    catTotals[pymnt.Category - 1] += pymnt.AmountInCents;
-                    grandTotal += pymnt.AmountInCents;
+                    var amt = pymnt.AmountDecimal.ToString("C"); //pymnt.StringDollarAmount.Replace( ".-",".");
+                    amt = GetPaddedDollarAmount(amt);
+                    historyList += strDt + cat + amt + Environment.NewLine;
+                    //catTotals[pymnt.Category - 1] += pymnt.AmountDecimal ;
+                    grandTotal += pymnt.AmountDecimal ;
+                    currentYTDTotal += pymnt.AmountDecimal;
                     numberOfPayments += 1;
                 }
+                historyList += "           Total for " + currentYear.ToString();
+                var curYTD = currentYTDTotal.ToString("C");  //$"${currentYTDTotal / 100}.{currentYTDTotal % 100:00}";
+                //curYTD = curYTD.Replace(".-", "."); // replace negative modulus
+                historyList += GetPaddedDollarAmount(curYTD) + Environment.NewLine;
+                historyList += Environment.NewLine;
+                historyList += "             Grand Total ";
+                var grandTot = $"${grandTotal / 100}.{grandTotal % 100:00}";
+                grandTot = grandTot.Replace(".-", ".");  // replace negative modulus
+                historyList += GetPaddedDollarAmount(grandTot);
 
                 var paymentData = new AssistanceDataViewModel()
                 {
@@ -101,16 +105,16 @@ namespace BHelp
                     EarliestPaymentDate = payments[payments.Count - 1].Date,  
                     EndDate = (DateTime)endDate,
                     PaymentHistoryList = historyList,
-                    TotalsByCategoryInCents = catTotals, 
+                    //TotalsByCategoryInCents = catTotals, 
                     GrandTotalString  = $"${grandTotal / 100}.{grandTotal % 100:00}", 
                     NumberOfPayments = numberOfPayments,
                     CategoryList = catList,
                     TotalsByCategoryString = new List<string>()
                 };
-                foreach (var total in catTotals)
-                {
-                    paymentData.TotalsByCategoryString.Add($"${total / 100}.{total % 100:00}");
-                }
+                //foreach (var total in catTotals)
+                //{
+                //    paymentData.TotalsByCategoryString.Add($"${total / 100}.{total % 100:00}");
+                //}
                 return paymentData;
             }
 
@@ -123,6 +127,33 @@ namespace BHelp
                 GrandTotalString  = "$0"
             };
             return noPaymentData; 
+        }
+
+        private static string GetPaddedDollarAmount(string amt)
+        {
+            switch (amt.Length) // set width to 10 spaces
+            {
+                case 4:
+                    amt = "      " + amt;
+                    break;
+                case 5:
+                    amt = "     " + amt;
+                    break;
+                case 6:
+                    amt = "    " + amt;
+                    break;
+                case 7:
+                    amt = "   " + amt;
+                    break;
+                case 8:
+                    amt = "  " + amt;
+                    break;
+                case 9:
+                    amt = " " + amt;
+                    break;
+            }
+
+            return amt;
         }
 
         public static List<Client> GetAllClientsList()

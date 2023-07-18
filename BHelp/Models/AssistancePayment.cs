@@ -13,6 +13,7 @@ namespace BHelp.Models
         public int AmountInCents { get; set; }
         public DateTime Date { get; set; }
         public string Note { get; set; }
+        public decimal AmountDecimal { get; set; }
 
         [NotMapped]
         public string StringDollarAmount

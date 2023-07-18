@@ -13,6 +13,21 @@ namespace BHelp
 {
     public static class Utilities
     {
+        public static string ConvertPaymentsToDecimal()
+        {
+            using (var db = new BHelpContext())
+            {
+                var payments = db.AssistancePayments.ToList();
+                foreach (var pymt in payments)
+                {
+                    var amt = $"{pymt.AmountInCents / 100}.{pymt.AmountInCents % 100:00}";
+                    amt = amt.Replace(".-", ".");
+                    pymt.AmountDecimal = Convert.ToDecimal(amt);
+                }
+                db.SaveChanges();
+            }
+            return null;
+        }
         public static void test()
         {
             using var db = new BHelpContext();

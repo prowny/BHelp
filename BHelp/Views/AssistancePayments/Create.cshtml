@@ -35,7 +35,9 @@
                 <tr>
                     <td><b>Client Payment Data</b></td>&nbsp;&nbsp;
                     <td>&nbsp;&nbsp;&nbsp;for client</td>
-                    <td>@Html.Label(@Model.FullName)</td>
+                    <td>@Html.Label(@Model.FullName)</td>&nbsp;&nbsp;
+                    <td>&nbsp;&nbsp;Household members:</td>
+                    <td>@Html.DisplayFor(h => h.HouseholdMembersString)</td>
                 </tr>
             </table>
             <table>
@@ -60,7 +62,7 @@
                     <td >@(Html.TextAreaFor(m => m.PaymentData.PaymentHistoryList,
                              new{style="width: 300px;"}))</td>
 
-                    @if (Model.PaymentData.NumberOfPayments > 0)
+                    @*@if (Model.PaymentData.NumberOfPayments > 0)
                     {
                         <td >&nbsp;&nbsp;</td>
                         for (var i = 0; i < Model.AssistanceCategoriesSelectList.Count(); i++)
@@ -68,10 +70,10 @@
                             <td ><b>@Model.PaymentData.CategoryList[i]</b></td>
                         }
                         <td ><b >Total</b></td>
-                    }
+                    }*@
                 </tr>
 
-                @if (Model.PaymentData.NumberOfPayments > 0)
+                @*@if (Model.PaymentData.NumberOfPayments > 0)
                 {
                     <tr >
                         <td ></td><td ></td><td ></td><td ></td>
@@ -81,7 +83,7 @@
                         }
                         <td style="text-align: center">@Model.PaymentData.GrandTotalString</td>
                     </tr>
-                }
+                }*@
             </table>
         </div>
         <hr />
@@ -98,8 +100,7 @@
                 <tr>
                     <td style="text-align: right">@Html.Label("Client:")</td>
                     <td>
-                        @Html.TextBoxFor(m => m.FullName,
-                            new { @readonly = "readonly" })
+                        @Html.DisplayFor(m => m.FullName)
 
                         @*@Html.DropDownListFor(model => model.ClientId,
                             new SelectList(Model.ClientSelectList, "Value",
@@ -126,7 +127,8 @@
                 <tr>
                     <td style="text-align: right">@Html.Label("Amount:")</td>
                     <td>
-                        @Html.TextBoxFor(model => model.AmountDecimal, new { style = "width:50px;", htmlAttributes = new { @class = "form-control" } })
+                        @Html.TextBoxFor(model => model.AmountDecimal,
+                            new { style = "width:50px;", onclick = "$(this).select();" , htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.AmountDecimal, "", new { @class = "text-danger" })
                     </td>
                 </tr>

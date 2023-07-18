@@ -73,11 +73,13 @@ namespace BHelp.Controllers
                 .OrderByDescending(d => d.Date).ToList();
 
             var categoryList = AppRoutines.GetAssistanceCategoriesList();
+
             foreach (var pymt in _paymentList)
             {
                 pymt.DateString = pymt.Date.ToString("MM/dd/yyyy");
                 var c = Convert.ToByte(pymt.Category);
                 pymt.ActionCategory = categoryList[c - 1];
+                //pymt.StringDollarAmount = pymt.StringDollarAmount.Replace(".-", "."); // replace negative modulus
             }
             view.PaymentList = _paymentList;
             view.ClientId = (int)clientId;
@@ -206,6 +208,23 @@ namespace BHelp.Controllers
                 if (client != null)
                 {
                     view.FullName = client.FirstName + " " + client.LastName;
+                    view.StreetNumber = client.StreetNumber;
+                    view.StreetName = client.StreetName;
+                    var familyNembers = AppRoutines.GetFamilyMembers(client.Id);
+                    
+                    var mbrCount = 0;
+                    foreach (var mbr in familyNembers)
+                    {
+                        if (mbrCount == 0)
+                        {
+                            view.HouseholdMembersString = view.FullName;
+                            mbrCount = 1;
+                        }
+                        else
+                        {
+                            view.HouseholdMembersString += " / " + mbr.FirstName + " " + mbr.LastName;
+                        }
+                    }
                 }
 
                 // Load view PaymentData
@@ -265,9 +284,7 @@ namespace BHelp.Controllers
                 var actionList = AppRoutines.GetAssistanceCategoriesSelectList();
                 actionList.Find(c => c.Value == assistancePayment.Category.ToString())
                     .Selected = true;
-
-                var amt = Convert.ToSingle(assistancePayment.AmountInCents);
-           
+            
                 var view = new AssistanceViewModel()
                 {
                     ClientSelectList = clientList,
@@ -276,7 +293,7 @@ namespace BHelp.Controllers
                     Action = assistancePayment.Action,
                     CategoryId =assistancePayment.Category,
                     AssistanceCategoriesSelectList = actionList,
-                    AmountDecimal = (decimal)(amt / 100),
+                    AmountDecimal = assistancePayment.AmountDecimal,
                     Note =assistancePayment.Note, 
                     ReturnURL = returnURL 
                 };
@@ -321,7 +338,7 @@ namespace BHelp.Controllers
                         aRec.ClientId = assistancePayment.ClientId;
                         aRec.Category = Convert.ToByte( assistancePayment.CategoryId);
                         aRec.Action = assistancePayment.Action;
-                        aRec.AmountInCents = (int)(assistancePayment.AmountDecimal * 100);
+                        aRec.AmountDecimal = assistancePayment.AmountDecimal;
                         aRec.Note = assistancePayment.Note;
                         db.SaveChanges();
                     }
@@ -494,6 +511,12 @@ namespace BHelp.Controllers
                 response.Write(sb);
                 response.End();
                 return RedirectToAction("PaymentsByDate", new{ startDate, endDate});
+            }
+
+            public ActionResult ConvertPaymentsToDecimal()
+            {
+                Utilities.ConvertPaymentsToDecimal();
+                return null;
             }
             protected override void Dispose(bool disposing)
             {

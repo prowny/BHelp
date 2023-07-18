@@ -79,7 +79,7 @@
                         <td title = @payment.AddressToolTip>@payment.AddressString</td>
                         <td>@payment.ActionCategory</td>
                         <td title = @payment.ActionToolTip>@payment.Action</td>
-                        <td style="text-align: center">@payment.StringDollarAmount</td>
+                        <td style="text-align: center">@payment.AmountDecimal.ToString("C")</td>
                         <td title ="@payment.NoteToolTip">@payment.Note</td>
                         <td>@Html.ActionLink("Edit", "Edit", new { id = payment.Id, returnURL = Model.ReturnURL })</td>
                     </tr>

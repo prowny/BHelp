@@ -67,7 +67,7 @@
                     <td>@payment.DateString</td>
                     <td style="text-align: center">@payment.ActionCategory</td>
                     <td style="text-align: center">@payment.Action</td>
-                    <td style="text-align: center">@payment.StringDollarAmount</td>
+                    <td style="text-align: center">@payment.AmountDecimal.ToString("C")</td>
                     <td style="text-align: center">@payment.Note</td>
                     <td>
                         @Html.ActionLink("Edit", "Edit", new { id = payment.Id , returnURL = "Individual"})
