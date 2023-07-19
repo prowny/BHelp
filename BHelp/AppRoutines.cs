@@ -84,7 +84,7 @@ namespace BHelp
                     amt = GetPaddedDollarAmount(amt);
                     historyList += strDt + cat + amt + Environment.NewLine;
                     //catTotals[pymnt.Category - 1] += pymnt.AmountDecimal ;
-                    grandTotal += pymnt.AmountDecimal ;
+                    grandTotal += pymnt.AmountDecimal;
                     currentYTDTotal += pymnt.AmountDecimal;
                     numberOfPayments += 1;
                 }
@@ -94,9 +94,9 @@ namespace BHelp
                 historyList += GetPaddedDollarAmount(curYTD) + Environment.NewLine;
                 historyList += Environment.NewLine;
                 historyList += "             Grand Total ";
-                var grandTot = $"${grandTotal / 100}.{grandTotal % 100:00}";
-                grandTot = grandTot.Replace(".-", ".");  // replace negative modulus
-                historyList += GetPaddedDollarAmount(grandTot);
+                //var grandTot = $"${grandTotal / 100}.{grandTotal % 100:00}";
+                //grandTot = grandTot.Replace(".-", ".");  // replace negative modulus
+                historyList += GetPaddedDollarAmount(grandTotal.ToString("C"));
 
                 var paymentData = new AssistanceDataViewModel()
                 {

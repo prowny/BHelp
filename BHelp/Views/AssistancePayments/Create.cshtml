@@ -57,10 +57,16 @@
                 </tr>
             </table>
             <table >
-                <tr >
-                    <td >Payments in Date Range</td><td >(@Model.PaymentData.NumberOfPayments):</td>
-                    <td >@(Html.TextAreaFor(m => m.PaymentData.PaymentHistoryList,
-                             new{style="width: 300px;"}))</td>
+                <tr>
+                    <td>Payments in Date Range</td>
+                    <td>(@Model.PaymentData.NumberOfPayments):</td>
+                    <td>
+                        @(Html.TextAreaFor(m => m.PaymentData.PaymentHistoryList,
+                            new{style="width: 300px;"}))
+                    </td>
+                    <td>
+                        @*??? Html.DropDownList("Types", Model.Types, new { @disabled = "disabled" })*@
+                    </td>
 
                     @*@if (Model.PaymentData.NumberOfPayments > 0)
                     {

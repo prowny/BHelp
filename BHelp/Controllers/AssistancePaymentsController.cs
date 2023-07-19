@@ -248,7 +248,7 @@ namespace BHelp.Controllers
                         ClientId = assistancePayment.ClientId,
                         Category = Convert .ToByte(assistancePayment.CategoryId),
                         Action = assistancePayment.Action,
-                        AmountInCents = (int)(assistancePayment.AmountDecimal * 100),
+                        AmountDecimal = assistancePayment .AmountDecimal,
                         Note = assistancePayment.Note 
                     };
 
