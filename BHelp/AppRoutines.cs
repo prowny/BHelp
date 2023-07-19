@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Web;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
@@ -17,29 +18,36 @@ namespace BHelp
 {
     public static class AppRoutines
     {
-        public static string GetAssistancePaymentHistoryList(int clientId, DateTime startDate, DateTime endDate)
+        public static List<SelectListItem> GetPaymentHistorySelectList(int clientId, DateTime? startDate, DateTime? endDate)
         {
+            if (startDate == null) startDate = DateTime.MinValue;
+            if (endDate == null || endDate == DateTime.MinValue) endDate = DateTime.Today;
             var catList = GetAssistanceCategoriesList(); 
             using var db = new BHelpContext();
             var payments = db.AssistancePayments
                         .Where(i => i.ClientId == clientId 
                         && i.Date >= startDate && i.Date <= endDate) 
                            .OrderByDescending( d => d.Date).ToList();
-            var historyList = "";
+            //var historyList = "";
+
+            var paymentHistorySelectList = new List<SelectListItem>();
             foreach (var pymnt in payments)
             {
                 var strDt = pymnt.Date.ToString("MM/dd/yyyy ");  // space after the date
                 var cat = catList[pymnt.Category - 1];
-                var amt = pymnt.StringDollarAmount;
-                //var act = pymnt.Action.Substring(0, 20);
-                cat = cat.PadRight(14 - cat.Length);
-                amt = amt.PadLeft(10 - amt.Length);
-                //var item = string.Format({0}, {1}, {2})  // formatting not working
-                //var item = $"{strDt,-11} {cat,14} {amt,10}";
-                //historyList += item + Environment.NewLine;
-                historyList += strDt + cat + " " + amt + Environment.NewLine;
+                cat = (cat + "            ").Substring(0, 14);
+                cat = cat.Replace(" ", "_");
+                var amt = pymnt.AmountDecimal.ToString("C");
+                amt = GetPaddedDollarAmount(amt);
+                var item = new SelectListItem()
+                {
+                    Value = "0",
+                    Text = strDt + cat + amt
+                };
+                paymentHistorySelectList.Add(item);
             }
-            return historyList;
+
+            return paymentHistorySelectList;
         }
 
         public static AssistanceDataViewModel GetAssistancePaymentData(int clientId, DateTime? startDate, DateTime? endDate)
@@ -67,7 +75,7 @@ namespace BHelp
                 {
                     if (pymnt.Date.Year != currentYear)  // Yearly subtotal
                     {
-                        var curTotal = "           Total for " + currentYear.ToString();
+                        var curTotal = "           Total for " + currentYear;
                         var strAmt = currentYTDTotal.ToString("C");   //$"${currentYTDTotal / 100}.{currentYTDTotal % 100:00}";
                         //strAmt = strAmt.Replace(".-", "."); // replace negative modulus
                         curTotal += GetPaddedDollarAmount(strAmt);

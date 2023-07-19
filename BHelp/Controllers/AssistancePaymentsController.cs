@@ -228,7 +228,7 @@ namespace BHelp.Controllers
                 }
 
                 // Load view PaymentData
-                //view.PaymentHistoryList = AppRoutines.GetAssistancePaymentHistoryList((int)clientId, view.StartDate, view.EndDate);
+                view.PaymentHistorySelectList = AppRoutines.GetPaymentHistorySelectList((int)clientId, view.StartDate, view.EndDate);
                 view.PaymentData = AppRoutines.GetAssistancePaymentData((int)clientId, startDate, endDate);
 
                 return View(view);
@@ -281,9 +281,9 @@ namespace BHelp.Controllers
                 clientList.Find(c => c.Value == assistancePayment.ClientId.ToString())
                     .Selected = true;
             
-                var actionList = AppRoutines.GetAssistanceCategoriesSelectList();
-                actionList.Find(c => c.Value == assistancePayment.Category.ToString())
-                    .Selected = true;
+                //var actionList = AppRoutines.GetAssistanceCategoriesSelectList();
+                //actionList.Find(c => c.Value == assistancePayment.Category.ToString())
+                //    .Selected = true;
             
                 var view = new AssistanceViewModel()
                 {
@@ -292,7 +292,7 @@ namespace BHelp.Controllers
                     Date = assistancePayment .Date,
                     Action = assistancePayment.Action,
                     CategoryId =assistancePayment.Category,
-                    AssistanceCategoriesSelectList = actionList,
+                    //AssistanceCategoriesSelectList = actionList,
                     AmountDecimal = assistancePayment.AmountDecimal,
                     Note =assistancePayment.Note, 
                     ReturnURL = returnURL 
@@ -435,7 +435,7 @@ namespace BHelp.Controllers
                     }
                 }
 
-                var TotalInCents = 0;
+                float Total = 0;
                 var sb = new StringBuilder();
             
                 sb.Append("Payment Dates:" + ',' + ',' + startDate.ToShortDateString()
@@ -483,8 +483,8 @@ namespace BHelp.Controllers
                     }
 
                     sb.Append(pymnt.Date.ToString("MM/dd/yyyy") + ',');
-                    sb.Append(pymnt.StringDollarAmount + ',');
-                    TotalInCents += pymnt.AmountInCents;
+                    sb.Append(pymnt.AmountDecimal.ToString("C")); 
+                    Total += (float)pymnt.AmountDecimal;
                     if (pymnt.Note == null)
                     { sb.Append(',');}
                     else
@@ -499,7 +499,7 @@ namespace BHelp.Controllers
                     sb.AppendLine();
                 }
                 sb.Append(",,,,,,,TOTAL,");
-                sb.Append($"${TotalInCents / 100}.{TotalInCents % 100:00}");
+                sb.Append(Total);
                 var response = System.Web.HttpContext.Current.Response;
                 response.BufferOutput = true;
                 response.Clear();

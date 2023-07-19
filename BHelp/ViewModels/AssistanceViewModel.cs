@@ -81,6 +81,7 @@ namespace BHelp.ViewModels
         public string BtnDelete { get; set; }
         public string PaymentHistoryList { get; set; }
         public AssistanceDataViewModel PaymentData { get; set; }
+        public List<SelectListItem> PaymentHistorySelectList { get; set; }
         public string StringDollarAmount
         {
             get => $"${AmountInCents / 100}.{AmountInCents % 100:00}";

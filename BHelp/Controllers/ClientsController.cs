@@ -151,7 +151,7 @@ namespace BHelp.Controllers
                 }
                 if (client.ReturnURL.Contains("Payment"))
                 {
-                    return RedirectToAction("Create", "AssistancePayments");
+                    return RedirectToAction("AssistancePaymentsMenu", "AssistancePayments");
                 }
                 return RedirectToAction("Index");
             }

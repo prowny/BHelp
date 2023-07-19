@@ -172,6 +172,8 @@
     {
         <div>
             @Html.ActionLink("Back to Assistance Payments Menu", "AssistancePaymentsMenu", "AssistancePayments", new { }, null)
+           <br />
+            @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
         </div>
     }
     else
@@ -180,7 +182,6 @@
             @Html.ActionLink("Back to List", "Index")
         </div>
     }
-
 
 </body>
 </html>
