@@ -281,10 +281,6 @@ namespace BHelp.Controllers
                 clientList.Find(c => c.Value == assistancePayment.ClientId.ToString())
                     .Selected = true;
             
-                //var actionList = AppRoutines.GetAssistanceCategoriesSelectList();
-                //actionList.Find(c => c.Value == assistancePayment.Category.ToString())
-                //    .Selected = true;
-            
                 var view = new AssistanceViewModel()
                 {
                     ClientSelectList = clientList,
@@ -292,7 +288,7 @@ namespace BHelp.Controllers
                     Date = assistancePayment .Date,
                     Action = assistancePayment.Action,
                     CategoryId =assistancePayment.Category,
-                    //AssistanceCategoriesSelectList = actionList,
+                    AssistanceCategoriesSelectList = AppRoutines.GetAssistanceCategoriesSelectList(),
                     AmountDecimal = assistancePayment.AmountDecimal,
                     Note =assistancePayment.Note, 
                     ReturnURL = returnURL 
@@ -483,12 +479,10 @@ namespace BHelp.Controllers
                     }
 
                     sb.Append(pymnt.Date.ToString("MM/dd/yyyy") + ',');
-                    sb.Append(pymnt.AmountDecimal.ToString("C")); 
+                    sb.Append(pymnt.AmountDecimal.ToString("C") + ","); 
                     Total += (float)pymnt.AmountDecimal;
-                    if (pymnt.Note == null)
-                    { sb.Append(',');}
-                    else
-                    if (pymnt.Note .Contains(","))
+
+                    if (pymnt.Note.Contains(","))
                     {
                         sb.Append("\"" + pymnt.Note + "\"" + ",");
                     }
