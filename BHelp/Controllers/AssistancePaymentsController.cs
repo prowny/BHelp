@@ -481,7 +481,9 @@ namespace BHelp.Controllers
                     sb.Append(pymnt.Date.ToString("MM/dd/yyyy") + ',');
                     sb.Append(pymnt.AmountDecimal.ToString("C") + ","); 
                     Total += (float)pymnt.AmountDecimal;
-
+                    if (pymnt.Note == null)
+                    { sb.Append(' ');}
+                    else
                     if (pymnt.Note.Contains(","))
                     {
                         sb.Append("\"" + pymnt.Note + "\"" + ",");
