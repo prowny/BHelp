@@ -479,23 +479,23 @@ namespace BHelp.Controllers
                     }
 
                     sb.Append(pymnt.Date.ToString("MM/dd/yyyy") + ',');
-                    sb.Append(pymnt.AmountDecimal.ToString("C") + ","); 
+                    sb.Append("\"" +pymnt.AmountDecimal.ToString("C") + "\","); 
                     Total += (float)pymnt.AmountDecimal;
-                    if (pymnt.Note == null)
-                    { sb.Append(' ');}
-                    else
-                    if (pymnt.Note.Contains(","))
-                    {
-                        sb.Append("\"" + pymnt.Note + "\"" + ",");
-                    }
-                    else
-                    {
-                        sb.Append(pymnt.Note + ",");
-                    }
+
+                    if (pymnt.Note != null)
+                        if (pymnt.Note.Contains(","))
+                        {
+                            sb.Append("\"" + pymnt.Note + "\"" + ",");
+                        }
+                        else
+                        {
+                            sb.Append(pymnt.Note + ",");
+                        }
                     sb.AppendLine();
                 }
+
                 sb.Append(",,,,,,,TOTAL,");
-                sb.Append(Total);
+                sb.Append("\"" +Total.ToString( "C") + "\"");
                 var response = System.Web.HttpContext.Current.Response;
                 response.BufferOutput = true;
                 response.Clear();
