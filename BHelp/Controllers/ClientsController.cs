@@ -126,7 +126,7 @@ namespace BHelp.Controllers
                 };
                 db.Clients.Add(newClient);
                 db.SaveChanges();
-                int clientId = newClient.Id;
+                var clientId = newClient.Id;
 
                 foreach (var member in client.FamilyMembers)
                 {
@@ -214,6 +214,25 @@ namespace BHelp.Controllers
                 client.DateOfBirth=DateTime.Today.AddYears(-client.Age);
                 db.Entry(client).State = EntityState.Modified;
                 db.SaveChanges();
+
+                // Check for an Open Delivery needing update:
+                var del = db.Deliveries.FirstOrDefault(s => s.ClientId == client.Id && s.Status == 0);
+                if (del != null)
+                {
+                    if (del.StreetNumber == null) { del.StreetNumber = ""; }
+                    else { del.StreetNumber = client.StreetNumber; }
+                    if (del.StreetName == null) { del.StreetName = ""; }
+                    else { del.StreetName = client.StreetName; }
+                    if (del.City  == null) { del.City  = ""; }
+                    else { del.City = client.City; }
+                    if (del.Phone == null) { del.Phone = ""; }
+                    else { del.Phone = client.Phone; }
+                    if (del.Zip == null) { del.Zip = ""; }
+                    else { del.Zip = client.Zip; }
+
+                    db.SaveChanges();
+                }
+
                 if (client.ReturnURL.Contains("LatestDeliveries"))
                 {
                     return RedirectToAction("ActiveClientsLatestDeliveries");
