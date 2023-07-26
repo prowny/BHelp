@@ -26,7 +26,6 @@
             <input type="hidden" name="HistoryStartDate" value="@Model.HistoryStartDate" />
             <input type="hidden" name="HistoryEndDate" value="@Model.HistoryEndDate" />
             <input type="hidden" name="GiftCardsEligible" value="@Model.GiftCardsEligible" />
-            @*<input type="hidden" name="ClientNameAddress" value="@Model.ClientNameAddress" />*@
             <input type="hidden" name="Phone" value="@Model.Phone" />
 
             @Html.AntiForgeryToken()
@@ -45,11 +44,11 @@
                         <td style="display: none" id="Id">@Html.Label(Model.Id.ToString())</td>
                     </tr>
                 </table>
-                <span><b>Client:</b>&nbsp;@Html.Label(Model.ClientNameAddress)&nbsp;</span>
+                <span><b>Client:&nbsp;</b></span>@Model.ClientNameAddress&nbsp; 
                 <span><b>Phone:</b>&nbsp;@Html.Label(Model.Phone)&nbsp;</span>
                 <span><b>Email:</b>&nbsp;@Model.Email</span>
                 <span><b>Permanent Notes:</b>&nbsp;@Html.TextBoxFor(n => n.Notes,
-                                                         new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip })</span>
+                    new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip })</span>
             </div>
             <span>
                 <b>Family:</b>&nbsp;
@@ -91,6 +90,17 @@
                             new { id = "DateDelivered", style = "width: 75px;" })
                         </td>
                         <td style="color: darkmagenta"> &#8592;Click to change</td>
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <td style="color: red">
+                                &nbsp;&nbsp;&nbsp;&nbsp;Administrator - Change Client:
+                            </td>
+                            <td >
+                                @Html.DropDownListFor(m => m.ClientId, new SelectList(Model.ClientSelectList,
+                                    "Value", "Text"), new { id = "NewClientId" })
+                                @Html.ValidationMessageFor(model => model.ODId, "", new { @class = "text-danger" })
+                            </td>
+                        }
                     </tr>
                 </table>
 
@@ -275,4 +285,21 @@
     {
         window.$("#SelectedStatus").val(status);
     };
+</script>
+<script >
+    window.$("#NewClientId").change(function () {
+        var RecId = window.$("#DeliveryId").val().toString();
+        var NewClientId = window.$("#NewClientId").val().toString();
+        var data = RecId + "|" + NewClientId; 
+        window.$.ajax({
+            type: "Get",
+            url: "/Deliveries/ChangeDeliveryClient?parameters=" + data,
+            success: function (data) {
+                window.$("body").html(data);
+            },
+            error: function (response) {
+                console.log(response.responseText);
+            }
+        });
+    });
 </script>

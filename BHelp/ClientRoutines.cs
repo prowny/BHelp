@@ -106,6 +106,35 @@ namespace BHelp
             return view;
         }
 
+        public static List<SelectListItem> GetClientSelectList(int clientId)
+        {
+            using var db = new BHelpContext();
+            //var recs = db.Deliveries.ToList();
+            //var uniqueClientsDeliveries  = recs.GroupBy(x => x.Id)
+            //    .Select(x => x.First()).ToList();
+
+            var clientSelectList = new List<SelectListItem>();
+            var clientList = db.Clients.OrderBy(c => c.LastName).ToList();
+            foreach (var client in clientList)
+            {
+                // Get only clients who already have a delivery: -- NO
+                //if (!db.Deliveries.Any(d => d.ClientId == client.Id)) continue;
+                //if (uniqueClientsDeliveries.Any(i => i.ClientId != client.Id) == false) continue;
+                var text = client.LastName + ", " + client.FirstName + " ";
+                text += client.StreetNumber + " " + client.StreetName;
+                text = text.PadRight(35);
+                text = text.Substring(0, 35);
+                var selListItem = new SelectListItem() { Value = client.Id.ToString(), Text = text };
+                if (clientId == client.Id)
+                {
+                    selListItem.Selected = true;
+                }
+
+                clientSelectList.Add(selListItem);
+            }
+            return clientSelectList ;
+        }
+
         private static int GetAge(DateTime dob)
         {
             TimeSpan span = DateTime.Now - dob;

@@ -866,6 +866,7 @@ namespace BHelp.Controllers
                     DriverName = AppRoutines.GetUserFullName(delivery.DriverId),
                     DriverNotes = delivery.DriverNotes,
                     DriversList = AppRoutines.GetDriversSelectList(),
+                    ClientSelectList =ClientRoutines .GetClientSelectList((int)id),
                     NamesAgesInHH = delivery.NamesAgesInHH,
                     SnapshotFamily = GetSnapshotFamily(delivery.NamesAgesInHH),
                     FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId),
@@ -2219,6 +2220,37 @@ namespace BHelp.Controllers
                     _KidSnacks = kidsnacksData[1],
                     _GiftCards = giftcardsData[1]
                 });
+            }
+
+            public ActionResult ChangeDeliveryClient(string parameters)
+            {
+                using var _db = new BHelpContext();
+                var data = parameters.Split(Convert.ToChar("|"));
+                var recId = Convert.ToInt32((data[0]));
+                var newClientId = Convert .ToInt32(data[1]);
+                var client = _db.Clients.Find(newClientId);
+                var del = _db.Deliveries.Find(recId);
+                if (del != null && client != null)
+                {
+                    del.ClientId = newClientId;
+                    del.FirstName = client.FirstName;
+                    del.LastName = client.LastName;
+                    del.StreetNumber = client.StreetNumber;
+                    del.StreetName = client.StreetName;
+                    del.City = client.City;
+                    del.Zip = client.Zip;
+                    del.Phone = client.Phone;
+                    var familyList = AppRoutines .GetFamilyMembers(newClientId);
+                    var namesAgesInHH = "";
+                    foreach (var mbr in familyList)
+                    {
+                        namesAgesInHH += mbr.NameAge;
+                    }
+                    del.NamesAgesInHH = namesAgesInHH; 
+                    _db.SaveChanges();
+                }
+            
+            return RedirectToAction("CallLogByLogDate");
             }
     }
 }
