@@ -132,5 +132,9 @@ namespace BHelp.ViewModels
         public int? KidSnackCount { get; set; }
         public int? PoundsOfFood { get; set; }
         public List<DeliveryViewModel> GiftCardReportDeliveries { get; set; }
+
+        // For ChangeDeliveryClient:
+        public Client OldClient { get; set; }
+        public Client NewClient { get; set; }
     }
 }

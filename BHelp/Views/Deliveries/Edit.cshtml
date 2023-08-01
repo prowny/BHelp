@@ -290,7 +290,7 @@
     window.$("#NewClientId").change(function () {
         var RecId = window.$("#DeliveryId").val().toString();
         var NewClientId = window.$("#NewClientId").val().toString();
-        var data = RecId + "|" + NewClientId; 
+        var data = RecId + "|" + NewClientId + "|" + window.$("#ReturnURL").val();
         window.$.ajax({
             type: "Get",
             url: "/Deliveries/ChangeDeliveryClient?parameters=" + data,

@@ -40,7 +40,8 @@
                 </td>
                 <td>
                     <a href="#" id="SearchString"><span>Search</span></a>
-                    <span style="color: darkmagenta">&#8592; (Enter full or partial Phone# OR Last Name OR Street Number)</span>
+                    <span style="color: darkmagenta">&#8592;
+                        (Enter full or partial Phone# OR Last Name OR Street Number)</span>
                 </td>
             </tr>
         </table>
@@ -57,9 +58,15 @@
                         @{
                             var assistanceViewModels = searchResults as AssistanceViewModel[] ?? searchResults.ToArray();
                         }
-                        @assistanceViewModels.Count()
+                        @assistanceViewModels.Length
+                    </td>
+                    <td style="color: magenta; font-style: italic">
+                        &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                        Hover your mouse on "..." to expand shortened data.
                     </td>
                 </tr>
+            </table>
+            <table >
                 <tr id="Column Headers">
                     <th>
                         <div style="width:100px", align="left">@Html.DisplayNameFor(model => model.LastName)</div>

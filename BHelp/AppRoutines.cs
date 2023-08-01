@@ -199,9 +199,9 @@ namespace BHelp
 
                 var delivery = new Delivery
                 {
-                    ODId = System.Web.HttpContext.Current.User.Identity.GetUserId(),
+                    ODId = HttpContext.Current.User.Identity.GetUserId(),
                     DeliveryDateODId = GetODIdForDate(delDate),
-                    //DriverId = GetDriverIdForDate(delDate),  // Lave null for drivers to choose delivery
+                    //DriverId = GetDriverIdForDate(delDate),  // Leave null for drivers to choose delivery
                     ClientId = clientId,
                     LogDate = DateTime.Today,
                     FirstName = client.FirstName,
@@ -429,6 +429,7 @@ namespace BHelp
                 clientList = db.Clients.Where(c => c.Phone.Contains(searchString)
                                                    || c.StreetNumber.Contains(searchString)
                                                    || c.Notes.Contains(searchString)
+                                                   || c.StreetName.Contains(searchString)
                                                    && c.Active).OrderBy(c => c.LastName).ToList();
             }
             else
@@ -1171,7 +1172,7 @@ namespace BHelp
                 sb.AppendLine();
             }
 
-            var response = System.Web.HttpContext.Current.Response;
+            var response = HttpContext.Current.Response;
             response.BufferOutput = true;
             response.Clear();
             response.ClearHeaders();
@@ -1301,7 +1302,7 @@ namespace BHelp
                 sb.AppendLine();
             }
 
-            var response = System.Web.HttpContext.Current.Response;
+            var response = HttpContext.Current.Response;
             response.BufferOutput = true;
             response.Clear();
             response.ClearHeaders();
@@ -1442,7 +1443,7 @@ namespace BHelp
             sb.Append(totalFullBags + "," + totalHalfBags + "," + totalKidSnacks + ",");
             sb.Append(totalGiftCards + "," + totalPoundsOfFood);
 
-            var response = System.Web.HttpContext.Current.Response;
+            var response = HttpContext.Current.Response;
             response.BufferOutput = true;
             response.Clear();
             response.ClearHeaders();
@@ -1506,7 +1507,7 @@ namespace BHelp
                 sb.AppendLine();
             }
 
-            var response = System.Web.HttpContext.Current.Response;
+            var response = HttpContext.Current.Response;
             response.BufferOutput = true;
             response.Clear();
             response.ClearHeaders();
@@ -1562,7 +1563,7 @@ namespace BHelp
                 sb.AppendLine();
             }
 
-            var response = System.Web.HttpContext.Current.Response;
+            var response = HttpContext.Current.Response;
             response.BufferOutput = true;
             response.Clear();
             response.ClearHeaders();
@@ -1627,7 +1628,7 @@ namespace BHelp
                 sb.AppendLine();
             }
 
-            var response = System.Web.HttpContext.Current.Response;
+            var response = HttpContext.Current.Response;
             response.BufferOutput = true;
             response.Clear();
             response.ClearHeaders();

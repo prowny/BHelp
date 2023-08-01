@@ -2228,6 +2228,33 @@ namespace BHelp.Controllers
                 var data = parameters.Split(Convert.ToChar("|"));
                 var recId = Convert.ToInt32((data[0]));
                 var newClientId = Convert .ToInt32(data[1]);
+                var returnURL = data[2];
+                var oldClient = _db.Clients.Find(recId);
+                var newClient = _db.Clients.Find(newClientId);
+                if (oldClient != null && newClient != null)
+                {
+                    var view = new DeliveryViewModel()
+                    {
+                        OldClient = oldClient,
+                        NewClient = newClient,
+                        ReturnURL = returnURL
+                    };
+                    return View(view);
+                }
+
+                if (returnURL.Contains("Individual")){ return RedirectToAction("CallLogIndividual");}
+                if (returnURL.Contains("LogDate")) { return RedirectToAction("CallLogByLogDate"); }
+                if (returnURL.Contains("DateDelivered")) { return RedirectToAction("CallLogByDateDelivered"); }
+
+                return RedirectToAction("CallLogMenu"); // default
+            }
+
+            public ActionResult ChangeDeliveryClientConfirmed(string parameters)
+            {
+                using var _db = new BHelpContext();
+                var data = parameters.Split(Convert.ToChar("|"));
+                var recId = Convert.ToInt32((data[0]));
+                var newClientId = Convert.ToInt32(data[1]);
                 var client = _db.Clients.Find(newClientId);
                 var del = _db.Deliveries.Find(recId);
                 if (del != null && client != null)
@@ -2240,17 +2267,18 @@ namespace BHelp.Controllers
                     del.City = client.City;
                     del.Zip = client.Zip;
                     del.Phone = client.Phone;
-                    var familyList = AppRoutines .GetFamilyMembers(newClientId);
+                    var familyList = AppRoutines.GetFamilyMembers(newClientId);
                     var namesAgesInHH = "";
                     foreach (var mbr in familyList)
                     {
                         namesAgesInHH += mbr.NameAge;
                     }
-                    del.NamesAgesInHH = namesAgesInHH; 
+                    del.NamesAgesInHH = namesAgesInHH;
                     _db.SaveChanges();
                 }
-            
-            return RedirectToAction("CallLogByLogDate");
+
+                return RedirectToAction("CallLogByLogDate");
             }
+
     }
 }

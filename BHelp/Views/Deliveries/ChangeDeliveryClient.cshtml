@@ -1,0 +1,47 @@
+﻿@model BHelp.ViewModels.DeliveryViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Change Delivery Client?</title>
+</head>
+<body>
+    <div>
+        <span><b>Delivery Client Change</b></span>
+        <br />
+        <span style="color: red;font-weight :bold">
+            CAUTION, THIS OPTION CAN MESS UP DATA. ONLY USE FOR EXACT DUPLICATE CLIENTS
+        </span>
+        <br />
+
+    </div>
+<div>
+    <table>
+        <tr>
+            <td>
+                Change Delivery Client From:
+            </td>
+            <td>@Model.OldClient.LastFirstName</td>
+            <td>@Model.OldClient.StreetNumber</td>
+            <td>&nbsp;@Model.OldClient.StreetName</td>
+            <td>&nbsp;@Model.OldClient.City</td>
+            <td>&nbsp;@Model.OldClient.Zip</td>
+        </tr>
+        <tr >
+            <td >To:</td>
+            <td>@Model.NewClient.LastFirstName</td>
+            <td>@Model.NewClient.StreetNumber</td>
+            <td>&nbsp;@Model.NewClient.StreetName</td>
+            <td>&nbsp;@Model.NewClient.City</td>
+            <td>&nbsp;@Model.NewClient.Zip</td>
+        </tr>
+    </table>
+</div>
+<br />
+<div>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
+</body>
+</html>
