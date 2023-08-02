@@ -22,7 +22,7 @@
     <section id="editForm">
         @using (Html.BeginForm("EditPost", "Deliveries", FormMethod.Post))
         {
-            <input type="hidden" name="ReturnUrl" value="@Model.ReturnURL" />
+            <input type="hidden" name="ReturnURL" value="@Model.ReturnURL" Id="ReturnURL" />
             <input type="hidden" name="HistoryStartDate" value="@Model.HistoryStartDate" />
             <input type="hidden" name="HistoryEndDate" value="@Model.HistoryEndDate" />
             <input type="hidden" name="GiftCardsEligible" value="@Model.GiftCardsEligible" />
@@ -211,7 +211,7 @@
 
                 @if (Model.ReturnURL.Contains("CallLogByDateDelivered"))
                 {
-                    @Html.ActionLink("Back to Delivery List", "CallLogByDateDelivered", new { startDate = Model.HistoryStartDate, endDate = Model.HistoryEndDate })//clientId = Model.ClientId
+                    @Html.ActionLink("Back to Delivery List", "CallLogByDateDelivered", new { startDate = Model.HistoryStartDate, endDate = Model.HistoryEndDate })
                 }
 
                 @if (Model.ReturnURL.Contains("UpdateHousehold"))

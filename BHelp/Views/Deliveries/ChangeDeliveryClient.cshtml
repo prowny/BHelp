@@ -2,6 +2,9 @@
 @{ Layout = null; }
 <!DOCTYPE html>
 
+<style>
+    #ChangeButton {background-color: red;color: white}
+</style>
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
@@ -11,11 +14,15 @@
     <div>
         <span><b>Delivery Client Change</b></span>
         <br />
+        <input type="hidden" name="Parameters" value="@Model.Parameters" />
+        <input type="hidden" name="HistoryStartDate" value="@Model.HistoryStartDate" />
+        <input type="hidden" name="HistoryEndDate" value="@Model.HistoryEndDate" />
+        <br />
         <span style="color: red;font-weight :bold">
-            CAUTION, THIS OPTION CAN MESS UP DATA. ONLY USE FOR EXACT DUPLICATE CLIENTS
+            CAUTION: THIS OPTION CAN MESS UP DATA. USE ONLY FOR EXACT DUPLICATE CLIENTS!
         </span>
         <br />
-
+        <br />
     </div>
 <div>
     <table>
@@ -30,7 +37,7 @@
             <td>&nbsp;@Model.OldClient.Zip</td>
         </tr>
         <tr >
-            <td >To:</td>
+            <td style ="text-align :right">To:</td>
             <td>@Model.NewClient.LastFirstName</td>
             <td>@Model.NewClient.StreetNumber</td>
             <td>&nbsp;@Model.NewClient.StreetName</td>
@@ -40,6 +47,26 @@
     </table>
 </div>
 <br />
+@Html.ActionLink("Change", "ChangeDeliveryClientConfirmed", new { parameters  = Model.Parameters }, new { id = "ChangeButton" })
+
+<div >
+
+</div>
+<br />
+@if (Model.ReturnURL.Contains("CallLogByLogDate"))
+{
+    @Html.ActionLink("Back to Delivery List", "CallLogByLogDate", new { startDate = Model.HistoryStartDate, endDate = Model.HistoryEndDate })
+}
+
+@if (Model.ReturnURL.Contains("CallLogIndividual"))
+{
+    @Html.ActionLink("Back to Delivery List", "CallLogIndividual", new { clientId = Model.ClientId })
+}
+
+@if (Model.ReturnURL.Contains("CallLogByDateDelivered"))
+{
+    @Html.ActionLink("Back to Delivery List", "CallLogByDateDelivered", new { startDate = Model.HistoryStartDate, endDate = Model.HistoryEndDate })
+}
 <div>
     @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
 </div>

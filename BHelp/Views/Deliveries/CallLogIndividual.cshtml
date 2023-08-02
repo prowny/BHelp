@@ -104,6 +104,7 @@
         </table>
         if (Model.DeliveryList.Count > 0)
         {
+            <br />
             @Html.ActionLink("Back to Select List", "CallLogIndividual", new { })
             <br />
             @Html.ActionLink("Download to CSV File (Helper data only)", "CallLogByIndividualToCSV", new { allData = false })

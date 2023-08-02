@@ -136,5 +136,6 @@ namespace BHelp.ViewModels
         // For ChangeDeliveryClient:
         public Client OldClient { get; set; }
         public Client NewClient { get; set; }
+        public string Parameters { get; set; }
     }
 }

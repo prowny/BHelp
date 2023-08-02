@@ -2226,20 +2226,27 @@ namespace BHelp.Controllers
             {
                 using var _db = new BHelpContext();
                 var data = parameters.Split(Convert.ToChar("|"));
-                var recId = Convert.ToInt32((data[0]));
+                var delRecId = Convert.ToInt32((data[0]));
                 var newClientId = Convert .ToInt32(data[1]);
                 var returnURL = data[2];
-                var oldClient = _db.Clients.Find(recId);
-                var newClient = _db.Clients.Find(newClientId);
-                if (oldClient != null && newClient != null)
+                var delRec = _db.Deliveries.Find(delRecId);
+                if (delRec != null)
                 {
-                    var view = new DeliveryViewModel()
+                    var existingClient = _db.Clients.Find(delRec.ClientId);
+                    var newClient = _db.Clients.Find(newClientId);
+                    if (existingClient != null && newClient != null)
                     {
-                        OldClient = oldClient,
-                        NewClient = newClient,
-                        ReturnURL = returnURL
+                        var view = new DeliveryViewModel()
+                        {
+                            OldClient = existingClient,
+                            NewClient = newClient,
+                            ReturnURL = returnURL,
+                            HistoryStartDate = (DateTime?)Session["CallLogStartDate"],
+                            HistoryEndDate = (DateTime?)Session["CallLogEndDate"],
+                            Parameters = parameters
                     };
-                    return View(view);
+                        return View(view);
+                    }
                 }
 
                 if (returnURL.Contains("Individual")){ return RedirectToAction("CallLogIndividual");}
@@ -2255,6 +2262,7 @@ namespace BHelp.Controllers
                 var data = parameters.Split(Convert.ToChar("|"));
                 var recId = Convert.ToInt32((data[0]));
                 var newClientId = Convert.ToInt32(data[1]);
+                var returnURL = data[2];
                 var client = _db.Clients.Find(newClientId);
                 var del = _db.Deliveries.Find(recId);
                 if (del != null && client != null)
@@ -2277,7 +2285,13 @@ namespace BHelp.Controllers
                     _db.SaveChanges();
                 }
 
-                return RedirectToAction("CallLogByLogDate");
+                var startDt = Session["CallLogStartDate"];
+                var endDt = Session["CallLogEndDate"];
+            if (returnURL.Contains("Individual"))  return RedirectToAction("CallLogIndividual"); 
+            if (returnURL.Contains("LogDate")) return RedirectToAction("CallLogByLogDate", new {startDate = startDt , endDate = endDt });
+            if (returnURL.Contains("DateDelivered")) return RedirectToAction("CallLogByDateDelivered", new { startDate = startDt, endDate = endDt }); 
+
+            return RedirectToAction("CallLogMenu");
             }
 
     }
