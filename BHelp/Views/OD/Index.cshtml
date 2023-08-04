@@ -42,7 +42,7 @@
                 @Html.TextBox("SearchText", "", new
                 {
                     id = "SearchText", style = "width: 50px;", onkeypress = "KeyPressHandler()",
-                    Title = "Tip: Enter full or partial Phone# OR Last Name OR Street Number", autofocus = true
+                    Title = "Tip: Enter full or partial Phone# OR Last Name OR Street Number OR Apartment", autofocus = true
                 })
             </td>
             <td>
@@ -71,7 +71,9 @@
                 <th>
                     <div style="width: 50px", align="left">@Html.DisplayNameFor(model => model.StreetName)</div></th>
                 <th>
-                    <div style="width: 50px", align="left"> @Html.DisplayNameFor(model => model.City)</div></th>
+                    <div style="width: 25px", align="left">@Html.DisplayNameFor(model => model.Apartment)</div></th>
+                <th>
+                    <div style="width: 50px", align="left"> @Html.DisplayNameFor(model => model.City)</div>
                 <th>
                     <div style="width: 25px", align="left">@Html.DisplayNameFor(model => model.Zip)</div></th>
                 <th>
@@ -92,6 +94,9 @@
                     <td title=@item.StreetToolTip>
                         @Html.DisplayFor(modelItem => item.StreetName)
                     </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Apartment)
+                    </td>
                     <td title=@item.CityToolTip>
                         @Html.DisplayFor(modelItem => item.City)
                     </td>
@@ -100,9 +105,9 @@
                         @Html.DisplayFor(modelItem => item.Phone)
                     </td>
                     @*<td>
-                            @Html.DropDownListFor(modelitem => item.Phone, item.FamilySelectList)
-                            (@item.FamilyMembers.Count)
-                        </td>*@
+            @Html.DropDownListFor(modelitem => item.Phone, item.FamilySelectList)
+            (@item.FamilyMembers.Count)
+        </td>*@
                     <td title=@item.NotesToolTip>
                         @Html.DisplayFor(modelItem => item.Notes)
                     </td>
@@ -110,7 +115,7 @@
                         @Html.DisplayFor(modelItem => item.DateCreatedString)
                     </td>
                     <td>
-                        @Html.ActionLink("Select", "UpdateHousehold", new {id = item.ClientId})
+                        @Html.ActionLink("Select", "UpdateHousehold", new { id = item.ClientId })
                     </td>
                 </tr>
             }

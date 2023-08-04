@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.WebPages;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using Castle.Core.Internal;
@@ -65,6 +66,7 @@ namespace BHelp.Controllers
                 clientList = db.Clients.Where(c => c.Phone.Contains(searchString)
                                                    || c.StreetNumber.Contains(searchString)  
                                                    || c.Notes.Contains(searchString)
+                                                   || c.StreetName.Contains(searchString)
                                                    && c.Active).OrderBy(c =>c.LastName).ToList();
             }
             else
@@ -75,13 +77,27 @@ namespace BHelp.Controllers
                 
             foreach (var client in clientList)
             {
-                var household = new HouseholdViewModel()
+                // if first character of StreetName is numeric, then it is a street number, not a name.
+                var apt = client .StreetName;
+                if (client.StreetName.Length > 2)
+                {
+                    if (client.StreetName.Substring(0, 1).IsInt())
+                    {
+                        apt = client.StreetName.Substring(3); // skip numbered streets
+                    }
+
+                    apt = new string(apt.Where(char.IsDigit).ToArray());
+                }
+
+                var household = new HouseholdViewModel
                 {
                     ClientId = client.Id,
                     FirstName = client.FirstName,
                     LastName = client.LastName,
                     StreetNumber = client.StreetNumber,
                     StreetName = client.StreetName,
+                    //Apartment = new string(client.StreetName.Where(char.IsDigit).ToArray()),
+                    Apartment = apt,
                     StreetToolTip = client.StreetName.Replace(" ", "\u00a0"),
                     City = client.City,
                     CityToolTip = client.City.Replace(" ", "\u00a0"),

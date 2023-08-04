@@ -31,6 +31,9 @@ namespace BHelp.ViewModels
         [DisplayName("Street Name")]
         public string StreetName { get; set; }
 
+        [DisplayName("Apt.  No.")]
+        public string Apartment { get; set; }
+        
         [DisplayName("City")]
         public string City { get; set; }
 
