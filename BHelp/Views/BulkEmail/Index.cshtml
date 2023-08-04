@@ -8,52 +8,80 @@
     <title>Bulk Email Index</title>
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
     <style>
-        #EmailButton {background-color: green; color:white}
+        #CSVButton {background-color: green; color:white}
     </style>
 </head>
 <body>
-<div>
-    <span><b>Send Emails</b></span>
-</div>
-<div>
-    <table>
-        <tr>
-            <td style="text-align: center"><b>List Name</b></td>
-            <td style="text-align: center"><b>Select</b></td>
-            <td><b>Include Inactives</b></td>
-        </tr>
-        <tr>
-            <td>Drivers</td>
-            <td style="text-align: center">@Html.CheckBoxFor(m => m.DriverSelect )
-                (@Model.ActiveDriverList.Count)</td>
-            <td style="text-align: center">@Html.CheckBoxFor(m => m.DriverIncludeInactives)
-                (@Model.DriverPlusInactiveList.Count)</td>
-        </tr>
-        <tr>
+<div >
+@using (Html.BeginForm("Index", "BulkEmail", FormMethod.Post))
+{
+    <div>
+        <span><b>Get Email Address List</b></span>
+    </div>
+    <div>
+        <table>
+            <tr>
+                <td style="text-align: center"><b>List Name</b></td>
+                <td style="text-align: center"><b>Select</b></td>
+                <td><b>Include Inactives</b></td>
+            </tr>
+            <tr>
+                <td>Drivers</td>
+                <td style="text-align: center">
+                    @Html.CheckBoxFor(m => m.DriverSelect)
+                    (@Model.ActiveDriverList.Count)
+                </td>
+                <td style="text-align: center">
+                    @Html.CheckBoxFor(m => m.DriverIncludeInactives)
+                    (@Model.DriverPlusInactiveList.Count)
+                </td>
+            </tr>
+            <tr>
             <td>ODs</td>
-            <td style="text-align: center">@Html.CheckBoxFor(m => m.ODSelect)
-                (@Model.ActiveODList.Count)</td>
-            <td style="text-align: center">@Html.CheckBoxFor(m => m.ODIncludeInactives)
-                (@Model.ODPlusInactiveList.Count)</td>
-        </tr>
+            <td style="text-align: center">
+                @Html.CheckBoxFor(m => m.ODSelect)
+                (@Model.ActiveODList.Count)
+            </td>
+            <td style="text-align: center">
+                @Html.CheckBoxFor(m => m.ODIncludeInactives)
+                (@Model.ODPlusInactiveList.Count)
+            </td>
+            @*</tr>
         <tr>
-            <td>Management</td>
-            <td style="text-align: center">@Html.CheckBoxFor(m => m.ManagementSelect)
-                (@Model.ActiveManagementList.Count)</td>
-            <td style="text-align: center">@Html.CheckBoxFor(m => m.ManagementIncludeInactives)
-                (@Model.ManagementPlusInactiveList.Count)</td>
-        </tr>
-        <td>All Volunteers</td>
-        <td style="text-align: center">@Html.CheckBoxFor(m => m.AllUsersSelect)
-            (@Model.AllActiveUsersList.Count)</td>
-        <td style="text-align: center">@Html.CheckBoxFor(m => m.AllUsersIncludeInactives)
-            (@Model.AllUsersPlusInactiveList.Count)</td>
-    </table>
-</div>
-<div>
-    <span style="font-style: italic; color: darkmagenta">(Sender will receive a copy of the email even if no selections are made.)</span>
-</div>
-<div>
+            <td>Management</td>  <!--  Management not implemented yet -->
+            <td style="text-align: center">
+                @Html.CheckBoxFor(m => m.ManagementSelect)
+            (@Model.ActiveManagementList.Count)
+        </td>
+        <td style="text-align: center">
+            @Html.CheckBoxFor(m => m.ManagementIncludeInactives)
+        (@Model.ManagementPlusInactiveList.Count)
+        </td>
+        </tr>*@
+            <tr>
+                <td>Staff</td>
+                <td style="text-align: center">
+                    @Html.CheckBoxFor(m => m.StaffSelect)
+                    (@Model.ActiveStaffList.Count)
+                </td>
+                <td style="text-align: center">
+                    @Html.CheckBoxFor(m => m.StaffIncludeInactives)
+                    (@Model.StaffPlusInactiveList.Count)
+                </td>
+            </tr>
+            <td>All Volunteers</td>
+            <td style="text-align: center">
+                @Html.CheckBoxFor(m => m.AllUsersSelect)
+                (@Model.AllActiveUsersList.Count)
+            </td>
+            <td style="text-align: center">
+                @Html.CheckBoxFor(m => m.AllUsersIncludeInactives)
+                (@Model.AllUsersPlusInactiveList.Count)
+            </td>
+        </table>
+    </div>
+
+@*<div>     
     <br />
     <table>
         <tr>
@@ -71,15 +99,19 @@
                     new{ style = "width: 800px; height: 100px"})</td>
         </tr>
     </table>
-</div>
-<div>
-    <br/>
-    <span><input type="submit" value="Email" class="btn btn-default" id="EmailButton" /></span>
-    <span style="color:blue">email not implemented yet...</span>
-</div>
-    <br />
+    </div>*@
+
     <div>
-        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+        <br/>
+        <span><input type="submit" value="Download CSV File" class="btn btn-default" id="CSVButton"/></span>
+        @*<span style="color:blue">email not implemented yet...</span>*@
     </div>
+}
+    </div>
+
+<br/>
+<div>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
 </body>
 </html>

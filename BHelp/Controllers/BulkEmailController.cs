@@ -23,9 +23,16 @@ namespace BHelp.Controllers
                 ActiveODList = GetMasterList("OfficerOfTheDay",
                     AllUsersPlusInactiveList, true),
 
+                // no "Management role" in this app
+                // Not included on the view
                 ManagementPlusInactiveList = GetMasterList("Management",
                     AllUsersPlusInactiveList, false),
                 ActiveManagementList = GetMasterList("Management",
+                    AllUsersPlusInactiveList, true),
+
+                StaffPlusInactiveList = GetMasterList("Staff",
+                    AllUsersPlusInactiveList, false),
+                ActiveStaffList = GetMasterList("Staff",
                     AllUsersPlusInactiveList, true),
 
                 AllUsersPlusInactiveList = AllUsersPlusInactiveList,
@@ -42,7 +49,8 @@ namespace BHelp.Controllers
             return View(view);
         }
 
-        public ActionResult Email()
+        [HttpPost]  
+        public ActionResult Index(BulkEmailViewModel viewModel)
         {
             return null; // not implemented yet
         }

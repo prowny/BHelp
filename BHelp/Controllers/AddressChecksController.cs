@@ -7,7 +7,7 @@ using BHelp.Models;
 
 namespace BHelp.Controllers
 {
-    public class AddressChecksController : Controller
+    public class AddressChecks : Controller
     {
         private readonly BHelpContext db = new BHelpContext();
 

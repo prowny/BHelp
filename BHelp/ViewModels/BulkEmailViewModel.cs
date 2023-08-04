@@ -10,6 +10,8 @@ namespace BHelp.ViewModels
         public List<ApplicationUser> ActiveDriverList { get; set; }
         public List<ApplicationUser> DriverPlusInactiveList { get; set; }
         public List<ApplicationUser> ActiveManagementList { get; set; }
+        public List<ApplicationUser> ActiveStaffList { get; set; }
+        public List<ApplicationUser> StaffPlusInactiveList { get; set; }
         public List<ApplicationUser> ManagementPlusInactiveList { get; set; }
         public List<ApplicationUser> AllActiveUsersList { get; set; }
         public List<ApplicationUser> AllUsersPlusInactiveList { get; set; }
@@ -20,6 +22,8 @@ namespace BHelp.ViewModels
         public bool DriverIncludeInactives { get; set; }
         public bool ManagementSelect { get; set; }
         public bool ManagementIncludeInactives { get; set; }
+        public bool StaffSelect { get; set; }
+        public bool StaffIncludeInactives { get; set; }
         public bool AllUsersSelect { get; set; }
         public bool AllUsersIncludeInactives { get; set; }
 
