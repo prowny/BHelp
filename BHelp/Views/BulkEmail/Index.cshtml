@@ -1,4 +1,5 @@
-﻿@model BHelp.ViewModels.BulkEmailViewModel
+﻿@using Castle.Core.Internal
+@model BHelp.ViewModels.BulkEmailViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -13,102 +14,69 @@
 </head>
 <body>
 <div >
-@using (Html.BeginForm("Index", "BulkEmail", FormMethod.Post))
-{
-    <div>
-        <span><b>Get Email Address List</b></span>
-    </div>
-    <div>
-        <table>
-            <tr>
-                <td style="text-align: center"><b>List Name</b></td>
-                <td style="text-align: center"><b>Select</b></td>
-                <td><b>Include Inactives</b></td>
-            </tr>
-            <tr>
-                <td>Drivers</td>
-                <td style="text-align: center">
-                    @Html.CheckBoxFor(m => m.DriverSelect)
-                    (@Model.ActiveDriverList.Count)
-                </td>
-                <td style="text-align: center">
-                    @Html.CheckBoxFor(m => m.DriverIncludeInactives)
-                    (@Model.DriverPlusInactiveList.Count)
-                </td>
-            </tr>
-            <tr>
-            <td>ODs</td>
-            <td style="text-align: center">
-                @Html.CheckBoxFor(m => m.ODSelect)
-                (@Model.ActiveODList.Count)
-            </td>
-            <td style="text-align: center">
-                @Html.CheckBoxFor(m => m.ODIncludeInactives)
-                (@Model.ODPlusInactiveList.Count)
-            </td>
-            @*</tr>
-        <tr>
-            <td>Management</td>  <!--  Management not implemented yet -->
-            <td style="text-align: center">
-                @Html.CheckBoxFor(m => m.ManagementSelect)
-            (@Model.ActiveManagementList.Count)
-        </td>
-        <td style="text-align: center">
-            @Html.CheckBoxFor(m => m.ManagementIncludeInactives)
-        (@Model.ManagementPlusInactiveList.Count)
-        </td>
-        </tr>*@
-            <tr>
-                <td>Staff</td>
-                <td style="text-align: center">
-                    @Html.CheckBoxFor(m => m.StaffSelect)
-                    (@Model.ActiveStaffList.Count)
-                </td>
-                <td style="text-align: center">
-                    @Html.CheckBoxFor(m => m.StaffIncludeInactives)
-                    (@Model.StaffPlusInactiveList.Count)
-                </td>
-            </tr>
-            <td>All Volunteers</td>
-            <td style="text-align: center">
-                @Html.CheckBoxFor(m => m.AllUsersSelect)
-                (@Model.AllActiveUsersList.Count)
-            </td>
-            <td style="text-align: center">
-                @Html.CheckBoxFor(m => m.AllUsersIncludeInactives)
-                (@Model.AllUsersPlusInactiveList.Count)
-            </td>
-        </table>
-    </div>
-
-@*<div>     
-    <br />
-    <table>
-        <tr>
-            <td>Email Subject:&nbsp;</td>
-            <td>
-                @Html.TextBoxFor(t => t.Subject,
-                    new { style = "width: 200px" })
-                <span style="font-style: italic; color: darkmagenta">&#8592;Each email subject should begin with</span>
-                &nbsp;<span style="color: darkmagenta">BHELP</span>
-            </td>
-        </tr>
-        <tr>
-            <td>Email Text: &nbsp;</td>
-            <td>@Html.TextAreaFor(t => t.EmailText,
-                    new{ style = "width: 800px; height: 100px"})</td>
-        </tr>
-    </table>
-    </div>*@
-
-    <div>
-        <br/>
-        <span><input type="submit" value="Download CSV File" class="btn btn-default" id="CSVButton"/></span>
-        @*<span style="color:blue">email not implemented yet...</span>*@
-    </div>
-}
-    </div>
-
+    @using (Html.BeginForm("Index", "BulkEmail", FormMethod.Post))
+    {
+        <div>
+            @Html.HiddenFor(m => m.JsonActiveODs)
+            @Html.HiddenFor(m => m.JsonActiveDrivers)
+            @Html.HiddenFor(m => m.JsonActiveStaff)
+            @Html.HiddenFor(m => m.JsonAllActiveUsers)
+            <span><b>Get Email Address List</b></span>
+        </div>
+        <div>
+            <table>
+                <tr>
+                    <td style="text-align: center"><b>List Name</b></td>
+                    <td style="text-align: center"><b>Select</b></td>
+                </tr>
+                <tr>
+                    <td>Drivers</td>
+                    <td style="text-align: left">
+                        @Html.CheckBoxFor(m => m.DriverSelect)
+                        (@Model.ActiveDriverList.Count)
+                    </td>
+                </tr>
+                <tr>
+                    <td>ODs</td>
+                    <td style="text-align: left">
+                        @Html.CheckBoxFor(m => m.ODSelect)
+                        (@Model.ActiveODList.Count)
+                    </td>
+                </tr>
+                <tr>
+                    <td>Staff</td>
+                    <td style="text-align: left">
+                        @Html.CheckBoxFor(m => m.StaffSelect)
+                        (@Model.ActiveStaffList.Count)
+                    </td>
+                </tr>
+                <tr>
+                    <td>All Users</td>
+                    <td style="text-align: center">
+                        @Html.CheckBoxFor(m => m.AllUsersSelect)
+                        (@Model.AllActiveUsersList.Count)
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <br/>
+            <span><input type="submit" value="Create Address List" class="btn btn-default" id="CSVButton"/></span>
+        </div>
+        if (!Model.EmailString.IsNullOrEmpty())
+        {
+        <div>
+            <br />
+            <span>List of addresses with no duplicates: click in text to select all,</span>
+            <br />
+            <span>copy and paste in your email Bcc area.</span>
+            <br />
+            <textarea rows="20" id="txtarea" onclick="this.select();" 
+                      style="width:600px">@Model.EmailString </textarea>
+        </div>
+        }
+    }
+</div>
 <br/>
 <div>
     @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)

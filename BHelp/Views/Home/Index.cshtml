@@ -77,11 +77,11 @@
         </div>
     }
 
-    @if (User.IsInAnyRoles("Developer"))
+    @if (User.IsInAnyRoles("Developer", "Administrator", "Staff"))
     {
         <div>
-            <strong>Email Menu (Developer only)</strong><br />
-            <a href="@Url.Action("Index", "BulkEmail")">Bulk Emails (Beta Test)</a><br />
+            <strong>Email Menu</strong><br />
+            <a href="@Url.Action("Index", "BulkEmail")">Bulk Email Addresses</a><br />
         </div>
         <br />
     }

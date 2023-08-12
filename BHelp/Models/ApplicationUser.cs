@@ -15,25 +15,23 @@ namespace BHelp.Models
     [JsonObject(MemberSerialization.OptIn)]
     public class ApplicationUser : IdentityUser
     {
-        [JsonProperty, DisplayName("Active")]
-        public bool Active { get; set; }    // Added PER 04/30/2021
+        [JsonProperty, DisplayName("Active")] public bool Active { get; set; } // Added PER 04/30/2021
 
         [JsonProperty, DisplayName("Begin Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateTime BeginDate { get; set; }    // Added PER 07/06/2021
+        public DateTime BeginDate { get; set; } // Added PER 07/06/2021
 
         [JsonProperty, DisplayName("Last Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateTime LastDate { get; set; }    // Added PER 07/06/2021
+        public DateTime LastDate { get; set; } // Added PER 07/06/2021
 
-        [JsonProperty, DisplayName("Notes")]
-        public String Notes { get; set; }    // Added PER 07/06/2021
+        [JsonProperty, DisplayName("Notes")] public String Notes { get; set; } // Added PER 07/06/2021
 
         [JsonProperty, StringLength(1), DisplayName("Volunteer Hours CategoryId")]
-        public string VolunteerCategory { get; set; }    // Added PER 01/13/2022
+        public string VolunteerCategory { get; set; } // Added PER 01/13/2022
 
         [JsonProperty, DisplayName("Volunteer Hours Subcategory")]
-        public string VolunteerSubcategory { get; set; }     // Added PER 01/13/2022
+        public string VolunteerSubcategory { get; set; } // Added PER 01/13/2022
 
         [JsonProperty, DisplayName("First Name")]
         public string FirstName { get; set; }
@@ -41,23 +39,19 @@ namespace BHelp.Models
         [JsonProperty, DisplayName("Last Name")]
         public string LastName { get; set; }
 
-        [JsonProperty, DisplayName("Title")]
-        public string Title { get; set; }
+        [JsonProperty, DisplayName("Title")] public string Title { get; set; }
 
-        [JsonProperty, DisplayName("Address")]  
-        public string Address { get; set; }  // Added PER 03/07/2022
+        [JsonProperty, DisplayName("Address")] public string Address { get; set; } // Added PER 03/07/2022
 
-        [JsonProperty, DisplayName("City")]
-        public string City { get; set; }  // Added PER 03/07/2022
+        [JsonProperty, DisplayName("City")] public string City { get; set; } // Added PER 03/07/2022
 
         [JsonProperty, StringLength(2), DisplayName("State")]
-        public string State { get; set; }  // Added PER 03/07/2022
+        public string State { get; set; } // Added PER 03/07/2022
 
         [JsonProperty, StringLength(10), DisplayName("Zip Code")]
-        public string Zip { get; set; }  // Added PER 03/07/2022
+        public string Zip { get; set; } // Added PER 03/07/2022
 
-        [JsonProperty, DisplayName("Phone 2")]
-        public string PhoneNumber2 { get; set; }  // Added PER 03/07/2022
+        [JsonProperty, DisplayName("Phone 2")] public string PhoneNumber2 { get; set; } // Added PER 03/07/2022
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
@@ -70,58 +64,35 @@ namespace BHelp.Models
         [JsonProperty]
         public override string Email
         {
-            get
-            {
-                return base.Email;
-            }
-            set
-            {
-                base.Email = value;
-            }
+            get { return base.Email; }
+            set { base.Email = value; }
         }
+
         [JsonProperty]
         public override string Id
         {
-            get
-            {
-                return base.Id;
-            }
-            set
-            {
-                base.Id = value;
-            }
+            get { return base.Id; }
+            set { base.Id = value; }
         }
+
         [JsonProperty]
         public override string UserName
         {
-            get
-            {
-                return base.UserName;
-            }
-            set
-            {
-                base.UserName = value;
-            }
+            get { return base.UserName; }
+            set { base.UserName = value; }
         }
+
         [JsonProperty]
         public override string PhoneNumber
         {
-            get
-            {
-                return base.PhoneNumber;
-            }
-            set
-            {
-                base.PhoneNumber = value;
-            }
+            get { return base.PhoneNumber; }
+            set { base.PhoneNumber = value; }
         }
 
         [NotMapped]
-        public string FullName
-        {
-            get { return string.Format("{0} {1}", FirstName, LastName); }
-            set => throw new NotImplementedException();
-        }
+        public string FullName => string.Format("{0} {1}", FirstName, LastName);
+
+        //set => throw new NotImplementedException();
         [NotMapped] public List<SelectListItem> VolunteerCategories { get; set; }
         [NotMapped] public List<SelectListItem> VolunteerSubcategories { get; set; }
         [NotMapped] public bool ShowAdminDocumentsMenu { get; set; }
@@ -135,5 +106,6 @@ namespace BHelp.Models
         [NotMapped] public bool ShowPantryCoordinatorDocumentsMenu { get; set; }
         [NotMapped] public List<SelectListItem> States { get; set; }
         [NotMapped] public string AllRolesForUser { get; set; }
+        [NotMapped] public string EmailRoleName { get; set; } // for use in Bulk Email sorting
     }
 }

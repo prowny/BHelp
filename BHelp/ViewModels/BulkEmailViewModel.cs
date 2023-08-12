@@ -3,31 +3,22 @@ using BHelp.Models;
 
 namespace BHelp.ViewModels
 {
-    public class BulkEmailViewModel
+    public sealed class BulkEmailViewModel
     {
         public List<ApplicationUser> ActiveODList { get; set; }
-        public List<ApplicationUser> ODPlusInactiveList { get; set; }
         public List<ApplicationUser> ActiveDriverList { get; set; }
-        public List<ApplicationUser> DriverPlusInactiveList { get; set; }
-        public List<ApplicationUser> ActiveManagementList { get; set; }
         public List<ApplicationUser> ActiveStaffList { get; set; }
-        public List<ApplicationUser> StaffPlusInactiveList { get; set; }
-        public List<ApplicationUser> ManagementPlusInactiveList { get; set; }
         public List<ApplicationUser> AllActiveUsersList { get; set; }
-        public List<ApplicationUser> AllUsersPlusInactiveList { get; set; }
 
         public bool ODSelect { get; set; }
-        public bool ODIncludeInactives { get; set; }
         public bool DriverSelect { get; set; }
-        public bool DriverIncludeInactives { get; set; }
-        public bool ManagementSelect { get; set; }
-        public bool ManagementIncludeInactives { get; set; }
         public bool StaffSelect { get; set; }
-        public bool StaffIncludeInactives { get; set; }
         public bool AllUsersSelect { get; set; }
-        public bool AllUsersIncludeInactives { get; set; }
 
-        public string Subject { get; set; }
-        public string EmailText { get; set; } 
+        public string JsonActiveODs { get; set; }
+        public string JsonActiveDrivers { get; set; }
+        public string JsonActiveStaff { get; set; }
+        public string JsonAllActiveUsers { get; set; }
+        public string EmailString { get; set; }
     }
 }

@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using BHelp.Models;
 using BHelp.ViewModels;
+using System.Text.Json;
+using BHelp.DataAccessLayer;
 
 namespace BHelp.Controllers
 {
@@ -10,49 +13,90 @@ namespace BHelp.Controllers
         // GET: BulkEmail
         public ActionResult Index()
         {
-            var AllUsersPlusInactiveList = AppRoutines.GetAllUserList();
+            using var _db = new BHelpContext();
+            var allActiveUsersList = _db.Users
+                .Where(u => u.Active).OrderBy(u => u.LastName)
+                .ThenBy(u => u.FirstName).ToList();
+
             var view = new BulkEmailViewModel
             {
-                DriverPlusInactiveList = GetMasterList("Driver",
-                    AllUsersPlusInactiveList, false),
                 ActiveDriverList = GetMasterList("Driver",
-                    AllUsersPlusInactiveList, true),
+                    allActiveUsersList, true),
 
-                ODPlusInactiveList = GetMasterList("OfficerOfTheDay",
-                    AllUsersPlusInactiveList, false),
                 ActiveODList = GetMasterList("OfficerOfTheDay",
-                    AllUsersPlusInactiveList, true),
+                    allActiveUsersList, true),
 
-                // no "Management role" in this app
-                // Not included on the view
-                ManagementPlusInactiveList = GetMasterList("Management",
-                    AllUsersPlusInactiveList, false),
-                ActiveManagementList = GetMasterList("Management",
-                    AllUsersPlusInactiveList, true),
-
-                StaffPlusInactiveList = GetMasterList("Staff",
-                    AllUsersPlusInactiveList, false),
                 ActiveStaffList = GetMasterList("Staff",
-                    AllUsersPlusInactiveList, true),
+                    allActiveUsersList, true),
 
-                AllUsersPlusInactiveList = AllUsersPlusInactiveList,
-                AllActiveUsersList = new List<ApplicationUser>(), 
-                Subject = "BHELP ",
-                EmailText = "(compose or paste your email text here)"
-            };
+                AllActiveUsersList = allActiveUsersList,
+                // json serialize list (view does not persist lists)
+                JsonAllActiveUsers = JsonSerializer.Serialize(allActiveUsersList)
+        };
 
-            foreach (var _user in AllUsersPlusInactiveList)
-            {
-                if(_user.Active) view.AllActiveUsersList.Add(_user);
-            }
-
+            view.JsonActiveDrivers = JsonSerializer.Serialize(view.ActiveDriverList);
+            view.JsonActiveODs = JsonSerializer.Serialize(view.ActiveODList);
+            view.JsonActiveStaff = JsonSerializer.Serialize(view.ActiveStaffList);
             return View(view);
         }
 
         [HttpPost]  
-        public ActionResult Index(BulkEmailViewModel viewModel)
+        public ActionResult Index(BulkEmailViewModel view)
         {
-            return null; // not implemented yet
+            // for Drivers / ODs, Staff / All Users
+            view.ActiveDriverList=JsonSerializer.Deserialize<List<ApplicationUser>>(view.JsonActiveDrivers);
+            view.ActiveODList = JsonSerializer.Deserialize<List<ApplicationUser>>(view.JsonActiveODs);
+            view.ActiveStaffList = JsonSerializer.Deserialize<List<ApplicationUser>>(view.JsonActiveStaff);
+            view.AllActiveUsersList = JsonSerializer.Deserialize<List<ApplicationUser>>(view.JsonAllActiveUsers);
+            view.EmailString = "";
+
+            var emailAddressList = new List<string>();
+            if (view.DriverSelect)
+            {
+                var _dL = view.ActiveDriverList;
+                if (_dL != null)
+                {
+                    foreach (var _user in _dL.Where(_user => !emailAddressList.Contains(_user.Email)))
+                    { emailAddressList.Add(_user.Email); }
+                }
+            }
+
+            if (view.ODSelect)
+            {
+                var _oL = view.ActiveODList;
+                if (_oL != null)
+                {
+                    foreach (var _user in _oL.Where(_user => !emailAddressList.Contains(_user.Email)))
+                    { emailAddressList.Add(_user.Email); }
+                }
+            }
+
+            if (view.StaffSelect)
+            {
+                var _sL = view.ActiveStaffList;
+                if (_sL != null)
+                {
+                    foreach (var _user in _sL.Where(_user => !emailAddressList.Contains(_user.Email)))
+                    { emailAddressList.Add(_user.Email); }
+                }
+            }
+
+            if (view.AllUsersSelect)
+            {
+                var _aL = view.AllActiveUsersList;
+                if (_aL != null)
+                {
+                    foreach (var _user in _aL.Where(_user => !emailAddressList.Contains(_user.Email)))
+                    { emailAddressList.Add(_user.Email); }
+                }
+            }
+
+            for (var i = 1; i < emailAddressList.Count; i++) // item [0] is null
+            {
+                view.EmailString += emailAddressList[i] + ";";
+            }
+
+            return View(view);
         }
 
         private static List<ApplicationUser> GetMasterList(string roleName, 
@@ -75,7 +119,8 @@ namespace BHelp.Controllers
                             LastName = _user.LastName,
                             Email = _user.Email,
                             PhoneNumber = _user.PhoneNumber,
-                            PhoneNumber2 = _user.PhoneNumber2
+                            PhoneNumber2 = _user.PhoneNumber2,
+                            EmailRoleName = roleName
                         };
                         if (activeOnly && addUsr.Active)
                         {
