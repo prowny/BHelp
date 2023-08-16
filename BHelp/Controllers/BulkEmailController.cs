@@ -30,7 +30,7 @@ namespace BHelp.Controllers
                     allActiveUsersList, true),
 
                 AllActiveUsersList = allActiveUsersList,
-                // json serialize list (view does not persist lists)
+                // json serialize list (view does not persist unserialized lists)
                 JsonAllActiveUsers = JsonSerializer.Serialize(allActiveUsersList)
         };
 

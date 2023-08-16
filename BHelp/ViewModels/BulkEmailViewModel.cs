@@ -19,6 +19,6 @@ namespace BHelp.ViewModels
         public string JsonActiveDrivers { get; set; }
         public string JsonActiveStaff { get; set; }
         public string JsonAllActiveUsers { get; set; }
-        public string EmailString { get; set; }
+        public string EmailString { get; set; } // list of emails concatenated with semicolon 
     }
 }

@@ -79,7 +79,6 @@ namespace BHelp.Controllers
                 pymt.DateString = pymt.Date.ToString("MM/dd/yyyy");
                 var c = Convert.ToByte(pymt.Category);
                 pymt.ActionCategory = categoryList[c - 1];
-                //pymt.StringDollarAmount = pymt.StringDollarAmount.Replace(".-", "."); // replace negative modulus
             }
             view.PaymentList = _paymentList;
             view.ClientId = (int)clientId;
@@ -117,37 +116,35 @@ namespace BHelp.Controllers
                 pymnt.DateString = pymnt.Date.ToString("MM/dd/yyyy");
                 pymnt.ActionCategory = categoryList[pymnt.Category - 1];
                 var client = clientLookupList.FirstOrDefault(i => i.Id == pymnt.ClientId);
-                if (client != null)
+                if (client == null) continue;
+                pymnt.LastName = client.LastName;
+                pymnt.FirstName = client.FirstName;
+                pymnt.AddressString = client.StreetNumber + " " + client.StreetName + " "
+                                      + client.City + " "  + client.Zip;
+                pymnt.AddressToolTip = (client.StreetNumber + " " + client.StreetName + " "
+                                        + client.City + " " + client.Zip).Replace(" ", "\u00a0");
+
+                if (pymnt.Note != null)
                 {
-                    pymnt.LastName = client.LastName;
-                    pymnt.FirstName = client.FirstName;
-                    pymnt.AddressString = client.StreetNumber + " " + client.StreetName + " "
-                        + client.City + " "  + client.Zip;
-                    pymnt.AddressToolTip = (client.StreetNumber + " " + client.StreetName + " "
-                                           + client.City + " " + client.Zip).Replace(" ", "\u00a0");
+                    pymnt.NoteToolTip = pymnt.Note.Replace(" ", "\u00a0");
+                    var s = pymnt.Note; // For display, abbreviate to 20 characters:           
+                    s = s.Length <= 20 ? s : s.Substring(0, 20) + "...";
+                    pymnt.Note = s;
+                }
 
-                    if (pymnt.Note != null)
-                    {
-                        pymnt.NoteToolTip = pymnt.Note.Replace(" ", "\u00a0");
-                        var s = pymnt.Note; // For display, abbreviate to 20 characters:           
-                        s = s.Length <= 20 ? s : s.Substring(0, 20) + "...";
-                        pymnt.Note = s;
-                    }
+                if (pymnt.Action != null)
+                {
+                    pymnt.ActionToolTip = pymnt.Action.Replace(" ", "\u00a0");
+                    var s = pymnt.Action; // For display, abbreviate to 20 characters:           
+                    s = s.Length <= 20 ? s : s.Substring(0, 20) + "...";
+                    pymnt.Action = s;
+                }
 
-                    if (pymnt.Action != null)
-                    {
-                        pymnt.ActionToolTip = pymnt.Action.Replace(" ", "\u00a0");
-                        var s = pymnt.Action; // For display, abbreviate to 20 characters:           
-                        s = s.Length <= 20 ? s : s.Substring(0, 20) + "...";
-                        pymnt.Action = s;
-                    }
-
-                    if (pymnt.AddressString != null)
-                    {
-                        var s = pymnt.AddressString;  // For display, abbreviate to 20 characters:       
-                        s = s.Length <= 20 ? s : s.Substring(0, 20) + "...";
-                        pymnt.AddressString = s;
-                    }
+                if (pymnt.AddressString == null) continue;
+                {
+                    var s = pymnt.AddressString;  // For display, abbreviate to 20 characters:       
+                    s = s.Length <= 20 ? s : s.Substring(0, 20) + "...";
+                    pymnt.AddressString = s;
                 }
             }
 
@@ -240,24 +237,21 @@ namespace BHelp.Controllers
             public ActionResult Create([Bind(Include = "Date,ClientId,Action,CategoryId,AmountDecimal,Note")]
                 AssistanceViewModel assistancePayment)
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid) return View();
+                var newRec = new AssistancePayment()
                 {
-                    var newRec = new AssistancePayment()
-                    {
-                        Date = assistancePayment.Date,
-                        ClientId = assistancePayment.ClientId,
-                        Category = Convert .ToByte(assistancePayment.CategoryId),
-                        Action = assistancePayment.Action,
-                        AmountDecimal = assistancePayment .AmountDecimal,
-                        Note = assistancePayment.Note 
-                    };
+                    Date = assistancePayment.Date,
+                    ClientId = assistancePayment.ClientId,
+                    Category = Convert .ToByte(assistancePayment.CategoryId),
+                    Action = assistancePayment.Action,
+                    AmountDecimal = assistancePayment .AmountDecimal,
+                    Note = assistancePayment.Note 
+                };
 
-                    db.AssistancePayments.Add(newRec);
-                    db.SaveChanges();
-                    return RedirectToAction("SearchClient");
-                }
+                db.AssistancePayments.Add(newRec);
+                db.SaveChanges();
+                return RedirectToAction("SearchClient");
 
-                return View();
             }
 
             // GET: AssistancePayments/Edit/5
@@ -365,13 +359,12 @@ namespace BHelp.Controllers
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
-                AssistancePayment assistancePayment = db.AssistancePayments.Find(id);
+                var assistancePayment = db.AssistancePayments.Find(id);
                 if (assistancePayment == null) return HttpNotFound();
                 var view = new AssistanceViewModel()
                 {
                     Date = assistancePayment.Date,
                     Action = assistancePayment.Action,
-                    AmountInCents =assistancePayment.AmountInCents, // auto fills StringDollarAmount
                     Note = assistancePayment.Note
                 };
                 var client = db.Clients.Find(assistancePayment.ClientId);
@@ -509,11 +502,11 @@ namespace BHelp.Controllers
                 return RedirectToAction("PaymentsByDate", new{ startDate, endDate});
             }
 
-            public ActionResult ConvertPaymentsToDecimal()
-            {
-                Utilities.ConvertPaymentsToDecimal();
-                return null;
-            }
+            //public ActionResult ConvertPaymentsToDecimal()
+            //{
+            //    Utilities.ConvertPaymentsToDecimal();
+            //    return null;
+            //}
             protected override void Dispose(bool disposing)
             {
                 if (disposing)

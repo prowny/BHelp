@@ -9,37 +9,22 @@ namespace BHelp.Models
         public int ClientId { get; set; }
         public byte Category { get; set; }
         public string Action { get; set; }
-        public string Payee { get; set; }  // unused 07/07/2023
-        public int AmountInCents { get; set; }
+        //public int AmountInCents { get; set; }
         public DateTime Date { get; set; }
         public string Note { get; set; }
         public decimal AmountDecimal { get; set; }
 
-        [NotMapped]
-        public string StringDollarAmount
-        {
-            get => $"${AmountInCents / 100}.{AmountInCents % 100:00}";
-            set => throw new NotImplementedException();
-        }
-        // string.Format("${0}.{1:00}", AmountInCents / 100, AmountInCents % 100);
-        // means format with $sign amount/100, amount modulo 100
-        // where modulo is 'the remainder when divided by'  100
-
         [NotMapped] public string LastName { get; set; }
         [NotMapped] public string FirstName { get; set; }
-        [NotMapped] public string StreetNumber { get; set; }
-        [NotMapped] public string StreetName { get; set; }
         [NotMapped] public string City { get; set; }
         [NotMapped] public string Zip { get; set; }
         [NotMapped] public string NoteToolTip { get; set; }
-
         [NotMapped] public string DateString { get; set; }
-
         [NotMapped] public string FullName { get; set; }
         [NotMapped] public string ActionCategory { get; set; }
-        [NotMapped] public string ActionToolTip { get; set; }
+        [NotMapped] public string ActionToolTip { get; set;}
         [NotMapped] public string AddressString { get; set; }
         [NotMapped] public string AddressToolTip { get; set; }
-        [NotMapped] public string PayeeToolTip { get; set; } // unused 07/07/2023
+        [NotMapped] public string StringDollarAmount { get; set; }
     }
 }
