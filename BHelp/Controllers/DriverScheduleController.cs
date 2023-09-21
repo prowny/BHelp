@@ -17,7 +17,7 @@ namespace BHelp.Controllers
     {
         // GET: DriverSchedule
         [AllowAnonymous]
-        public ActionResult Edit( DateTime? boxDate)
+        public ActionResult Edit(DateTime? boxDate)
         {
             var db = new BHelpContext();
             GetSessionLookupLists(boxDate); // DriverList, GroupList, Holidays, DriverScheduleDateData
@@ -242,6 +242,60 @@ namespace BHelp.Controllers
             }
         }
 
+        // GET: DriverSchedule/Individual Signup
+        public ActionResult Individual(DateTime? boxDate)
+        {
+            GetSessionLookupLists(boxDate);
+            var view =  GetDriverScheduleViewModel();
+            var schedules = new List<DriverScheduleViewModel>();
+            var startDt = GetFirstWeekDay(view.Month, view.Year);
+            var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
+            var startDayOfWk = (int)startDt.DayOfWeek;
+            var dt = DateTime.MinValue;
+            var skip = false;
+            for (var i = 0; i < 27; i++)
+            {
+                if (i >= startDayOfWk)
+                {
+                    if (skip == false)
+                    {
+                        dt = startDt;
+                        skip = true;
+                    }
+                }
+
+                var schedule = new DriverScheduleViewModel
+                {
+                    Id = i,
+                    Date = dt,
+                    DriverId = "0",
+                    BackupDriverId = "0",
+                    BackupDriver2Id = "0",
+                    MonthName = view.MonthName,
+                    Note = view.Note
+                };
+                if (dt > DateTime.MinValue)
+                {
+                    schedule.DayString = dt.Day.ToString("0");
+                }
+                schedules.Add(schedule);
+
+                if (dt > DateTime.MinValue)
+                {
+                    dt = dt.AddDays(1);
+                    if ((int)dt.DayOfWeek == 6)
+                    {
+                        dt = dt.AddDays(2);
+                    }
+
+                    if (dt > endDate) dt = DateTime.MinValue;
+                }
+            }
+
+            view.DriversSchedule = schedules;
+            return View(view);
+        }
+
         public ActionResult PreviousMonth(int month, int year)
             {
                 month = month - 1;
@@ -264,6 +318,32 @@ namespace BHelp.Controllers
             var _boxDate = GetFirstWeekDay(month, year);
             return RedirectToAction("Edit", new { boxDate = _boxDate });
         }
+
+        public ActionResult PreviousMonthIndividual(int month, int year)
+        {
+            month = month - 1;
+            if (month < 1)
+            {
+                month = 12;
+                year = year - 1;
+            }
+            var _boxDate = GetFirstWeekDay(month, year);
+            return RedirectToAction("Individual", new { boxDate = _boxDate });
+        }
+
+        public ActionResult NextMonthIndividual(int month, int year)
+        {
+            month = month + 1;
+            if (month > 12)
+            {
+                month = 1;
+                year = year + 1;
+            }
+            var _boxDate = GetFirstWeekDay(month, year);
+            return RedirectToAction("Individual", new { boxDate = _boxDate });
+        }
+
+
         private static DateTime GetFirstWeekDay(int month, int year)
     {
         DateTime dt = new DateTime(year, month, 1);
@@ -515,6 +595,7 @@ namespace BHelp.Controllers
             {
                 CurrentUserId = User.Identity.GetUserId(), 
                 BoxDay = new DateTime[6, 6],
+                BoxSignup = new bool[26],
                 BoxODId = new string[26],
                 BoxDriverId = new string[26],
                 BoxDriverName = new string[26],

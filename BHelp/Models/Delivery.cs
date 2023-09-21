@@ -12,11 +12,6 @@ namespace BHelp.Models
         public int Id { get; set; }
         public int ClientId { get; set; }
 
-        //[DisplayName("Desired Delivery Date")]
-        //[Column(TypeName = "Date")]
-        //[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
-        //public DateTime DeliveryDate { get; set; }  // UNUSED. Deprecated 11/21; use only DateDelivered 
-
         [DisplayName("Call Log Date")]
         [Column(TypeName = "Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
@@ -103,7 +98,7 @@ namespace BHelp.Models
         public Boolean AllZeroProducts { get; set; }
 
         [NotMapped]
-        public Boolean EligiibilityRulesException { get; set; }
+        public bool EligiibilityRulesException { get; set; }
 
         [NotMapped]
         public int PoundsOfFood { get; set; }
