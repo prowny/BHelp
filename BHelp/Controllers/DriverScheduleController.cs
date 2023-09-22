@@ -296,6 +296,11 @@ namespace BHelp.Controllers
             return View(view);
         }
 
+        public ActionResult SubmitMyChanges()
+        {
+            return RedirectToAction("Individual");
+        }
+
         public ActionResult PreviousMonth(int month, int year)
             {
                 month = month - 1;
@@ -595,7 +600,10 @@ namespace BHelp.Controllers
             {
                 CurrentUserId = User.Identity.GetUserId(), 
                 BoxDay = new DateTime[6, 6],
-                BoxSignup = new bool[26],
+                BoxDriverSignup = new bool[26],
+                BoxDriverUnsign = new bool[26],
+                BoxBackupDriverSignup = new bool[26],
+                BoxBackupDriverUnsign = new bool[26],
                 BoxODId = new string[26],
                 BoxDriverId = new string[26],
                 BoxDriverName = new string[26],
@@ -670,6 +678,7 @@ namespace BHelp.Controllers
                         if (bdrIdx >= 0)
                         {
                             view.BoxBackupDriverName[idx] = driverList[bdrIdx].Text;
+                            view.BoxBackupDriverId[idx] = driverList[bdrIdx].Value;
                             view.BoxBackupDriverPhone[idx] = driverDataList[bdrIdx].PhoneNumber;
                             view.BoxBackupDriverPhone2[idx] = driverDataList[bdrIdx].PhoneNumber2;
                             view.BoxBackupDriverEmail[idx] = driverDataList[bdrIdx].Email;

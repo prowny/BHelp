@@ -77,7 +77,10 @@ namespace BHelp.ViewModels
         [DataType(DataType.MultilineText)]
         public string[] BoxNote { get; set; }
         public bool[] BoxHoliday { get; set; }
-        public bool[] BoxSignup { get; set; }
+        public bool[] BoxDriverSignup { get; set; }
+        public bool[] BoxDriverUnsign { get; set; }
+        public bool[] BoxBackupDriverSignup { get; set; }
+        public bool[] BoxBackupDriverUnsign { get; set; }
         public string[] BoxHolidayDescription { get; set; }
         public bool IsDriverOnly { get; set; }
         public bool IsScheduler { get; set; }
