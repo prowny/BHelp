@@ -57,7 +57,7 @@ namespace BHelp.Controllers
 
             var view = GetODScheduleViewModel();
 
-            if (User.IsInAnyRoles("Scheduler", "Developer", "Administrator"))
+            if (User.IsInAnyRoles("DriverScheduler", "Developer", "Administrator"))
             {
                 var cutOffDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
                 if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer", "Administrator"))
@@ -65,7 +65,7 @@ namespace BHelp.Controllers
                     view.AllowEdit = true;
                 }
 
-                if (User.IsInAnyRoles("Scheduler", "Developer", "Administrator"))
+                if (User.IsInAnyRoles("DriverScheduler", "Developer", "Administrator"))
                 {
                     view.IsScheduler = true;
                 }
@@ -280,7 +280,7 @@ namespace BHelp.Controllers
                 Session["ODSelectList"] = odList;
                 Session["ODDataList"] = odDataList;
 
-                if (!User.IsInAnyRoles("Scheduler", "Developer", "Administrator")) // is NOT Scheduler
+                if (!User.IsInAnyRoles("ODScheduler", "Developer", "Administrator")) // is NOT Scheduler
                 {
                     var nonSchedulerODSelectList = new List<SelectListItem>
                     {
@@ -332,7 +332,7 @@ namespace BHelp.Controllers
             }
         }
 
-        [Authorize(Roles = "Developer,Administrator,Staff,Scheduler,OfficerOfTheDay")]
+        [Authorize(Roles = "Developer,Administrator,Staff,ODScheduler,OfficerOfTheDay")]
         public ActionResult ODScheduleToExcel()
         {
             var view = GetODScheduleViewModel();

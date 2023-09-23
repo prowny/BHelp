@@ -70,7 +70,7 @@ namespace BHelp
             subCatList.Add(selListItem);
             selListItem = new SelectListItem() { Value = "OD", Text = @"OD" };
             subCatList.Add(selListItem);
-            selListItem = new SelectListItem() { Value = "Scheduler", Text = @"Scheduler" };
+            selListItem = new SelectListItem() { Value = "DriverScheduler", Text = @"DriverScheduler" };
             subCatList.Add(selListItem);
             selListItem = new SelectListItem() { Value = "Trainer", Text = @"Trainer" };
             subCatList.Add(selListItem);
@@ -183,7 +183,7 @@ namespace BHelp
                 new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Food Staff",PeopleCount =0,TotalHours = 0},
                 new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Food Staff Supervisor",PeopleCount =0,TotalHours = 0},
                 new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "OD",PeopleCount =0,TotalHours = 0},
-                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Scheduler",PeopleCount =0,TotalHours = 0},
+                new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Driver Scheduler",PeopleCount =0,TotalHours = 0},
                 new VolunteerHoursTotalsViewModel(){Category ="F", Subcategory = "Trainer",PeopleCount =0,TotalHours = 0}
             };
    

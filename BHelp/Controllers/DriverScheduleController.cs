@@ -24,14 +24,14 @@ namespace BHelp.Controllers
 
             var view = GetDriverScheduleViewModel();
            
-            if (User.IsInAnyRoles("Scheduler","Developer", "Administrator"))
+            if (User.IsInAnyRoles("DriverScheduler","Developer", "Administrator"))
             {
                 var cutOffDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
                 if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer", "Administrator"))
                 {
                     view.AllowEdit = true;
                 }
-                if (User.IsInAnyRoles("Scheduler", "Developer", "Administrator"))
+                if (User.IsInAnyRoles("DriverScheduler", "Developer", "Administrator"))
                 {
                     view.IsScheduler = true;
                 }
@@ -151,7 +151,7 @@ namespace BHelp.Controllers
         }
 
         // POST: DriverSchedule/Edit
-        [HttpPost, Authorize(Roles = "Developer,Administrator,Staff,Scheduler")]
+        [HttpPost, Authorize(Roles = "Developer,Administrator,Staff,DriverScheduler")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(DriverScheduleViewModel schedule)
         {
@@ -296,8 +296,14 @@ namespace BHelp.Controllers
             return View(view);
         }
 
-        public ActionResult SubmitMyChanges()
+        // POST: Submit DriverScheduleViewModel
+        [HttpPost, Authorize(Roles = "Developer,Administrator,Staff,Driver,DriverScheduler")]
+        [ValidateAntiForgeryToken]
+        public ActionResult SubmitMyChanges(DriverScheduleViewModel schedule)
         {
+            //return RedirectToAction("Individual");
+            if (!ModelState.IsValid) return RedirectToAction("Individual");
+
             return RedirectToAction("Individual");
         }
 
@@ -395,7 +401,7 @@ namespace BHelp.Controllers
                 Session["DriverSelectList"] = driverList;
                 Session["DriverDataList"] = driverDataList;
 
-                if (!User.IsInAnyRoles("Scheduler", "Developer", "Administrator")) // is NOT Scheduler
+                if (!User.IsInAnyRoles("DriverScheduler", "Developer", "Administrator")) // is NOT Scheduler
                 {
                     var nonSchedulerDriverSelectList = new List<SelectListItem>
                     {
@@ -451,7 +457,7 @@ namespace BHelp.Controllers
             //}
         }
 
-        [Authorize(Roles = "Developer,Administrator,Staff,Scheduler,Driver")]
+        [Authorize(Roles = "Developer,Administrator,Staff,DriverScheduler,Driver")]
         public ActionResult DriverScheduleToExcel()
         {
             var view = GetDriverScheduleViewModel();

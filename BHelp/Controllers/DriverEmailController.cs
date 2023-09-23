@@ -371,7 +371,7 @@ namespace BHelp.Controllers
                 Session["DriverSelectList"] = driverList;
                 Session["DriverDataList"] = driverDataList;
 
-                if (!User.IsInAnyRoles("Scheduler", "Developer", "Administrator")) // is NOT Scheduler
+                if (!User.IsInAnyRoles("DriverScheduler", "Developer", "Administrator")) // is NOT Scheduler
                 {
                     var nonSchedulerDriverSelectList = new List<SelectListItem>
                     {

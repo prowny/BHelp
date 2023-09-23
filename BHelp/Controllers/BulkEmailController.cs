@@ -122,14 +122,23 @@ namespace BHelp.Controllers
                             PhoneNumber2 = _user.PhoneNumber2,
                             EmailRoleName = roleName
                         };
-                        if (activeOnly && addUsr.Active)
+                        //if (activeOnly && addUsr.Active)
+                        //{
+                        //    listMaster.Add(addUsr);
+                        //}
+                        //if(!activeOnly)
+                        //{
+                        //    listMaster.Add(addUsr);
+                        //}
+
+                        switch (activeOnly)
                         {
-                            listMaster.Add(addUsr);
+                            case true when addUsr.Active:
+                            case false:
+                                listMaster.Add(addUsr);
+                                break;
                         }
-                        if(!activeOnly)
-                        {
-                            listMaster.Add(addUsr);
-                        }
+
                     }
                 }
             }

@@ -235,7 +235,7 @@ namespace BHelp.Controllers
                 Session["ODSelectList"] = odList;
                 Session["ODDataList"] = odDataList;
 
-                if (!User.IsInAnyRoles("Scheduler", "Developer", "Administrator")) // is NOT Scheduler
+                if (!User.IsInAnyRoles("DriverScheduler", "Developer", "Administrator")) // is NOT Scheduler
                 {
                     var nonSchedulerODSelectList = new List<SelectListItem>
                     {
