@@ -7,25 +7,26 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Individual Driver Schedule Signup </title>
+    <style>
+        #SubmitButton {
+            background-color: blue;
+            color: white
+        }
+    </style>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
 </head>
-<style>
-    #SubmitButton {
-        background-color: blue;
-        color: white
-    }
-</style>
-<script src="~/Scripts/jquery-3.3.1.min.js"></script>
-<script src="~/Scripts/jquery.validate.min.js"></script>
-<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
 <body>
-    @using (Html.BeginForm("SubmitMyChanges", "DriverSchedule", FormMethod.Post))
+    @using (Html.BeginForm("Individual", "DriverSchedule", 
+        Model, FormMethod.Post))
     {
         @Html.AntiForgeryToken()
         <div>
-            <b>This page not implemented yet!</b>
-            <br />
-            Individual Signup for driver &nbsp;<b>@User.Identity.Name</b>
+            Individual Signup & Cancel Signup for driver &nbsp;<b>@User.Identity.Name</b>
             <br />
         </div>
         <div>
@@ -38,14 +39,23 @@
                             <b>@Model.MonthName&nbsp;@Model.Year</b>
                         </span>
                     </td>
-                    <td>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        @Html.ActionLink(" Previous Month", "PreviousMonthIndividual",
-                            new { @Model.Month, @Model.Year })
-                    </td>
+
+                    @{ int currentYrMo; }
+                    @(currentYrMo = Model.Year * 100 + Model.Month)
+                    @{ DateTime previousDt; }
+                    @(previousDt = Model.CurrentDate.AddMonths(-1))
+                    @{ var previousYrMo = previousDt.Year * 100 + previousDt.Month; }
+                    @if (previousYrMo >= currentYrMo)
+                    {
+                        <td>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            @Html.ActionLink(" Previous Month", "PreviousMonthIndividual",
+                                new { @Model.Month, @Model.Year })
+                        </td>
+                    }
                     <td>
                         &nbsp;&nbsp;@Html.ActionLink(" Next Month", "NextMonthIndividual",
-                            new { @Model.Month, @Model.Year })
+new { @Model.Month, @Model.Year })
                     </td>
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home")</td>
                 </tr>
@@ -89,13 +99,15 @@
                                             <span style="text-decoration-color: red">
                                                 @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
                                             </span>
-                                            if (Model.BoxDay[row, col] > DateTime.Today)
+                                            if (Model.BoxDay[row, col] > DateTime.Today 
+                                                && User.IsInRole( "Driver"))
                                             {
                                                 <span>
                                                     <br />
                                                     &nbsp;&nbsp;
                                                     @Html.Label("Sign Up:", new { style = "color: red" })
-                                                    @Html.CheckBoxFor(c => c.BoxDriverSignup[i])
+                                                    @Html.ActionLink("Sign Up", "DriverSignUp", 
+                                                        new{ idx = i, date = Model.BoxDay[row, col], cancel = false })
                                                 </span>
                                             }
                                         }
@@ -111,13 +123,15 @@
                                             </span>
                                             <br />
                                             @Html.Raw(Model.BoxDriverName[i])
-                                            if (Model.BoxDriverId[i] == Model.CurrentUserId)
+                                            if (Model.BoxDriverId[i] == Model.CurrentUserId
+                                                && User.IsInRole("Driver"))
                                             {
                                                 <br />
                                                 <span style="text-decoration-color: red">
                                                     &nbsp;&nbsp;
-                                                    @Html.Label("Un-Sign:", new { style = "color: red" })
-                                                    @Html.CheckBoxFor(c => c.BoxDriverUnsign[i])
+                                                    @Html.Label("Cancel:", new { style = "color: red" })
+                                                    @Html.ActionLink("Cancel", "DriverSignUp", 
+                                                        new{ idx = i, date = Model.BoxDay[row, col], cancel = true })     
                                                 </span>
                                             }
                                             if (Model.BoxDriverPhone[i] != null)
@@ -157,14 +171,15 @@
                                         <span style="text-decoration-color: red">
                                             @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
                                         </span>
-                                        if (Model.BoxDay[row, col] > DateTime.Today)
+                                        if (Model.BoxDay[row, col] > DateTime.Today
+                                            && User.IsInRole("Driver"))
                                         {
                                             <br />
                                             <span style="text-decoration-color: red">
                                                 &nbsp;&nbsp;
                                                 @Html.Label("Sign Up:", new { style = "color: red" })
-                                                @Html.CheckBoxFor(c => c.BoxBackupDriverSignup[i])
-                                            </span>
+                                                @Html.ActionLink("Sign Up", "BackupDriverSignUp", 
+                                                    new{ idx = i, date = Model.BoxDay[row, col], cancel = false })                                            </span>
                                         }
                                     }
                                 }
@@ -182,9 +197,9 @@
                                         <br />
                                         <span style="text-decoration-color: red">
                                             &nbsp;&nbsp;
-                                            @Html.Label("Un-Sign:", new { style = "color: red" })
-                                            @Html.CheckBoxFor(c => c.BoxBackupDriverUnsign[i])
-                                        </span>
+                                            @Html.Label("Cancel:", new { style = "color: red" })
+                                            @Html.ActionLink("Cancel", "BackupDriverSignUp", 
+                                                new{ idx = i, date = Model.BoxDay[row, col], cancel = true })                                        </span>
                                     }
                                     if (Model.BoxBackupDriverPhone[i] != null)
                                     {
@@ -335,8 +350,8 @@
         </div>
         <br />
         <div>
-            <input name="btnSubmit" type="submit" value="Submit My Changes" class="btn btn-default" id="SubmitButton" />
-            <b>&nbsp;Not Implemented Yet!</b>
+            <input name="btnSubmit" type="submit" value="Submit My Changes" class="btn btn-default" id="SubmitButton"/>
+            @*<b>&nbsp;Not Implemented Yet!</b>*@
         </div>
     }
     <div>
@@ -346,9 +361,21 @@
 </body>
 </html>
 
-<script>
-    function submitForm()
-    {
-        window.$('form').submit();
-    }
-</script>
+@*<script >
+    $(function () {
+        $("#DriverSignUp").change(function () {
+            var boxIdx = window.$("#DriverSignUp").Id;
+            var boxValue = window.$("#DriverSignUp").val();
+            var data = boxIndex: boxIdx, boxValue: boxValue;
+            window.$.ajax({
+                type: "Get",
+                url: "/DriverSchedule/SignUp",
+                success: function (data) {
+                    window.$("body").html(data);
+                },
+                error: function (response) {
+                    alert(response);
+                }
+            });
+    }); 
+</script>*@

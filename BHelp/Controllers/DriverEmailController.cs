@@ -147,29 +147,27 @@ namespace BHelp.Controllers
 
         private DriverScheduleViewModel GetDriverScheduleViewModel(int year, int month)
         {
-            var view = new DriverScheduleViewModel
-            {
-                BoxDay = new DateTime[6, 6],
-                BoxODId = new string[26],
-                BoxDriverName = new string[26],
-                BoxDriverPhone = new string[26],
-                BoxDriverPhone2 = new string[26],
-                BoxDriverEmail = new string[26],
-                BoxBackupDriverId = new string[26],
-                BoxBackupDriverName = new string[26],
-                BoxBackupDriverPhone = new string[26],
-                BoxBackupDriverPhone2 = new string[26],
-                BoxBackupDriverEmail = new string[26],
-                BoxGroupName = new string[26],
-                BoxGroupDriverName = new string[26],
-                BoxGroupDriverPhone = new string[26],
-                BoxGroupDriverPhone2 = new string[26],
-                BoxGroupDriverEmail = new string[26],
-                BoxHolidayDescription = new string[26],
-                BoxNote = new string[26],
-                Month = month,
-                Year = year
-            };
+            var view = new DriverScheduleViewModel();
+            view.BoxDay = new DateTime[6, 6];
+            view.BoxODId = new string[26];
+            view.BoxDriverName = new string[26];
+            view.BoxDriverPhone = new string[26];
+            view.BoxDriverPhone2 = new string[26];
+            view.BoxDriverEmail = new string[26];
+            view.BoxBackupDriverId = new string[26];
+            view.BoxBackupDriverName = new string[26];
+            view.BoxBackupDriverPhone = new string[26];
+            view.BoxBackupDriverPhone2 = new string[26];
+            view.BoxBackupDriverEmail = new string[26];
+            view.BoxGroupName = new string[26];
+            view.BoxGroupDriverName = new string[26];
+            view.BoxGroupDriverPhone = new string[26];
+            view.BoxGroupDriverPhone2 = new string[26];
+            view.BoxGroupDriverEmail = new string[26];
+            view.BoxHolidayDescription = new string[26];
+            view.BoxNote = new string[26];
+            view.Month = month;
+            view.Year = year;
 
             var startDate = new DateTime(view.Year, view.Month, 1);
             var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));

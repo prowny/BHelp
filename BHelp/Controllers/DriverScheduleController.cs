@@ -299,12 +299,84 @@ namespace BHelp.Controllers
         // POST: Submit DriverScheduleViewModel
         [HttpPost, Authorize(Roles = "Developer,Administrator,Staff,Driver,DriverScheduler")]
         [ValidateAntiForgeryToken]
-        public ActionResult SubmitMyChanges(DriverScheduleViewModel schedule)
+        public ActionResult Individual(DriverScheduleViewModel schedule)
         {
             //return RedirectToAction("Individual");
             if (!ModelState.IsValid) return RedirectToAction("Individual");
 
             return RedirectToAction("Individual");
+        }
+
+        public ActionResult DriverSignUp(int? idx, DateTime? date, bool? cancel)
+        {
+            var CurrentUserId = User.Identity.GetUserId();
+            // check for existing DriversSchedules record
+            using var db = new BHelpContext();
+            var rec = db.DriverSchedules
+                .FirstOrDefault(d => d.Date == date);
+            if (rec != null)
+            {
+                if (cancel == true)
+                {
+                    rec.DriverId = null;
+                }
+                else // cancel = false:
+                {
+                    rec.DriverId = CurrentUserId;
+                }
+                db.SaveChanges();
+            }
+            else  // rec is null:
+            {
+                if (date != null)
+                {
+                    var newRec = new DriverSchedule
+                    {
+                        Date = (DateTime)date,
+                        DriverId = CurrentUserId
+                    };
+                    db.DriverSchedules.Add(newRec);
+                }
+
+                db.SaveChanges();
+            }
+            return RedirectToAction("Individual", new {boxDate = date});
+        }
+
+        public ActionResult BackupDriverSignUp(int? idx, DateTime? date, bool? cancel)
+        {
+            var CurrentUserId = User.Identity.GetUserId();
+            // check for existing DriversSchedules record
+            using var db = new BHelpContext();
+            var rec = db.DriverSchedules
+                .FirstOrDefault(d => d.Date == date);
+            if (rec != null)
+            {
+                if (cancel == true)
+                {
+                    rec.BackupDriverId = null;
+                }
+                else // cancel = false:
+                {
+                    rec.BackupDriverId = CurrentUserId;
+                }
+                db.SaveChanges();
+            }
+            else  // rec is null:
+            {
+                if (date != null)
+                {
+                    var newRec = new DriverSchedule
+                    {
+                        Date = (DateTime)date,
+                        BackupDriverId = CurrentUserId
+                    };
+                    db.DriverSchedules.Add(newRec);
+                }
+
+                db.SaveChanges();
+            }
+            return RedirectToAction("Individual", new { boxDate = date });
         }
 
         public ActionResult PreviousMonth(int month, int year)
@@ -462,7 +534,7 @@ namespace BHelp.Controllers
         {
             var view = GetDriverScheduleViewModel();
             var workbook = new XLWorkbook();
-            IXLWorksheet ws = workbook.Worksheets.Add("Driver Schedule");
+            var ws = workbook.Worksheets.Add("Driver Schedule");
 
             var dateData = Session["DriverScheduleDateData"].ToString();
             var month = Convert.ToInt32(dateData.Substring(2, 2));
@@ -604,43 +676,16 @@ namespace BHelp.Controllers
         {
             var view = new DriverScheduleViewModel()
             {
-                CurrentUserId = User.Identity.GetUserId(), 
-                BoxDay = new DateTime[6, 6],
-                BoxDriverSignup = new bool[26],
-                BoxDriverUnsign = new bool[26],
-                BoxBackupDriverSignup = new bool[26],
-                BoxBackupDriverUnsign = new bool[26],
-                BoxODId = new string[26],
-                BoxDriverId = new string[26],
-                BoxDriverName = new string[26],
-                BoxDriverPhone = new string[26],
-                BoxDriverPhone2 = new string[26],
-                BoxDriverEmail = new string[26],
-                BoxBackupDriverId = new string[26],
-                BoxBackupDriverName = new string[26],
-                BoxBackupDriverPhone = new string[26],
-                BoxBackupDriverPhone2 = new string[26],
-                BoxBackupDriverEmail = new string[26],
-                BoxBackupDriver2Id = new string[26],
-                BoxBackupDriver2Name = new string[26],
-                BoxBackupDriver2Phone = new string[26],
-                BoxBackupDriver2Phone2 = new string[26],
-                BoxBackupDriver2Email = new string[26],
-                BoxGroupName = new string[26],
-                BoxGroupDriverName = new string[26],
-                BoxGroupDriverPhone = new string[26],
-                BoxGroupDriverPhone2 = new string[26],
-                BoxGroupDriverEmail = new string[26],
-                BoxNote = new string[26],
-                BoxHoliday = new bool[26],
-                BoxHolidayDescription = new string[26],
-                BoxDriverConfirmed = new bool[26]
-        };
+                CurrentUserId = User.Identity.GetUserId(),
+                BoxDay = new DateTime[6, 6]
+            } ;
+
             var dateData = Session["DriverScheduleDateData"].ToString();
             view.Month = Convert.ToInt32(dateData.Substring(2, 2));
             view.Year = Convert.ToInt32(dateData.Substring(4, 4));
             view.Date = new DateTime(view.Year, view.Month, Convert.ToInt32(dateData.Substring(0, 2)));
             view.MonthName = Strings.ToUpperCase(view.Date.ToString("MMMM"));
+            view.CurrentDate= DateTime.Today;
             var startDate = new DateTime(view.Year, view.Month, 1);
             var endDate = new DateTime(view.Year,view.Month, DateTime.DaysInMonth(view.Year, view.Month));
             var startDayOfWk = (int)startDate.DayOfWeek;
@@ -667,7 +712,7 @@ namespace BHelp.Controllers
                     }
 
                     var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
-                    if (mIdx >= 0)  // mIdx = -1 if match not found
+                    if (mIdx >= 0)  // match found  (mIdx = -1 if match not found)
                     {
                         view.BoxNote[idx] = monthlyList[mIdx].Note;
                         var drIdx = driverList.FindIndex(d => d.Value == monthlyList[mIdx].DriverId);

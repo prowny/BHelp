@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 
 namespace BHelp.ViewModels
 {
@@ -53,7 +54,6 @@ namespace BHelp.ViewModels
         public string[] BoxDriverPhone2 { get; set; }
         public string[] BoxDriverEmail { get; set; }
         public bool[] BoxDriverConfirmed { get; set; }
-
         public string[] BoxBackupDriverId { get; set; }
         public string[] BoxBackupDriverName { get; set; }
         public string[] BoxBackupDriverPhone { get; set; }
@@ -89,5 +89,63 @@ namespace BHelp.ViewModels
         public DateTime CurrentDate { get; set; }  // to set mindate in datepicker
         public string CurrentUserId { get; set; }
         public List <SelectListItem> GroupList { get; set; }
+        public List<BoxSignUp> BoxDriverSignUps { get; set; }
+        public List<BoxSignUp> BoxDriverUnSignUps { get; set; }
+        public List<BoxSignUp> BoxBackupDriverSignUps { get; set; }
+        public List<BoxSignUp> BoxBackupDriverUnSignUps { get; set; }
+
+        public Dictionary<int, bool> DriverSignup { get; set; }
+
+        // create constructor to initialize the arrays
+        public DriverScheduleViewModel()
+        {
+            BoxDriverId = new string[26];
+            BoxDriverName = new string[26];
+            BoxODId = new string[26];
+            BoxDriverPhone = new string[26];
+            BoxDriverPhone2 = new string[26];
+            BoxDriverEmail = new string[26];
+            BoxDriverConfirmed = new bool[26];
+            BoxBackupDriverId = new string[26];
+            BoxBackupDriverName = new string[26];
+            BoxBackupDriverPhone = new string[26];
+            BoxBackupDriverPhone2 = new string[26];
+            BoxBackupDriverEmail = new string[26];
+            BoxBackupDriver2Id = new string[26];
+            BoxBackupDriver2Name = new string[26];
+            BoxBackupDriver2Phone = new string[26];
+            BoxBackupDriver2Phone2 = new string[26];
+            BoxBackupDriver2Email = new string[26];
+            BoxGroupId = new int[26];
+            BoxGroupName = new string[26];
+            BoxGroupDriverId = new string[26];
+            BoxGroupDriverName = new string[26];
+            BoxGroupDriverPhone = new string[26];
+            BoxGroupDriverPhone2 = new string[26];
+            BoxGroupDriverEmail = new string[26];
+            BoxNote = new string[26];
+            BoxHoliday = new bool[26];
+            BoxHolidayDescription = new string[26];
+            BoxDriverSignup = new bool[26];
+            BoxDriverUnsign = new bool[26];
+            BoxBackupDriverSignup = new bool[26];
+            BoxBackupDriverUnsign = new bool[26];
+            BoxDriverSignUps = new List<BoxSignUp>();
+            BoxDriverUnSignUps = new List<BoxSignUp>();
+            BoxBackupDriverSignUps = new List<BoxSignUp>();
+            BoxBackupDriverUnSignUps = new List<BoxSignUp>();
+            DriverSignup = new Dictionary<int, bool>();
+           
+            for (var i = 0; i < 26; i++)
+            {
+                var nbsu = new BoxSignUp { Id = i, Checked = false };
+                BoxDriverSignUps.Add(nbsu);
+                BoxDriverUnSignUps.Add(nbsu);
+                BoxBackupDriverSignUps.Add(nbsu);
+                BoxBackupDriverUnSignUps.Add(nbsu);
+
+                DriverSignup.Add( i, false);
+            }
+        }
     }
 }

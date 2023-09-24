@@ -443,6 +443,7 @@
     </Compile>
     <Compile Include="ViewModels\AssistanceDataViewModel.cs" />
     <Compile Include="ViewModels\AssistanceViewModel.cs" />
+    <Compile Include="ViewModels\BoxSignUp.cs" />
     <Compile Include="ViewModels\BulkEmailViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
