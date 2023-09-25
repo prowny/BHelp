@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
@@ -247,6 +251,7 @@ namespace BHelp.Controllers
         {
             GetSessionLookupLists(boxDate);
             var view =  GetDriverScheduleViewModel();
+            view.TodayYearMonth = DateTime.Today.Year * 100 + DateTime.Today.Month;
             var schedules = new List<DriverScheduleViewModel>();
             var startDt = GetFirstWeekDay(view.Month, view.Year);
             var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
@@ -677,8 +682,9 @@ namespace BHelp.Controllers
             var view = new DriverScheduleViewModel()
             {
                 CurrentUserId = User.Identity.GetUserId(),
-                BoxDay = new DateTime[6, 6]
-            } ;
+                BoxDay = new DateTime[6, 6],
+                TodayYearMonth = DateTime.Today.Year * 100 + DateTime.Today.Month
+        };
 
             var dateData = Session["DriverScheduleDateData"].ToString();
             view.Month = Convert.ToInt32(dateData.Substring(2, 2));
@@ -822,6 +828,30 @@ namespace BHelp.Controllers
         {
             var holidays = HolidayRoutines.GetHolidays(dt.Year);
             return holidays.Find(h => h.CalculatedDate == dt);
+        }
+
+        private async Task SendDriverSchedulerEmail(string address, string htmlContent, string attach)
+        {
+            using var msg = new MailMessage();
+            msg.From = new MailAddress("DriverScheduler@BethesdaHelpFD.org", "BHELP Driver Scheduler");
+
+
+            msg.To.Add(new MailAddress(address, "HFED Team Member"));
+            msg.Subject = "BHELP - Driver Schedule";
+            msg.Body = htmlContent;
+            msg.IsBodyHtml = true;
+            if (attach.Length > 2)
+            {
+                var byteArray = Encoding.ASCII.GetBytes(attach);
+                var stream = new MemoryStream(byteArray);
+                var data = new Attachment(stream, "Calendar.ics");
+                msg.Attachments.Add(data);
+            }
+
+            msg.Priority = MailPriority.Normal;
+            using var mailClient = new SmtpClient("BethesdaHelpFD.org", 587);
+            mailClient.Credentials = new NetworkCredential("DriverScheduler@BethesdaHelpFD.org", "nCig!yv2u*mwPa63_xDya*@V");
+            await mailClient.SendMailAsync(msg);
         }
     }
 }

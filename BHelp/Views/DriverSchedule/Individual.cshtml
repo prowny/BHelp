@@ -40,12 +40,9 @@
                         </span>
                     </td>
 
-                    @{ int currentYrMo; }
-                    @(currentYrMo = Model.Year * 100 + Model.Month)
-                    @{ DateTime previousDt; }
-                    @(previousDt = Model.CurrentDate.AddMonths(-1))
+                    @{ var previousDt = Model.Date.AddMonths(-1);}
                     @{ var previousYrMo = previousDt.Year * 100 + previousDt.Month; }
-                    @if (previousYrMo >= currentYrMo)
+                    @if (previousYrMo >= Model.TodayYearMonth)
                     {
                         <td>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -53,10 +50,18 @@
                                 new { @Model.Month, @Model.Year })
                         </td>
                     }
-                    <td>
-                        &nbsp;&nbsp;@Html.ActionLink(" Next Month", "NextMonthIndividual",
-new { @Model.Month, @Model.Year })
-                    </td>
+
+                    @{ var nextDt = Model.Date.AddMonths(1); }
+                    @{ var nextYrMo = nextDt.Year * 100 + nextDt.Month; }
+                    @{ var maxDt = DateTime.Today.AddMonths(3); }
+                    @{ var maxYrMo = maxDt.Year * 100 + maxDt.Month; }
+                    @if (nextYrMo <= maxYrMo)
+                    {
+                        <td>
+                            &nbsp;&nbsp;@Html.ActionLink(" Next Month", "NextMonthIndividual",
+                                            new { @Model.Month, @Model.Year })
+                        </td>
+                    }
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home")</td>
                 </tr>
             </table>
@@ -360,22 +365,3 @@ new { @Model.Month, @Model.Year })
     </div>
 </body>
 </html>
-
-@*<script >
-    $(function () {
-        $("#DriverSignUp").change(function () {
-            var boxIdx = window.$("#DriverSignUp").Id;
-            var boxValue = window.$("#DriverSignUp").val();
-            var data = boxIndex: boxIdx, boxValue: boxValue;
-            window.$.ajax({
-                type: "Get",
-                url: "/DriverSchedule/SignUp",
-                success: function (data) {
-                    window.$("body").html(data);
-                },
-                error: function (response) {
-                    alert(response);
-                }
-            });
-    }); 
-</script>*@

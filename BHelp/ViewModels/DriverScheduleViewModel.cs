@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
-using DocumentFormat.OpenXml.Drawing.Diagrams;
 
 namespace BHelp.ViewModels
 {
@@ -11,33 +10,27 @@ namespace BHelp.ViewModels
         public int Id { get; set; }
         public DateTime Date { get; set; }
 
+        public int TodayYearMonth { get; set; }
+
         [StringLength(128)]
         public string DriverId { get; set; }
 
-        public string DriverName { get; set; }
 
         [StringLength(128)]
         public string BackupDriverId { get; set; }
 
-        public string BackupDriverName { get; set; }
 
         [StringLength(128)]
         public string BackupDriver2Id { get; set; }
 
-        public string BackupDriver2Name { get; set; }
-
         public int GroupId { get; set; }
-        public string GroupName { get; set; }
 
         [StringLength(128)]
         public string GroupDriverId { get; set; }
-
-        public string GroupDriverName { get; set; }
       
         [DataType(DataType.MultilineText)]
         public string Note { get; set; }
 
-        public bool IsHoliday { get; set; }
         public string DayString { get; set; }
         public int Month { get; set; }
         public string MonthName { get; set; }
@@ -89,12 +82,6 @@ namespace BHelp.ViewModels
         public DateTime CurrentDate { get; set; }  // to set mindate in datepicker
         public string CurrentUserId { get; set; }
         public List <SelectListItem> GroupList { get; set; }
-        public List<BoxSignUp> BoxDriverSignUps { get; set; }
-        public List<BoxSignUp> BoxDriverUnSignUps { get; set; }
-        public List<BoxSignUp> BoxBackupDriverSignUps { get; set; }
-        public List<BoxSignUp> BoxBackupDriverUnSignUps { get; set; }
-
-        public Dictionary<int, bool> DriverSignup { get; set; }
 
         // create constructor to initialize the arrays
         public DriverScheduleViewModel()
@@ -130,22 +117,6 @@ namespace BHelp.ViewModels
             BoxDriverUnsign = new bool[26];
             BoxBackupDriverSignup = new bool[26];
             BoxBackupDriverUnsign = new bool[26];
-            BoxDriverSignUps = new List<BoxSignUp>();
-            BoxDriverUnSignUps = new List<BoxSignUp>();
-            BoxBackupDriverSignUps = new List<BoxSignUp>();
-            BoxBackupDriverUnSignUps = new List<BoxSignUp>();
-            DriverSignup = new Dictionary<int, bool>();
-           
-            for (var i = 0; i < 26; i++)
-            {
-                var nbsu = new BoxSignUp { Id = i, Checked = false };
-                BoxDriverSignUps.Add(nbsu);
-                BoxDriverUnSignUps.Add(nbsu);
-                BoxBackupDriverSignUps.Add(nbsu);
-                BoxBackupDriverUnSignUps.Add(nbsu);
-
-                DriverSignup.Add( i, false);
-            }
         }
     }
 }
