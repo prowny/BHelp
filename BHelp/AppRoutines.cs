@@ -177,7 +177,6 @@ namespace BHelp
             var user = db.Users.Find(id);
             if (user == null) return "(nobody yet)";
             return user.FullName;
-
         }
 
         public static Delivery NewDeliveryRecord(int clientId)
@@ -1757,6 +1756,20 @@ namespace BHelp
             var sqlString = "SELECT UserId FROM AspNetUserRoles WHERE ";
             sqlString += "RoleId = '" + roleId + "'";
             return db.Database.SqlQuery<string>(sqlString).ToList();
+        }
+
+        public static string GetUserEmail(string id)
+        {
+            using var _db = new BHelpContext();
+            var user = _db.Users.Find(id);
+            if (user == null)
+            {
+                return null;
+            }
+            else
+            {
+                return user.Email;
+            }
         }
 
         public static string GetStringAllRolesForUser(string userId)

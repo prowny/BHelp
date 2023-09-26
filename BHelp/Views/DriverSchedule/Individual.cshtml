@@ -150,17 +150,6 @@
                                                 <br />
                                                 @Html.Label(Model.BoxDriverPhone2[i])
                                             }
-                                            if (Model.BoxDriverEmail[i] != null)
-                                            {
-                                                const string subject = "BHELP Food Program";
-                                                var body = @Model.DriversSchedule[i].Date.ToLongDateString()
-                                                           + " Driver: " + @Model.BoxDriverName[i];
-                                                <a href="mailto:@Uri.EscapeDataString(Model.BoxDriverEmail[i])
-                                            ?Subject=@Uri.EscapeDataString(subject)
-                                            &body=@Uri.EscapeDataString(body)">
-                                                    @Model.BoxDriverEmail[i]
-                                                </a>
-                                            }
                                         }
                                     }
                                 }
@@ -183,7 +172,7 @@
                                             <span style="text-decoration-color: red">
                                                 &nbsp;&nbsp;
                                                 @Html.Label("Sign Up:", new { style = "color: red" })
-                                                @Html.ActionLink("Sign Up", "BackupDriverSignUp", 
+                                                @Html.ActionLink("Sign Up", "BackupSignUp", 
                                                     new{ idx = i, date = Model.BoxDay[row, col], cancel = false })                                            </span>
                                         }
                                     }
@@ -203,7 +192,7 @@
                                         <span style="text-decoration-color: red">
                                             &nbsp;&nbsp;
                                             @Html.Label("Cancel:", new { style = "color: red" })
-                                            @Html.ActionLink("Cancel", "BackupDriverSignUp", 
+                                            @Html.ActionLink("Cancel", "BackupSignUp", 
                                                 new{ idx = i, date = Model.BoxDay[row, col], cancel = true })                                        </span>
                                     }
                                     if (Model.BoxBackupDriverPhone[i] != null)
@@ -216,17 +205,6 @@
                                     {
                                         <br />
                                         @Html.Label(Model.BoxBackupDriverPhone2[i])
-                                    }
-                                    if (Model.BoxBackupDriverEmail[i] != null)
-                                    {
-                                        const string subject = "BHELP Food Program";
-                                        var body = @Model.DriversSchedule[i].Date.ToLongDateString()
-                                                   + " Backup Driver: " + @Model.BoxBackupDriverName[i];
-                                        <a href="mailto:@Uri.EscapeDataString(Model.BoxBackupDriverEmail[i])
-                                                ?Subject=@Uri.EscapeDataString(subject)
-                                                &body=@Uri.EscapeDataString(body)">
-                                            @Model.BoxBackupDriverEmail[i]
-                                        </a>
                                     }
                                 }
 
@@ -353,11 +331,11 @@
                 }
             </table>
         </div>
-        <br />
+        @*<br />
         <div>
             <input name="btnSubmit" type="submit" value="Submit My Changes" class="btn btn-default" id="SubmitButton"/>
-            @*<b>&nbsp;Not Implemented Yet!</b>*@
-        </div>
+            <b>&nbsp;Not Implemented Yet!</b>
+        </div>*@
     }
     <div>
         <br />

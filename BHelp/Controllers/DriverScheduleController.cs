@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
@@ -315,6 +313,7 @@ namespace BHelp.Controllers
         public ActionResult DriverSignUp(int? idx, DateTime? date, bool? cancel)
         {
             var CurrentUserId = User.Identity.GetUserId();
+            var text =  AppRoutines.GetUserFullName(User.Identity.GetUserId());
             // check for existing DriversSchedules record
             using var db = new BHelpContext();
             var rec = db.DriverSchedules
@@ -324,14 +323,16 @@ namespace BHelp.Controllers
                 if (cancel == true)
                 {
                     rec.DriverId = null;
+                    text += " has canceled as DRIVER for " + date?.ToString("MM/dd/yyyy");
                 }
                 else // cancel = false:
                 {
                     rec.DriverId = CurrentUserId;
+                    text += " has signed up as DRIVER for " + date?.ToString("MM/dd/yyyy");
                 }
                 db.SaveChanges();
             }
-            else  // rec is null:
+            else  // no existing rec:
             {
                 if (date != null)
                 {
@@ -341,13 +342,56 @@ namespace BHelp.Controllers
                         DriverId = CurrentUserId
                     };
                     db.DriverSchedules.Add(newRec);
+                    text += " has signed up as DRIVER for " + date.Value.ToString("MM/dd/yyyy");
                 }
-
                 db.SaveChanges();
             }
+            SendEmailToDriverScheduler(text); 
+
             return RedirectToAction("Individual", new {boxDate = date});
         }
 
+        public ActionResult BackupSignUp(int? idx, DateTime? date, bool? cancel)
+        {
+            var CurrentUserId = User.Identity.GetUserId();
+            var text = AppRoutines.GetUserFullName(User.Identity.GetUserId());
+
+            // check for existing DriversSchedules record
+            using var db = new BHelpContext();
+            var rec = db.DriverSchedules
+                .FirstOrDefault(d => d.Date == date);
+            if (rec != null)
+            {
+                if (cancel == true)
+                {
+                    rec.BackupDriverId = null;
+                    text += " has canceled as BACKUP DRIVER for " + date?.ToString("MM/dd/yyyy");
+                }
+                else // cancel = false:
+                {
+                    rec.BackupDriverId = CurrentUserId;
+                    text += " has signed up as BACKUP DRIVER for " + date?.ToString("MM/dd/yyyy");
+                }
+                db.SaveChanges();
+            }
+            else  // no existing rec:
+            {
+                if (date != null)
+                {
+                    var newRec = new DriverSchedule
+                    {
+                        Date = (DateTime)date,
+                        DriverId = CurrentUserId
+                    };
+                    db.DriverSchedules.Add(newRec);
+                    text += " has signed up as BACKUP DRIVER for " + date.Value.ToString("MM/dd/yyyy");
+                }
+                db.SaveChanges();
+            }
+            SendEmailToDriverScheduler(text);
+
+            return RedirectToAction("Individual", new { boxDate = date });
+        }
         public ActionResult BackupDriverSignUp(int? idx, DateTime? date, bool? cancel)
         {
             var CurrentUserId = User.Identity.GetUserId();
@@ -830,28 +874,30 @@ namespace BHelp.Controllers
             return holidays.Find(h => h.CalculatedDate == dt);
         }
 
-        private async Task SendDriverSchedulerEmail(string address, string htmlContent, string attach)
+        private static void SendEmailToDriverScheduler(string text)
         {
+            var roleId = AppRoutines.GetRoleId("DriverScheduler");
+            var listUserIdsInRole = AppRoutines.GetUserIdsInRole(roleId);
+            
+            foreach (var user in listUserIdsInRole)
+            {
+                var email = AppRoutines.GetUserEmail(user);
+                SendEmail(email, text);
+            }
+        }
+        private static void SendEmail(string address, string text)
+        {
+            address = "prowny@aol.com"; // for testing !!!!!!!!!!!!!!!!!!!!!!!
             using var msg = new MailMessage();
             msg.From = new MailAddress("DriverScheduler@BethesdaHelpFD.org", "BHELP Driver Scheduler");
-
-
-            msg.To.Add(new MailAddress(address, "HFED Team Member"));
+            msg.To.Add(new MailAddress(address, "BHELP Driver"));
             msg.Subject = "BHELP - Driver Schedule";
-            msg.Body = htmlContent;
-            msg.IsBodyHtml = true;
-            if (attach.Length > 2)
-            {
-                var byteArray = Encoding.ASCII.GetBytes(attach);
-                var stream = new MemoryStream(byteArray);
-                var data = new Attachment(stream, "Calendar.ics");
-                msg.Attachments.Add(data);
-            }
-
+            msg.Body = text;
+            
             msg.Priority = MailPriority.Normal;
             using var mailClient = new SmtpClient("BethesdaHelpFD.org", 587);
             mailClient.Credentials = new NetworkCredential("DriverScheduler@BethesdaHelpFD.org", "nCig!yv2u*mwPa63_xDya*@V");
-            await mailClient.SendMailAsync(msg);
+             mailClient.Send(msg);
         }
     }
 }
