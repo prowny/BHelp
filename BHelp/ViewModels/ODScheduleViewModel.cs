@@ -10,6 +10,7 @@ namespace BHelp.ViewModels
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
+        public int TodayYearMonth { get; set; }
 
         [StringLength(128)]
         public string ODId { get; set; }

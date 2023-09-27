@@ -13,11 +13,6 @@
             color: white
         }
     </style>
-    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
-    <script src="~/Scripts/jquery.validate.min.js"></script>
-    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
-    <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
 </head>
 <body>
@@ -46,7 +41,7 @@
                     {
                         <td>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            @Html.ActionLink(" Previous Month", "PreviousMonthIndividual",
+                            @Html.ActionLink(" Previous Month", "PreviousMonthIndividualDriver",
                                 new { @Model.Month, @Model.Year })
                         </td>
                     }
@@ -58,7 +53,7 @@
                     @if (nextYrMo <= maxYrMo)
                     {
                         <td>
-                            &nbsp;&nbsp;@Html.ActionLink(" Next Month", "NextMonthIndividual",
+                            &nbsp;&nbsp;@Html.ActionLink(" Next Month", "NextMonthIndividualDriver",
                                             new { @Model.Month, @Model.Year })
                         </td>
                     }
@@ -150,6 +145,17 @@
                                                 <br />
                                                 @Html.Label(Model.BoxDriverPhone2[i])
                                             }
+                                            if (Model.BoxDriverEmail[i] != null)
+                                            {
+                                                const string subject = "BHELP Food Program";
+                                                var body = @Model.DriversSchedule[i].Date.ToLongDateString()
+                                                           + " Driver: " + @Model.BoxDriverName[i];
+                                                <a href="mailto:@Uri.EscapeDataString(Model.BoxDriverEmail[i])
+                                                ?Subject=@Uri.EscapeDataString(subject)
+                                                &body=@Uri.EscapeDataString(body)">
+                                                    @Model.BoxBackupDriver2Email[i]
+                                                </a>
+                                            }
                                         }
                                     }
                                 }
@@ -205,6 +211,17 @@
                                     {
                                         <br />
                                         @Html.Label(Model.BoxBackupDriverPhone2[i])
+                                    }
+                                    if (Model.BoxBackupDriver2Email[i] != null)
+                                    {
+                                        const string subject = "BHELP Food Program";
+                                        var body = @Model.DriversSchedule[i].Date.ToLongDateString()
+                                                   + " Backup Driver: " + @Model.BoxBackupDriver2Name[i];
+                                            <a href="mailto:@Uri.EscapeDataString(Model.BoxBackupDriver2Email[i])
+                                            ?Subject=@Uri.EscapeDataString(subject)
+                                            &body=@Uri.EscapeDataString(body)">
+                                            @Model.BoxBackupDriver2Email[i]
+                                        </a>
                                     }
                                 }
 
@@ -331,11 +348,6 @@
                 }
             </table>
         </div>
-        @*<br />
-        <div>
-            <input name="btnSubmit" type="submit" value="Submit My Changes" class="btn btn-default" id="SubmitButton"/>
-            <b>&nbsp;Not Implemented Yet!</b>
-        </div>*@
     }
     <div>
         <br />

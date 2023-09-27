@@ -43,7 +43,7 @@ namespace BHelp.Controllers
                 }
             }
 
-            var startDt = GetFirstWeekDay(view.Month, view.Year);
+            var startDt = AppRoutines.GetFirstWeekDay(view.Month, view.Year);
             var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
             var startDayOfWk = (int)startDt.DayOfWeek;
             var driverList = (List <SelectListItem>)Session["DriverList"];
@@ -251,7 +251,7 @@ namespace BHelp.Controllers
             var view =  GetDriverScheduleViewModel();
             view.TodayYearMonth = DateTime.Today.Year * 100 + DateTime.Today.Month;
             var schedules = new List<DriverScheduleViewModel>();
-            var startDt = GetFirstWeekDay(view.Month, view.Year);
+            var startDt = AppRoutines .GetFirstWeekDay(view.Month, view.Year);
             var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
             var startDayOfWk = (int)startDt.DayOfWeek;
             var dt = DateTime.MinValue;
@@ -436,7 +436,7 @@ namespace BHelp.Controllers
                     month = 12;
                     year = year - 1;
                 }
-                var _boxDate = GetFirstWeekDay(month, year);
+                var _boxDate = AppRoutines.GetFirstWeekDay(month, year);
                 return RedirectToAction("Edit", new{boxDate = _boxDate });
             }
         public ActionResult NextMonth(int month, int year)
@@ -447,11 +447,11 @@ namespace BHelp.Controllers
                 month = 1;
                 year = year + 1;
             }
-            var _boxDate = GetFirstWeekDay(month, year);
+            var _boxDate = AppRoutines.GetFirstWeekDay(month, year);
             return RedirectToAction("Edit", new { boxDate = _boxDate });
         }
 
-        public ActionResult PreviousMonthIndividual(int month, int year)
+        public ActionResult PreviousMonthIndividualDriver(int month, int year)
         {
             month = month - 1;
             if (month < 1)
@@ -459,11 +459,11 @@ namespace BHelp.Controllers
                 month = 12;
                 year = year - 1;
             }
-            var _boxDate = GetFirstWeekDay(month, year);
+            var _boxDate = AppRoutines.GetFirstWeekDay(month, year);
             return RedirectToAction("Individual", new { boxDate = _boxDate });
         }
 
-        public ActionResult NextMonthIndividual(int month, int year)
+        public ActionResult NextMonthIndividualDriver(int month, int year)
         {
             month = month + 1;
             if (month > 12)
@@ -471,19 +471,10 @@ namespace BHelp.Controllers
                 month = 1;
                 year = year + 1;
             }
-            var _boxDate = GetFirstWeekDay(month, year);
+            var _boxDate = AppRoutines.GetFirstWeekDay(month, year);
             return RedirectToAction("Individual", new { boxDate = _boxDate });
         }
 
-
-        private static DateTime GetFirstWeekDay(int month, int year)
-    {
-        DateTime dt = new DateTime(year, month, 1);
-        var dayOfWeek = (int) dt.DayOfWeek;
-        if (dayOfWeek == 0) dt = dt.AddDays(1); // change from Sun to Mon 
-        if (dayOfWeek == 6) dt = dt.AddDays(2); // change from Sat to Mon
-        return dt;
-    }
         private List<SelectListItem> GetDriverIdSelectList()
         {
            
@@ -868,7 +859,7 @@ namespace BHelp.Controllers
             }
         }
         
-        private Holiday GetHolidayData(DateTime dt)
+        private static Holiday GetHolidayData(DateTime dt)
         {
             var holidays = HolidayRoutines.GetHolidays(dt.Year);
             return holidays.Find(h => h.CalculatedDate == dt);

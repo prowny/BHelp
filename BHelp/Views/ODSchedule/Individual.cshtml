@@ -7,9 +7,177 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Individual OD Schedule Signup</title>
+    <style >
+        #SubmitButton {
+            background-color: blue;
+            color: white
+        }
+    </style>
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
 </head>
 <body>
-    <div>
-    </div>
+    @using (Html.BeginForm("Individual", "ODSchedule",
+        Model, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div>
+            Individual Signup & Cancel Signup for OD &nbsp;<b>@User.Identity.Name</b>
+            <br />
+        </div>
+        /*======================== Calendar Section ========================*/
+        <div>
+            <table>
+                <tr>
+                    <td>
+                        <b>Bethesda Help Officer of the Day Schedule - </b><span style="color: red">
+                            <b>@Model.MonthName&nbsp;@Model.Year</b>
+                        </span>
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        @Html.ActionLink(" Previous Month", "PreviousMonthIndividualOD",
+                            new { @Model.Month, @Model.Year })
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;@Html.ActionLink(" Next Month", "NextMonthIndividualOD",
+                            new { @Model.Month, @Model.Year })
+                    </td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home")</td>
+                </tr>
+            </table>
+        </div>
+
+        <div>
+            <table Id="schedule">
+                <tr>
+                    <th class="top">MONDAY</th>
+                    <th class="top">TUESDAY</th>
+                    <th class="top">WEDNESDAY</th>
+                    <th class="top">THURSDAY</th>
+                    <th class="top">FRIDAY</th>
+                </tr>
+
+                @{var i = 0;}
+                @for (var row = 1; row < 6; row++)
+                {
+                    <tr>
+                        @for (var col = 1; col < 6; col++)
+                        {
+                            i++;
+                            var bgcolor = "white";
+                            if (Model.ODsSchedule[i].Date == Model.Date && Model.AllowEdit)
+                            {
+                                bgcolor = "yellow";
+                            }
+                            <td style="border: thin solid black; vertical-align: top; background-color: @bgcolor">
+                                @if (Model.ODsSchedule[i].Date > DateTime.MinValue)
+                                {
+                                    <b>@Html.Label(Model.ODsSchedule[i].DayString)</b>
+
+                                    if (Model.AllowEdit)
+                                    {
+                                        if (Model.IsODOnly)
+                                        {
+                                            if (Model.ODsSchedule[i].Date >= DateTime.Today
+                                                && (Model.BoxODId[i] == Model.CurrentUserId || Model.BoxODId[i] == null))
+                                            {
+                                                if (!Model.BoxHoliday[i])
+                                                {
+                                                    <span style="font-size: small">
+                                                        @Html.ActionLink("Edit", "Edit",
+                                                            new { boxDate = Model.ODsSchedule[i].Date })
+                                                    </span>
+                                                }
+                                            }
+                                        }
+                                        else // NOT IsODOnly
+                                        {
+                                            if (Model.IsScheduler || Model.ODsSchedule[i].Date >= DateTime.Today)
+                                            {
+                                                if (!Model.BoxHoliday[i])
+                                                {
+                                                    <span style="font-size: small">
+                                                        @Html.ActionLink("Edit", "Edit",
+                                                            new { boxDate = Model.ODsSchedule[i].Date })
+                                                    </span>
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if (Model.BoxODName[i] == null)
+                                    {
+                                        if (!Model.BoxHoliday[i])
+                                        {
+                                            <span style="font-size: small">
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                @Html.Label("OD: ")
+                                            </span>
+                                            <span style="text-decoration-color: red">
+                                                @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <br />
+                                        @Html.Raw(Model.BoxODName[i])
+                                    }
+
+                                    if (Model.BoxODPhone[i] != null)
+                                    {
+                                        <br />
+                                        @Html.Label(Model.BoxODPhone[i])
+                                    }
+
+                                    if (Model.BoxODPhone2[i] != null)
+                                    {
+                                        <br />
+                                        @Html.Label(Model.BoxODPhone2[i])
+                                    }
+
+                                    if (Model.BoxODEmail[i] != null)
+                                    {
+                                        var subject = "BHELP Food Program";
+                                        var body = @Model.ODsSchedule[i].Date.ToLongDateString()
+                                                   + " OD: " + @Model.BoxODName[i];
+                                        <a href="mailto:@Uri.EscapeDataString(Model.BoxODEmail[i])
+                                   ?Subject=@Uri.EscapeDataString(subject)
+                                   &body=@Uri.EscapeDataString(body)">
+                                            @Model.BoxODEmail[i]
+                                        </a>
+                                    }
+
+                                    if (Model.BoxNote[i] != null)
+                                    {
+                                        <br />
+                                        <span style="font-size: small">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            @Html.Label("Notes")
+                                        </span>
+                                        <br />
+                                        @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>"))
+
+                                    }
+
+                                    if (Model.BoxHoliday[i])
+                                    {
+                                        <br />
+                                        @Html.Raw(Model.BoxHolidayDescription[i].Replace(Environment.NewLine, "<br/>"))
+                                    }
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+
+<div>
+    <br />
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
+   
 </body>
 </html>

@@ -70,10 +70,6 @@ namespace BHelp.ViewModels
         [DataType(DataType.MultilineText)]
         public string[] BoxNote { get; set; }
         public bool[] BoxHoliday { get; set; }
-        public bool[] BoxDriverSignup { get; set; }
-        public bool[] BoxDriverUnsign { get; set; }
-        public bool[] BoxBackupDriverSignup { get; set; }
-        public bool[] BoxBackupDriverUnsign { get; set; }
         public string[] BoxHolidayDescription { get; set; }
         public bool IsDriverOnly { get; set; }
         public bool IsScheduler { get; set; }
@@ -113,10 +109,6 @@ namespace BHelp.ViewModels
             BoxNote = new string[26];
             BoxHoliday = new bool[26];
             BoxHolidayDescription = new string[26];
-            BoxDriverSignup = new bool[26];
-            BoxDriverUnsign = new bool[26];
-            BoxBackupDriverSignup = new bool[26];
-            BoxBackupDriverUnsign = new bool[26];
         }
     }
 }

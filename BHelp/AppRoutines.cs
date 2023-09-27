@@ -1747,7 +1747,6 @@ namespace BHelp
                 .ThenBy(u => u.FirstName).ToList();
             return allVolunteersList;
         }
-     
 
         public static List<string> GetUserIdsInRole(string roleId)
         {
@@ -1834,6 +1833,14 @@ namespace BHelp
             {
                 return "(unknown)";
             }
+        }
+        public static DateTime GetFirstWeekDay(int month, int year)
+        {
+            DateTime dt = new DateTime(year, month, 1);
+            var dayOfWeek = (int)dt.DayOfWeek;
+            if (dayOfWeek == 0) dt = dt.AddDays(1); // change from Sun to Mon 
+            if (dayOfWeek == 6) dt = dt.AddDays(2); // change from Sat to Mon
+            return dt;
         }
     }
 }
