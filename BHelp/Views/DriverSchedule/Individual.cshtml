@@ -48,7 +48,7 @@
 
                     @{ var nextDt = Model.Date.AddMonths(1); }
                     @{ var nextYrMo = nextDt.Year * 100 + nextDt.Month; }
-                    @{ var maxDt = DateTime.Today.AddMonths(3); }
+                    @{ var maxDt = DateTime.Today.AddMonths(2); }
                     @{ var maxYrMo = maxDt.Year * 100 + maxDt.Month; }
                     @if (nextYrMo <= maxYrMo)
                     {
@@ -112,7 +112,6 @@
                                             }
                                         }
                                     }
-
                                     else /*DriverName is Not Null:*/
                                     {
                                         if (Model.BoxDay[row, col].Month == Model.Month)

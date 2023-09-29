@@ -236,8 +236,6 @@ namespace BHelp.Controllers
                 Session["ODScheduleDateData"] = day.Day.ToString("00") + month.ToString("00") + year;
             }
             GetODLookUpLists(boxDate);
-           
-        
             var view = GetODScheduleViewModel();
                 view.TodayYearMonth = DateTime.Today.Year * 100 + DateTime.Today.Month;
                 var schedules = new List<ODScheduleViewModel>();
@@ -301,11 +299,13 @@ namespace BHelp.Controllers
                     if (cancel == true)
                     {
                         rec.ODId = null;
+                        rec.Note = null;
                         text += " has canceled as OD for " + date?.ToString("MM/dd/yyyy");
                     }
                     else // cancel = false:
                     {
                         rec.ODId = CurrentUserId;
+                        rec.Note = null;
                         text += " has signed up as OD for " + date?.ToString("MM/dd/yyyy");
                     }
                     db.SaveChanges();
@@ -357,68 +357,70 @@ namespace BHelp.Controllers
             {   // AND ODDataList AND NonSchedulerODSelectList
                 var _dt = DateTime.Today;
                 if (boxDate != null)
-                { _dt = (DateTime)boxDate; }
+                {
+                    _dt = (DateTime)boxDate;
+                }
                 var _mo = _dt.Month;
                 var _yr = _dt.Year;
                 SetMonthlyList(_mo, _yr); // sets Session["MonthlyODSchedule"]
                 if (Session["ODSelectList"] == null)
                 {
                     var odList = new List<SelectListItem>();
-                    var odDataList = new List<ApplicationUser>();
-                    var _db = new BHelpContext();
-                    var userList = _db.Users.OrderBy(u => u.LastName).ToList();
-                    var roleLookup = AppRoutines.UsersInRolesLookup();
-                    var odRoleId = AppRoutines.GetRoleId("OfficerOfTheDay");
-                
-                    odList.Add(new SelectListItem()
-                    {
-                        Text = @"(nobody yet)",
-                        Value = "0"
-                    });
-                    odDataList.Add(new ApplicationUser()
-                    {
-                        Id = "0" // added so indexes of odDataList match odList 
-                    });
-                    foreach (var user in userList)
-                    {
-                        if (roleLookup.Any(r => r.UserId == user.Id && r.RoleId == odRoleId))
+                        var odDataList = new List<ApplicationUser>();
+                        var _db = new BHelpContext();
+                        var userList = _db.Users.OrderBy(u => u.LastName).ToList();
+                        var roleLookup = AppRoutines.UsersInRolesLookup();
+                        var odRoleId = AppRoutines.GetRoleId("OfficerOfTheDay");
+                    
+                        odList.Add(new SelectListItem()
                         {
-                            odList.Add(new SelectListItem()
+                            Text = @"(nobody yet)",
+                            Value = "0"
+                        });
+                        odDataList.Add(new ApplicationUser()
+                        {
+                            Id = "0" // added so indexes of odDataList match odList 
+                        });
+                        foreach (var user in userList)
+                        {
+                            if (roleLookup.Any(r => r.UserId == user.Id && r.RoleId == odRoleId))
                             {
-                                Text = user.FirstName + @" " + user.LastName,
-                                Value = user.Id,
-                                Selected = false
-                            });
-                            odDataList.Add(user);
-                        };
+                                odList.Add(new SelectListItem()
+                                {
+                                    Text = user.FirstName + @" " + user.LastName,
+                                    Value = user.Id,
+                                    Selected = false
+                                });
+                                odDataList.Add(user);
+                            };
                     }
                     Session["ODSelectList"] = odList;
-                    Session["ODDataList"] = odDataList;
+                        Session["ODDataList"] = odDataList;
 
-                    if (!User.IsInAnyRoles("ODScheduler", "Developer", "Administrator")) // is NOT Scheduler
-                    {
-                        var nonSchedulerODSelectList = new List<SelectListItem>
+                        if (!User.IsInAnyRoles("ODScheduler", "Developer", "Administrator")) // is NOT Scheduler
                         {
-                            new SelectListItem()
+                            var nonSchedulerODSelectList = new List<SelectListItem>
                             {
-                                Text = @"(nobody yet)",
-                                Value = "0"
-                            }
-                        };
-                        var currentUserId = User.Identity.GetUserId();
-                        // get user's record from odDataList
-                        var userData = odDataList.FirstOrDefault(i => i.Id == currentUserId);
-                        if (userData != null)
-                        {
-                            var userDataSelectItem = new SelectListItem()
-                            {
-                                Text = userData.FullName,
-                                Value = currentUserId
+                                new SelectListItem()
+                                {
+                                    Text = @"(nobody yet)",
+                                    Value = "0"
+                                }
                             };
-                            nonSchedulerODSelectList.Add(userDataSelectItem);
+                            var currentUserId = User.Identity.GetUserId();
+                            // get user's record from odDataList
+                            var userData = odDataList.FirstOrDefault(i => i.Id == currentUserId);
+                            if (userData != null)
+                            {
+                                var userDataSelectItem = new SelectListItem()
+                                {
+                                    Text = userData.FullName,
+                                    Value = currentUserId
+                                };
+                                nonSchedulerODSelectList.Add(userDataSelectItem);
+                            }
+                            Session["NonSchedulerODSelectList"] = nonSchedulerODSelectList;
                         }
-                        Session["NonSchedulerODSelectList"] = nonSchedulerODSelectList;
-                    }
                 }
             }
 
@@ -426,25 +428,25 @@ namespace BHelp.Controllers
             {
                 var start = new DateTime(year, month, 1);
                 var end = new DateTime(year, month, DateTime.DaysInMonth(year, month));
-                var ml = (List<ODSchedule>)Session["MonthlyODSchedule"];
-                if (Session["MonthlyODSchedule"] == null || ml.Count == 0)
-                {
+                //var ml = (List<ODSchedule>)Session["MonthlyODSchedule"];
+                //if (Session["MonthlyODSchedule"] == null || ml.Count == 0)
+                //{
                     var db = new BHelpContext();
                     var monthlyList = db.ODSchedules
                         .Where(d => d.Date >= start && d.Date <= end).OrderBy(d => d.Date).ToList();
                     Session["MonthlyODSchedule"] = monthlyList;
-                }
-                else
-                {  // use existing list:
-                    var monthlyList = (List<ODSchedule>)Session["MonthlyODSchedule"];
-                    if (monthlyList[0].Date.Month != month || monthlyList[0].Date.Year != year)
-                    {  // reload:
-                        var db = new BHelpContext();
-                        monthlyList = db.ODSchedules
-                            .Where(d => d.Date >= start && d.Date <= end).OrderBy(d => d.Date).ToList();
-                        Session["MonthlyODSchedule"] = monthlyList;
-                    }
-                }
+                //}
+                //else
+                //{  // use existing list:
+                //    var monthlyList = (List<ODSchedule>)Session["MonthlyODSchedule"];
+                //    if (monthlyList[0].Date.Month != month || monthlyList[0].Date.Year != year)
+                //    {  // reload:
+                //        var db = new BHelpContext();
+                //        monthlyList = db.ODSchedules
+                //            .Where(d => d.Date >= start && d.Date <= end).OrderBy(d => d.Date).ToList();
+                //        Session["MonthlyODSchedule"] = monthlyList;
+                //    }
+                //}
             }
 
             [Authorize(Roles = "Developer,Administrator,Staff,ODScheduler,OfficerOfTheDay")]
@@ -547,6 +549,7 @@ namespace BHelp.Controllers
                 {
                     CurrentUserId = User.Identity.GetUserId(),
                     BoxDay = new DateTime[6, 6],
+                    BoxODId = new string[26],
                     BoxODName = new string[26],
                     BoxODPhone = new string[26],
                     BoxODPhone2 = new string[26],
@@ -589,6 +592,7 @@ namespace BHelp.Controllers
                             if (odIdx >= 0)
                             {
                                 view.BoxODName[idx] = odList[odIdx].Text;
+                                view.BoxODId[idx] = odList[odIdx].Value;
                                 view.BoxODPhone[idx] = odDataList[odIdx].PhoneNumber;
                                 view.BoxODPhone2[idx] = odDataList[odIdx].PhoneNumber2;
                                 view.BoxODEmail[idx] = odDataList[odIdx].Email;
@@ -625,9 +629,9 @@ namespace BHelp.Controllers
                 return RedirectToAction("Individual", new { boxDate = _boxDate });
             }
 
-        private static void SendEmailToODScheduler(string text)
+            private static void SendEmailToODScheduler(string text)
             {
-                var roleId = AppRoutines.GetRoleId("DriverScheduler");
+                var roleId = AppRoutines.GetRoleId("ODScheduler");
                 var listUserIdsInRole = AppRoutines.GetUserIdsInRole(roleId);
 
                 foreach (var user in listUserIdsInRole)
@@ -640,14 +644,14 @@ namespace BHelp.Controllers
             {
                 address = "prowny@aol.com"; // for testing !!!!!!!!!!!!!!!!!!!!!!!
                 using var msg = new MailMessage();
-                msg.From = new MailAddress("ODScheduler@BethesdaHelpFD.org", "BHELP Driver Scheduler");
+                msg.From = new MailAddress("ODScheduler@BethesdaHelpFD.org", "BHELP OD Scheduler");
                 msg.To.Add(new MailAddress(address, "BHELP OD"));
                 msg.Subject = "BHELP - OD Schedule";
                 msg.Body = text;
 
                 msg.Priority = MailPriority.Normal;
                 using var mailClient = new SmtpClient("BethesdaHelpFD.org", 587);
-                mailClient.Credentials = new NetworkCredential("ODScheduler@BethesdaHelpFD.org", "nCig!yv2u*mwPa63_xDya*@V");
+                mailClient.Credentials = new NetworkCredential("ODScheduler@BethesdaHelpFD.org", "nq!aeyu9Gc_Ebm2aoP@vNNnPi");
                 mailClient.Send(msg);
             }
     }
