@@ -78,12 +78,11 @@
                         @for (var col = 1; col < 6; col++)
                         {
                             i++;
-                            var bgcolor = "white";
-                            if (Model.ODsSchedule[i].Date == Model.Date && Model.AllowEdit)
-                            {
-                                bgcolor = "yellow";
-                            }
-                            <td style="border: thin solid black; vertical-align: top; background-color: @bgcolor">
+                            //if (Model.ODsSchedule[i].Date == Model.Date && Model.AllowEdit)
+                            //{
+                            //    bgcolor = "yellow";
+                            //}
+                            <td style="border: thin solid black; vertical-align: top">
                                 @if (Model.ODsSchedule[i].Date > DateTime.MinValue)
                                 {
                                     <b>@Html.Label(Model.ODsSchedule[i].DayString)</b>
@@ -136,9 +135,7 @@
                                         {
                                             <span>
                                                 <br />
-                                                &nbsp;&nbsp;
-                                                @Html.Label("Sign Up:", new { style = "color: red" })
-                                                @Html.ActionLink("Sign Up", "ODSignUp", 
+                                                @Html.ActionLink("Click Here to Sign Up", "ODSignUp", 
                                                     new{ idx = i, date = Model.BoxDay[row, col], cancel = false })
                                             </span>
                                         }
@@ -148,14 +145,14 @@
                                         <br />
                                         @Html.Raw(Model.BoxODName[i])
                                     }
+
                                     if (Model.BoxODId[i] == Model.CurrentUserId
-                                        && User.IsInRole("OfficerOfTheDay"))
+                                                && User.IsInRole("OfficerOfTheDay")
+                                                && Model.BoxDay[row,col] > DateTime.Today)
                                     {
                                         <br />
-                                        <span style="text-decoration-color: red">
-                                            &nbsp;&nbsp;
-                                            @Html.Label("Cancel:", new { style = "color: red" })
-                                            @Html.ActionLink("Cancel", "ODSignUp", 
+                                        <span>
+                                            @Html.ActionLink("Click Here to Cancel", "ODSignUp", 
                                                 new{ idx = i, date = Model.BoxDay[row, col], cancel = true })     
                                         </span>
                                     }
@@ -177,8 +174,8 @@
                                         var body = @Model.ODsSchedule[i].Date.ToLongDateString()
                                                    + " OD: " + @Model.BoxODName[i];
                                         <a href="mailto:@Uri.EscapeDataString(Model.BoxODEmail[i])
-                                   ?Subject=@Uri.EscapeDataString(subject)
-                                   &body=@Uri.EscapeDataString(body)">
+                                        ?Subject=@Uri.EscapeDataString(subject)
+                                         &body=@Uri.EscapeDataString(body)">
                                             @Model.BoxODEmail[i]
                                         </a>
                                     }

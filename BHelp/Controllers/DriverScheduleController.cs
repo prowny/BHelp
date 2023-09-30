@@ -878,7 +878,7 @@ namespace BHelp.Controllers
         }
         private static void SendEmail(string address, string text)
         {
-            address = "prowny@aol.com"; // for testing !!!!!!!!!!!!!!!!!!!!!!!
+            //address = "prowny@aol.com"; // for testing !!!!!!!!!!!!!!!!!!!!!!!
             using var msg = new MailMessage();
             msg.From = new MailAddress("DriverScheduler@BethesdaHelpFD.org", "BHELP Driver Scheduler");
             msg.To.Add(new MailAddress(address, "BHELP Driver"));

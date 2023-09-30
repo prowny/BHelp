@@ -78,12 +78,7 @@
                         @for (var col = 1; col < 6; col++)
                         {
                             i++;
-                            var bgcolor = "white";
-                            if (Model.DriversSchedule[i].Date <= DateTime.Today)
-                            {
-                                bgcolor = "grey";
-                            }
-                            <td style="border: thin solid black; vertical-align: top; background-color: @bgcolor">
+                            <td style="border: thin solid black; vertical-align: top">
                                 @if (Model.DriversSchedule[i].Date > DateTime.MinValue && Model.BoxDay[row, col].Month == Model.Month)
                                 {
                                     <b>@Html.Label(Model.DriversSchedule[i].DayString)</b>
@@ -100,13 +95,13 @@
                                                 @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
                                             </span>
                                             if (Model.BoxDay[row, col] > DateTime.Today 
-                                                && User.IsInRole( "Driver"))
+                                                && User.IsInRole( "Driver")
+                                                && Model.BoxDay[row,col] > DateTime.Today)
                                             {
                                                 <span>
                                                     <br />
                                                     &nbsp;&nbsp;
-                                                    @Html.Label("Sign Up:", new { style = "color: red" })
-                                                    @Html.ActionLink("Sign Up", "DriverSignUp", 
+                                                    @Html.ActionLink("Click Here to Sign Up", "DriverSignUp", 
                                                         new{ idx = i, date = Model.BoxDay[row, col], cancel = false })
                                                 </span>
                                             }
@@ -123,13 +118,12 @@
                                             <br />
                                             @Html.Raw(Model.BoxDriverName[i])
                                             if (Model.BoxDriverId[i] == Model.CurrentUserId
-                                                && User.IsInRole("Driver"))
+                                                && User.IsInRole("Driver")
+                                                && Model.BoxDay[row,col] > DateTime.Today)
                                             {
                                                 <br />
-                                                <span style="text-decoration-color: red">
-                                                    &nbsp;&nbsp;
-                                                    @Html.Label("Cancel:", new { style = "color: red" })
-                                                    @Html.ActionLink("Cancel", "DriverSignUp", 
+                                                <span>
+                                                    @Html.ActionLink("Click Here to Cancel", "DriverSignUp", 
                                                         new{ idx = i, date = Model.BoxDay[row, col], cancel = true })     
                                                 </span>
                                             }
@@ -144,15 +138,16 @@
                                                 <br />
                                                 @Html.Label(Model.BoxDriverPhone2[i])
                                             }
+
                                             if (Model.BoxDriverEmail[i] != null)
                                             {
-                                                const string subject = "BHELP Food Program";
+                                                var subject = "BHELP Food Program";
                                                 var body = @Model.DriversSchedule[i].Date.ToLongDateString()
                                                            + " Driver: " + @Model.BoxDriverName[i];
                                                 <a href="mailto:@Uri.EscapeDataString(Model.BoxDriverEmail[i])
                                                 ?Subject=@Uri.EscapeDataString(subject)
                                                 &body=@Uri.EscapeDataString(body)">
-                                                    @Model.BoxBackupDriver2Email[i]
+                                                    @Model.BoxDriverEmail[i]
                                                 </a>
                                             }
                                         }
@@ -174,10 +169,8 @@
                                             && User.IsInRole("Driver"))
                                         {
                                             <br />
-                                            <span style="text-decoration-color: red">
-                                                &nbsp;&nbsp;
-                                                @Html.Label("Sign Up:", new { style = "color: red" })
-                                                @Html.ActionLink("Sign Up", "BackupSignUp", 
+                                            <span>
+                                                @Html.ActionLink("Click Here to Sign Up", "BackupSignUp", 
                                                     new{ idx = i, date = Model.BoxDay[row, col], cancel = false })                                            </span>
                                         }
                                     }
@@ -191,13 +184,12 @@
                                     </span>
                                     <br />
                                     @Html.Raw(Model.BoxBackupDriverName[i])
-                                    if (Model.BoxBackupDriverId[i] == Model.CurrentUserId)
+                                    if (Model.BoxBackupDriverId[i] == Model.CurrentUserId
+                                        && Model.BoxDay[row, col] > DateTime.Today)
                                     {
                                         <br />
-                                        <span style="text-decoration-color: red">
-                                            &nbsp;&nbsp;
-                                            @Html.Label("Cancel:", new { style = "color: red" })
-                                            @Html.ActionLink("Cancel", "BackupSignUp", 
+                                        <span>
+                                            @Html.ActionLink("Click Here to Cancel", "BackupSignUp", 
                                                 new{ idx = i, date = Model.BoxDay[row, col], cancel = true })                                        </span>
                                     }
                                     if (Model.BoxBackupDriverPhone[i] != null)
@@ -211,15 +203,15 @@
                                         <br />
                                         @Html.Label(Model.BoxBackupDriverPhone2[i])
                                     }
-                                    if (Model.BoxBackupDriver2Email[i] != null)
+                                    if (Model.BoxBackupDriverEmail[i] != null)
                                     {
                                         const string subject = "BHELP Food Program";
                                         var body = @Model.DriversSchedule[i].Date.ToLongDateString()
-                                                   + " Backup Driver: " + @Model.BoxBackupDriver2Name[i];
-                                            <a href="mailto:@Uri.EscapeDataString(Model.BoxBackupDriver2Email[i])
+                                                   + " Backup Driver: " + @Model.BoxBackupDriverName[i];
+                                            <a href="mailto:@Uri.EscapeDataString(Model.BoxBackupDriverEmail[i])
                                             ?Subject=@Uri.EscapeDataString(subject)
                                             &body=@Uri.EscapeDataString(body)">
-                                            @Model.BoxBackupDriver2Email[i]
+                                            @Model.BoxBackupDriverEmail[i]
                                         </a>
                                     }
                                 }
