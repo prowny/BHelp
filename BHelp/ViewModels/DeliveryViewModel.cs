@@ -40,10 +40,10 @@ namespace BHelp.ViewModels
         public int GiftCardsEligible { get; set; }
 
         [Range(0,20)]
-        public int FullBags { get; set; }
+        public int FullBags { get; set; } // now called "A Bags"
 
         [Range(0, 20)]
-        public int HalfBags { get; set; }
+        public int HalfBags { get; set; } // now called "B Bags"
 
         [Range(0, 20)]
         public int KidSnacks { get; set; }

@@ -1667,8 +1667,8 @@ namespace BHelp.Controllers
                 view.HelperTitles[4] = "# Cumulative Residents Children <18";
                 view.HelperTitles[5] = "# Cumulative Residents Adults 18-59";
                 view.HelperTitles[6] = "# Cumulative Residents Seniors 60+";
-                view.HelperTitles[7] = "# Full Bags (10 lbs per bag)";
-                view.HelperTitles[8] = "# Half Bags (9 lbs per bag)";
+                view.HelperTitles[7] = "# A Bags (10 lbs per bag)";
+                view.HelperTitles[8] = "# B Bags (9 lbs per bag)";
                 view.HelperTitles[9] = "# Snacks";
                 view.HelperTitles[10] = "# Giant Gift Cards Disbursed";
                 view.HelperTitles[11] = "# Households Distinct Served";
@@ -1679,8 +1679,8 @@ namespace BHelp.Controllers
                 view.HelperTitles[16] = "# Repeat Deliveries";
                 view.HelperTitles[17] = "# First-Time Deliveries";
                 view.HelperTitles[18] = "# Households Receiving 2 Gift Cards";
-                view.HelperTitles[19] = "# Total Lbs of Full Bags";
-                view.HelperTitles[20] = "# Total Lbs of Half Bags";
+                view.HelperTitles[19] = "# Total Lbs of A Bags";
+                view.HelperTitles[20] = "# Total Lbs of B Bags";
 
                 view.ZipCodes = AppRoutines.GetZipCodesList();
                 view.ZipCounts = new int[21, view.ZipCodes.Count + 2]; // ZipCodes, Counts

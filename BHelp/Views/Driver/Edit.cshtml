@@ -71,13 +71,13 @@
                     <td style="color: darkmagenta">&#8592;Click to change</td>
                 </tr>
                 <tr>
-                    <td>Full Bags:&nbsp;</td>
+                    <td>A Bags:&nbsp;</td>
                     <td>@Html.EditorFor(model => model.FullBags, new { htmlAttributes = new { style = "width:30px", @min = "0", max = "9" } })
                         @Html.ValidationMessageFor(model => model.FullBags, "", new { @class = "text-danger" })
                     </td>
                 </tr>
                 <tr>
-                    <td>Half Bags:&nbsp;</td>
+                    <td>B Bags:&nbsp;</td>
                     <td>
                         @Html.EditorFor(model => model.HalfBags, new { htmlAttributes = new { style = "width:30px", @min = "0", max = "9" } })
                         @Html.ValidationMessageFor(model => model.HalfBags, "", new { @class = "text-danger" })

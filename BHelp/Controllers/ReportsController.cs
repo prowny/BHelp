@@ -558,7 +558,7 @@ namespace BHelp.Controllers
             sb.AppendLine();
 
             // Headers
-            sb.Append("Date,Driver,Deliveries,Residents,Full Bags, Half Bags, Kid Snacks," +
+            sb.Append("Date,Driver,Deliveries,Residents,A Bags, B Bags, Kid Snacks," +
                       "Pounds of Food, Gift Cards");
             sb.AppendLine();
 

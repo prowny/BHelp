@@ -151,12 +151,12 @@
                 </table>
                 <table>
                     <tr>
-                        <td>@Html.LabelFor(model => model.FullBags, htmlAttributes: new { @class = "control-label col-md-2" })</td>
+                        <td>@Html.Label("A Bags", htmlAttributes: new { @class = "control-label col-md-2" })</td>
                         <td>
                             @Html.EditorFor(model => model.FullBags, new { htmlAttributes = new { id = "FullBags", style = "width:35px", min = 0, max = 5 } })
                             @Html.ValidationMessageFor(model => model.FullBags, "", new { @class = "text-danger" })
                         </td>
-                        <td>@Html.LabelFor(model => model.HalfBags, htmlAttributes: new { @class = "control-label col-md-2" })</td>
+                        <td>@Html.Label("B Bags", new { @class = "control-label col-md-2" })</td>
                         <td>
                             @Html.EditorFor(model => model.HalfBags, new { htmlAttributes = new { id = "HalfBags", style = "width:35px", min = 0, max = 3 } })
                             @Html.ValidationMessageFor(model => model.HalfBags, "", new { @class = "text-danger" })

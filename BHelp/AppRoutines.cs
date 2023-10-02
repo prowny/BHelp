@@ -239,7 +239,7 @@ namespace BHelp
             delivery.GiftCardsEligible = GetGiftCardsEligible(delivery.ClientId, delivery.DateDelivered.Value);
             delivery.GiftCards = delivery.GiftCardsEligible;
 
-            // Full Bags:
+            // Full Bags (A Bags):
             var numberInHousehold = delivery.Children + delivery.Adults + delivery.Seniors;
             if (numberInHousehold <= 2)
             {
@@ -895,7 +895,7 @@ namespace BHelp
             ws.Cell(1, 2).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
             var key = "K = Kids 0-17, A = Adults 18-59, S = Adults 60+, HH = Household, ";
-            key += "F = Full Bags, H = Half Bags, KS = Kids Snacks for ages 2-17, GC = Gift Cards";
+            key += "Abags = A Bags, Bbags = B Bags, KS = Kids Snacks for ages 2-17, GC = Gift Cards";
             ws.Cell(1, 8).SetValue(key);
             ws.Cell(1, 8).Style.Alignment.WrapText = true;
             ws.Cell(1, 8).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
@@ -1091,7 +1091,7 @@ namespace BHelp
             sb.Append(DateTime.Today.ToShortDateString() + ',');
             sb.Append(",,,,,");
             var key = "K = Kids 0-17, A = Adults 18-59, S = Adults 60+, HH = Household, ";
-            key += "F = Full Bags, H = Half Bags, KS = Kids Snacks for ages 2-17, GC = Gift Cards";
+            key += "Abags = A Bags, Bbags = B Bags, KS = Kids Snacks for ages 2-17, GC = Gift Cards";
             sb.Append("\"" + key + "\"");
             sb.AppendLine();
 
@@ -1146,7 +1146,7 @@ namespace BHelp
             sb.Append("\n");
 
             sb.Append("Log Date,Name,Address,Driver,Delivery Date,ZipCode,Status,# in HH,#Children,");
-            sb.Append("#Adults 18-59,# Seniors >=60,#Full Bags,#HalfBags,#Kid Snacks,");
+            sb.Append("#Adults 18-59,# Seniors >=60,#A Bags,#B Bags,#Kid Snacks,");
             sb.Append("#Gift Cards,#Pounds of Food");
             if (allData)
             {
@@ -1211,8 +1211,7 @@ namespace BHelp
                     var _namesAges = "";
                     if (d.NamesAgesInHH != null) _namesAges = d.NamesAgesInHH.Replace("\n", "")
                         .Replace("\r", "").Replace(",", " ");
-                    var _phone = "";
-                    //if (d.Phone != null) _phone = "\"" + d.Phone.Replace("\"", "'") + "\"";
+                    var _phone = "";;
                     if (d.Phone != null) _phone = d.Phone.Replace("\n", "")
                         .Replace("\r", "").Replace(",", " ");
                     var _city = "";
