@@ -77,7 +77,7 @@ namespace BHelp.Controllers
             foreach (var pymt in _paymentList)
             {
                 pymt.DateString = pymt.Date.ToString("MM/dd/yyyy");
-                var c = Convert.ToByte(pymt.Category);
+                var c = Convert.ToByte(pymt.CategoryId);
                 pymt.ActionCategory = categoryList[c - 1];
             }
             view.PaymentList = _paymentList;
@@ -114,7 +114,7 @@ namespace BHelp.Controllers
             foreach (var pymnt in paymentView.PaymentList)
             {
                 pymnt.DateString = pymnt.Date.ToString("MM/dd/yyyy");
-                pymnt.ActionCategory = categoryList[pymnt.Category - 1];
+                pymnt.ActionCategory = categoryList[pymnt.CategoryId - 1];
                 var client = clientLookupList.FirstOrDefault(i => i.Id == pymnt.ClientId);
                 if (client == null) continue;
                 pymnt.LastName = client.LastName;
@@ -174,7 +174,7 @@ namespace BHelp.Controllers
 
                     pymt.DateString = pymt.Date.ToString("MM/dd/yyyy");
 
-                    var c = Convert.ToByte(pymt.Category);
+                    var c = Convert.ToByte(pymt.CategoryId);
                     pymt.ActionCategory = categoryList[c- 1];
                 }
 
@@ -242,7 +242,7 @@ namespace BHelp.Controllers
                 {
                     Date = assistancePayment.Date,
                     ClientId = assistancePayment.ClientId,
-                    Category = Convert .ToByte(assistancePayment.CategoryId),
+                    CategoryId = Convert .ToByte(assistancePayment.CategoryId),
                     Action = assistancePayment.Action,
                     AmountDecimal = assistancePayment .AmountDecimal,
                     Note = assistancePayment.Note 
@@ -281,7 +281,7 @@ namespace BHelp.Controllers
                     ClientId = assistancePayment.ClientId,
                     Date = assistancePayment .Date,
                     Action = assistancePayment.Action,
-                    CategoryId =assistancePayment.Category,
+                    CategoryId =assistancePayment.CategoryId,
                     AssistanceCategoriesSelectList = AppRoutines.GetAssistanceCategoriesSelectList(),
                     AmountDecimal = assistancePayment.AmountDecimal,
                     Note =assistancePayment.Note, 
@@ -326,7 +326,7 @@ namespace BHelp.Controllers
                     {
                         aRec.Date = assistancePayment.Date;
                         aRec.ClientId = assistancePayment.ClientId;
-                        aRec.Category = Convert.ToByte( assistancePayment.CategoryId);
+                        aRec.CategoryId = Convert.ToByte( assistancePayment.CategoryId);
                         aRec.Action = assistancePayment.Action;
                         aRec.AmountDecimal = assistancePayment.AmountDecimal;
                         aRec.Note = assistancePayment.Note;
@@ -410,14 +410,14 @@ namespace BHelp.Controllers
                 foreach (var pymnt in payments)
                 {
                     pymnt.DateString = pymnt.Date.ToString("MM/dd/yyyy");
-                    pymnt.ActionCategory = categoryList[pymnt.Category - 1];
+                    pymnt.ActionCategory = categoryList[pymnt.CategoryId - 1];
                     var client = clientLookupList.FirstOrDefault(i => i.Id == pymnt.ClientId);
                     if (client != null)
                     {
                         pymnt.LastName = client.LastName;
                         pymnt.FirstName = client.FirstName;
                         pymnt.AddressString = client.StreetNumber + " " + client.StreetName;
-                        pymnt.ActionCategory = categoryList[pymnt.Category - 1];
+                        pymnt.ActionCategory = categoryList[pymnt.CategoryId - 1];
                         pymnt.City = client.City;
                         pymnt.Zip = client.Zip;
 
@@ -502,11 +502,11 @@ namespace BHelp.Controllers
                 return RedirectToAction("PaymentsByDate", new{ startDate, endDate});
             }
 
-            //public ActionResult ConvertPaymentsToDecimal()
-            //{
-            //    Utilities.ConvertPaymentsToDecimal();
-            //    return null;
-            //}
+            public ActionResult RebuildAssistancePayments()
+            {
+                Utilities.RebuildAssistancePayments();
+                return null;
+            }
             protected override void Dispose(bool disposing)
             {
                 if (disposing)

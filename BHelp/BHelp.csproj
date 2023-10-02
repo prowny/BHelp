@@ -601,6 +601,7 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="App_Data\AssistancePayments.csv" />
+    <Content Include="App_Data\AsstPymnts.csv" />
     <None Include="Properties\PublishProfiles\BhelpHostGator.pubxml" />
     <None Include="Properties\PublishProfiles\Test.BhelpHostGator.pubxml" />
     <None Include="Properties\PublishProfiles\od-calllogProfile.pubxml">

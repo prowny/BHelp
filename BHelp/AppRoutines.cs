@@ -34,7 +34,7 @@ namespace BHelp
             foreach (var pymnt in payments)
             {
                 var strDt = pymnt.Date.ToString("MM/dd/yyyy ");  // space after the date
-                var cat = catList[pymnt.Category - 1];
+                var cat = catList[pymnt.CategoryId - 1];
                 cat = (cat + "            ").Substring(0, 14);
                 cat = cat.Replace(" ", "_");
                 var amt = pymnt.AmountDecimal.ToString("C");
@@ -86,7 +86,7 @@ namespace BHelp
                         currentYTDTotal = 0;
                     }
                     var strDt = pymnt.Date.ToString("MM/dd/yyyy "); // note space after date
-                    var cat = catList[pymnt.Category - 1];
+                    var cat = catList[pymnt.CategoryId - 1];
                     cat = (cat + "          ").Substring(0, 14);
                     var amt = pymnt.AmountDecimal.ToString("C"); //pymnt.StringDollarAmount.Replace( ".-",".");
                     amt = GetPaddedDollarAmount(amt);
@@ -384,7 +384,7 @@ namespace BHelp
 
         public static List<string> GetAssistanceCategoriesList()
         {
-            List<string> GetAssistanceCategoriesList = new List<string>
+            var GetAssistanceCategoriesList = new List<string>
             {
                 "Utilities",
                 "Rent",

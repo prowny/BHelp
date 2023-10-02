@@ -7,7 +7,7 @@ namespace BHelp.Models
     {
         public int Id { get; set; }
         public int ClientId { get; set; }
-        public byte Category { get; set; }
+        public byte CategoryId { get; set; }
         public string Action { get; set; }
         //public int AmountInCents { get; set; }
         public DateTime Date { get; set; }

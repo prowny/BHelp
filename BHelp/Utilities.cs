@@ -13,6 +13,26 @@ namespace BHelp
 {
     public static class Utilities
     {
+        public static void RebuildAssistancePayments()
+        {
+            var paymentList = new List<string>();
+            var lines =
+                File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/AsstPymnts.csv");
+            foreach (var line in lines)
+            {
+                if (line.Substring(0, 2) != "Id")
+                {
+                    paymentList.Add(line);
+                }
+            }
+
+            foreach (var line in paymentList)
+            {
+                var values =  line.Split(',');
+            }
+            var y = "";
+
+        }
         public static void test()
         {
             using var db = new BHelpContext();
