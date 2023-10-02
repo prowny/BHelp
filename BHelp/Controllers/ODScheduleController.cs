@@ -184,7 +184,7 @@ namespace BHelp.Controllers
 
                     Session["MonthlyODSchedule"] = msUpdate;
 
-                    return RedirectToAction("Individual", new { boxDate = schedule.Date, odid = schedule.ODId });
+                    return RedirectToAction("Edit", new { boxDate = schedule.Date, odid = schedule.ODId });
                 }
 
                 // Add new record
@@ -209,7 +209,7 @@ namespace BHelp.Controllers
                 msAdd.Add(newMsAdd);
                 Session["MonthlyODSchedule"] = msAdd;
 
-                return RedirectToAction("Individual", new { boxDate = newRec.Date, odId = schedule.ODId });
+                return RedirectToAction("Edit", new { boxDate = newRec.Date, odId = schedule.ODId });
             }
             else
             {
