@@ -9,6 +9,7 @@ using BHelp.ViewModels;
 using System.IO;
 using System.Text;
 using ClosedXML.Excel;
+using System.Data.SqlTypes;
 
 namespace BHelp.Controllers
 {
@@ -31,7 +32,7 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ApplicationUser user = (from u in _db.Users
+            var user = (from u in _db.Users
                 .Where(u => u.UserName == userName) select u).Single();
             if (user == null)
             {
@@ -59,6 +60,15 @@ namespace BHelp.Controllers
                 }
             }
 
+            if (Request.UrlReferrer == null) return View(user);
+            var retUrl = Request.UrlReferrer.ToString();
+            if (retUrl.Contains('?'))
+            {
+                var i = retUrl.IndexOf('?');
+                retUrl = retUrl.Substring(0, i);
+            }
+            user.ReturnURL = retUrl;
+
             return View(user);
         }
 
@@ -68,7 +78,7 @@ namespace BHelp.Controllers
         public ActionResult Edit([Bind(Include = "Id,UserName,Active,FirstName,LastName,"
                                 + "Title,PhoneNumber,PhoneNumber2,Email,BeginDate,LastDate,"
                                 + "Notes,VolunteerCategory,VolunteerSubcategory,Address,City,"
-                                + "State,Zip")] ApplicationUser user)
+                                + "State,Zip,ReturnURL")] ApplicationUser user)
         {
             if (ModelState.IsValid)
             {
@@ -93,20 +103,42 @@ namespace BHelp.Controllers
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
+
+            if (Request.UrlReferrer == null) return View(user);
+            var retUrl = Request.UrlReferrer.ToString();
+            if (retUrl.Contains('?'))
+            {
+                var i = retUrl.IndexOf('?');
+                retUrl = retUrl.Substring(0, i);
+            }
+            user.ReturnURL = retUrl;
             return View(user);
         }
 
         // GET: Users/Delete/5
-        public ActionResult Delete(string userName)
+        public ActionResult Delete(string userId, string returnUrl)
         {
-            if (userName == null)
+            if (userId == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ApplicationUser user = (from u in _db.Users.Where(u => u.UserName == userName) select u).Single();
+            var user = (from u in _db.Users.Where(u => u.Id == userId) select u).Single();
             if (user == null)
             {
                 return HttpNotFound();
+            }
+
+            // Check for Okay to Delete:    
+            user.OKtoDelete = true;
+            using var db = new BHelpContext();
+            {
+                var sqlString = "SELECT UserId FROM AspNetUserRoles WHERE ";
+                sqlString += "UserId = '" + userId + "'";
+                var success = db.Database.SqlQuery<string>(sqlString).FirstOrDefault();
+                if (success != null)
+                {
+                    user.OKtoDelete = false;
+                }
             }
             return View(user);
         }
@@ -121,11 +153,16 @@ namespace BHelp.Controllers
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete"), Authorize(Roles = "Administrator,Developer")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string userName)
+        public ActionResult DeleteConfirmed(string userId)
         {
-            ApplicationUser user = (from u in _db.Users.Where(u => u.UserName == userName) select u).Single();
+            var user = (from u in _db.Users.Where(u => u.Id == userId) select u).Single();
             _db.Users.Remove(user);
             _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult DeleteDenied(string userName)
+        {
             return RedirectToAction("Index");
         }
 

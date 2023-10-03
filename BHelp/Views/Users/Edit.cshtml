@@ -4,7 +4,8 @@
 
 <style>
     #SaveButton {background-color: blue;color: white}
-</style>
+    #DeleteButton {background-color: red;color: white}
+</style>>
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
@@ -19,6 +20,7 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
+    <input type="hidden" name="ReturnURL" value="@Model.ReturnURL" Id="ReturnURL" />
 
     <div>
         <h4>Edit User</h4>
@@ -171,8 +173,8 @@
 
         <br />
         <div class="form-group">
-            <div class="col-md-10">
-                <input type="submit" value="Save" id="SaveButton" />
+            <div class="col-md-10">                <input type="submit" value="Save" id="SaveButton" />&nbsp;
+                @Html.ActionLink("Delete", "Delete", new { userId = Model.Id, returnUrl = Model.ReturnURL }, new { id = "DeleteButton" })
             </div>
         </div>
     </div>

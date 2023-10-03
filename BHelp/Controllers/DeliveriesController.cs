@@ -1147,7 +1147,6 @@ namespace BHelp.Controllers
                 return View(delivery);
             }
 
-            //public ActionResult Assign(int? id, string returnURL)
             [HttpPost]
             public ActionResult Assign(DeliveryViewModel model)
             {

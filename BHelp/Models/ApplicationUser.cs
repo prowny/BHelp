@@ -85,12 +85,12 @@ namespace BHelp.Models
         [JsonProperty]
         public override string PhoneNumber
         {
-            get { return base.PhoneNumber; }
-            set { base.PhoneNumber = value; }
+            get => base.PhoneNumber;
+            set => base.PhoneNumber = value;
         }
 
-        [NotMapped]
-        public string FullName => string.Format("{0} {1}", FirstName, LastName);
+        [NotMapped] public bool OKtoDelete { get; set; } // (has no roles, deliveries, schedules, volunteer hours assigned)
+        [NotMapped] public string FullName => string.Format("{0} {1}", FirstName, LastName);
 
         //set => throw new NotImplementedException();
         [NotMapped] public List<SelectListItem> VolunteerCategories { get; set; }
@@ -107,5 +107,6 @@ namespace BHelp.Models
         [NotMapped] public List<SelectListItem> States { get; set; }
         [NotMapped] public string AllRolesForUser { get; set; }
         [NotMapped] public string EmailRoleName { get; set; } // for use in Bulk Email sorting
+        [NotMapped] public string ReturnURL { get; set; }
     }
 }
