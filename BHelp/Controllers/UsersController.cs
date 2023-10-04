@@ -9,7 +9,6 @@ using BHelp.ViewModels;
 using System.IO;
 using System.Text;
 using ClosedXML.Excel;
-using System.Data.SqlTypes;
 
 namespace BHelp.Controllers
 {
@@ -135,10 +134,37 @@ namespace BHelp.Controllers
                 var sqlString = "SELECT UserId FROM AspNetUserRoles WHERE ";
                 sqlString += "UserId = '" + userId + "'";
                 var success = db.Database.SqlQuery<string>(sqlString).FirstOrDefault();
-                if (success != null)
-                {
-                    user.OKtoDelete = false;
-                }
+                if (success != null) user.OKtoDelete = false;
+
+                var dels = db.Deliveries.FirstOrDefault(d => d.DeliveryDateODId == userId);
+                if (dels != null) user.OKtoDelete = false;
+                dels = db.Deliveries.FirstOrDefault(d => d.ODId == userId);
+                if (dels != null) user.OKtoDelete = false;
+                dels = db.Deliveries.FirstOrDefault(d => d.DriverId == userId);
+                if (dels != null) user.OKtoDelete = false;
+
+                var ods = db.ODSchedules.FirstOrDefault(o => o.ODId == userId);
+                if (ods != null) user.OKtoDelete = false;
+
+                var drvrs = db.DriverSchedules.FirstOrDefault(d => d.DriverId == userId);
+                if (drvrs != null) user.OKtoDelete = false;
+                drvrs = db.DriverSchedules.FirstOrDefault(d => d.DriverId == userId);
+                if (drvrs != null) user.OKtoDelete = false;
+                drvrs = db.DriverSchedules.FirstOrDefault(d => d.BackupDriverId  == userId);
+                if (drvrs != null) user.OKtoDelete = false;
+                drvrs = db.DriverSchedules.FirstOrDefault(d => d.BackupDriver2Id == userId);
+                if (drvrs != null) user.OKtoDelete = false;
+
+
+                var hrs = db.VolunteerHours.FirstOrDefault(h => h.UserId == userId);
+                if (hrs != null) user.OKtoDelete = false;
+                hrs = db.VolunteerHours.FirstOrDefault(h => h.OriginatorUserId == userId);
+                if (hrs != null) user.OKtoDelete = false;
+            }
+
+            if (user.OKtoDelete == false)
+            {
+                return RedirectToAction("DeleteDenied");
             }
             return View(user);
         }
@@ -161,9 +187,9 @@ namespace BHelp.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult DeleteDenied(string userName)
+        public ActionResult DeleteDenied()
         {
-            return RedirectToAction("Index");
+            return View();
         }
 
         [Authorize(Roles = "Administrator,Developer")]

@@ -1,5 +1,4 @@
-﻿
-@{ Layout = null; }
+﻿@{ Layout = null; }
 <!DOCTYPE html>
 
 <html>
@@ -8,8 +7,18 @@
     <title>DeleteDenied</title>
 </head>
 <body>
-    <div>
-        @Html.ActionLink("Back to List", "Index")
-    </div>
+<div>
+    <span><b>Cannot delete this user because they are associated with one or more deliveries,</b></span>
+    <br />
+    <span><b>one or more schedules, or have one or more Roles.</b></span>
+    <br />
+    <span><b>Remove the association(s) and try again.</b></span>
+</div>
+<div>
+    <br/>
+    @Html.ActionLink("Back to List", "Index")
+    <br/>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
 </body>
 </html>
