@@ -842,6 +842,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Users\DeleteDenied.cshtml" />
+    <Content Include="Views\Clients\DeleteDenied.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

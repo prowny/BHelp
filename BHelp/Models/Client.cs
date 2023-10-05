@@ -27,16 +27,13 @@ namespace BHelp.Models
         [DisplayName("Street Number")]
         public string StreetNumber { get; set; }
 
-        [Required]
-        [DisplayName("Street Name")]
+        [Required] [DisplayName("Street Name")]
         public string StreetName { get; set; }
 
-        [Required]
-        [DisplayName("City")]
+        [Required] [DisplayName("City")]
         public string City { get; set; }
 
-        [Required]
-        [DisplayName("Zip Code")]
+        [Required] [DisplayName("Zip Code")]
         public string Zip { get; set; }
 
         public string Email { get; set; }
@@ -48,57 +45,45 @@ namespace BHelp.Models
         [DataType(DataType.Date)]
         public DateTime DateCreated { get; set; }
 
-        [NotMapped]
-        public string FullName
+        [NotMapped] public string FullName
         {
             get { return string.Format("{0} {1}", FirstName, LastName); }
         }
 
-        [NotMapped]
-        public string LastFirstName => $"{LastName + ", "} {FirstName}";
+        [NotMapped] public string LastFirstName => $"{LastName + ", "} {FirstName}";
 
-        [NotMapped]
-        public IEnumerable<SelectListItem> ZipCodes { get; set; }
+        [NotMapped] public IEnumerable<SelectListItem> ZipCodes { get; set; }
 
-        [NotMapped]
-        public List<FamilyMember> FamilyMembers { get; set; }
+        [NotMapped] public List<FamilyMember> FamilyMembers { get; set; }
 
-        [NotMapped]
-        public int HouseholdCount { get; set; }
+        [NotMapped] public int HouseholdCount { get; set; }
 
-        [NotMapped]
-        public IEnumerable<SelectListItem> FamilySelectList { get; set; }
+        [NotMapped] public IEnumerable<SelectListItem> FamilySelectList { get; set; }
 
-        [NotMapped]
-        public string SearchString { get; set; }
+        [NotMapped] public string SearchString { get; set; }
 
-        [NotMapped]
-        public string CurrentUserFullName { get; set; }
-        [NotMapped]
-        public string StreetToolTip { get; set; }
-        [NotMapped]
-        public string CityToolTip { get; set; }
-        [NotMapped]
-        public string PhoneToolTip { get; set; }
-        [NotMapped]
-        public string NotesToolTip { get; set; }
+        [NotMapped] public string CurrentUserFullName { get; set; }
+
+        [NotMapped] public string StreetToolTip { get; set; }
+
+        [NotMapped] public string CityToolTip { get; set; }
+
+        [NotMapped] public string PhoneToolTip { get; set; }
+
+        [NotMapped] public string NotesToolTip { get; set; }
        
-        [NotMapped]
-        public IEnumerable<Client> SearchResults { get; set; }
+        [NotMapped] public IEnumerable<Client> SearchResults { get; set; }
 
-        [NotMapped]
-        public int Age { get; set; }
+        [NotMapped] public int Age { get; set; }
 
-        [NotMapped]
-        public bool Delete { get; set; }
+        [NotMapped] public bool Delete { get; set; }
 
-        [NotMapped]
-        public string ClientNameAddress { get; set; }
+        [NotMapped] public string ClientNameAddress { get; set; }
 
-        [NotMapped]
-        public string NameAddressToolTip { get; set; }    // for open delivery filtering
+        [NotMapped] public string NameAddressToolTip { get; set; }    // for open delivery filtering
 
-        [NotMapped]
-        public string ReturnURL { get; set; }
+        [NotMapped] public string ReturnURL { get; set; }
+
+        [NotMapped] public bool OKtoDelete { get; set; }
     }
 }

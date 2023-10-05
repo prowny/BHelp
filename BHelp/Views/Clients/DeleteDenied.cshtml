@@ -1,0 +1,26 @@
+﻿@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>DeleteDenied</title>
+</head>
+<body>
+<div>
+    <span><b>Cannot delete this client because they are associated with one or more deliveries</b></span>
+    <br />
+    <span><b>or have one or more Financial Assistance Payments</b></span>
+    <br />
+    <span><b>or belong to one or more Client Groups.</b></span>
+    <br />
+    <span><b>Remove the association(s) and try again.</b></span>
+</div>
+<div>
+    <br/>
+    @Html.ActionLink("Back to List", "Index")
+    <br/>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
+</body>
+</html>

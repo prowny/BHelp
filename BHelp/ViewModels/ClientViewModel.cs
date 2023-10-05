@@ -71,5 +71,6 @@ namespace BHelp.ViewModels
         public string[,] ClientStrings { get; set; }
         public int ClientCount { get; set; }
         public string ReturnURL { get; set; }
+        public bool OKtoDelete { get; set; }
     }
 }

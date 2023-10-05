@@ -250,10 +250,29 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Client client = db.Clients.Find(id);
+            var client = db.Clients.Find(id);
             if (client == null) { return HttpNotFound(); }
-           
+
+            // Check for Okay to Delete:    
+            client.OKtoDelete = true;
+
+            var del = db.Deliveries.FirstOrDefault(d => d.ClientId == client.Id );
+            if (del != null) client.OKtoDelete = false;
+            var pymnt = db.AssistancePayments.FirstOrDefault(p => p.ClientId == client .Id  );
+            if(pymnt != null) client.OKtoDelete = false;
+            var gp = db.GroupMembers.FirstOrDefault(g => g.ClientId == client.Id);
+            if (gp != null) client.OKtoDelete = false;
+
+            if (client.OKtoDelete == false)
+            {
+                return RedirectToAction("DeleteDenied");
+            }
+
             return View(client);
+        }
+        public ActionResult DeleteDenied()
+        {
+            return View();
         }
 
         // POST: Clients/Delete/5
