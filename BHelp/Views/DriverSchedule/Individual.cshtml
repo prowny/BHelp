@@ -170,7 +170,7 @@
                                         {
                                             <br />
                                             <span>
-                                                @Html.ActionLink("Click Here to Sign Up", "BackupSignUp", 
+                                                @Html.ActionLink("Click Here to Sign Up", "BackupDriverSignUp", 
                                                     new{ idx = i, date = Model.BoxDay[row, col], cancel = false })                                            </span>
                                         }
                                     }
@@ -189,7 +189,7 @@
                                     {
                                         <br />
                                         <span>
-                                            @Html.ActionLink("Click Here to Cancel", "BackupSignUp", 
+                                            @Html.ActionLink("Click Here to Cancel", "BackupDriverSignUp", 
                                                 new{ idx = i, date = Model.BoxDay[row, col], cancel = true })                                        </span>
                                     }
                                     if (Model.BoxBackupDriverPhone[i] != null)

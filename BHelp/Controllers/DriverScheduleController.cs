@@ -310,10 +310,12 @@ namespace BHelp.Controllers
             return RedirectToAction("Individual");
         }
 
+       
         public ActionResult DriverSignUp(int? idx, DateTime? date, bool? cancel)
         {
             var CurrentUserId = User.Identity.GetUserId();
-            var text =  AppRoutines.GetUserFullName(User.Identity.GetUserId());
+            var text = AppRoutines.GetUserFullName(User.Identity.GetUserId());
+
             // check for existing DriversSchedules record
             using var db = new BHelpContext();
             var rec = db.DriverSchedules
@@ -346,12 +348,11 @@ namespace BHelp.Controllers
                 }
                 db.SaveChanges();
             }
-            SendEmailToDriverScheduler(text); 
+            SendEmailToDriverScheduler(text);
 
-            return RedirectToAction("Individual", new {boxDate = date});
+            return RedirectToAction("Individual", new { boxDate = date });
         }
-
-        public ActionResult BackupSignUp(int? idx, DateTime? date, bool? cancel)
+        public ActionResult BackupDriverSignUp(int? idx, DateTime? date, bool? cancel)
         {
             var CurrentUserId = User.Identity.GetUserId();
             var text = AppRoutines.GetUserFullName(User.Identity.GetUserId());
@@ -374,43 +375,6 @@ namespace BHelp.Controllers
                 }
                 db.SaveChanges();
             }
-            else  // no existing rec:
-            {
-                if (date != null)
-                {
-                    var newRec = new DriverSchedule
-                    {
-                        Date = (DateTime)date,
-                        BackupDriverId = CurrentUserId
-                    };
-                    db.DriverSchedules.Add(newRec);
-                    text += " has signed up as BACKUP DRIVER for " + date.Value.ToString("MM/dd/yyyy");
-                }
-                db.SaveChanges();
-            }
-            SendEmailToDriverScheduler(text);
-
-            return RedirectToAction("Individual", new { boxDate = date });
-        }
-        public ActionResult BackupDriverSignUp(int? idx, DateTime? date, bool? cancel)
-        {
-            var CurrentUserId = User.Identity.GetUserId();
-            // check for existing DriversSchedules record
-            using var db = new BHelpContext();
-            var rec = db.DriverSchedules
-                .FirstOrDefault(d => d.Date == date);
-            if (rec != null)
-            {
-                if (cancel == true)
-                {
-                    rec.BackupDriverId = null;
-                }
-                else // cancel = false:
-                {
-                    rec.BackupDriverId = CurrentUserId;
-                }
-                db.SaveChanges();
-            }
             else  // rec is null:
             {
                 if (date != null)
@@ -418,13 +382,16 @@ namespace BHelp.Controllers
                     var newRec = new DriverSchedule
                     {
                         Date = (DateTime)date,
-                        BackupDriverId = CurrentUserId
+                        BackupDriverId = CurrentUserId,
                     };
+                    text += " has signed up as BACKUP DRIVER for " + date.Value.ToString("MM/dd/yyyy");
                     db.DriverSchedules.Add(newRec);
                 }
 
                 db.SaveChanges();
             }
+            SendEmailToDriverScheduler(text);
+
             return RedirectToAction("Individual", new { boxDate = date });
         }
 
