@@ -381,7 +381,7 @@ namespace BHelp.Controllers
                     var newRec = new DriverSchedule
                     {
                         Date = (DateTime)date,
-                        DriverId = CurrentUserId
+                        BackupDriverId = CurrentUserId
                     };
                     db.DriverSchedules.Add(newRec);
                     text += " has signed up as BACKUP DRIVER for " + date.Value.ToString("MM/dd/yyyy");
