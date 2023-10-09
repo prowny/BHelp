@@ -967,12 +967,12 @@ namespace BHelp
             ws.Cell(3, 12).Style.Alignment.WrapText = true;
             ws.Cell(3, 12).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
-            ws.Columns("13").Width = 3;
-            ws.Cell(3, 13).SetValue("#F").Style.Font.SetBold(true);
+            ws.Columns("13").Width = 5;
+            ws.Cell(3, 13).SetValue("#Abags").Style.Font.SetBold(true);
             ws.Cell(3, 13).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
-            ws.Columns("14").Width = 3;
-            ws.Cell(3, 14).SetValue("#H").Style.Font.SetBold(true);
+            ws.Columns("14").Width = 5;
+            ws.Cell(3, 14).SetValue("#Bbags").Style.Font.SetBold(true);
             ws.Cell(3, 14).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
             ws.Columns("15").Width = 4;
@@ -1096,7 +1096,7 @@ namespace BHelp
             sb.AppendLine();
 
             sb.Append("Delivery Date,Driver,ZipCode,Client,Address,City,Phone,#K,#A,#S,# in HH,");
-            sb.Append("All Household Members/Ages,#F,#H,#KS,#GC,");
+            sb.Append("All Household Members/Ages,#ABags,#Bbags,#KS,#GC,");
             sb.Append("Client Permanent Notes,OD & Driver Delivery Notes");
             sb.AppendLine();
 
