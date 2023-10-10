@@ -795,15 +795,15 @@ namespace BHelp.Controllers
                         _view.DeliveryDateODId = odSched.ODId;
                     }
 
-                    var driverSched = AppRoutines.GetDriverSchedule((DateTime)_NewDateDelivered);
-                    if (driverSched == null)
-                    {
-                        _view.DriverId = null; // (nobody yet)
-                    }
-                    else
-                    {
-                        _view.DriverId = driverSched.DriverId;
-                    }
+                    //var driverSched = AppRoutines.GetDriverSchedule((DateTime)_NewDateDelivered);
+                    //if (driverSched == null)
+                    //{
+                     _view.DriverId = null; // (nobody yet)
+                    //}
+                    //else
+                    //{
+                    //    _view.DriverId = driverSched.DriverId;
+                    //}
 
                     // Reset selected item in DeliveryDateODList
                     foreach (var item in _view.DeliveryDateODList)

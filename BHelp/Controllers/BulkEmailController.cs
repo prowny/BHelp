@@ -93,7 +93,7 @@ namespace BHelp.Controllers
 
             for (var i = 1; i < emailAddressList.Count; i++) // item [0] is null
             {
-                view.EmailString += emailAddressList[i] + ";";
+                view.EmailString += emailAddressList[i] + ",";
             }
 
             return View(view);
