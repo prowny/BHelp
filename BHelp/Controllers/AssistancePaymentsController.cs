@@ -504,7 +504,7 @@ namespace BHelp.Controllers
 
             public ActionResult RebuildAssistancePayments()
             {
-                Utilities.RebuildAssistancePayments();
+                //Utilities.RebuildAssistancePayments();
                 return null;
             }
             protected override void Dispose(bool disposing)

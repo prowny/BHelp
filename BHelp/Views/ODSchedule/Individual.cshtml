@@ -153,7 +153,8 @@
                                         <br />
                                         <span>
                                             @Html.ActionLink("Click Here to Cancel", "ODSignUp", 
-                                                new{ idx = i, date = Model.BoxDay[row, col], cancel = true })     
+                                                new{ idx = i, date = Model.BoxDay[row, col], cancel = true },
+                                                new { style = "color:red; font-weight:bold"})     
                                         </span>
                                     }
                                     if (Model.BoxODPhone[i] != null)

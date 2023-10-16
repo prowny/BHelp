@@ -99,10 +99,10 @@
                                                 && Model.BoxDay[row,col] > DateTime.Today)
                                             {
                                                 <span>
-                                                    <br />
                                                     &nbsp;&nbsp;
-                                                    @Html.ActionLink("Click Here to Sign Up", "DriverSignUp", 
-                                                        new{ idx = i, date = Model.BoxDay[row, col], cancel = false })
+                                                    @Html.ActionLink("Click Here to Sign Up",
+                                                        "DriverSignUp",
+                                                        new { idx = i, date = Model.BoxDay[row, col], cancel = false })
                                                 </span>
                                             }
                                         }
@@ -121,10 +121,11 @@
                                                 && User.IsInRole("Driver")
                                                 && Model.BoxDay[row,col] > DateTime.Today)
                                             {
-                                                <br />
                                                 <span>
-                                                    @Html.ActionLink("Click Here to Cancel", "DriverSignUp", 
-                                                        new{ idx = i, date = Model.BoxDay[row, col], cancel = true })     
+                                                    &nbsp;&nbsp;
+                                                        @Html.ActionLink("Click Here to Cancel", "DriverSignUp",
+                                                            new { idx = i, date = Model.BoxDay[row, col], cancel = true },
+                                                            new { style = "color:red; font-weight:bold" })
                                                 </span>
                                             }
                                             if (Model.BoxDriverPhone[i] != null)
@@ -168,10 +169,11 @@
                                         if (Model.BoxDay[row, col] > DateTime.Today
                                             && User.IsInRole("Driver"))
                                         {
-                                            <br />
                                             <span>
-                                                @Html.ActionLink("Click Here to Sign Up", "BackupDriverSignUp", 
-                                                    new{ idx = i, date = Model.BoxDay[row, col], cancel = false })                                            </span>
+                                                &nbsp;&nbsp;
+                                                @Html.ActionLink("Click Here to Sign Up", "BackupDriverSignUp",
+                                                    new { idx = i, date = Model.BoxDay[row, col], cancel = false })
+                                            </span>
                                         }
                                     }
                                 }
@@ -187,10 +189,12 @@
                                     if (Model.BoxBackupDriverId[i] == Model.CurrentUserId
                                         && Model.BoxDay[row, col] > DateTime.Today)
                                     {
-                                        <br />
                                         <span>
-                                            @Html.ActionLink("Click Here to Cancel", "BackupDriverSignUp", 
-                                                new{ idx = i, date = Model.BoxDay[row, col], cancel = true })                                        </span>
+                                            &nbsp;&nbsp;
+                                            @Html.ActionLink("Click Here to Cancel", "BackupDriverSignUp",
+                                                new { idx = i, date = Model.BoxDay[row, col], cancel = true },
+                                                new {style = "color:red; font-weight:bold"})
+                                        </span>
                                     }
                                     if (Model.BoxBackupDriverPhone[i] != null)
                                     {
