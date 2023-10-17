@@ -102,7 +102,8 @@
                                                     &nbsp;&nbsp;
                                                     @Html.ActionLink("Click Here to Sign Up",
                                                         "DriverSignUp",
-                                                        new { idx = i, date = Model.BoxDay[row, col], cancel = false })
+                                                        new { idx = i, date = Model.BoxDay[row, col], cancel = false },
+                                                        new { style = "color:red; font-weight:bold" })
                                                 </span>
                                             }
                                         }
@@ -172,7 +173,8 @@
                                             <span>
                                                 &nbsp;&nbsp;
                                                 @Html.ActionLink("Click Here to Sign Up", "BackupDriverSignUp",
-                                                    new { idx = i, date = Model.BoxDay[row, col], cancel = false })
+                                                    new { idx = i, date = Model.BoxDay[row, col], cancel = false },
+                                                    new { style = "color:red; font-weight:bold"})
                                             </span>
                                         }
                                     }

@@ -135,8 +135,9 @@
                                         {
                                             <span>
                                                 <br />
-                                                @Html.ActionLink("Click Here to Sign Up", "ODSignUp", 
-                                                    new{ idx = i, date = Model.BoxDay[row, col], cancel = false })
+                                                @Html.ActionLink("Click Here to Sign Up", "ODSignUp",
+                                                    new{ idx = i, date = Model.BoxDay[row, col], cancel = false },
+                                                    new { style = "color:red; font-weight:bold" })
                                             </span>
                                         }
                                     }
