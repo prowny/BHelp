@@ -131,7 +131,8 @@
                                             </span>
                                         }
                                         if (Model.BoxDay[row, col] > DateTime.Today 
-                                            && User.IsInRole( "OfficerOfTheDay"))
+                                            && User.IsInRole( "OfficerOfTheDay")
+                                            && !Model.BoxHoliday[i])
                                         {
                                             <span>
                                                 <br />
