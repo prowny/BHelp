@@ -171,7 +171,7 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Document document = db.Documents.Find(id);
+            var document = db.Documents.Find(id);
             if (document == null)
             {
                 return HttpNotFound();
@@ -200,7 +200,7 @@ namespace BHelp.Controllers
                 DocNames = new string[docList.Count],
                 DocIds = new int[docList.Count]
             };
-            for (int i = 0; i < docList.Count; i++)
+            for (var i = 0; i < docList.Count; i++)
             {
                 view.DocNames[i] = docList[i].Title;
                 view.DocIds[i] = docList[i].Id;

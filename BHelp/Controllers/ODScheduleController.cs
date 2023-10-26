@@ -642,8 +642,11 @@ namespace BHelp.Controllers
             }
             private static void SendEmail(string address, string text)
             {
-                //address = "prowny@aol.com"; // for testing !!!!!!!!!!!!!!!!!!!!!!!
-                using var msg = new MailMessage();
+            if (AppRoutines.IsDebug()) 
+            {
+                address = "prowny@aol.com"; // for testing !!!!!!!!!!!!!!!!!!!!!!!
+            }
+            using var msg = new MailMessage();
                 msg.From = new MailAddress("ODScheduler@BethesdaHelpFD.org", "BHELP OD Scheduler");
                 msg.To.Add(new MailAddress(address, "BHELP OD"));
                 msg.Subject = "BHELP - OD Schedule";

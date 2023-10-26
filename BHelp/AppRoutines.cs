@@ -18,6 +18,15 @@ namespace BHelp
 {
     public static class AppRoutines
     {
+        public static bool IsDebug()
+        {
+            #if DEBUG
+                        return true;
+            #else
+                    return false;
+            #endif
+        }
+
         public static List<SelectListItem> GetPaymentHistorySelectList(int clientId, DateTime? startDate, DateTime? endDate)
         {
             if (startDate == null) startDate = DateTime.MinValue;
