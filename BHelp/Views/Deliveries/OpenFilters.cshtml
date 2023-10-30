@@ -112,8 +112,8 @@
                         <td style="text-align: center"><b>@Html.Label("City")</b></td>
                         <td style="text-align: center"><b>@Html.Label("DelvDateOD")</b></td>
                         <td style="text-align: center"><b>@Html.Label("Client")</b></td>
-                        <td><b>F</b></td>
-                        <td><b>H</b></td>
+                        <td><b>A</b></td>
+                        <td><b>B</b></td>
                         <td><b>S</b></td>
                         <td><b>G</b></td>
                     </tr>
@@ -160,47 +160,45 @@
             <br/>
             @if (Model.SelectedDeliveriesList.Count > 0)
             {
-        <div>
-            <span><b>Choose one option below to update </b></span>
-            <span style="text-decoration: underline"><b>all</b></span>
-            <span><b>checked deliveries:</b></span>
-            <br />
-            Repace All Checked Items Delivery Date with this date:
-            @Html.TextBoxFor(m => m.ReplacementDeliveryDate, "{0:MM/dd/yyyy}",
-                new { id = "ReplacementDeliveryDate", style = "width: 75px;" })
-            <span style="color: darkmagenta"> &#8592;Click to change</span>
-            <input name="btnReplacementDeliveryDate" type="submit" value="Go" class="btn btn-default" id="GoButton" />
-            <br />
-            Replace All Checked Items Driver with this Driver:
-            @Html.DropDownListFor(m => Model.ReplacementDriverId, Model.DriversSelectList)
-            <input name="btnReplacementDriverId" type="submit" value="Go" class="btn btn-default" id="GoButton" />
-            <br />
-            Replace All Checked Items Delivery Date OD with this OD:
-            @Html.DropDownListFor(m => Model.ReplacementDeliveryDateODId, Model.ODSelectList)
-            <input name="btnReplacementDeliveryDateODId" type="submit" value="Go" class="btn btn-default" id="GoButton" />
-            <br />
-            Set All Checked Items Delivery Status to Delivered
-            <span style="color: darkmagenta"> &nbsp;(Except when zero bags and cards)</span>
-            <input name="btnSetStatusToDelivered" type="submit" value="Go" class="btn btn-default" id="GoButton" />
-            <br />
-            <span><b>Or:</b></span>
-            <br/>
-            Download Checked Deliveries to Excel
-            <input name="btnExcelOpenSelected" type="submit" value="Go" class="btn btn-default" id="GoButton" />
-            <br />
-            Download Checked Deliveries to CSV File
-            <input name="btnCSVOpenSelected" type="submit" value="Go" class="btn btn-default" id="GoButton" />
-            
-          </div>
+            <div>
+                <span><b>Choose one option below to update </b></span>
+                <span style="text-decoration: underline"><b>all</b></span>
+                <span><b>checked deliveries:</b></span>
+                <br />
+                Repace All Checked Items Delivery Date with this date:
+                @Html.TextBoxFor(m => m.ReplacementDeliveryDate, "{0:MM/dd/yyyy}",
+                    new { id = "ReplacementDeliveryDate", style = "width: 75px;" })
+                <span style="color: darkmagenta"> &#8592;Click to change</span>
+                <input name="btnReplacementDeliveryDate" type="submit" value="Go" class="btn btn-default" id="GoButton" />
+                <br />
+                Replace All Checked Items Driver with this Driver:
+                @Html.DropDownListFor(m => Model.ReplacementDriverId, Model.DriversSelectList)
+                <input name="btnReplacementDriverId" type="submit" value="Go" class="btn btn-default" id="GoButton" />
+                <br />
+                Replace All Checked Items Delivery Date OD with this OD:
+                @Html.DropDownListFor(m => Model.ReplacementDeliveryDateODId, Model.ODSelectList)
+                <input name="btnReplacementDeliveryDateODId" type="submit" value="Go" class="btn btn-default" id="GoButton" />
+                <br />
+                Set All Checked Items Delivery Status to Delivered
+                <span style="color: darkmagenta"> &nbsp;(Except when zero bags and cards)</span>
+                <input name="btnSetStatusToDelivered" type="submit" value="Go" class="btn btn-default" id="GoButton" />
+                <br />
+                <span><b>Or:</b></span>
                 <br/>
-                <span style="color:crimson "><small>* EX = Eligibility Rules Exception found</small></span>
-
+                Download Checked Deliveries to Excel
+                <input name="btnExcelOpenSelected" type="submit" value="Go" class="btn btn-default" id="GoButton" />
+                <br />
+                Download Checked Deliveries to CSV File
+                <input name="btnCSVOpenSelected" type="submit" value="Go" class="btn btn-default" id="GoButton" />
+              </div>
+              <br/>
+              <span style="color:crimson "><small>* EX = Eligibility Rules Exception found</small></span>
         }
         </div>
-   <div>
-   <br />
-   @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
-</div> @*Return to Dashboard*@
+    <div>
+        <br />
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div> @*Return to Dashboard*@
 
     }
 </body>
