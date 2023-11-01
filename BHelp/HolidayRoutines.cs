@@ -35,19 +35,19 @@ namespace BHelp
                 
                 if (hol.Repeat == 1) // Annual Month-Day
                 {
-                    var _holiday = new Holiday()
-                    {
-                        CalculatedDate = AdjustForWeekendHoliday(new DateTime(year, hol.Month, hol.Day)),
-                        Description = hol.Description,
-                        EffectiveDate = hol.EffectiveDate
-                    };
-                    if (_holiday.CalculatedDate >= hol.EffectiveDate)
-                    {
-                        Holidays.Add(_holiday);
-                    }
+                    //var _holiday = new Holiday()
+                    //{
+                    //    CalculatedDate = AdjustForWeekendHoliday(new DateTime(year, hol.Month, hol.Day)),
+                    //    Description = hol.Description,
+                    //    EffectiveDate = hol.EffectiveDate
+                    //};
+                    //if (_holiday.CalculatedDate >= hol.EffectiveDate)
+                    //{
+                    //    Holidays.Add(_holiday);
+                    //}
                 }
 
-                if (hol.Repeat == 2) // Annual Month-WeekNumber-WeekDay
+                if (hol.Repeat == 2) // Annual Month-WeekNumber-WeekDay (like Thanksgiving)
                 {
                     if (hol.Month == 2)
                     {
@@ -59,18 +59,14 @@ namespace BHelp
                     var dtDayOfWeek = listWeekDays[hol.Weekday];
                     var dtDay = 0;
                     var weekdayCount = 0;
-                    for (int i = 1; i < rangeTo + 1; i++)
+                    for (var i = 1; i < rangeTo + 1; i++)
                     {
                         var dtDate = new DateTime(year, hol.Month, i);
-                        if (dtDate.DayOfWeek.ToString() == dtDayOfWeek)
-                        {
-                            weekdayCount++;
-                            if (weekdayCount == hol.WeekNumber + 1)
-                            {
-                                dtDay = i;
-                                break;
-                            }
-                        }
+                        if (dtDate.DayOfWeek.ToString() != dtDayOfWeek) continue;
+                        weekdayCount++;
+                        if (weekdayCount != hol.WeekNumber + 1) continue;
+                        dtDay = i;
+                        break;
                     }
 
                     // routine fails for 4th Thursday: ************
@@ -150,9 +146,10 @@ namespace BHelp
 
         public static string[] GetWeekdayArray()
         {
-            var weekdayList = new string[5];
+            var weekdayList = new string[6];
             weekdayList[0] = "Monday"; weekdayList[1] = "Tuesday"; weekdayList[2] = "Wednesday";
             weekdayList[3] = "Thursday"; weekdayList[4] = "Friday";
+            weekdayList[5] = "Last"; 
             return weekdayList;
         }
         public static string[] GetWeekdayNumberArray()

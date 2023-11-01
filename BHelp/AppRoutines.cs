@@ -1551,7 +1551,7 @@ namespace BHelp
         public static List<HolidayViewModel> GetFederalHolidays(int year)
         {
             var Holidays = new List<HolidayViewModel>();
-            var holiday = new HolidayViewModel()
+            var holiday = new HolidayViewModel
             {
                 Date = AdjustForWeekendHoliday(new DateTime(year, 1, 1).Date),
                 Name = "New Year's Day"

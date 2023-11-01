@@ -17,8 +17,11 @@ namespace BHelp.ViewModels
         public int Weekday { get; set; } // 0: none, 1 - 5: Mon-Tue-Wed-Thu-Fri
         public int WeekNumber { get; set; } // 0: none, 1- 4: 1st, 2nd, 3rd, 4th, last: 5
         public DateTime EffectiveDate { get; set; }
-        public string MonthDay { get; set; }
-
+        public string WeekDayName { get; set; } // for display in Holidays Index 
+        public string MonthDay { get; set; } // for sorting holiday list
+        public string[] RepeatList { get; set; }
+        public string[] MonthList { get; set; } // Jan - Dec
+        public string[] WeekDayList { get; set; } // Mon - Fri
         public IEnumerable<SelectListItem> Repeats { get; set; }
         public IEnumerable<SelectListItem> Months { get; set; }
         public IEnumerable<SelectListItem> Days { get; set; }

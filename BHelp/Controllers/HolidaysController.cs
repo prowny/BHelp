@@ -11,11 +11,12 @@ namespace BHelp.Controllers
 {
     public class HolidaysController : Controller
     {
-        private readonly BHelpContext db = new BHelpContext();
+        private readonly BHelpContext db = new();
         // GET: Holidays
         public ActionResult Index()
         {
-            var holidayList = db.Holidays.ToList();
+            //var holidayList = db.Holidays.ToList();
+            var holidayList = AppRoutines.GetFederalHolidays(DateTime.Today.Year);
             // Add Month-Day to list for sorting
             foreach (var hol in holidayList)
             {
@@ -40,7 +41,7 @@ namespace BHelp.Controllers
 
                 hol.MonthList = HolidayRoutines.GetMonthArray();
                 hol.WeekDayList = HolidayRoutines.GetWeekdayArray();
-                hol.WeekDayNumber = HolidayRoutines.GetWeekdayNumberArray();
+                //hol.WeekDayNumber = HolidayRoutines.GetWeekdayNumberArray();
                 hol.RepeatList = HolidayRoutines.GetRepeatArray();
             }
             
