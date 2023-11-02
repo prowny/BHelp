@@ -406,15 +406,17 @@ namespace BHelp.Controllers
             var driverHalfBagCount = 0;
             var driverKidSnackCount = 0;
             var driverPounds = 0;
-            var driverCardCount = 0;
-            
+            var driverGiftCardCount = 0;
+            var driverHolidayGiftCardCount = 0;
+
             var dateDeliveryCount = 0;
             var dateResidentsCount = 0;
             var dateFullBagCount = 0;
             var dateHalfBagCount = 0;
             var dateKidSnackCount = 0;
             var datePounds = 0;
-            var dateCardCount = 0;
+            var dateGiftCardCount = 0;
+            var dateHolidayGiftCardCount = 0;
 
             var totalDeliveryCount = 0;
             var totalResidentsCount = 0;
@@ -422,7 +424,8 @@ namespace BHelp.Controllers
             var totalHalfBagCount = 0;
             var totalKidSnackCount = 0;
             var totalPounds = 0;
-            var totalCardCount = 0;
+            var totalGiftCardCount = 0;
+            var totalHolidayGiftCardCount = 0;
             var reportDeliveryList = new List<DeliveryViewModel>(); // get giftcard totals by day/driver
 
             //===================================
@@ -456,7 +459,8 @@ namespace BHelp.Controllers
                             driverHalfBagCount += del.HalfBags;
                             driverKidSnackCount += del.KidSnacks;
                             driverPounds += Convert.ToInt32(del.FullBags * 10 + del.HalfBags * 9);
-                            driverCardCount += del.GiftCards;
+                            driverGiftCardCount += del.GiftCards;
+                            driverHolidayGiftCardCount += del.HolidayGiftCards;
 
                             dateDeliveryCount += 1;
                             dateResidentsCount += del.HouseoldCount;
@@ -464,15 +468,17 @@ namespace BHelp.Controllers
                             dateHalfBagCount += del.HalfBags;
                             dateKidSnackCount += del.KidSnacks; 
                             datePounds += Convert.ToInt32(del.FullBags * 10 + del.HalfBags * 9);
-                            dateCardCount += del.GiftCards;
-
+                            dateGiftCardCount += del.GiftCards;
+                            dateHolidayGiftCardCount += del.HolidayGiftCards;
+                            
                             totalDeliveryCount += 1;
                             totalResidentsCount += del.HouseoldCount;
                             totalFullBagCount += del.FullBags;
                             totalHalfBagCount += del.HalfBags;
                             totalKidSnackCount += del.KidSnacks;
                             totalPounds += Convert.ToInt32(del.FullBags * 10 + del.HalfBags * 9);
-                            totalCardCount += del.GiftCards;
+                            totalGiftCardCount += del.GiftCards;
+                            totalHolidayGiftCardCount += del.HolidayGiftCards;
                         }
 
                         // Summarize driver:
@@ -486,7 +492,8 @@ namespace BHelp.Controllers
                             HalfBagCount = driverHalfBagCount,
                             KidSnackCount  =driverKidSnackCount,
                             PoundsOfFood = driverPounds, 
-                            GiftCardCount = driverCardCount
+                            GiftCardCount = driverGiftCardCount,
+                            HolidayGiftCardCount = driverHolidayGiftCardCount
                         };
                         reportDeliveryList.Add(newDrv);
                         driverDeliveryCount = 0;
@@ -495,7 +502,7 @@ namespace BHelp.Controllers
                         driverHalfBagCount = 0;
                         driverKidSnackCount = 0;
                         driverPounds = 0;
-                        driverCardCount = 0;
+                        driverGiftCardCount = 0;
                     }
 
                     // Summarize the date:
@@ -509,7 +516,8 @@ namespace BHelp.Controllers
                         HalfBagCount = dateHalfBagCount,
                         KidSnackCount =dateKidSnackCount, 
                         PoundsOfFood = datePounds, 
-                        GiftCardCount = dateCardCount
+                        GiftCardCount = dateGiftCardCount,
+                        HolidayGiftCardCount = dateHolidayGiftCardCount
                     };
                     reportDeliveryList.Add(newDt);
                     newDt = new DeliveryViewModel() // blank line
@@ -521,7 +529,8 @@ namespace BHelp.Controllers
                     dateHalfBagCount = 0;
                     dateKidSnackCount =0;
                     datePounds = 0;
-                    dateCardCount = 0;
+                    dateGiftCardCount = 0;
+                    dateHolidayGiftCardCount = 0;
                 }
             }
 
@@ -535,7 +544,8 @@ namespace BHelp.Controllers
                 HalfBagCount = totalHalfBagCount,
                 KidSnackCount = totalKidSnackCount, 
                 PoundsOfFood = totalPounds, 
-                GiftCardCount = totalCardCount
+                GiftCardCount = totalGiftCardCount,
+                HolidayGiftCardCount = totalHolidayGiftCardCount
             };
             reportDeliveryList.Add(totalDel);
 
@@ -559,7 +569,7 @@ namespace BHelp.Controllers
 
             // Headers
             sb.Append("Date,Driver,Deliveries,Residents,A Bags, B Bags, Kid Snacks," +
-                      "Pounds of Food, Gift Cards");
+                      "Pounds of Food, Gift Cards, HolidayGiftCards");
             sb.AppendLine();
 
             foreach (var del in reportDeliveryList)
@@ -581,6 +591,7 @@ namespace BHelp.Controllers
                 sb.Append(del.KidSnackCount + ",");
                 sb.Append(del.PoundsOfFood + ","); 
                 sb.Append(del.GiftCardCount  + ",");
+                sb.Append(del.HolidayGiftCardCount + ",");
                 sb.AppendLine();
             }
 
@@ -610,7 +621,7 @@ namespace BHelp.Controllers
                     { endDate = DateTime.Today; }
                     else
                     {
-                        DateTime lastSunday = DateTime.Now.AddDays(-1);
+                        var lastSunday = DateTime.Now.AddDays(-1);
                         while (lastSunday.DayOfWeek != DayOfWeek.Sunday) lastSunday = lastSunday.AddDays(-1);
                         endDate = lastSunday;
                     }

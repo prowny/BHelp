@@ -53,7 +53,7 @@ namespace BHelp.Models
 
         [DataType(DataType.MultilineText)]
         public string DriverNotes { get; set; }
-        public Boolean FirstDelivery { get; set; }
+        public bool FirstDelivery { get; set; }
         public int Status { get; set; }  // 0 = Open, 1 = Completed, 2 = Undelivered
 
         [NotMapped]
@@ -96,7 +96,7 @@ namespace BHelp.Models
         public Client Client { get; set; }  // for open delivery filtering
 
         [NotMapped]
-        public Boolean AllZeroProducts { get; set; }
+        public bool AllZeroProducts { get; set; }
 
         [NotMapped]
         public bool EligiibilityRulesException { get; set; }

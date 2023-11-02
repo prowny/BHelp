@@ -111,8 +111,8 @@ namespace BHelp.ViewModels
         public string ReportTitle { get; set; }
         public DateTime NextDeliveryEligibleDate { get; set; }
         public DateTime NextGiftCardEligibleDate { get; set; }
-        public Boolean EligiibilityRulesException { get; set; }
-        public Boolean OkToEdit { get; set; }
+        public bool EligiibilityRulesException { get; set; }
+        public bool OkToEdit { get; set; }
         public int TotalHouseholdCount { get; set; }  // Total in DeliveryList
         public int TotalChildren { get; set; }  // Total in DeliveryList
         public int TotalAdults { get; set; }  // Total in DeliveryList
@@ -121,6 +121,7 @@ namespace BHelp.ViewModels
         public int TotalHalfBags { get; set; }  // Total in DeliveryList
         public int TotalKidSnacks { get; set; }  // Total in DeliveryList
         public int TotalGiftCards { get; set; }  // Total in DeliveryList
+        public int TotalHolidayGiftCards { get; set; }  // Total in DeliveryList
         public int TotalPoundsOfFood { get; set; }  // Total in DeliveryList
 
         // For change in Edit DateDelivered
@@ -129,10 +130,11 @@ namespace BHelp.ViewModels
 
         // for GiftCard report: (with nullable counts, to print blank lines)
         public int? DeliveryCount { get; set; }
-        public int? GiftCardCount { get; set; }
         public int? FullBagCount { get; set; }
         public int? HalfBagCount { get; set; }
         public int? KidSnackCount { get; set; }
+        public int? GiftCardCount { get; set; }
+        public int? HolidayGiftCardCount { get; set; }
         public int? PoundsOfFood { get; set; }
         public List<DeliveryViewModel> GiftCardReportDeliveries { get; set; }
 

@@ -53,6 +53,7 @@
             <td style="text-align: center"><b>Kid Snacks</b></td>
             <td style="text-align: center"><b>Pounds of Food</b></td>
             <td style="text-align: center"><b>Gift Cards</b></td>
+            <td style="text-align: center"><b>HolidayGiftCards</b></td>
         </tr>
     
         @foreach (var delivery in Model.GiftCardReportDeliveries)
@@ -87,6 +88,9 @@
                 </td>
                 <td style="text-align: center">
                     @delivery.GiftCardCount
+                </td>
+                <td style="text-align: center">
+                    @delivery.HolidayGiftCardCount
                 </td>
             </tr>
            

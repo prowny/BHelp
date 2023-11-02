@@ -1044,7 +1044,32 @@ namespace BHelp.Controllers
                 // DriverId and DeliveryDateODId are used in Edit dropdowns and return a
                 // text value of null when 'nobody yet' is selected:
                 if (delivery.DeliveryDateODId == null)
-                {  // Reminder error - ODId required: 
+                {
+                    // Save any updates:
+                    //var rec = AppRoutines.GetDeliveryRecord(delivery.Id);
+                    using var _db = new BHelpContext();
+                    {
+                        var rec = _db.Deliveries.FirstOrDefault(i => i.Id == delivery.Id);
+                        if (rec != null)
+                        {
+                            rec.DateDelivered = delivery.DateDelivered;
+                            rec.LogDate = delivery.LogDate;
+                            rec.FullBags = delivery.FullBags;
+                            rec.HalfBags = delivery.HalfBags;
+                            rec.KidSnacks = delivery.KidSnacks;
+                            rec.HolidayGiftCards = delivery.HolidayGiftCards;
+                            rec.GiftCards = delivery.GiftCards;
+                            rec.ODId = delivery.ODId;
+                            rec.Status = delivery.Status;
+                            rec.ODNotes = delivery.ODNotes;
+                            rec.DriverNotes = delivery.DriverNotes;
+                            rec.DeliveryDateODId = delivery.DeliveryDateODId;
+                            rec.DriverId = delivery.DriverId;
+                            rec.Zip = delivery.Zip;
+                            _db.SaveChanges();
+                        }
+                    }
+                    // Reminder error - ODId required: 
                     return RedirectToAction("AdviseODIdRequired", new { _id = delivery.Id });
                 }
 
@@ -1063,6 +1088,7 @@ namespace BHelp.Controllers
                         updateData.HalfBags = delivery.HalfBags;
                         updateData.KidSnacks = delivery.KidSnacks;
                         updateData.GiftCards = delivery.GiftCards;
+                        updateData .HolidayGiftCards= delivery.HolidayGiftCards;    
                         updateData.GiftCardsEligible = delivery.GiftCardsEligible;
                         updateData.ODNotes = delivery.ODNotes;
                         updateData.DriverId = delivery.DriverId;
@@ -1086,7 +1112,8 @@ namespace BHelp.Controllers
                         }
 
                         if (updateData.Status == 1 && updateData.FullBags == 0 && updateData.HalfBags == 0
-                            && updateData.KidSnacks == 0 && updateData.GiftCards == 0)
+                            && updateData.KidSnacks == 0 && updateData.GiftCards == 0
+                            && updateData.HolidayGiftCards == 0)
                         {
                             // Cannot save delivery as completed with zero products: 
                             return RedirectToAction("AdviseCannotSave", new { _id = delivery.Id });

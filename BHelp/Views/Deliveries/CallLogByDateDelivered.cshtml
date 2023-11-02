@@ -74,6 +74,7 @@
                     <td style="text-align: center"><b>#Bbags</b></td>
                     <td style="text-align: center"><b>#KS</b></td>
                     <td style="text-align: center"><b>#GC</b></td>
+                    <td style="text-align: center"><b>#HGC</b></td>
                     <td style="text-align: center"><b>Lbs.</b></td>
                 </tr>
                 @foreach (var delivery in Model.DeliveryList)
@@ -103,6 +104,7 @@
                 <td style="text-align: center">@delivery.HalfBags</td>
                 <td style="text-align: center">@delivery.KidSnacks</td>
                 <td style="text-align: center">@delivery.GiftCards</td>
+                <td style="text-align: center">@delivery.HolidayGiftCards</td>
                 <td style="text-align: center">@delivery.PoundsOfFood</td>
                 @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
                 {
