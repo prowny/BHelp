@@ -170,6 +170,7 @@
                             @Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { id = "GiftCards", style = "width:35px", min = 0, max = 2 } })
                             @Html.ValidationMessageFor(model => model.GiftCards, "", new { @class = "text-danger" })
                         </td>
+                        <td>@Html.LabelFor(model => model.HolidayGiftCards, htmlAttributes: new { @class = "control-label col-md-2" })</td>
                         <td>
                             @Html.EditorFor(model => model.HolidayGiftCards, new { htmlAttributes = new { id = "HolidayGiftCards", style = "width:35px", min = 0, max = 2 } })
                             @Html.ValidationMessageFor(model => model.HolidayGiftCards, "", new { @class = "text-danger" })
