@@ -51,6 +51,9 @@ namespace BHelp.ViewModels
         [Range(0, 20)]
         public int GiftCards { get; set; }
 
+        [Range(0, 2)]
+        public int HolidayGiftCards { get; set; }
+
         [DisplayName("OD Name")]
         public string ODName { get; set; }
         

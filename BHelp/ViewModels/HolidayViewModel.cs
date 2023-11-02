@@ -22,6 +22,7 @@ namespace BHelp.ViewModels
         public string[] RepeatList { get; set; }
         public string[] MonthList { get; set; } // Jan - Dec
         public string[] WeekDayList { get; set; } // Mon - Fri
+        public int[] WeekDayNumber { get; set; }
         public IEnumerable<SelectListItem> Repeats { get; set; }
         public IEnumerable<SelectListItem> Months { get; set; }
         public IEnumerable<SelectListItem> Days { get; set; }

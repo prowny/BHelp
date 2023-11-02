@@ -762,7 +762,8 @@ namespace BHelp.Controllers
             public ActionResult Edit(int? id, string returnURL,
                 DateTime? _NewDateDelivered, string _ODId, string _DeliveryDateODId,
                 string _ODNotes, string _DriverNotes, string _Zip,
-                string _Status, int? _FullBags, int? _HalfBags, int? _KidSnacks, int? _GiftCards,
+                string _Status, int? _FullBags, int? _HalfBags, int? _KidSnacks,
+                int? _GiftCards, int? _HolidayGiftCards,
                 DateTime? _HistoryStartDate, DateTime? _HistoryEndDate )
             {
                 if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -782,6 +783,7 @@ namespace BHelp.Controllers
                     if (_HalfBags != null) _view.HalfBags = (int)_HalfBags;
                     if (_KidSnacks != null) _view.KidSnacks = (int)_KidSnacks;
                     if (_GiftCards != null) _view.GiftCards = (int)_GiftCards;
+                    if (_HolidayGiftCards != null) _view.HolidayGiftCards = (int)_HolidayGiftCards;
                     if (_HistoryStartDate != null) _view.HistoryStartDate = _HistoryStartDate;
                     if (_HistoryEndDate != null) _view.HistoryEndDate = _HistoryEndDate;
 
@@ -940,6 +942,7 @@ namespace BHelp.Controllers
                 viewModel.HalfBags = delivery.HalfBags;
                 viewModel.KidSnacks = delivery.KidSnacks;
                 viewModel.GiftCards = delivery.GiftCards;
+                viewModel.HolidayGiftCards = delivery.HolidayGiftCards;
                 viewModel.GiftCardsEligible = delivery.GiftCardsEligible;
 
                 var client = AppRoutines.GetClientRecord(delivery.ClientId);
@@ -2196,8 +2199,9 @@ namespace BHelp.Controllers
                 var halfbagsData = data[10].Split(Convert.ToChar("="));
                 var kidsnacksData = data[11].Split(Convert.ToChar("="));
                 var giftcardsData = data[12].Split(Convert.ToChar("="));
-            
-                return RedirectToAction("Edit", new{ id = idData[1],
+                var holidaygiftcardsData = data[12].Split(Convert.ToChar("="));
+
+            return RedirectToAction("Edit", new{ id = idData[1],
                     _NewDateDelivered = newDateDelivered[1],
                     returnUrl = urlData[1],
                     _ODId = odidData[1], 
@@ -2209,7 +2213,8 @@ namespace BHelp.Controllers
                     _FullBags = fullbagsData[1],
                     _HalfBags = halfbagsData[1],
                     _KidSnacks = kidsnacksData[1],
-                    _GiftCards = giftcardsData[1]
+                    _GiftCards = giftcardsData[1],
+                    _HolidayGiftCards = holidaygiftcardsData[1]
                 });
             }
 

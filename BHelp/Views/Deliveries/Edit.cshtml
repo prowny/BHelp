@@ -170,6 +170,10 @@
                             @Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { id = "GiftCards", style = "width:35px", min = 0, max = 2 } })
                             @Html.ValidationMessageFor(model => model.GiftCards, "", new { @class = "text-danger" })
                         </td>
+                        <td>
+                            @Html.EditorFor(model => model.HolidayGiftCards, new { htmlAttributes = new { id = "HolidayGiftCards", style = "width:35px", min = 0, max = 2 } })
+                            @Html.ValidationMessageFor(model => model.HolidayGiftCards, "", new { @class = "text-danger" })
+                        </td>
                     </tr>
                 </table>
                 <table>
@@ -260,13 +264,15 @@
         var halfbags = window.$("#HalfBags").val();
         var kidsnacks = window.$("#KidSnacks").val();
         var giftcards = window.$("#GiftCards").val();
+        var holidaygiftcards = window.$("#HolidayGiftCards").val();
 
         var data = "id=" + Id + "|" + "newdatedelivered=" + newdatedelivered + "|";
         data += "returnurl=" + returnurl + "|" + "odid=" + odid + "|";
         data += "deliverydateodid=" + deliverydateodid + "|" + "odnotes=" + odnotes + "|";
         data += "drivernotes=" + drivernotes + "|" + "zip=" + zip + "|" + "status=" + status + "|";
         data += "fullbags =" + fullbags + "|" + "halfbags=" + halfbags + "|";
-        data += "kidsnacks=" + kidsnacks + "|" + "giftcards=" + giftcards;
+        data += "kidsnacks=" + kidsnacks + "|" + "giftcards=" + giftcards + "|";
+        data += "holidaygiftcards=" + holidaygiftcards;     
         window.$.ajax({
             type: "Get",
             url: "/Deliveries/EditDateDeliveredChange?parameters=" + data,

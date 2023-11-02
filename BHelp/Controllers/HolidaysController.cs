@@ -15,37 +15,11 @@ namespace BHelp.Controllers
         // GET: Holidays
         public ActionResult Index()
         {
-            //var holidayList = db.Holidays.ToList();
-            var holidayList = AppRoutines.GetFederalHolidays(DateTime.Today.Year);
-            // Add Month-Day to list for sorting
-            foreach (var hol in holidayList)
-            {
-                if (hol.Repeat == 0) // get mo-day from fixed date
-                {
-                    hol.MonthDay = hol.FixedDate.Month.ToString("00")
-                                   + hol.FixedDate.Day.ToString("00");
-                    // add weekday name for display
-                    hol.WeekDayName = hol.FixedDate.DayOfWeek.ToString();
-                }
+            var holidayList = db.Holidays.ToList();
 
-                if (hol.Repeat == 1)
-                {
-                    hol.MonthDay = hol.Month.ToString("00") + hol.Day.ToString("00");
-                }
-
-                if (hol.Repeat == 2)
-                {
-                    var weekNo = 7 * (hol.WeekNumber + 1); // (close enough)
-                    hol.MonthDay = hol.Month.ToString("00") + weekNo.ToString("00");
-                }
-
-                hol.MonthList = HolidayRoutines.GetMonthArray();
-                hol.WeekDayList = HolidayRoutines.GetWeekdayArray();
-                //hol.WeekDayNumber = HolidayRoutines.GetWeekdayNumberArray();
-                hol.RepeatList = HolidayRoutines.GetRepeatArray();
-            }
-            
-            return View(holidayList.OrderBy(md => md.MonthDay));
+            holidayList = holidayList.OrderBy(md => md.FixedDate).ToList();
+         
+            return View(holidayList);
         }
 
         // GET: Holidays/Create
@@ -55,11 +29,6 @@ namespace BHelp.Controllers
             {
                 FixedDate = DateTime.Today,
                 EffectiveDate = DateTime.Today,
-                Repeats = HolidayRoutines.GetRepeatsSelectList(),
-                Months = HolidayRoutines.GetMonthsSelectList(),
-                Days = HolidayRoutines.GetDaysSelectList(),
-                WeekDayNumbers = HolidayRoutines.GetWeekDayNumberSelectList(),
-                WeekDays = HolidayRoutines.GetWeekDaySelectList()
             };
             return View(view);
         }
@@ -92,11 +61,6 @@ namespace BHelp.Controllers
                 return RedirectToAction("Index");
             }
             
-            holiday.Repeats = HolidayRoutines.GetRepeatsSelectList();
-            holiday.Months = HolidayRoutines.GetMonthsSelectList();
-            holiday.Days = HolidayRoutines.GetDaysSelectList();
-            holiday.WeekDayNumbers = HolidayRoutines.GetWeekDayNumberSelectList();
-            holiday.WeekDays = HolidayRoutines.GetWeekDaySelectList();
             return View(holiday);
         }
 
@@ -107,17 +71,12 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Holiday holiday = db.Holidays.Find(id);
+            var holiday = db.Holidays.Find(id);
             if (holiday == null)
             {
                 return HttpNotFound();
             }
 
-            holiday.Days = HolidayRoutines.GetDaysSelectList();
-            holiday.Months = HolidayRoutines.GetMonthsSelectList();
-            holiday.Repeats = HolidayRoutines.GetRepeatsSelectList();
-            holiday.WeekDayNumbers = HolidayRoutines.GetWeekDayNumberSelectList();
-            holiday.WeekDays = HolidayRoutines.GetWeekDaySelectList();
             return View(holiday);
         }
 
@@ -139,15 +98,12 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Holiday holiday = db.Holidays.Find(id);
+            var holiday = db.Holidays.Find(id);
             if (holiday == null)
             {
                 return HttpNotFound();
             }
-            holiday.MonthList = HolidayRoutines.GetMonthArray();
-            holiday.WeekDayList = HolidayRoutines.GetWeekdayArray();
-            holiday.WeekDayNumber = HolidayRoutines.GetWeekdayNumberArray();
-            holiday.RepeatList = HolidayRoutines.GetRepeatArray();
+           
             return View(holiday);
         }
 

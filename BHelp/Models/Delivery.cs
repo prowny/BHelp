@@ -37,6 +37,7 @@ namespace BHelp.Models
         public int KidSnacks { get; set; }
         public int GiftCardsEligible { get; set; }
         public int GiftCards { get; set; }
+        public int HolidayGiftCards { get; set; }
 
         [StringLength(128)]
         public string ODId { get; set; }

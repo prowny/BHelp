@@ -540,7 +540,7 @@ namespace BHelp.Controllers
             private Holiday GetHolidayData(DateTime dt)
             {
                 var holidays = HolidayRoutines.GetHolidays(dt.Year);
-                return holidays.FirstOrDefault(holiday => dt == holiday.CalculatedDate);
+                return holidays.FirstOrDefault(holiday => dt == holiday.FixedDate);
             }
 
             private ODScheduleViewModel GetODScheduleViewModel()

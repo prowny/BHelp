@@ -1,4 +1,4 @@
-﻿@model IOrderedEnumerable<BHelp.ViewModels.HolidayViewModel>
+﻿@model IEnumerable<BHelp.Models.Holiday>
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -10,6 +10,7 @@
 <body>
     <p>
         &nbsp;@Html.ActionLink("Create New", "Create")
+        &nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
     </p>
     <table class="table">
         <tr>
@@ -17,96 +18,31 @@
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Repeat)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.FixedDate)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Month)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Day)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.WeekNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Weekday)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EffectiveDate)
-            </th>
-            <th></th>
         </tr>
 
         @foreach (var item in Model)
-        {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        @if (item.Repeat == 0)
-        {
-            <td>@item.RepeatList[0]</td>
-            @*Does not repeat*@
-            string fixeddate = item.FixedDate.ToString("MM/dd/yyyy");
-            <td>@fixeddate</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td style="text-align: center">@item.WeekDayName</td>
-            <td></td>
-        }
-        @if (item.Repeat == 1)
-        {
-            <td>@item.RepeatList[1]</td>
-            @*Annually on fixed month/day*@
-        }
-        @if (item.Repeat == 2)
-        {
-            <td>@item.RepeatList[2]</td>
-            @*Annually on fixed month/ week / day*@
-        }
-        @if (item.Repeat == 1 || item.Repeat == 2)
-        {
-            <td></td>
-            <td style="text-align: center">
-                @Html.DisplayFor(modelItem => item.MonthList[item.Month])
-            </td>
-        }
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
 
-        @if (item.Repeat == 1)
-        {
-            <td style="text-align: center">
-                @Html.DisplayFor(modelItem => item.Day)
-            </td>
-            <td style="text-align: center">(auto)</td>
-            <td style="text-align: center">(auto)</td>
-        }
+                    @if (item.Repeat == 0)
+                    {
+                        @*Does not repeat*@
+                        @* as of 11/02/2023, this is the only option *@
+                        string fixeddate = item.FixedDate.ToString("MM/dd/yyyy");
+                        <td>@fixeddate</td>
+                    }
 
-        @if (item.Repeat == 2)
-        {
-            <td></td>
-            <td style="text-align: center">
-                @Html.DisplayFor(modelItem => item.WeekDayNumber[item.WeekNumber])
-            </td>
-            <td style="text-align: center">
-                @Html.DisplayFor(modelItem => item.WeekDayList[item.Weekday])
-            </td>
-        }
-
-        @if (item.Repeat == 1 || item.Repeat == 2)
-        {
-            string effectivedate = item.EffectiveDate.ToString("MM/dd/yyyy");
-            <td>@effectivedate</td>
-        }
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-        </td>
-    </tr>
-        }
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    </td>
+                </tr>
+            }
     </table>
     <br />
     <div>

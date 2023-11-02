@@ -829,7 +829,7 @@ namespace BHelp.Controllers
         private static Holiday GetHolidayData(DateTime dt)
         {
             var holidays = HolidayRoutines.GetHolidays(dt.Year);
-            return holidays.Find(h => h.CalculatedDate == dt);
+            return holidays.Find(h => h.FixedDate == dt);
         }
 
         private static void SendEmailToDriverScheduler(string text)

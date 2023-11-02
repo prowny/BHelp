@@ -74,10 +74,7 @@ namespace BHelp
                 var historyList = "";
                 var currentYear = payments[0].Date.Year;
                 decimal currentYTDTotal = 0;
-                //var catTotals = new List<int>();
                 var numberOfPayments = 0;
-                //for (var i = 0; i < catList.Count; i++)
-                //{ catTotals.Add(0); }
 
                 decimal grandTotal = 0;
                 foreach (var pymnt in payments)
@@ -85,8 +82,7 @@ namespace BHelp
                     if (pymnt.Date.Year != currentYear)  // Yearly subtotal
                     {
                         var curTotal = "           Total for " + currentYear;
-                        var strAmt = currentYTDTotal.ToString("C");   //$"${currentYTDTotal / 100}.{currentYTDTotal % 100:00}";
-                        //strAmt = strAmt.Replace(".-", "."); // replace negative modulus
+                        var strAmt = currentYTDTotal.ToString("C");
                         curTotal += GetPaddedDollarAmount(strAmt);
 
                         historyList += curTotal + Environment.NewLine + Environment.NewLine;
@@ -97,22 +93,18 @@ namespace BHelp
                     var strDt = pymnt.Date.ToString("MM/dd/yyyy "); // note space after date
                     var cat = catList[pymnt.CategoryId - 1];
                     cat = (cat + "          ").Substring(0, 14);
-                    var amt = pymnt.AmountDecimal.ToString("C"); //pymnt.StringDollarAmount.Replace( ".-",".");
+                    var amt = pymnt.AmountDecimal.ToString("C");
                     amt = GetPaddedDollarAmount(amt);
                     historyList += strDt + cat + amt + Environment.NewLine;
-                    //catTotals[pymnt.Category - 1] += pymnt.AmountDecimal ;
                     grandTotal += pymnt.AmountDecimal;
                     currentYTDTotal += pymnt.AmountDecimal;
                     numberOfPayments += 1;
                 }
                 historyList += "           Total for " + currentYear.ToString();
-                var curYTD = currentYTDTotal.ToString("C");  //$"${currentYTDTotal / 100}.{currentYTDTotal % 100:00}";
-                //curYTD = curYTD.Replace(".-", "."); // replace negative modulus
+                var curYTD = currentYTDTotal.ToString("C");
                 historyList += GetPaddedDollarAmount(curYTD) + Environment.NewLine;
                 historyList += Environment.NewLine;
                 historyList += "             Grand Total ";
-                //var grandTot = $"${grandTotal / 100}.{grandTotal % 100:00}";
-                //grandTot = grandTot.Replace(".-", ".");  // replace negative modulus
                 historyList += GetPaddedDollarAmount(grandTotal.ToString("C"));
 
                 var paymentData = new AssistanceDataViewModel()
@@ -121,17 +113,13 @@ namespace BHelp
                     //StartDate = (DateTime)startDate,
                     EarliestPaymentDate = payments[payments.Count - 1].Date,  
                     EndDate = (DateTime)endDate,
-                    PaymentHistoryList = historyList,
-                    //TotalsByCategoryInCents = catTotals, 
+                    PaymentHistoryList = historyList, 
                     GrandTotalString  = $"${grandTotal / 100}.{grandTotal % 100:00}", 
                     NumberOfPayments = numberOfPayments,
                     CategoryList = catList,
                     TotalsByCategoryString = new List<string>()
                 };
-                //foreach (var total in catTotals)
-                //{
-                //    paymentData.TotalsByCategoryString.Add($"${total / 100}.{total % 100:00}");
-                //}
+          
                 return paymentData;
             }
 
@@ -327,8 +315,8 @@ namespace BHelp
         {
             var dt = DateTime.MinValue;
             using var db = new BHelpContext();
-            var delivery = db.Deliveries.Where(i => i.ClientId == clientId
-                                                    && i.GiftCards > 0 && i.Status == 1)
+            var delivery = db.Deliveries.Where(i => i.ClientId == clientId 
+                && (i.GiftCards > 0 || i.HolidayGiftCards >0) && i.Status == 1)
                 .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
             if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
             return dt;
@@ -406,7 +394,7 @@ namespace BHelp
 
         public static List<SelectListItem> GetAssistanceCategoriesSelectList()
         {
-            List<SelectListItem> GetAssistanceCategoriesSelectList = new List<SelectListItem>();
+            var GetAssistanceCategoriesSelectList = new List<SelectListItem>();
 
             var selListItem = new SelectListItem() { Value = "1", Text = "Utilities" };
             GetAssistanceCategoriesSelectList.Add(selListItem);
@@ -497,7 +485,7 @@ namespace BHelp
             var delList = GetAllDeliveriesThisMonth(clientId, dt);
             foreach (var del in delList)
             {
-                var cards = Convert.ToInt32(del.GiftCards);
+                var cards = Convert.ToInt32(del.GiftCards) + Convert.ToInt32(del.HolidayGiftCards);
                 giftCardCount += cards;
             }
 
@@ -508,7 +496,8 @@ namespace BHelp
         {
             using var db = new BHelpContext();
             var delList = db.Deliveries.Where(d => d.ClientId == clientId
-                && d.Status == 1 && d.DateDelivered < toDate && d.GiftCards > 0)
+                && d.Status == 1 && d.DateDelivered < toDate 
+                && (d.GiftCards > 0 || d.HolidayGiftCards > 0))
                 .OrderByDescending(d => d.DateDelivered).ToList();
             if (delList.Count == 0) return DateTime.MinValue;
             var delivery = delList[0];
@@ -525,7 +514,7 @@ namespace BHelp
             var delList = GetAllDeliveriesThisMonth(clientId, dt);
 
             return delList.Where(del => del.DateDelivered < dt)
-                .Sum(del => del.GiftCards);
+                .Sum(del => del.GiftCards + del.HolidayGiftCards);
         }
 
         private static List<Delivery> GetAllDeliveriesThisMonth(int clientId, DateTime dt)
@@ -533,9 +522,10 @@ namespace BHelp
             var startDate = new DateTime(dt.Year, dt.Month, 1);
             var endDate = new DateTime(dt.Year, dt.Month, DateTime.DaysInMonth(dt.Year, dt.Month));
             using var db = new BHelpContext();
-            return db.Deliveries.Where(i => i.ClientId == clientId && i.Status == 1
-                                                                   && i.DateDelivered >= startDate &&
-                                                                   i.DateDelivered <= endDate).ToList();
+            return db.Deliveries
+                .Where(i => i.ClientId == clientId && i.Status == 1
+                && i.DateDelivered >= startDate
+                && i.DateDelivered <= endDate).ToList();
         }
 
         public static DateTime GetNextEligibleDeliveryDate(int clientId, DateTime dt)
@@ -675,7 +665,7 @@ namespace BHelp
 
         public static List<SelectListItem> GetFamilySelectList(int clientId)
         {
-            List<SelectListItem> householdList = new List<SelectListItem>();
+            var householdList = new List<SelectListItem>();
             using var db = new BHelpContext();
             var client = db.Clients.Find(clientId);
             if (client == null) return (householdList);
@@ -1064,8 +1054,8 @@ namespace BHelp
 
                 if (client != null)
                 {
-                    var familyMembers = db.FamilyMembers.Where(c => c.ClientId == client.Id).ToList();
-                    //var kids2_17 = GetNumberOfKids2_17(client.Id);
+                    var familyMembers = db.FamilyMembers
+                        .Where(c => c.ClientId == client.Id).ToList();
                     var kidCount = AppRoutines.GetNumberOfChildren(client.Id);
                     odv.OpenDeliveries[i, 8] = kidCount.ToString();
                     odv.OpenDeliveries[i, 9] = AppRoutines.GetNumberOfAdults(client.Id).ToString();
@@ -1500,7 +1490,7 @@ namespace BHelp
         {
             using var db = new BHelpContext();
             var report = new UsersInRolesReportViewModel { Report = new List<List<string[]>>() };
-            List<string[]> headerLines = new List<string[]>
+            var headerLines = new List<string[]>
             {
                 new[]
                 {
@@ -1515,9 +1505,9 @@ namespace BHelp
             sql = "SELECT RoleId FROM AspNetUserRoles";
             var roleIds = db.Database.SqlQuery<string>(sql).ToList();
             var roleLookup = new List<UserRoleViewModel>();
-            for (int i = 0; i < userIds.Count; i++)
+            for (var i = 0; i < userIds.Count; i++)
             {
-                string rName = rolesList.Where(r => r.Id == roleIds[i])
+                var rName = rolesList.Where(r => r.Id == roleIds[i])
                     .Select(r => new { r.Name }).Single().ToString();
                 var uRVM = new UserRoleViewModel
                 {
@@ -1541,170 +1531,11 @@ namespace BHelp
 
         public static DateTime GetFirstWeekdayDate(int month, int year)
         {
-            DateTime dt = new DateTime(year, month, 1);
+            var dt = new DateTime(year, month, 1);
             var dayOfWeek = (int)dt.DayOfWeek;
             if (dayOfWeek == 0) dt = dt.AddDays(1); // change from Sun to Mon 
             if (dayOfWeek == 6) dt = dt.AddDays(2); // change from Sat to Mon
             return dt;
-        }
-
-        public static List<HolidayViewModel> GetFederalHolidays(int year)
-        {
-            var Holidays = new List<HolidayViewModel>();
-            var holiday = new HolidayViewModel
-            {
-                Date = AdjustForWeekendHoliday(new DateTime(year, 1, 1).Date),
-                Name = "New Year's Day"
-            };
-            Holidays.Add(holiday);
-
-            var dtDay = (from day in Enumerable.Range(1, 31)
-                where new DateTime(year, 1, day).DayOfWeek == DayOfWeek.Monday
-                select day).ElementAt(2); // third Monday
-            holiday = new HolidayViewModel()
-            {
-                Date = new DateTime(year, 1, dtDay),
-                Name = "Martiin Luther King, Jr. Day"
-            };
-            Holidays.Add(holiday);
-
-            //    NOT OBSERVED AT BETHESDA HELP
-            // dtDay = (from day in Enumerable.Range(1, 29)
-            //    where new DateTime(year, 2, day).DayOfWeek == DayOfWeek.Monday
-            //    select day).ElementAt(2);  // 3rd Monday
-            //holiday = new HolidayViewModel()
-            //{
-            //    Date = new DateTime(year, 2, dtDay),
-            //    Name = "Presidents' Day"
-            //};
-            //Holidays.Add(holiday);
-
-
-            var dt = new DateTime(year, 5, 31);
-            var dayOfWeek = dt.DayOfWeek;
-            while (dayOfWeek != DayOfWeek.Monday)
-            {
-                dt = dt.AddDays(-1);
-                dayOfWeek = dt.DayOfWeek; // Last Monday in May
-            }
-
-            holiday = new HolidayViewModel()
-            {
-                Date = dt.Date,
-                Name = "Memorial Day"
-            };
-            Holidays.Add(holiday);
-
-            dt = AdjustForWeekendHoliday(new DateTime(year, 6, 19).Date);
-            holiday = new HolidayViewModel()
-            {
-                Date = dt.Date,
-                Name = "Juneteenth Day"
-            };
-            Holidays.Add(holiday);
-
-            dt = AdjustForWeekendHoliday(new DateTime(year, 7, 4).Date);
-            holiday = new HolidayViewModel()
-            {
-                Date = dt.Date,
-                Name = "Independence Day"
-            };
-            Holidays.Add(holiday);
-
-            dt = new DateTime(year, 9, 1);
-            dayOfWeek = dt.DayOfWeek;
-            while (dayOfWeek != DayOfWeek.Monday)
-            {
-                dt = dt.AddDays(1);
-                dayOfWeek = dt.DayOfWeek;
-            }
-
-            holiday = new HolidayViewModel()
-            {
-                Date = dt.Date,
-                Name = "Labor Day"
-            };
-            Holidays.Add(holiday);
-
-            //    NOT OBSERVED AT BETHESDA HELP 
-            //dtDay = (from day in Enumerable.Range(1, 31)
-            //where new DateTime(year, 10, day).DayOfWeek == DayOfWeek.Monday
-            //select day).ElementAt(1); // 2nd Monday
-            //holiday = new HolidayViewModel()
-            //{
-            //    Date = new DateTime(year, 10, dtDay),
-            //    Name = "Indigenous Peoples' Day"
-            //};
-            //Holidays.Add(holiday);
-
-            //    NOT OBSERVED AT BETHESDA HELP
-            //dt = AdjustForWeekendHoliday(new DateTime(year, 11, 11).Date);
-            //holiday = new HolidayViewModel()
-            //{
-            //    Date = dt.Date,
-            //    Name = "Veterans Day"
-            //};
-            //Holidays.Add(holiday);
-
-            dtDay = (from day in Enumerable.Range(1, 30)
-                where new DateTime(year, 11, day).DayOfWeek == DayOfWeek.Thursday
-                select day).ElementAt(3); // 4th Thursday
-            holiday = new HolidayViewModel()
-            {
-                Date = new DateTime(year, 11, dtDay),
-                Name = "Thanksgiving Day"
-            };
-            Holidays.Add(holiday);
-
-            dt = AdjustForWeekendHoliday(new DateTime(year, 12, 25).Date);
-            holiday = new HolidayViewModel()
-            {
-                Date = dt.Date,
-                Name = "Christmas Day"
-            };
-            Holidays.Add(holiday);
-
-            return Holidays;
-        }
-
-        private static DateTime AdjustForWeekendHoliday(DateTime holiday)
-        {
-            if (holiday.DayOfWeek == DayOfWeek.Saturday)
-            {
-                return holiday.AddDays(-1);
-            }
-            else if (holiday.DayOfWeek == DayOfWeek.Sunday)
-            {
-                return holiday.AddDays(1);
-            }
-            else
-            {
-                return holiday;
-            }
-        }
-
-        public static bool IsHoliday(DateTime dt, List<HolidayViewModel> holidays)
-        {
-            // check 4th of July for proper year:
-            var july4th = holidays.FirstOrDefault(j => j.Date.Month == 7
-                                                       && j.Date.Day == 4);
-            if (july4th != null)
-            {
-                if (july4th.Date.Year != dt.Year) // need to reloadholidays (year change)
-                {
-                    holidays = GetFederalHolidays(dt.Year);
-                }
-            }
-
-            foreach (var hol in holidays)
-            {
-                if (dt == hol.Date)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         public static string[] GetShortMonthArray()
@@ -1844,7 +1675,7 @@ namespace BHelp
         }
         public static DateTime GetFirstWeekDay(int month, int year)
         {
-            DateTime dt = new DateTime(year, month, 1);
+            var dt = new DateTime(year, month, 1);
             var dayOfWeek = (int)dt.DayOfWeek;
             if (dayOfWeek == 0) dt = dt.AddDays(1); // change from Sun to Mon 
             if (dayOfWeek == 6) dt = dt.AddDays(2); // change from Sat to Mon
