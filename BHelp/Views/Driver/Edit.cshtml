@@ -95,6 +95,11 @@
                     <td>@Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { style = "width:30px", @min = "0", @max = 2 } })</td>
                     @Html.ValidationMessageFor(model => model.GiftCards, "", new { @class = "text-danger" })
                 </tr>
+                <tr>
+                <td>Holiday Gift Cards:&nbsp;</td>
+                    <td>@Html.EditorFor(model => model.HolidayGiftCards, new { htmlAttributes = new { style = "width:30px", @min = "0", @max = 2 } })</td>
+                    @Html.ValidationMessageFor(model => model.HolidayGiftCards, "", new { @class = "text-danger" })
+                </tr>
             </table>
 
             <table>

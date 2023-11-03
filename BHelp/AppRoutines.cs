@@ -874,7 +874,6 @@ namespace BHelp
             }
 
             return seniorsCount;
-
         }
 
         public static FileStreamResult ExcelOpenDeliveries(OpenDeliveryViewModel view)
@@ -893,8 +892,10 @@ namespace BHelp
             ws.Cell(1, 2).SetValue(DateTime.Today.ToShortDateString()).Style.Font.SetBold(true);
             ws.Cell(1, 2).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
-            var key = "K = Kids 0-17, A = Adults 18-59, S = Adults 60+, HH = Household, ";
-            key += "Abags = A Bags, Bbags = B Bags, KS = Kids Snacks for ages 2-17, GC = Gift Cards";
+            var key = "K = Kids 0-17, A = Adults 18-59, S = Adults 60+,";
+            key += " HH = Household, Abags = A Bags, Bbags = B Bags,";
+            key += " KS = Kids Snacks for ages 2-17, GC = Gift Cards,";
+            key += " HGC = Holiday Gift Cards";
             ws.Cell(1, 8).SetValue(key);
             ws.Cell(1, 8).Style.Alignment.WrapText = true;
             ws.Cell(1, 8).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
@@ -981,20 +982,26 @@ namespace BHelp
             ws.Columns("16").Width = 4;
             ws.Cell(3, 16).SetValue("#GC").Style.Font.SetBold(true);
             ws.Cell(3, 16).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Columns("17").Width = 15;
-            ws.Cell(3, 17).SetValue("Client Permanent Notes").Style.Font.SetBold(true);
-            ws.Cell(3, 17).Style.Alignment.WrapText = true;
+
+            ws.Columns("17").Width = 4;
+            ws.Cell(3, 17).SetValue("#HGC").Style.Font.SetBold(true);
             ws.Cell(3, 17).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+
+
             ws.Columns("18").Width = 15;
-            ws.Cell(3, 18).SetValue("OD & Driver Delivery Notes").Style.Font.SetBold(true);
+            ws.Cell(3, 18).SetValue("Client Permanent Notes").Style.Font.SetBold(true);
             ws.Cell(3, 18).Style.Alignment.WrapText = true;
             ws.Cell(3, 18).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("19").Width = 15;
+            ws.Cell(3, 19).SetValue("OD & Driver Delivery Notes").Style.Font.SetBold(true);
+            ws.Cell(3, 19).Style.Alignment.WrapText = true;
+            ws.Cell(3, 19).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
             var activeRow = 3;
             for (var i = 0; i < view.OpenDeliveryCount; i++)
             {
                 activeRow++;
-                for (var col = 1; col < 19; col++)
+                for (var col = 1; col < 20; col++)
                 {
                     ws.Cell(activeRow, col).SetValue(view.OpenDeliveries[i, col]);
                     ws.Cell(activeRow, col).Style.Alignment.WrapText = true;
@@ -1026,7 +1033,7 @@ namespace BHelp
                 .ThenBy(n => n.LastName).ToList();
             odv.OpenDeliveryCount = deliveryList.Count;
 
-            odv.OpenDeliveries = new string[deliveryList.Count, 20];
+            odv.OpenDeliveries = new string[deliveryList.Count, 21];
             var i = 0;
             foreach (var del in deliveryList)
             {
@@ -1063,15 +1070,16 @@ namespace BHelp
                     odv.OpenDeliveries[i, 11] = (familyMembers.Count + 1).ToString();
                     odv.OpenDeliveries[i, 12] = GetNamesAgesOfAllInHousehold(client.Id);
 
-                    odv.OpenDeliveries[i, 17] = client.Notes;
+                    odv.OpenDeliveries[i, 18] = client.Notes;
                 }
 
                 odv.OpenDeliveries[i, 13] = del.FullBags.ToString();
                 odv.OpenDeliveries[i, 14] = del.HalfBags.ToString();
                 odv.OpenDeliveries[i, 15] = del.KidSnacks.ToString();
                 odv.OpenDeliveries[i, 16] = del.GiftCards.ToString();
-
-                odv.OpenDeliveries[i, 18] = del.ODNotes + " " + del.DriverNotes;
+                odv.OpenDeliveries[i, 17] = del.HolidayGiftCards.ToString();
+                // Client Notes [i,18] already set above
+                odv.OpenDeliveries[i, 19] = del.ODNotes + " " + del.DriverNotes;
                 i++;
             }
 
@@ -1089,19 +1097,22 @@ namespace BHelp
             sb.Append(view.ReportTitle + ',');
             sb.Append(DateTime.Today.ToShortDateString() + ',');
             sb.Append(",,,,,");
-            var key = "K = Kids 0-17, A = Adults 18-59, S = Adults 60+, HH = Household, ";
-            key += "Abags = A Bags, Bbags = B Bags, KS = Kids Snacks for ages 2-17, GC = Gift Cards";
+            var key = "K = Kids 0-17, A = Adults 18-59, S = Adults 60+,";
+            key += "HH = Household,Abags = A Bags, Bbags = B Bags,";
+            key += "KS = Kids Snacks for ages 2-17, GC = Gift Cards,";
+            key += "HGC = Holiday Gift Cards";
             sb.Append("\"" + key + "\"");
             sb.AppendLine();
 
-            sb.Append("Delivery Date,Driver,ZipCode,Client,Address,City,Phone,#K,#A,#S,# in HH,");
-            sb.Append("All Household Members/Ages,#ABags,#Bbags,#KS,#GC,");
+            sb.Append("Delivery Date,Driver,ZipCode,Client,Address,City,Phone,");
+            sb.Append("#K,#A,#S,# in HH,All Household Members/Ages,");
+            sb.Append("#ABags,#Bbags,#KS,#GC,#HGC,");
             sb.Append("Client Permanent Notes,OD & Driver Delivery Notes");
             sb.AppendLine();
 
             for (var i = 0; i < view.OpenDeliveryCount; i++)
             {
-                for (var col = 1; col < 18; col++)
+                for (var col = 1; col < 19; col++)
                 {
                     if (view.OpenDeliveries[i, col] != null)
                     {
@@ -1120,7 +1131,6 @@ namespace BHelp
                     }
                 }
 
-                sb.Append("\"" + view.OpenDeliveries[i, 18] + "\"");
                 sb.AppendLine();
             }
 
@@ -1269,7 +1279,9 @@ namespace BHelp
             return null;
         }
 
-        public static FileStreamResult QORKReportToCSV(ReportsViewModel view)
+        public static FileStreamResult 
+            
+            QORKReportToCSV(ReportsViewModel view)
         {
             var sb = new StringBuilder();
             sb.Append(view.ReportTitle + ',');

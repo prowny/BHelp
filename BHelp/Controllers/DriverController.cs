@@ -23,7 +23,7 @@ namespace BHelp.Controllers
         {
             if (!logDate.HasValue)
             {
-                DateTime cdt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+                var cdt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
                 var cdts = cdt.ToString("MM/dd/yyyy");
                 Session["CallLogDate"] = cdts;
                 logDate = cdt;
@@ -115,8 +115,9 @@ namespace BHelp.Controllers
         // POST: Driver/Edit
         [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,FullBags,HalfBags,KidSnacks,GiftCards," +
-                    "DateDelivered,DriverNotes,DriverId,SelectedStatus")] Delivery delivery)
+        public ActionResult Edit([Bind(Include = "Id,FullBags,HalfBags,KidSnacks, " 
+                     + "GiftCards,HolidayGiftCards,DateDelivered, "
+                     + "DriverNotes,DriverId,SelectedStatus")] Delivery delivery)
         {
             if (ModelState.IsValid)
             {
@@ -127,7 +128,8 @@ namespace BHelp.Controllers
                     del.FullBags = delivery.FullBags;
                     del.HalfBags = delivery.HalfBags;
                     del.KidSnacks = delivery.KidSnacks;
-                    //del.GiftCards = delivery.GiftCards; // don't update
+                    del.GiftCards = delivery.GiftCards;
+                    del.HolidayGiftCards = delivery.HolidayGiftCards;
                     del.DriverNotes = delivery.DriverNotes;
                     del.DateDelivered = delivery.DateDelivered;
                     switch (delivery.SelectedStatus)

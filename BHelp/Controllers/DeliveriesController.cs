@@ -81,6 +81,7 @@ namespace BHelp.Controllers
                     deliveryView.HalfBags = delivery.HalfBags;
                     deliveryView.KidSnacks = delivery.KidSnacks;
                     deliveryView.GiftCards = delivery.GiftCards;
+                    deliveryView.HolidayGiftCards = delivery.HolidayGiftCards;
                     deliveryView.GiftCardsEligible = delivery.GiftCardsEligible;
                     deliveryView.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
                     deliveryView.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
