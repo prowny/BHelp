@@ -1403,19 +1403,21 @@ namespace BHelp.Controllers
                         del.HalfBags = 0;
                         del.KidSnacks = 0;
                         del.GiftCards = 0;
-                    }
+                        del.HolidayGiftCards = 0;
+                }
 
-                    var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
-                    del.PoundsOfFood = fullWeight;
-                    callLogView.TotalHouseholdCount += del.HouseoldCount;
-                    callLogView.TotalChildren += del.Children;
-                    callLogView.TotalAdults += del.Adults;
-                    callLogView.TotalSeniors += del.Seniors;
-                    callLogView.TotalFullBags += del.FullBags;
-                    callLogView.TotalHalfBags += del.HalfBags;
-                    callLogView.TotalKidSnacks += del.KidSnacks;
-                    callLogView.TotalGiftCards += del.GiftCards;
-                    callLogView.TotalPoundsOfFood += del.PoundsOfFood;
+                var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
+                del.PoundsOfFood = fullWeight;
+                callLogView.TotalHouseholdCount += del.HouseoldCount;
+                callLogView.TotalChildren += del.Children;
+                callLogView.TotalAdults += del.Adults;
+                callLogView.TotalSeniors += del.Seniors;
+                callLogView.TotalFullBags += del.FullBags;
+                callLogView.TotalHalfBags += del.HalfBags;
+                callLogView.TotalKidSnacks += del.KidSnacks;
+                callLogView.TotalGiftCards += del.GiftCards;
+                callLogView.TotalHolidayGiftCards += del.HolidayGiftCards;
+                callLogView.TotalPoundsOfFood += del.PoundsOfFood;
                 }
 
                 Session["CallLogByLogDateList"] = callLogView;
@@ -1510,10 +1512,11 @@ namespace BHelp.Controllers
                             del.HalfBags = 0;
                             del.KidSnacks = 0;
                             del.GiftCards = 0;
+                            del.HolidayGiftCards = 0;
                         }
 
-                        var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
-                        del.PoundsOfFood = fullWeight;
+                    var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
+                    del.PoundsOfFood = fullWeight;
                     }
 
                     callLogView.TotalHouseholdCount += del.HouseoldCount;
@@ -1524,6 +1527,7 @@ namespace BHelp.Controllers
                     callLogView.TotalHalfBags += del.HalfBags;
                     callLogView.TotalKidSnacks += del.KidSnacks;
                     callLogView.TotalGiftCards += del.GiftCards;
+                    callLogView.TotalHolidayGiftCards += del.HolidayGiftCards;
                     callLogView.TotalPoundsOfFood += del.PoundsOfFood;
                 }
 
@@ -1729,7 +1733,7 @@ namespace BHelp.Controllers
                                                                  && d.DateDelivered <= thruDate).ToList();
                     totalDeliveries += deliveryData.Count;
                     
-                    List<int> distinctList = new List<int>();
+                    var distinctList = new List<int>();
                     var distinctChildren = 0; 
                     var distinctAdults = 0;
                     var distinctSeniors = 0;  
@@ -1788,8 +1792,8 @@ namespace BHelp.Controllers
                         totalHalfBags += del.HalfBags;
                         snacks += del.KidSnacks;
                         totalSnacks += del.KidSnacks;
-                        cards += del.GiftCards;
-                        totalCards += del.GiftCards;
+                        cards += del.GiftCards + del.HolidayGiftCards;
+                        totalCards += del.GiftCards + del.HolidayGiftCards;
                     }
 
                     var col = zip + 1; 
@@ -1841,10 +1845,10 @@ namespace BHelp.Controllers
 
                 return view;
             }
-            private List<SelectListItem> GetSnapshotFamily(string listHH)
+            private static List<SelectListItem> GetSnapshotFamily(string listHH)
             {
                 var i = 0;
-                List<SelectListItem> familyList = new List<SelectListItem>();
+                var familyList = new List<SelectListItem>();
                 var listStrLineElements = listHH.Split(',').ToList();
                 foreach (var mbr in listStrLineElements)
                 {
@@ -1854,7 +1858,7 @@ namespace BHelp.Controllers
                 }
                 return familyList;
             }
-            private ReportsViewModel GetCountyReportView(int yy, int qtr)
+            private static ReportsViewModel GetCountyReportView(int yy, int qtr)
             {
                 using var db = new BHelpContext();
                 var view = new ReportsViewModel { Year = yy, Quarter = qtr };
@@ -1881,13 +1885,13 @@ namespace BHelp.Controllers
                 view.MonthYear = new string[3];
                 view.MonthYear[0] =
                     DateTimeFormatInfo.CurrentInfo.GetMonthName(1 + 3 * (qtr - 1))
-                    + " " + view.Year.ToString();
+                    + " " + view.Year;
                 view.MonthYear[1] =
                     DateTimeFormatInfo.CurrentInfo.GetMonthName(2 + 3 * (qtr - 1))
-                    + " " + view.Year.ToString();
+                    + " " + view.Year;
                 view.MonthYear[2] =
                     DateTimeFormatInfo.CurrentInfo.GetMonthName(3 + 3 * (qtr - 1))
-                    + " " + view.Year.ToString();
+                    + " " + view.Year;
                 view.DateRangeTitle = view.MonthYear[0] + " through " + view.MonthYear[2];
                 view.ReportTitle = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(1 + 3 * (qtr - 1))
                                    + "-" + DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(3 + 3 * (qtr - 1))
@@ -2054,7 +2058,7 @@ namespace BHelp.Controllers
                 using var db = new BHelpContext();
                 var total = 0;
                 var dList = db.Deliveries.Where(d => d.ClientId == clientId
-                                                     && d.DateDelivered >= dt1 && d.DateDelivered <= dt2)
+                    && d.DateDelivered >= dt1 && d.DateDelivered <= dt2)
                     .Select(g => g.GiftCards).ToList();
                 foreach (var i in dList)
                 {
@@ -2073,7 +2077,7 @@ namespace BHelp.Controllers
                 {
                     // Ends on a Saturday - weekday Monday is 1, Saturday is 6
                     // If today is a  Saturday, default to this week
-                    int weekDay = Convert.ToInt32(DateTime.Today.DayOfWeek);
+                    var weekDay = Convert.ToInt32(DateTime.Today.DayOfWeek);
                     if (weekDay >= 6) // Default to this this Saturday, else Saturday last week
                     { endDate = DateTime.Today.AddDays(6 - weekDay); }
                     else
@@ -2316,6 +2320,5 @@ namespace BHelp.Controllers
 
             return RedirectToAction("CallLogMenu");
             }
-
     }
 }

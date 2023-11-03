@@ -67,6 +67,7 @@
         <th><div class="col40">@Html.Label("B Bags")</div></th>
         <th><div class="col40">@Html.Label("Kids Snack")</div></th>
         <th><div class="col40">@Html.Label("Giant Gift Cards")</div></th>
+        <th><div class="col40">@Html.Label("Holiday Gift Cards")</div></th>
         <th><div class="col100">@Html.Label("Driver Notes ")</div></th>
     </tr>
 
@@ -113,6 +114,7 @@
             <td style="text-align: center">@Html.DisplayFor(modelItem => item.HalfBags)</td>
             <td style="text-align: center">@Html.DisplayFor(modelItem => item.KidSnacks)</td>
             <td style="text-align: center">@Html.DisplayFor(modelItem => item.GiftCards)</td>
+            <td style="text-align: center">@Html.DisplayFor(modelItem => item.HolidayGiftCards)</td>
             <td title=@item.DriverNotesToolTip>@Html.DisplayFor(modelItem => item.DriverNotes)</td>
             @if (User.IsInRole("Administrator") || User.IsInRole("Staff") || User.IsInRole("OfficerOfTheDay"))
             {
