@@ -503,6 +503,7 @@ namespace BHelp.Controllers
                         driverKidSnackCount = 0;
                         driverPounds = 0;
                         driverGiftCardCount = 0;
+                        driverHolidayGiftCardCount = 0;
                     }
 
                     // Summarize the date:

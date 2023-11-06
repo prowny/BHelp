@@ -20,7 +20,7 @@
             </div>
         }
         <div>
-            @if (User.IsInRole("OfficerOfTheDay"))
+            @if (User.IsInRole("OfficerOfTheDay") || User.IsInRole("Administrator"))
             {
                 <a href="~/Videos/ODSignUp.mp4" target="_blank">OD Self-Scheduling Video</a>
             }
