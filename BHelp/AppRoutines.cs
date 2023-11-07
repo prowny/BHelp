@@ -1078,8 +1078,9 @@ namespace BHelp
                 odv.OpenDeliveries[i, 15] = del.KidSnacks.ToString();
                 odv.OpenDeliveries[i, 16] = del.GiftCards.ToString();
                 odv.OpenDeliveries[i, 17] = del.HolidayGiftCards.ToString();
-                // Client Notes [i,18] already set above
+                // Client Notes [i, 18] already set above
                 odv.OpenDeliveries[i, 19] = del.ODNotes + " " + del.DriverNotes;
+               
                 i++;
             }
 
@@ -1146,7 +1147,7 @@ namespace BHelp
             return null;
         }
 
-        public static FileStreamResult CallLogHistoryResultToCSV(DeliveryViewModel view, Boolean allData)
+        public static FileStreamResult CallLogHistoryResultToCSV(DeliveryViewModel view, bool allData)
         {
             using var db = new BHelpContext();
             // for adding OD names if allData

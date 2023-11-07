@@ -569,8 +569,9 @@ namespace BHelp.Controllers
                         odv.OpenDeliveries[j, 14] = rec.HalfBags.ToString();
                         odv.OpenDeliveries[j, 15] = rec.KidSnacks.ToString();
                         odv.OpenDeliveries[j, 16] = rec.GiftCards.ToString();
-                        odv.OpenDeliveries[j, 17] = rec.Client.Notes;
-                        odv.OpenDeliveries[j, 18] = rec.ODNotes + " " + rec.DriverNotes;
+                        odv.OpenDeliveries[j, 17] = rec.HolidayGiftCards.ToString(); 
+                        odv.OpenDeliveries[j, 18] = rec.Client.Notes;
+                        odv.OpenDeliveries[j, 19] = rec.ODNotes + " " + rec.DriverNotes;
 
                         checkedSelectedDeliveries.Add(rec); // for get distinct OD list
                     }
@@ -629,7 +630,8 @@ namespace BHelp.Controllers
                             del.EligiibilityRulesException = true;
                     }
 
-                    if (del.FullBags == 0 && del.HalfBags == 0 && del.KidSnacks == 0 && del.GiftCards == 0)
+                    if (del.FullBags == 0 && del.HalfBags == 0 && del.KidSnacks == 0 
+                        && del.GiftCards == 0 && del.HolidayGiftCards == 0)
                     {
                         del.AllZeroProducts = true;
                     }
@@ -741,7 +743,7 @@ namespace BHelp.Controllers
                 return newView;
             }
 
-            private Client GetClientData(int id)
+            private static Client GetClientData(int id)
             {
                 var _client = AppRoutines.GetClientRecord(id);
                 if (_client != null)
