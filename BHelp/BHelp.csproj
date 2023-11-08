@@ -631,6 +631,7 @@
     <Content Include="Scripts\ResetAnyPassword.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Videos\DriverVideo.mp4" />
     <Content Include="Videos\ODSignUp.mp4" />
     <Content Include="Views\Holidays\Index.cshtml" />
     <Content Include="Views\Home\About.cshtml">

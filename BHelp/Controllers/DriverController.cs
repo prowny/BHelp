@@ -53,6 +53,7 @@ namespace BHelp.Controllers
                     delivery.ClientNameAddress = client.LastName + ", " + client.FirstName
                        + " " + client.StreetNumber + " " + client.StreetName;
                     delivery.Notes = client.Notes;
+                    delivery.Phone = client.Phone;  
                     var familyMembers = AppRoutines.GetFamilyMembers(client.Id);
                     delivery.HouseoldCount = familyMembers.Count;
                 }
