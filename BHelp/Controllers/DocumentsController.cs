@@ -66,6 +66,9 @@ namespace BHelp.Controllers
             selList.Add(role);
             role = new SelectListItem() { Value = "Trainer", Text = @"Trainer" };
             selList.Add(role);
+            selList.Add(role);
+            role = new SelectListItem() { Value = "Bagger", Text = @"Bagger" };
+            selList.Add(role);
             return selList;
         }
 

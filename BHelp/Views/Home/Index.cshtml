@@ -120,6 +120,20 @@
         </div>
         <br />
     }
+    
+@if (User.IsInAnyRoles("Bagger","PantryCoordinator","Developer","Administrator"))
+{
+    <div>
+        <strong>Bagger Menu</strong><br />
+        @*<a href="@Url.Action("Index", "BaggerEmail")">Bagger Schedule Email</a><br />*@
+
+        @if (Model.ShowBaggerDocumentsMenu)
+        {
+            <a href="@Url.Action("ViewDocumentCategory", "Documents", new {menuCat="Bagger"})">View Bagger Documents</a>
+        }
+    </div>
+    <br />
+}
 
 @if (User.IsInAnyRoles("Developer","Administrator", "DriverScheduler", "ODScheduler"))
 {
@@ -129,7 +143,6 @@
     {
     <a href="@Url.Action("Edit", "DriverSchedule")">Maintain Driver Schedules</a><br />
     }
-    @*<a href="@Url.Action("Index", "DriverEmail")">Driver Schedule Email</a><br />*@
     @if(User.IsInAnyRoles("Developer","Administrator","ODScheduler"))
     {
     <a href="@Url.Action("Edit", "ODSchedule")">Maintain OD Schedules</a><br />

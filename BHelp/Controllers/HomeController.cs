@@ -28,8 +28,9 @@ namespace BHelp.Controllers
                     ShowStaffDocumentsMenu = false,
                     ShowEveryoneDocumentsMenu = false,
                     ShowReportsDocumentsMenu = false,
-                    ShowPantryCoordinatorDocumentsMenu = false
-                };
+                    ShowPantryCoordinatorDocumentsMenu = false,
+                    ShowBaggerDocumentsMenu = false
+            };
             var db = new BHelpContext();
             var docList = db.Documents.ToList();
             var menuCatString = "";
@@ -43,6 +44,7 @@ namespace BHelp.Controllers
             if (menuCatString.Contains("Everyone")) view.ShowEveryoneDocumentsMenu = true;
             if (menuCatString.Contains("Reports")) view.ShowReportsDocumentsMenu = true;
             if (menuCatString.Contains("PantryCoordinator")) view.ShowPantryCoordinatorDocumentsMenu = true;
+            if (menuCatString.Contains("Bagger")) view.ShowBaggerDocumentsMenu = true;
 
             if (view.ShowEveryoneDocumentsMenu)
             { // get Everyone docs Title and Index for direct access on main menu
