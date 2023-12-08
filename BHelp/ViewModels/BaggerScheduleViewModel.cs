@@ -30,6 +30,8 @@ namespace BHelp.ViewModels
         public int Year { get; set; }
         public List<SelectListItem> BaggerList { get; set; }  // for DropDownList SelectList
         public List<ApplicationUser> BaggerDataList { get; set; } // for Phone/Email with index matching BaggerList
+        public List<SelectListItem>PartnerList { get; set; }  // for DropDownList SelectList
+        public List<ApplicationUser> PartnerDataList { get; set; } // for Phone/Email with index matching PartnerList
         public List<BaggerScheduleViewModel> BaggersSchedule { get; set; }
         public DateTime[,] BoxDay { get; set; }  // Boxes refer to cells on calendar
         public string[] BoxBaggerName { get; set; }

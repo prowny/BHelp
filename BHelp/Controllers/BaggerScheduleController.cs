@@ -7,6 +7,8 @@ using System.Linq;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Org.BouncyCastle.Utilities;
+using ClosedXML.Excel;
+using System.IO;
 
 namespace BHelp.Controllers
 {
@@ -26,7 +28,7 @@ namespace BHelp.Controllers
             }
             else  // returning to BaggerSchedule
             {
-                // Returning with Bagger change:
+                // Returning with changes:
                 if (baggerId != null)
                 {
                     var dateData = Session["BaggerScheduleDateData"].ToString();
@@ -98,6 +100,7 @@ namespace BHelp.Controllers
                 if (existingRec.BaggerId != null)
                 {
                     view.BaggerId = existingRec.BaggerId;
+                    view.PartnerId = existingRec.PartnerId;
                     view.OldBaggerId = existingRec.BaggerId;
                     var baggerIdx = baggerList.FindIndex(d => d.Value == view.BaggerId);
                     if (baggerIdx > 0) view.BaggerName = baggerDataList[baggerIdx].FullName;
@@ -166,6 +169,7 @@ namespace BHelp.Controllers
                     // Update record
                     if (schedule.BaggerId == "0") schedule.BaggerId = null;
                     rec.BaggerId = schedule.BaggerId;
+                    rec.PartnerId = schedule.PartnerId;
                     rec.Note = schedule.Note;
                     db.SaveChanges();
 
@@ -174,6 +178,7 @@ namespace BHelp.Controllers
                     foreach (var item in msUpdate.Where(s => s.Date == schedule.Date))
                     {
                         item.BaggerId = schedule.BaggerId;
+                        item.PartnerId = schedule.PartnerId;
                         item.Note = schedule.Note;
                     }
 
@@ -233,7 +238,7 @@ namespace BHelp.Controllers
 
                 baggerList.Add(new SelectListItem()
                 {
-                    Text = @"(nobody yet)",
+                    Text = "(nobody yet)",
                     Value = "0"
                 });
                 baggerDataList.Add(new ApplicationUser()
@@ -246,7 +251,7 @@ namespace BHelp.Controllers
                     {
                         baggerList.Add(new SelectListItem()
                         {
-                            Text = user.FirstName + @" " + user.LastName,
+                            Text = user.FirstName + " " + user.LastName,
                             Value = user.Id,
                             Selected = false
                         });
@@ -262,7 +267,7 @@ namespace BHelp.Controllers
                             {
                                 new SelectListItem()
                                 {
-                                    Text = @"(nobody yet)",
+                                    Text = "(nobody yet)",
                                     Value = "0"
                                 }
                             };
@@ -354,6 +359,17 @@ namespace BHelp.Controllers
                             view.BoxBaggerPhone2[idx] = baggerDataList[baggerIdx].PhoneNumber2;
                             view.BoxBaggerEmail[idx] = baggerDataList[baggerIdx].Email;
                         }
+
+                        var partnerIdx = baggerList.FindIndex(d => d.Value == monthlyList[mIdx].PartnerId);
+                        if (partnerIdx >= 0)
+                        {
+                            view.BoxPartnerName[idx] = baggerList[partnerIdx].Text;
+                            view.BoxPartnerId[idx] = baggerList[partnerIdx].Value;
+                            view.BoxPartnerPhone[idx] = baggerDataList[partnerIdx].PhoneNumber;
+                            view.BoxPartnerPhone2[idx] = baggerDataList[partnerIdx].PhoneNumber2;
+                            view.BoxPartnerEmail[idx] = baggerDataList[partnerIdx].Email;
+                        }
+
                         view.BoxNote[idx] = monthlyList[mIdx].Note;
                     }
                 }
@@ -392,5 +408,93 @@ namespace BHelp.Controllers
             return RedirectToAction("Edit", new { boxDate = _boxDate });
         }
 
+        [Authorize(Roles = "Developer,Administrator,Staff,BaggerScheduler,OfficerOfTheDay")]
+        public ActionResult BaggerScheduleToExcel()
+        {
+            var view = GetBaggerScheduleViewModel();
+
+            var workbook = new XLWorkbook();
+            IXLWorksheet ws = workbook.Worksheets.Add("Bagger Schedule");
+
+            var tempDate = new DateTime(view.Year, view.Month, 1);
+            var monthName = tempDate.ToString("MMMM");
+
+            int row = 1;
+            ws.Columns("1").Width = 20;
+            ws.Columns("2").Width = 20;
+            ws.Columns("3").Width = 20;
+            ws.Columns("4").Width = 20;
+            ws.Columns("5").Width = 20;
+            ws.Cell(row, 1).SetValue("BHelp Bagger Schedule - " + monthName + " " + view.Year);
+
+            row++;
+            ws.Cell(row, 1).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+            ws.Cell(row, 1).SetValue("MONDAY");
+            ws.Cell(row, 2).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+            ws.Cell(row, 2).SetValue("TUESDAY");
+            ws.Cell(row, 3).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+            ws.Cell(row, 3).SetValue("WEDNESDAY");
+            ws.Cell(row, 4).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+            ws.Cell(row, 4).SetValue("THURSDAY");
+            ws.Cell(row, 5).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+            ws.Cell(row, 5).SetValue("FRI-SAT-SUN");
+
+            for (var i = 1; i < 6; i++)
+            {
+                row++;
+                for (var j = 1; j < 6; j++)
+                {
+                    if (view.BoxDay[i, j] > DateTime.MinValue)
+                    {
+                        var idx = j + 5 * (i - 1);
+                        var boxContents = (view.BoxDay[i, j].Day.ToString("0"));
+
+                        if (view.BoxBaggerName[idx] == null)
+                        {
+                            boxContents += Environment.NewLine + "Bagger: TBD";
+                        }
+                        else
+                        {
+                            boxContents += Environment.NewLine + "Bagger:";
+                            boxContents += Environment.NewLine + view.BoxBaggerName[idx];
+                        }
+
+                        if (view.BoxBaggerPhone[idx] != null)
+                        {
+                            boxContents += Environment.NewLine + view.BoxBaggerPhone[idx];
+                        }
+                        if (view.BoxBaggerPhone2[idx] != null)
+                        {
+                            boxContents += Environment.NewLine + view.BoxBaggerPhone2[idx];
+                        }
+
+                        if (view.BoxBaggerEmail[idx] != null)
+                        {
+                            boxContents += Environment.NewLine + view.BoxBaggerEmail[idx];
+                        }
+
+                        if (view.BoxNote[idx] != null)
+                        {
+                            boxContents += Environment.NewLine + "Note:";
+                            boxContents += Environment.NewLine + view.BoxNote[idx];
+                        }
+
+                        if (view.BoxHoliday[idx])
+                        {
+                            boxContents += Environment.NewLine + view.BoxHolidayDescription[idx];
+                        }
+
+                        ws.Cell(row, j).Value = "Bold";
+                        ws.Cell(row, j).SetValue(boxContents);
+                    }
+                }
+            }
+
+            var ms = new MemoryStream();
+            workbook.SaveAs(ms);
+            ms.Position = 0;
+            return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            { FileDownloadName = "BHelpBaggerSchedule " + tempDate.ToString("MM") + "-" + tempDate.ToString("yyyy") + ".xlsx" };
+        }
     }
 }

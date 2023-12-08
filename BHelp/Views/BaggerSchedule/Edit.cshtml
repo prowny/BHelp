@@ -9,11 +9,25 @@
     <meta name="viewport" content="width=device-width" />
     <title>Edit</title>
     <style>
-    #schedule {border-collapse: collapse;border: thin solid black}
-    .top {width: 185px;border-right: thin solid black;}
-    .edit {width: 160px;}
-    #SaveButton {background-color: blue;color: white}
-</style>
+        #schedule {
+            border-collapse: collapse;
+            border: thin solid black
+        }
+
+        .top {
+            width: 185px;
+            border-right: thin solid black;
+        }
+
+        .edit {
+            width: 160px;
+        }
+
+        #SaveButton {
+            background-color: blue;
+            color: white
+        }
+    </style>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
@@ -37,8 +51,9 @@
                     <tr id="HeaderRow">
                         <td><b>BHelp Bagger Schedule</b></td>
                         <td style="text-align: center">Date:</td>
-                        <td style="text-align: center">Bagger</td>
-                        <td style="text-align: center">Note:</td>
+                        <td style="text-align: center">Bagger:</td>
+                        <td style="text-align: center">Partner: (optional)</td>
+                        <td style="text-align: center">Notes:</td>
                     </tr>
 
                     <tr id="EditRow">
@@ -53,6 +68,10 @@
                             </td>
                             <td>
                                 @Html.TextBoxFor(m => m.BaggerName,
+                                    new { style = "background: lightgray", @readonly = "readonly" })
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.PartnerName,
                                     new { style = "background: lightgray", @readonly = "readonly" })
                             </td>
                             <td>
@@ -94,6 +113,12 @@
                                 @Html.ValidationMessageFor(m => m.BaggerId, "", new { @class = "text-danger" })
                             </td>
                             <td>
+                                @Html.DropDownListFor(m => m.PartnerId,
+                                    new SelectList(Model.BaggerList, "Value", "Text", Model.PartnerId),
+                                    new { id = "Partnerddl" })
+                                @Html.ValidationMessageFor(m => m.PartnerId, "", new { @class = "text-danger" })
+                            </td>
+                            <td>
                                 @Html.TextAreaFor(t => t.Note)
                                 @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
                             </td>
@@ -117,6 +142,7 @@
                         <td><b>BHelp Bagger Schedule</b></td>
                         <td style="text-align: center">Date:</td>
                         <td style="text-align: center">Bagger:</td>
+                        <td style="text-align: center">Partner: (optional)</td>
                         <td style="text-align: center">Notes:</td>
                     </tr>
 
@@ -133,8 +159,18 @@
                             @Html.ValidationMessageFor(m => m.BaggerId, "", new { @class = "text-danger" })
                         </td>
                         <td>
+                            @Html.DropDownListFor(m => m.PartnerId,
+                                new SelectList(Model.BaggerList, "Value", "Text", Model.PartnerId),
+                                new { id = "Partnerddl2" })
+                            @Html.ValidationMessageFor(m => m.PartnerId, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
                             @Html.TextAreaFor(t => t.Note)
                             @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            &nbsp;&nbsp;
+                            <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
                         </td>
                     </tr>
                 </table>
@@ -290,9 +326,32 @@
                 }
             </table>
         </div>
-
     }
-    <div>
-    </div>
 </body>
+<br />
+<div>
+    @Html.ActionLink("Download to Excel File", "BaggerScheduleToExcel", "BaggerSchedule")
+    <br />
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
 </html>
+
+<script type="text/javascript">
+    $(function () {
+        window.$("#BoxDate").datepicker({
+            
+        });
+    });
+</script>
+<script type="text/javascript">
+    window.$(function () {
+        window.$('#BoxDate').change(function () {
+            var _boxDate = window.$(this).val();
+            var link = '@Url.Action("Edit", "BaggerSchedule",
+                            new { boxDate = "-1" })';
+            link = link.replace("-1", _boxDate);
+            window.location.href = link;
+        });
+    });
+</script>
+
