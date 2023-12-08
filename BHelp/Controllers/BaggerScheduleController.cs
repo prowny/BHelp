@@ -151,6 +151,67 @@ namespace BHelp.Controllers
             return View(view);
         }
 
+        // POST: BaggerSchedule/Edit
+        [HttpPost, AllowAnonymous, ValidateAntiForgeryToken]
+        public ActionResult Edit(BaggerScheduleViewModel schedule)
+        {
+            if (ModelState.IsValid)
+            {
+                using var db = new BHelpContext();
+                // Check if date exists & update
+                var rec = db.BaggerSchedules
+                    .FirstOrDefault(d => d.Date == schedule.Date);
+                if (rec != null)
+                {
+                    // Update record
+                    if (schedule.BaggerId == "0") schedule.BaggerId = null;
+                    rec.BaggerId = schedule.BaggerId;
+                    rec.Note = schedule.Note;
+                    db.SaveChanges();
+
+                    // update session variable:
+                    var msUpdate = (List<BaggerSchedule>)Session["MonthlyBaggerSchedule"];
+                    foreach (var item in msUpdate.Where(s => s.Date == schedule.Date))
+                    {
+                        item.BaggerId = schedule.BaggerId;
+                        item.Note = schedule.Note;
+                    }
+
+                    Session["MonthlyBaggerSchedule"] = msUpdate;
+
+                    return RedirectToAction("Edit", new { boxDate = schedule.Date, baggerid = schedule.BaggerId });
+                }
+
+                // Add new record
+                if (schedule.BaggerId == "0") schedule.BaggerId = null;
+                var newRec = new BaggerSchedule()
+                {
+                    Date = schedule.Date,
+                    BaggerId = schedule.BaggerId,
+                    PartnerId = schedule.PartnerId,
+                    Note = schedule.Note
+                };
+                db.BaggerSchedules.Add(newRec);
+                db.SaveChanges();
+
+                // update session variable:
+                var msAdd = (List<BaggerSchedule>)Session["MonthlyBaggerSchedule"];
+                var newMsAdd = new BaggerSchedule()
+                {
+                    BaggerId = schedule.BaggerId,
+                    Date = schedule.Date
+                };
+                msAdd.Add(newMsAdd);
+                Session["MonthlyBaggerSchedule"] = msAdd;
+
+                return RedirectToAction("Edit", new { boxDate = newRec.Date, baggerId = schedule.BaggerId });
+            }
+            else
+            {
+                return RedirectToAction("Edit");
+            }
+        }
+
         private void GetBaggerLookUpLists(DateTime? boxDate)
         {   // AND BaggerDataList AND NonSchedulerBaggerSelectList
             var _dt = DateTime.Today;
@@ -305,6 +366,30 @@ namespace BHelp.Controllers
         {
             var holidays = HolidayRoutines.GetHolidays(dt.Year);
             return holidays.FirstOrDefault(holiday => dt == holiday.FixedDate);
+        }
+
+        public ActionResult PreviousMonth(int month, int year)
+        {
+            month = month - 1;
+            if (month < 1)
+            {
+                month = 12;
+                year = year - 1;
+            }
+            var _boxDate = AppRoutines.GetFirstWeekdayDate(month, year);
+            return RedirectToAction("Edit", new { boxDate = _boxDate });
+        }
+
+        public ActionResult NextMonth(int month, int year)
+        {
+            month = month + 1;
+            if (month > 12)
+            {
+                month = 1;
+                year = year + 1;
+            }
+            var _boxDate = AppRoutines.GetFirstWeekdayDate(month, year);
+            return RedirectToAction("Edit", new { boxDate = _boxDate });
         }
 
     }

@@ -156,7 +156,7 @@ namespace BHelp.Controllers
             return View(view);
         }
 
-        // POST: DriverSchedule/Edit
+        // POST: ODSchedule/Edit
         [HttpPost,AllowAnonymous,ValidateAntiForgeryToken]
         public ActionResult Edit(ODScheduleViewModel schedule)
         {

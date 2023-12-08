@@ -1,0 +1,298 @@
+﻿@using System.Web.Mvc.Html
+@model BHelp.ViewModels.BaggerScheduleViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Edit</title>
+    <style>
+    #schedule {border-collapse: collapse;border: thin solid black}
+    .top {width: 185px;border-right: thin solid black;}
+    .edit {width: 160px;}
+    #SaveButton {background-color: blue;color: white}
+</style>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+</head>
+<body>
+    @using (Html.BeginForm("Edit", "BaggerSchedule", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.CurrentUserId)
+        @Html.HiddenFor(m => m.AllowEdit)
+        @Html.HiddenFor(m => m.IsScheduler)
+
+        /*========== Regular Non-Scheduler users Edit Section ==================*/
+        if (Model.AllowEdit && !Model.IsScheduler)  /* NOT Scheduler */
+        {
+            <div id="UserEditSection">
+                <table>
+                    <tr id="HeaderRow">
+                        <td><b>BHelp Bagger Schedule</b></td>
+                        <td style="text-align: center">Date:</td>
+                        <td style="text-align: center">Bagger</td>
+                        <td style="text-align: center">Note:</td>
+                    </tr>
+
+                    <tr id="EditRow">
+                        <td style="text-align: right" class="edit">Enter/Edit data here:</td>
+
+                        @*=============== Another user has it locked ===============*@
+                        @if (Model.OldBaggerId != null && Model.OldBaggerId != Model.CurrentUserId)
+                        {
+                            <td class="edit" style="text-align: center; width: 75px">
+                                @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
+                                    new { id = "BoxDate", @readonly = "readonly", style = "width: 75px;text-align:center" })
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.BaggerName,
+                                    new { style = "background: lightgray", @readonly = "readonly" })
+                            </td>
+                            <td>
+                                @Html.TextAreaFor(t => t.Note,
+                                    new { style = "background: lightgray", @readonly = "readonly" })
+                                @Html.ValidationMessageFor(m => m.Note,
+                                    "", new { @class = "text-danger" })
+                            </td>
+                            /* no save button */
+                        }
+                        else if (!Model.IsScheduler && Model.Date < DateTime.Today)
+                        {
+                            <td class="edit" style="text-align: center; width: 75px">
+                                @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
+                                    new { id = "BoxDate", @readonly = "readonly", style = "width: 75px;background:lightgray;text-align:center" })
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.BaggerName,
+                                    new { style = "background: lightgray", @readonly = "readonly" })
+                            </td>
+                            <td>
+                                @Html.TextAreaFor(t => t.Note,
+                                    new { style = "background: lightgray", @readonly = "readonly" })
+                                @Html.ValidationMessageFor(m => m.Note,
+                                    "", new { @class = "text-danger" })
+                            </td>
+                            /* no save button */
+                        }
+                        else /*========= User may change =============*/
+                        {
+                            <td class="edit" style="text-align: center; width: 75px">
+                                @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
+                                    new { id = "BoxDate", @readonly = "readonly", style = "width: 75px; background-color: yellow; text-align:center" })
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(m => m.BaggerId,
+                                    new SelectList(Model.BaggerList, "Value", "Text", Model.BaggerId),
+                                    new { id = "Baggerddl" })
+                                @Html.ValidationMessageFor(m => m.BaggerId, "", new { @class = "text-danger" })
+                            </td>
+                            <td>
+                                @Html.TextAreaFor(t => t.Note)
+                                @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
+                            </td>
+                            <td>
+                                &nbsp;&nbsp;
+                                <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
+                            </td>
+                        }
+                    </tr>
+                </table>
+                <hr />
+            </div>
+        }  /*end of AllowEdit && NOT Scheduler */
+
+        /*================= Admin / Scheduler Edit Section =======================*/
+        if (Model.IsScheduler)
+        {
+            <div id="EditSection">
+                <table>
+                    <tr id="HeaderRow">
+                        <td><b>BHelp Bagger Schedule</b></td>
+                        <td style="text-align: center">Date:</td>
+                        <td style="text-align: center">Bagger:</td>
+                        <td style="text-align: center">Notes:</td>
+                    </tr>
+
+                    <tr id="EditRow">
+                        <td style="text-align: right" class="edit">Enter/Edit data here:</td>
+                        <td class="edit" style="text-align: center; width: 75px">
+                            @Html.TextBoxFor(model => model.Date, Model.Date.ToString("MM/dd/yyyy"),
+                                new { id = "BoxDate", @readonly = "readonly", style = "width: 75px; background-color: yellow; text-align:center" })
+                        </td>
+                        <td>
+                            @Html.DropDownListFor(m => m.BaggerId,
+                                new SelectList(Model.BaggerList, "Value", "Text", Model.BaggerId),
+                                new { id = "Baggerddl2" })
+                            @Html.ValidationMessageFor(m => m.BaggerId, "", new { @class = "text-danger" })
+                        </td>
+                        <td>
+                            @Html.TextAreaFor(t => t.Note)
+                            @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
+                        </td>
+                    </tr>
+                </table>
+                <hr />
+            </div>
+        } /*========= End of Admin / Scheduler Edit Section ========*/
+
+        /*======================== Calendar Display Section ========================*/
+        <div>
+            <table>
+                <tr>
+                    <td>
+                        <b>Bethesda Bagger Schedule - </b><span style="color: red">
+                            <b>@Model.MonthName&nbsp;@Model.Year</b>
+                        </span>
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        @Html.ActionLink(" Previous Month", "PreviousMonth",
+                            new { @Model.Month, @Model.Year })
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;@Html.ActionLink(" Next Month", "NextMonth",
+                            new { @Model.Month, @Model.Year })
+                    </td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("Return to Dashboard", "Index", "Home")</td>
+                </tr>
+            </table>
+        </div>
+
+        <div>
+            <table Id="schedule">
+                <tr>
+                    <th class="top">MONDAY</th>
+                    <th class="top">TUESDAY</th>
+                    <th class="top">WEDNESDAY</th>
+                    <th class="top">THURSDAY</th>
+                    <th class="top">FRI-SAT-SUN</th>
+                </tr>
+
+                @{var i = 0;}
+                @for (var row = 1; row < 6; row++)
+                {
+                    <tr>
+                        @for (var col = 1; col < 6; col++)
+                        {
+                            i++;
+                            var bgcolor = "white";
+                            if (Model.BaggersSchedule[i].Date == Model.Date && Model.AllowEdit)
+                            {
+                                bgcolor = "yellow";
+                            }
+                            <td style="border: thin solid black; vertical-align: top; background-color: @bgcolor">
+                                @if (Model.BaggersSchedule[i].Date > DateTime.MinValue)
+                                {
+                                    <b>@Html.Label(Model.BaggersSchedule[i].DayString)</b>
+
+                                    if (Model.AllowEdit)
+                                    {
+                                        if (Model.IsBaggerOnly)
+                                        {
+                                            if (Model.BaggersSchedule[i].Date >= DateTime.Today
+                                                && (Model.BoxBaggerId[i] == Model.CurrentUserId || Model.BoxBaggerId[i] == null))
+                                            {
+                                                if (!Model.BoxHoliday[i])
+                                                {
+                                                    <span style="font-size: small">
+                                                        @Html.ActionLink("Edit", "Edit",
+                                                            new { boxDate = Model.BaggersSchedule[i].Date })
+                                                    </span>
+                                                }
+                                            }
+                                        }
+                                        else // NOT IsODOnly
+                                        {
+                                            if (Model.IsScheduler || Model.BaggersSchedule[i].Date >= DateTime.Today)
+                                            {
+                                                if (!Model.BoxHoliday[i])
+                                                {
+                                                    <span style="font-size: small">
+                                                        @Html.ActionLink("Edit", "Edit",
+                                                            new { boxDate = Model.BaggersSchedule[i].Date })
+                                                    </span>
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if (Model.BoxBaggerName[i] == null)
+                                    {
+                                        if (!Model.BoxHoliday[i])
+                                        {
+                                            <span style="font-size: small">
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                @Html.Label("OD: ")
+                                            </span>
+                                            <span style="text-decoration-color: red">
+                                                @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <br />
+                                        @Html.Raw(Model.BoxBaggerName[i])
+                                    }
+
+                                    if (Model.BoxBaggerPhone[i] != null)
+                                    {
+                                        <br />
+                                        @Html.Label(Model.BoxBaggerPhone[i])
+                                    }
+
+                                    if (Model.BoxBaggerPhone2[i] != null)
+                                    {
+                                        <br />
+                                        @Html.Label(Model.BoxBaggerPhone2[i])
+                                    }
+
+                                    if (Model.BoxBaggerEmail[i] != null)
+                                    {
+                                        var subject = "BHELP Food Program";
+                                        var body = @Model.BaggersSchedule[i].Date.ToLongDateString()
+                                                   + " OD: " + @Model.BoxBaggerName[i];
+                                        <a href="mailto:@Uri.EscapeDataString(Model.BoxBaggerEmail[i])
+                               ?Subject=@Uri.EscapeDataString(subject)
+                               &body=@Uri.EscapeDataString(body)">
+                                            @Model.BoxBaggerEmail[i]
+                                        </a>
+                                    }
+
+                                    if (Model.BoxNote[i] != null)
+                                    {
+                                        <br />
+                                        <span style="font-size: small">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            @Html.Label("Notes")
+                                        </span>
+                                        <br />
+                                        @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>"))
+
+                                    }
+
+                                    if (Model.BoxHoliday[i])
+                                    {
+                                        <br />
+                                        @Html.Raw(Model.BoxHolidayDescription[i].Replace(Environment.NewLine, "<br/>"))
+                                    }
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </table>
+        </div>
+
+    }
+    <div>
+    </div>
+</body>
+</html>
