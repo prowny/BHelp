@@ -16,7 +16,7 @@ namespace BHelp.Controllers
     {
         private readonly BHelpContext db = new BHelpContext();
 
-        // GET: Household
+        // GET: OD
         [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         public ActionResult Index(string callLogDate, string searchString, int? selectedId)
         {

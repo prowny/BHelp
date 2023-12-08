@@ -294,6 +294,7 @@
     <Compile Include="Controllers\AddressChecksController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Controllers\BaggerScheduleController.cs" />
     <Compile Include="Controllers\BulkEmailController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -394,6 +395,7 @@
     <Compile Include="Models\AssistancePayment.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Models\BaggerSchedule.cs" />
     <Compile Include="Models\Holiday.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -443,6 +445,7 @@
     </Compile>
     <Compile Include="ViewModels\AssistanceDataViewModel.cs" />
     <Compile Include="ViewModels\AssistanceViewModel.cs" />
+    <Compile Include="ViewModels\BaggerScheduleViewModel.cs" />
     <Compile Include="ViewModels\BoxSignUp.cs" />
     <Compile Include="ViewModels\BulkEmailViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1042,6 +1045,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="Views\Bagger\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
