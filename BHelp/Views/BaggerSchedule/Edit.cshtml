@@ -2,31 +2,16 @@
 @model BHelp.ViewModels.BaggerScheduleViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
-<!DOCTYPE html>
 
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Edit</title>
     <style>
-        #schedule {
-            border-collapse: collapse;
-            border: thin solid black
-        }
-
-        .top {
-            width: 185px;
-            border-right: thin solid black;
-        }
-
-        .edit {
-            width: 160px;
-        }
-
-        #SaveButton {
-            background-color: blue;
-            color: white
-        }
+        #schedule { border-collapse: collapse; border: thin solid black }
+        .top { width: 185px; border-right: thin solid black; }
+        .edit { width: 160px; }
+        #SaveButton { background-color: blue; color: white }
     </style>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
@@ -244,7 +229,7 @@
                                                 }
                                             }
                                         }
-                                        else // NOT IsODOnly
+                                        else // NOT IsBaggerOnly
                                         {
                                             if (Model.IsScheduler || Model.BaggersSchedule[i].Date >= DateTime.Today)
                                             {
@@ -265,7 +250,7 @@
                                         {
                                             <span style="font-size: small">
                                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                @Html.Label("OD: ")
+                                                @Html.Label("Bagger: ")
                                             </span>
                                             <span style="text-decoration-color: red">
                                                 @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
@@ -275,6 +260,10 @@
                                     else
                                     {
                                         <br />
+                                        <span style="font-size: small">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            @Html.Label("Bagger: ")
+                                        </span>
                                         @Html.Raw(Model.BoxBaggerName[i])
                                     }
 
@@ -292,14 +281,48 @@
 
                                     if (Model.BoxBaggerEmail[i] != null)
                                     {
-                                        var subject = "BHELP Food Program";
+                                        const string subject = "BHELP Food Program";
                                         var body = @Model.BaggersSchedule[i].Date.ToLongDateString()
-                                                   + " OD: " + @Model.BoxBaggerName[i];
+                                                   + " Bagger: " + @Model.BoxBaggerName[i];
                                         <a href="mailto:@Uri.EscapeDataString(Model.BoxBaggerEmail[i])
-                               ?Subject=@Uri.EscapeDataString(subject)
-                               &body=@Uri.EscapeDataString(body)">
+                                            ?Subject=@Uri.EscapeDataString(subject)
+                                            &body=@Uri.EscapeDataString(body)">
                                             @Model.BoxBaggerEmail[i]
                                         </a>
+                                    }
+
+                                    if (Model.BoxPartnerName[i] != null && Model.BoxPartnerName[i] != "(nobody yet)" )
+                                    {
+                                        <br />
+                                        <span style="font-size: small">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            @Html.Label("Partner: ")
+                                        </span>
+                                        @Html.Raw(Model.BoxPartnerName[i])
+                                    }
+
+                                    if (Model.BoxPartnerPhone[i] != null)
+                                    {
+                                        <br />
+                                        @Html.Label(Model.BoxPartnerPhone[i])
+                                    }
+
+                                    if (Model.BoxPartnerPhone2[i] != null)
+                                    {
+                                        <br />
+                                        @Html.Label(Model.BoxPartnerPhone2[i])
+                                    }
+
+                                    if (Model.BoxPartnerEmail[i] != null)
+                                    {
+                                        const string subject = "BHELP Food Program";
+                                        var body = @Model.BaggersSchedule[i].Date.ToLongDateString()
+                                                   + " Bagger: " + @Model.BoxPartnerName[i];
+                                        <a href="mailto:@Uri.EscapeDataString(Model.BoxPartnerEmail[i])>
+                                            ?Subject=@Uri.EscapeDataString(subject)
+                                            &body=@Uri.EscapeDataString(body)">
+                                        </a>
+                                        @Model.BoxPartnerEmail[i]
                                     }
 
                                     if (Model.BoxNote[i] != null)
@@ -338,8 +361,7 @@
 
 <script type="text/javascript">
     $(function () {
-        window.$("#BoxDate").datepicker({
-            
+        window.$("#BoxDate").datepicker({            
         });
     });
 </script>

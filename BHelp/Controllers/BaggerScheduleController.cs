@@ -134,7 +134,14 @@ namespace BHelp.Controllers
                 };
                 if (dt > DateTime.MinValue)
                 {
-                    schedule.DayString = dt.Day.ToString("0");
+                    if (IsFriSatSun(dt))  // substitute FriSatSun for day of week
+                    {
+                        schedule.DayString = dt.ToString("dddd" + " " + dt.ToShortDateString());
+                    }
+                    else
+                    {
+                        schedule.DayString = dt.Day.ToString("0");
+                    }
                 }
                 schedules.Add(schedule);
                 if (dt > DateTime.MinValue)
@@ -198,6 +205,9 @@ namespace BHelp.Controllers
                 };
                 db.BaggerSchedules.Add(newRec);
                 db.SaveChanges();
+
+                // if new record is a Fri-Sat-Sun, erase any previous Fri-Sat-Sun records:
+
 
                 // update session variable:
                 var msAdd = (List<BaggerSchedule>)Session["MonthlyBaggerSchedule"];
@@ -495,6 +505,11 @@ namespace BHelp.Controllers
             ms.Position = 0;
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             { FileDownloadName = "BHelpBaggerSchedule " + tempDate.ToString("MM") + "-" + tempDate.ToString("yyyy") + ".xlsx" };
+        }
+
+        private static bool IsFriSatSun(DateTime dt)
+        {
+            return dt.DayOfWeek is DayOfWeek.Friday or DayOfWeek.Saturday or DayOfWeek.Sunday;
         }
     }
 }
