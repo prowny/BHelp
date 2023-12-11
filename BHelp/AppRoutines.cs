@@ -1113,7 +1113,7 @@ namespace BHelp
 
             for (var i = 0; i < view.OpenDeliveryCount; i++)
             {
-                for (var col = 1; col < 19; col++)
+                for (var col = 1; col < 20; col++)
                 {
                     if (view.OpenDeliveries[i, col] != null)
                     {

@@ -207,13 +207,26 @@ namespace BHelp.Controllers
                 db.SaveChanges();
 
                 // if new record is a Fri-Sat-Sun, erase any previous Fri-Sat-Sun records:
-
-
+                if (IsFriSatSun(schedule.Date))
+                {
+                    var prevFri = schedule.Date.AddDays(-1);
+                    var prevSat = schedule.Date.AddDays(-2);
+                    var prevSun = schedule.Date.AddDays(-3);
+                    var prevFriRec = db.BaggerSchedules.FirstOrDefault(d => d.Date == prevFri);
+                    if (prevFriRec != null) db.BaggerSchedules.Remove(prevFriRec);
+                    var prevSatRec = db.BaggerSchedules.FirstOrDefault(d => d.Date == prevSat);
+                    if (prevSatRec != null) db.BaggerSchedules.Remove(prevSatRec);
+                    var prevSunRec = db.BaggerSchedules.FirstOrDefault(d => d.Date == prevSun);
+                    if (prevSunRec != null) db.BaggerSchedules.Remove(prevSunRec);
+                    db.SaveChanges();
+                }
+                
                 // update session variable:
                 var msAdd = (List<BaggerSchedule>)Session["MonthlyBaggerSchedule"];
                 var newMsAdd = new BaggerSchedule()
                 {
                     BaggerId = schedule.BaggerId,
+                    PartnerId = schedule.PartnerId,
                     Date = schedule.Date
                 };
                 msAdd.Add(newMsAdd);
