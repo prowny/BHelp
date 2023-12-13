@@ -134,9 +134,10 @@ namespace BHelp.Controllers
                 };
                 if (dt > DateTime.MinValue)
                 {
+                    // !!!get bagger records for this date range, then look up to see if there's a record for this date & which day of week it is
                     if (IsFriSatSun(dt))  // substitute FriSatSun for day of week
                     {
-                        schedule.DayString = dt.ToString("dddd" + " " + dt.ToShortDateString());
+                        schedule.DayString = dt.ToString("dddd" + " " + dt.ToString("MM/dd/yyyy"));
                     }
                     else
                     {
@@ -146,11 +147,21 @@ namespace BHelp.Controllers
                 schedules.Add(schedule);
                 if (dt > DateTime.MinValue)
                 {
-                    dt = dt.AddDays(1);
-                    if ((int)dt.DayOfWeek == 6)
+                    if (IsFriSatSun(dt))
                     {
-                        dt = dt.AddDays(2);
+                        if (dt.DayOfWeek == DayOfWeek.Friday) dt = dt.AddDays(3);
+                        if (dt.DayOfWeek == DayOfWeek.Saturday) dt = dt.AddDays(2);
+                        if (dt.DayOfWeek == DayOfWeek.Sunday) dt = dt.AddDays(1);
                     }
+                    else
+                    {
+                        dt = dt.AddDays(1);
+                    }
+                    //dt = dt.AddDays(1);
+                    //if ((int)dt.DayOfWeek == 6)
+                    //{
+                    //    dt = dt.AddDays(2);
+                    //}
 
                     if (dt > endDate) dt = DateTime.MinValue;
                 }
@@ -341,6 +352,7 @@ namespace BHelp.Controllers
 
                 BoxNote = new string[26],
                 BoxHoliday = new bool[26],
+                BoxFriSatSun = new bool[26],
                 BoxHolidayDescription = new string[26]
             };
             var dateData = Session["BaggerScheduleDateData"].ToString();
@@ -368,6 +380,11 @@ namespace BHelp.Controllers
                         view.BoxHoliday[idx] = true;
                         var holidayData = GetHolidayData(view.BoxDay[i, j]);
                         view.BoxHolidayDescription[idx] = holidayData.Description + Environment.NewLine + "BH Closed";
+                    }
+
+                    if (IsFriSatSun(view.BoxDay[i, j]))
+                    {
+                        view.BoxFriSatSun[idx] = true;
                     }
 
                     var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);

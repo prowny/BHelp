@@ -1,4 +1,5 @@
 ﻿@using System.Web.Mvc.Html
+@using DocumentFormat.OpenXml.Wordprocessing
 @model BHelp.ViewModels.BaggerScheduleViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
@@ -250,14 +251,15 @@
                                         {
                                             <span style="font-size: small">
                                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                @Html.Label("Bagger: ")
-                                            </span>
-                                            <span style="text-decoration-color: red">
-                                                @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
-                                            </span>
+                                            @Html.Label("Bagger: ")
+                                        </span>
+
+                                        <span style="text-decoration-color: red">
+                                            @Html.Label("TBD", new { style = "color: red; font-weight: bold" })
+                                        </span>
                                         }
                                     }
-                                    else
+                                    else  /* BoxBaggerName != null */
                                     {
                                         <br />
                                         <span style="font-size: small">

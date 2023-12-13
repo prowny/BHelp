@@ -33,7 +33,6 @@
             <strong>Developer Menu</strong><br />
             <a href="@Url.Action("Index", "DriverEmail")">Driver Email</a><br />
             <a href="@Url.Action("Index", "Logins")">View Logins Log</a><br />
-            <a href="@Url.Action("Edit", "BaggerSchedule")">Maintain Bagger Schedules</a><br />
         </div>
         <br />
     }
@@ -148,6 +147,12 @@
     {
     <a href="@Url.Action("Edit", "ODSchedule")">Maintain OD Schedules</a><br />
     }
+    
+    @if(User.IsInAnyRoles("Developer","Administrator","BaggerScheduler"))
+    {
+        <a href="@Url.Action("Edit", "BaggerSchedule")">Maintain Bagger Schedules</a><br />
+    }
+
     @*<a href="@Url.Action("Index", "ODEmail")">OD Schedule Email</a><br />*@
     <a href="@Url.Action("Index", "Holidays")">Maintain Holidays</a><br />
 </div>

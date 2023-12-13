@@ -24,6 +24,7 @@ namespace BHelp.ViewModels
         public string Note { get; set; }
 
         public bool IsHoliday { get; set; }
+        public bool IsFriSatSun { get; set; }
         public string DayString { get; set; }
         public int Month { get; set; }
         public string MonthName { get; set; }
@@ -46,6 +47,7 @@ namespace BHelp.ViewModels
         public string[] BoxPartnerEmail { get; set; }
         public bool[] BoxHoliday { get; set; }
         public string[] BoxHolidayDescription { get; set; }
+        public bool[] BoxFriSatSun { get; set; }
 
         [DataType(DataType.MultilineText)]
         public string[] BoxNote { get; set; }
