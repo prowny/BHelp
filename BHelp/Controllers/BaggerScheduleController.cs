@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
-using Org.BouncyCastle.Utilities;
 using ClosedXML.Excel;
 using System.IO;
+using Strings = Org.BouncyCastle.Utilities.Strings;
 
 namespace BHelp.Controllers
 {
@@ -28,8 +28,7 @@ namespace BHelp.Controllers
             }
             else  // returning to BaggerSchedule
             {
-                // Returning with changes:
-                if (baggerId != null)
+                if (baggerId != null) // Returning with Bagger change:
                 {
                     var dateData = Session["BaggerScheduleDateData"].ToString();
                     var day = Convert.ToInt32(dateData.Substring(0, 2));
@@ -123,6 +122,7 @@ namespace BHelp.Controllers
                     }
                 }
 
+                var monthlyList = (List<BaggerSchedule>)Session["MonthlyBaggerSchedule"];
                 var schedule = new BaggerScheduleViewModel
                 {
                     Id = i,
@@ -134,34 +134,48 @@ namespace BHelp.Controllers
                 };
                 if (dt > DateTime.MinValue)
                 {
-                    // !!!get bagger records for this date range, then look up to see if there's a record for this date & which day of week it is
+                    schedule.DayString = dt.Day.ToString("0"); // default
                     if (IsFriSatSun(dt))  // substitute FriSatSun for day of week
                     {
-                        schedule.DayString = dt.ToString("dddd" + " " + dt.ToString("MM/dd/yyyy"));
-                    }
-                    else
-                    {
-                        schedule.DayString = dt.Day.ToString("0");
+                        // check for existing Fri-Sat-Sun:
+                        var chkDt = dt;
+                        var mIdx = monthlyList.FindIndex(d => d.Date == chkDt); //Friday
+                        if (mIdx >= 0)
+                        {
+                            schedule.DayString = chkDt.ToString("dddd" + " " + chkDt.ToString("MM/dd/yyyy"));
+                        }
+
+                        if (mIdx == -1)
+                        {
+                            chkDt = chkDt.AddDays(1); // Saturday
+                            mIdx = monthlyList.FindIndex(d => d.Date == chkDt);
+                            if (mIdx >= 0)
+                            {
+                                schedule.DayString = chkDt.ToString("dddd" + " " + chkDt.ToString("MM/dd/yyyy"));
+                            }
+                        }
+
+                        if (mIdx == -1)
+                        {
+                            chkDt = chkDt.AddDays(1); // Sunday
+                            mIdx = monthlyList.FindIndex(d => d.Date == chkDt);
+                            if (mIdx >= 0)
+                            {
+                                schedule.DayString = chkDt.ToString("dddd" + " " + chkDt.ToString("MM/dd/yyyy"));
+                            }
+                        }
                     }
                 }
                 schedules.Add(schedule);
+
                 if (dt > DateTime.MinValue)
                 {
-                    if (IsFriSatSun(dt))
+                    dt = dt.AddDays(1);
+
+                    if ((int)dt.DayOfWeek == 6)
                     {
-                        if (dt.DayOfWeek == DayOfWeek.Friday) dt = dt.AddDays(3);
-                        if (dt.DayOfWeek == DayOfWeek.Saturday) dt = dt.AddDays(2);
-                        if (dt.DayOfWeek == DayOfWeek.Sunday) dt = dt.AddDays(1);
+                        dt = dt.AddDays(2);
                     }
-                    else
-                    {
-                        dt = dt.AddDays(1);
-                    }
-                    //dt = dt.AddDays(1);
-                    //if ((int)dt.DayOfWeek == 6)
-                    //{
-                    //    dt = dt.AddDays(2);
-                    //}
 
                     if (dt > endDate) dt = DateTime.MinValue;
                 }
@@ -184,39 +198,49 @@ namespace BHelp.Controllers
                     .FirstOrDefault(d => d.Date == schedule.Date);
                 if (rec != null)
                 {
-                    // Update record
-                    if (schedule.BaggerId == "0") schedule.BaggerId = null;
-                    rec.BaggerId = schedule.BaggerId;
-                    rec.PartnerId = schedule.PartnerId;
-                    rec.Note = schedule.Note;
-                    db.SaveChanges();
 
-                    // update session variable:
-                    var msUpdate = (List<BaggerSchedule>)Session["MonthlyBaggerSchedule"];
-                    foreach (var item in msUpdate.Where(s => s.Date == schedule.Date))
+                    if (schedule.BaggerId == "0") // Remove record
                     {
-                        item.BaggerId = schedule.BaggerId;
-                        item.PartnerId = schedule.PartnerId;
-                        item.Note = schedule.Note;
+                        db.BaggerSchedules.Remove(rec);
+                        db.SaveChanges();
+                        // update session variable:
+                        var msRemove = (List<BaggerSchedule>)Session["MonthlyBaggerSchedule"];
+                        var removeIdx = msRemove.FindIndex(d => d.Date == schedule.Date);
+                        if (removeIdx >= 0) msRemove.RemoveAt(removeIdx);
+                        Session["MonthlyBaggerSchedule"] = msRemove;
+                        return RedirectToAction("Edit", new { boxDate = schedule.Date, baggerid = "0" });
                     }
+                    else // Update record
+                    {
+                        rec.Date = schedule.Date;
+                        rec.BaggerId = schedule.BaggerId;
+                        rec.PartnerId = schedule.PartnerId;
+                        rec.Note = schedule.Note;
+                        db.SaveChanges();
+                        // update session variable:
+                        var msUpdate = (List<BaggerSchedule>)Session["MonthlyBaggerSchedule"];
+                        foreach (var item in msUpdate.Where(s => s.Date == schedule.Date))
+                        {
+                            item.BaggerId = schedule.BaggerId;
+                            item.PartnerId = schedule.PartnerId;
+                            item.Note = schedule.Note;
+                        }
 
-                    Session["MonthlyBaggerSchedule"] = msUpdate;
-
-                    return RedirectToAction("Edit", new { boxDate = schedule.Date, baggerid = schedule.BaggerId });
+                        Session["MonthlyBaggerSchedule"] = msUpdate;
+                    }
                 }
 
                 // Add new record
-                if (schedule.BaggerId == "0") schedule.BaggerId = null;
                 var newRec = new BaggerSchedule()
                 {
-                    Date = schedule.Date,
-                    BaggerId = schedule.BaggerId,
-                    PartnerId = schedule.PartnerId,
-                    Note = schedule.Note
+                Date = schedule.Date,
+                BaggerId = schedule.BaggerId,
+                PartnerId = schedule.PartnerId,
+                Note = schedule.Note
                 };
                 db.BaggerSchedules.Add(newRec);
                 db.SaveChanges();
-
+            
                 // if new record is a Fri-Sat-Sun, erase any previous Fri-Sat-Sun records:
                 if (IsFriSatSun(schedule.Date))
                 {
@@ -224,11 +248,11 @@ namespace BHelp.Controllers
                     var prevSat = schedule.Date.AddDays(-2);
                     var prevSun = schedule.Date.AddDays(-3);
                     var prevFriRec = db.BaggerSchedules.FirstOrDefault(d => d.Date == prevFri);
-                    if (prevFriRec != null) db.BaggerSchedules.Remove(prevFriRec);
+                    if (prevFriRec != null && prevFriRec.Date != schedule.Date) db.BaggerSchedules.Remove(prevFriRec);
                     var prevSatRec = db.BaggerSchedules.FirstOrDefault(d => d.Date == prevSat);
-                    if (prevSatRec != null) db.BaggerSchedules.Remove(prevSatRec);
+                    if (prevSatRec != null && prevSatRec.Date != schedule.Date) db.BaggerSchedules.Remove(prevSatRec);
                     var prevSunRec = db.BaggerSchedules.FirstOrDefault(d => d.Date == prevSun);
-                    if (prevSunRec != null) db.BaggerSchedules.Remove(prevSunRec);
+                    if (prevSunRec != null && prevSunRec.Date != schedule.Date) db.BaggerSchedules.Remove(prevSunRec);
                     db.SaveChanges();
                 }
                 
@@ -250,6 +274,7 @@ namespace BHelp.Controllers
                 return RedirectToAction("Edit");
             }
         }
+        
 
         private void GetBaggerLookUpLists(DateTime? boxDate)
         {   // AND BaggerDataList AND NonSchedulerBaggerSelectList
@@ -382,13 +407,23 @@ namespace BHelp.Controllers
                         view.BoxHolidayDescription[idx] = holidayData.Description + Environment.NewLine + "BH Closed";
                     }
 
-                    if (IsFriSatSun(view.BoxDay[i, j]))
+                    var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
+
+                    if (view.BoxDay[i, j].DayOfWeek == (DayOfWeek)5 && mIdx == -1) // This is a Friday - put Fri-Sat-Sun records in this box ('idx')
                     {
-                        view.BoxFriSatSun[idx] = true;
+                        var _boxday = view.BoxDay[i, j].AddDays(1); // Saturday
+                        mIdx = monthlyList.FindIndex(d => d.Date == _boxday);
+                        if (mIdx >= 0) { view.BoxDay[i, j] = _boxday;}
+
+                        if (mIdx == -1) // look for Sunday record: 
+                        {
+                            _boxday = _boxday.AddDays(1); // Sunday
+                            mIdx = monthlyList.FindIndex(d => d.Date == _boxday);
+                            if (mIdx >= 0) { view.BoxDay[i, j] = _boxday; }
+                        }
                     }
 
-                    var mIdx = monthlyList.FindIndex(d => d.Date == view.BoxDay[i, j]);
-                    if (mIdx >= 0) // mIdx = -1 if match not found
+                    if (mIdx >= 0) // match found -  (mIdx = -1 if match not found)
                     {
                         var baggerIdx = baggerList.FindIndex(d => d.Value == monthlyList[mIdx].BaggerId);
                         if (baggerIdx >= 0)
@@ -512,6 +547,27 @@ namespace BHelp.Controllers
                         {
                             boxContents += Environment.NewLine + view.BoxBaggerEmail[idx];
                         }
+
+                        if (view.BoxPartnerName[idx] != null)
+                        {
+                            boxContents += Environment.NewLine + "Partner:";
+                            boxContents += Environment.NewLine + view.BoxPartnerName[idx];
+                            if (view.BoxPartnerPhone[idx] != null)
+                            {
+                                boxContents += Environment.NewLine + view.BoxPartnerPhone[idx];
+                            }
+                            if (view.BoxPartnerPhone2[idx] != null)
+                            {
+                                boxContents += Environment.NewLine + view.BoxPartnerPhone2[idx];
+                            }
+
+                            if (view.BoxPartnerEmail[idx] != null)
+                            {
+                                boxContents += Environment.NewLine + view.BoxPartnerEmail[idx];
+                            }
+
+                        }
+
 
                         if (view.BoxNote[idx] != null)
                         {

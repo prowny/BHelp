@@ -59,7 +59,7 @@ namespace BHelp.Controllers
 
             var view = GetODScheduleViewModel();
 
-            if (User.IsInAnyRoles("DriverScheduler", "Developer", "Administrator"))
+            if (User.IsInAnyRoles("ODScheduler", "Developer", "Administrator"))
             {
                 var cutOffDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
                 if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer", "Administrator"))
@@ -67,7 +67,7 @@ namespace BHelp.Controllers
                     view.AllowEdit = true;
                 }
 
-                if (User.IsInAnyRoles("DriverScheduler", "Developer", "Administrator"))
+                if (User.IsInAnyRoles("ODScheduler", "Developer", "Administrator"))
                 {
                     view.IsScheduler = true;
                 }

@@ -1,5 +1,4 @@
 ﻿@using System.Web.Mvc.Html
-@using DocumentFormat.OpenXml.Wordprocessing
 @model BHelp.ViewModels.BaggerScheduleViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
@@ -237,8 +236,19 @@
                                                 if (!Model.BoxHoliday[i])
                                                 {
                                                     <span style="font-size: small">
-                                                        @Html.ActionLink("Edit", "Edit",
-                                                            new { boxDate = Model.BaggersSchedule[i].Date })
+                                                        @if (Model.BaggersSchedule[i].DayString.Length >2)
+                                                        {
+                                                            var _d = Model.BaggersSchedule[i].DayString;
+                                                            var _ds = _d.Substring(_d.Length - 10, 10);
+                                                            var _dt = Convert.ToDateTime(_ds);
+                                                            @Html.ActionLink("Edit", "Edit",
+                                                                new { boxDate = _dt })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.ActionLink("Edit", "Edit",
+                                                                new { boxDate = Model.BaggersSchedule[i].Date })
+                                                        }
                                                     </span>
                                                 }
                                             }
@@ -363,7 +373,17 @@
 
 <script type="text/javascript">
     $(function () {
-        window.$("#BoxDate").datepicker({            
+        var day;
+        window.$("#BoxDate").datepicker({  
+            //beforeShowDay: function (date) {
+            //    day = date.getDay();  
+            //    /*Mon-Tue-Wed-Thur only: */
+            //    if (day == 1 || day == 2 || day == 3 || day == 4) {
+            //        return [true];
+            //    } else {
+            //        return [false];
+            //    }
+            //}
         });
     });
 </script>
@@ -372,7 +392,7 @@
         window.$('#BoxDate').change(function () {
             var _boxDate = window.$(this).val();
             var link = '@Url.Action("Edit", "BaggerSchedule",
-                            new { boxDate = "-1" })';
+                            new { boxDate = "-1" })'; /* -1 is a placeholder  */      
             link = link.replace("-1", _boxDate);
             window.location.href = link;
         });
