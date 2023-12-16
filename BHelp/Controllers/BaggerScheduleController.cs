@@ -240,7 +240,7 @@ namespace BHelp.Controllers
                 };
                 db.BaggerSchedules.Add(newRec);
                 db.SaveChanges();
-            
+
                 // if new record is a Fri-Sat-Sun, erase any previous Fri-Sat-Sun records:
                 if (IsFriSatSun(schedule.Date))
                 {
