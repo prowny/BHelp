@@ -127,7 +127,7 @@
         <strong>Bagger Menu</strong><br />
         @*<a href="@Url.Action("Index", "BaggerEmail")">Bagger Schedule Email</a><br />*@
         <a href="@Url.Action("Edit", "BaggerSchedule")">View Bagger Schedules</a><br />
-
+        <a href="@Url.Action("Individual", "BaggerSchedule")">My Schedule Signup / Edit</a><br />
         @if (Model.ShowBaggerDocumentsMenu)
         {
             <a href="@Url.Action("ViewDocumentCategory", "Documents", new {menuCat="Bagger"})">View Bagger Documents</a>

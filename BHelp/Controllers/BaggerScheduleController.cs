@@ -9,6 +9,8 @@ using Microsoft.AspNet.Identity;
 using ClosedXML.Excel;
 using System.IO;
 using Strings = Org.BouncyCastle.Utilities.Strings;
+using System.Net.Mail;
+using System.Net;
 
 namespace BHelp.Controllers
 {
@@ -274,7 +276,147 @@ namespace BHelp.Controllers
                 return RedirectToAction("Edit");
             }
         }
-        
+
+        // GET: zbsggerSchedule/Individual Signup
+        public ActionResult Individual(DateTime? boxDate)
+        {
+            if (boxDate == null)
+            {
+                var month = DateTime.Today.Month;
+                var year = DateTime.Today.Year;
+                var day = AppRoutines.GetFirstWeekdayDate(month, year);
+                boxDate = DateTime.Today;
+                Session["BaggerScheduleDateData"] = day.Day.ToString("00") + month.ToString("00") + year;
+            }
+            else
+            {
+                var month = boxDate.GetValueOrDefault().Month;
+                var year = boxDate.GetValueOrDefault().Year;
+                var day = AppRoutines.GetFirstWeekdayDate(month, year);
+                Session["BaggerScheduleDateData"] = day.Day.ToString("00") + month.ToString("00") + year;
+            }
+            GetBaggerLookUpLists(boxDate);
+            var view = GetBaggerScheduleViewModel();
+            view.TodayYearMonth = DateTime.Today.Year * 100 + DateTime.Today.Month;
+            var schedules = new List<BaggerScheduleViewModel>();
+            var startDt = AppRoutines.GetFirstWeekDay(view.Month, view.Year);
+            var endDate = new DateTime(view.Year, view.Month, DateTime.DaysInMonth(view.Year, view.Month));
+            var startDayOfWk = (int)startDt.DayOfWeek;
+            var dt = DateTime.MinValue;
+            var skip = false;
+            for (var i = 0; i < 27; i++)
+            {
+                if (i >= startDayOfWk)
+                {
+                    if (skip == false)
+                    {
+                        dt = startDt;
+                        skip = true;
+                    }
+                }
+
+                var schedule = new BaggerScheduleViewModel
+                {
+                    Id = i,
+                    Date = dt,
+                    BaggerId = "0",
+                    MonthName = view.MonthName,
+                    Note = view.Note
+                };
+                if (dt > DateTime.MinValue)
+                {
+                    schedule.DayString = dt.Day.ToString("0");
+                }
+
+                schedules.Add(schedule);
+
+                if (dt > DateTime.MinValue)
+                {
+                    dt = dt.AddDays(1);
+                    if ((int)dt.DayOfWeek == 6)
+                    {
+                        dt = dt.AddDays(2);
+                    }
+
+                    if (dt > endDate) dt = DateTime.MinValue;
+                }
+            }
+
+            view.BaggersSchedule = schedules;
+            return View(view);
+        }
+
+        public ActionResult BaggerSignUp(int? idx, DateTime? date, bool? cancel)
+        {
+            var CurrentUserId = User.Identity.GetUserId();
+            var text = AppRoutines.GetUserFullName(User.Identity.GetUserId());
+            // check for existing BaggerSchedules record
+            using var db = new BHelpContext();
+            var rec = db.BaggerSchedules
+                .FirstOrDefault(od => od.Date == date);
+            if (rec != null)
+            {
+                if (cancel == true)
+                {
+                    rec.BaggerId = null;
+                    rec.Note = null;
+                    text += " has canceled as Bagger for " + date?.ToString("MM/dd/yyyy");
+                }
+                else // cancel = false:
+                {
+                    rec.BaggerId = CurrentUserId;
+                    rec.Note = null;
+                    text += " has signed up as Bagger for " + date?.ToString("MM/dd/yyyy");
+                }
+                db.SaveChanges();
+            }
+            else  // no existing rec:
+            {
+                if (date != null)
+                {
+                    var newRec = new BaggerSchedule()
+                    {
+                        Date = (DateTime)date,
+                        BaggerId = CurrentUserId
+                    };
+                    db.BaggerSchedules.Add(newRec);
+                    text += " has signed up as Bagger for " + date.Value.ToString("MM/dd/yyyy");
+                }
+                db.SaveChanges();
+            }
+            SendEmailToBaggerScheduler(text);
+
+            return RedirectToAction("Individual", new { boxDate = date });
+        }
+
+        private static void SendEmailToBaggerScheduler(string text)
+        {
+            var roleId = AppRoutines.GetRoleId("BaggerScheduler");
+            var listUserIdsInRole = AppRoutines.GetUserIdsInRole(roleId);
+
+            foreach (var user in listUserIdsInRole)
+            {
+                var email = AppRoutines.GetUserEmail(user);
+                SendEmail(email, text);
+            }
+        }
+        private static void SendEmail(string address, string text)
+        {
+            if (AppRoutines.IsDebug())
+            {
+                address = "prowny@aol.com"; // for testing !!!!!!!!!!!!!!!!!!!!!!!
+            }
+            using var msg = new MailMessage();
+            msg.From = new MailAddress("BaggerScheduler@BethesdaHelpFD.org", "BHELP Bagger Scheduler");
+            msg.To.Add(new MailAddress(address, "BHELP Bagger"));
+            msg.Subject = "BHELP - Bagger Schedule";
+            msg.Body = text;
+
+            msg.Priority = MailPriority.Normal;
+            using var mailClient = new SmtpClient("BethesdaHelpFD.org", 587);
+            mailClient.Credentials = new NetworkCredential("BaggerScheduler@BethesdaHelpFD.org", "nq!aeyu9Gc_Ebm2aoP@vNNnPi");
+            mailClient.Send(msg);
+        }
 
         private void GetBaggerLookUpLists(DateTime? boxDate)
         {   // AND BaggerDataList AND NonSchedulerBaggerSelectList
