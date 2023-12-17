@@ -277,7 +277,7 @@ namespace BHelp.Controllers
             }
         }
 
-        // GET: zbsggerSchedule/Individual Signup
+        // GET: BaggerSchedule/Individual Signup
         public ActionResult Individual(DateTime? boxDate)
         {
             if (boxDate == null)
@@ -315,6 +315,7 @@ namespace BHelp.Controllers
                     }
                 }
 
+                var monthlyList = (List<BaggerSchedule>)Session["MonthlyBaggerSchedule"];
                 var schedule = new BaggerScheduleViewModel
                 {
                     Id = i,
@@ -325,7 +326,39 @@ namespace BHelp.Controllers
                 };
                 if (dt > DateTime.MinValue)
                 {
-                    schedule.DayString = dt.Day.ToString("0");
+                    schedule.DayString = dt.Day.ToString("0"); // default
+
+                    if (IsFriSatSun(dt))  // substitute FriSatSun for day of week
+                    {
+                        // check for existing Fri-Sat-Sun:
+                        var chkDt = dt;
+                        var mIdx = monthlyList.FindIndex(d => d.Date == chkDt); //Friday
+                        if (mIdx >= 0)
+                        {
+                            schedule.DayString = chkDt.ToString("dddd" + " " + chkDt.ToString("MM/dd/yyyy"));
+                        }
+
+                        if (mIdx == -1)
+                        {
+                            chkDt = chkDt.AddDays(1); // Saturday
+                            mIdx = monthlyList.FindIndex(d => d.Date == chkDt);
+                            if (mIdx >= 0)
+                            {
+                                schedule.DayString = chkDt.ToString("dddd" + " " + chkDt.ToString("MM/dd/yyyy"));
+                            }
+                        }
+
+                        if (mIdx == -1)
+                        {
+                            chkDt = chkDt.AddDays(1); // Sunday
+                            mIdx = monthlyList.FindIndex(d => d.Date == chkDt);
+                            if (mIdx >= 0)
+                            {
+                                schedule.DayString = chkDt.ToString("dddd" + " " + chkDt.ToString("MM/dd/yyyy"));
+                            }
+                        }
+                    }
+
                 }
 
                 schedules.Add(schedule);
@@ -353,7 +386,7 @@ namespace BHelp.Controllers
             // check for existing BaggerSchedules record
             using var db = new BHelpContext();
             var rec = db.BaggerSchedules
-                .FirstOrDefault(od => od.Date == date);
+                .FirstOrDefault(bgr => bgr.Date == date);
             if (rec != null)
             {
                 if (cancel == true)
@@ -361,6 +394,10 @@ namespace BHelp.Controllers
                     rec.BaggerId = null;
                     rec.Note = null;
                     text += " has canceled as Bagger for " + date?.ToString("MM/dd/yyyy");
+                    db.BaggerSchedules.Remove(rec);
+                    db.SaveChanges();
+                    SendEmailToBaggerScheduler(text);
+                    return RedirectToAction("Individual", new { boxDate = date });
                 }
                 else // cancel = false:
                 {
@@ -414,7 +451,7 @@ namespace BHelp.Controllers
 
             msg.Priority = MailPriority.Normal;
             using var mailClient = new SmtpClient("BethesdaHelpFD.org", 587);
-            mailClient.Credentials = new NetworkCredential("BaggerScheduler@BethesdaHelpFD.org", "nq!aeyu9Gc_Ebm2aoP@vNNnPi");
+            mailClient.Credentials = new NetworkCredential("BaggerScheduler@BethesdaHelpFD.org", "f10A7749-75ae-4D0e-9914-2beE4af4c62d");
             mailClient.Send(msg);
         }
 
@@ -623,6 +660,30 @@ namespace BHelp.Controllers
             }
             var _boxDate = AppRoutines.GetFirstWeekdayDate(month, year);
             return RedirectToAction("Edit", new { boxDate = _boxDate });
+        }
+
+        public ActionResult PreviousMonthIndividualBagger(int month, int year)
+        {
+            month = month - 1;
+            if (month < 1)
+            {
+                month = 12;
+                year = year - 1;
+            }
+            var _boxDate = AppRoutines.GetFirstWeekDay(month, year);
+            return RedirectToAction("Individual", new { boxDate = _boxDate });
+        }
+
+        public ActionResult NextMonthIndividualBagger(int month, int year)
+        {
+            month = month + 1;
+            if (month > 12)
+            {
+                month = 1;
+                year = year + 1;
+            }
+            var _boxDate = AppRoutines.GetFirstWeekDay(month, year);
+            return RedirectToAction("Individual", new { boxDate = _boxDate });
         }
 
         [Authorize(Roles = "Developer,Administrator,Staff,BaggerScheduler,OfficerOfTheDay")]

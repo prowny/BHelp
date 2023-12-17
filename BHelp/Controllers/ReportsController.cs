@@ -176,6 +176,13 @@ namespace BHelp.Controllers
             var view = new UserViewModel { UserList = GetUserMasterList("OfficerOfTheDay") };
             return View(view);
         }
+
+        public ActionResult BaggerMasterList()
+        {
+            var view = new UserViewModel { UserList = GetUserMasterList("Bagger") };
+            return View(view);
+        }
+
         public ActionResult MasterListToExcel(string role)
         {
             var listMaster = GetUserMasterList(role);

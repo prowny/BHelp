@@ -1,0 +1,49 @@
+﻿@model BHelp.ViewModels.UserViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>BaggerMasterList</title>
+</head>
+<body>
+<div>
+    <table>
+        <tr>
+            <td><b>As of @DateTime.Today.ToShortDateString()</b></td>
+        </tr>
+        <tr>
+            <td><b>Active Baggers</b></td>
+        </tr>
+        <tr>
+            <td><b>First Name</b></td>
+            <td><b>Last Name</b></td>
+            <td><b>Email</b></td>
+            <td><b>Phone</b></td>
+            <td><b>Phone 2</b></td>
+        </tr>
+        @foreach (var usr in Model.UserList)
+        {
+            <tr>
+                <td>@usr.FirstName</td>
+                <td>@usr.LastName</td>
+                <td><a href="mailto:">@usr.Email</a></td>
+                <td>@usr.PhoneNumber</td>
+                <td>@usr.PhoneNumber2</td>
+            </tr>
+        }
+    </table>
+</div>
+<div>
+    <br />
+    @Html.ActionLink("Download to Excel File", "MasterListToExcel", new { role = "Bagger" })
+    <br />
+    @Html.ActionLink("Download to CSV File", "MasterListToCSV", new { role = "Bagger" })
+    <br />
+    @Html.ActionLink("Return to Reports Menu", "ReportsMenu")
+    <br />
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
+</body>
+</html>
