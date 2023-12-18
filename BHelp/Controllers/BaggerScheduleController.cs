@@ -57,10 +57,10 @@ namespace BHelp.Controllers
 
             var view = GetBaggerScheduleViewModel();
 
-            if (User.IsInAnyRoles("DriverScheduler", "Developer", "Administrator"))
+            if (User.IsInAnyRoles("BaggerScheduler", "Developer", "Administrator"))
             {
                 var cutOffDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-                if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer", "Administrator"))
+                if (view.Date >= cutOffDate || User.IsInAnyRoles("Developer", "Administrator", "BaggerScheduler"))
                 {
                     view.AllowEdit = true;
                 }
