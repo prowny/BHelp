@@ -37,7 +37,7 @@ namespace BHelp.Controllers
                 };
                 familyList.Add(headOfHousehold);
                 var familyMembers = new List<FamilyMember>();
-                foreach (FamilyMember member in familyList)
+                foreach (var member in familyList)
                 {
                     member.Age = AppRoutines.GetAge(member.DateOfBirth, DateTime.Today);
                     familyMembers.Add(member);

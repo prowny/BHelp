@@ -48,26 +48,26 @@ namespace BHelp.Controllers
         private static List<SelectListItem> LoadMenuCategories()
         {
             var selList = new List<SelectListItem>();
-            var role = new SelectListItem() { Value = "Everyone", Text = @"Everyone" };
+            var role = new SelectListItem() { Value = "Everyone", Text = "Everyone" };
             selList.Add(role);
-            role = new SelectListItem() { Value = "Administrator", Text = @"Administrator" };
+            role = new SelectListItem() { Value = "Administrator", Text = "Administrator" };
             selList.Add(role);
-            role = new SelectListItem() { Value = "Staff", Text = @"Staff" };
+            role = new SelectListItem() { Value = "Staff", Text = "Staff" };
             selList.Add(role);
-            role = new SelectListItem() { Value = "OfficerOfTheDay", Text = @"OD" };
+            role = new SelectListItem() { Value = "OfficerOfTheDay", Text = "OD" };
             selList.Add(role);
-            role = new SelectListItem() { Value = "Driver", Text = @"Driver" };
+            role = new SelectListItem() { Value = "Bagger", Text = "Bagger" };
+            selList.Add(role);
+            role = new SelectListItem() { Value = "Driver", Text = "Driver" };
             selList.Add(role); 
-            role = new SelectListItem() { Value = "Reports", Text = @"Reports" };
+            role = new SelectListItem() { Value = "Reports", Text = "Reports" };
             selList.Add(role);
-            role = new SelectListItem() { Value = "PantryCoordinator", Text = @"Pantry Coordinator" };
+            role = new SelectListItem() { Value = "PantryCoordinator", Text = "Pantry Coordinator" };
             selList.Add(role);
-            role = new SelectListItem() { Value = "DriverScheduler", Text = @"DriverScheduler" };
+            role = new SelectListItem() { Value = "DriverScheduler", Text = "DriverScheduler" };
             selList.Add(role);
-            role = new SelectListItem() { Value = "Trainer", Text = @"Trainer" };
+            role = new SelectListItem() { Value = "Trainer", Text = "Trainer" };
             selList.Add(role);
-            selList.Add(role);
-            role = new SelectListItem() { Value = "Bagger", Text = @"Bagger" };
             selList.Add(role);
             return selList;
         }

@@ -86,7 +86,7 @@ namespace BHelp.Controllers
             if (id == null)
             { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
 
-            Delivery delivery = db.Deliveries.Find(id);
+            var delivery = db.Deliveries.Find(id);
             if (delivery == null) return RedirectToAction("Index");
             delivery.DriversList = AppRoutines.GetDriversSelectList();
             foreach (var item in delivery.DriversList)
@@ -131,6 +131,17 @@ namespace BHelp.Controllers
                     del.KidSnacks = delivery.KidSnacks;
                     del.GiftCards = delivery.GiftCards;
                     del.HolidayGiftCards = delivery.HolidayGiftCards;
+
+                    // Only Administrators may see and edit HolidayGiftCards outside of NOV-DEC  12-30-2023
+                    if (delivery.DateDelivered != null)
+                    {
+                        var delMonth = delivery.DateDelivered.Value.Month;
+                        if (delMonth != 11 && delMonth != 12 && !User.IsInRole("Administrator")) 
+                        {
+                            del.HolidayGiftCards = 0;
+                        }
+                    }
+
                     del.DriverNotes = delivery.DriverNotes;
                     del.DateDelivered = delivery.DateDelivered;
                     switch (delivery.SelectedStatus)

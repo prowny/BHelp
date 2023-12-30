@@ -95,11 +95,20 @@
                     <td>@Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { style = "width:30px", @min = "0", @max = 2 } })</td>
                     @Html.ValidationMessageFor(model => model.GiftCards, "", new { @class = "text-danger" })
                 </tr>
-                <tr>
-                <td>Holiday Gift Cards:&nbsp;</td>
-                    <td>@Html.EditorFor(model => model.HolidayGiftCards, new { htmlAttributes = new { style = "width:30px", @min = "0", @max = 2 } })</td>
-                    @Html.ValidationMessageFor(model => model.HolidayGiftCards, "", new { @class = "text-danger" })
-                </tr>
+                
+            @* Only Administrators may see and edit HolidayGiftCards outside of NOV-DEC*@
+            @if (Model.DateDelivered != null)
+            {
+                var delMonth = Model.DateDelivered.Value.Month;
+                if (delMonth == 11 || delMonth == 12 || User.IsInRole("Administrator"))
+                {
+                    <tr>
+                        <td>Holiday Gift Cards:&nbsp;</td>
+                        <td>@Html.EditorFor(model => model.HolidayGiftCards, new { htmlAttributes = new { style = "width:30px", @min = "0", @max = 2 } })</td>
+                        @Html.ValidationMessageFor(model => model.HolidayGiftCards, "", new { @class = "text-danger" })
+                    </tr>
+                }
+            }
             </table>
 
             <table>

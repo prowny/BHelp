@@ -70,7 +70,7 @@
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             @Html.HiddenFor(model => Model.ClientId, new { id = "ClientId" })
             @Html.HiddenFor(m => m.Status, new { id = "Status" })
-            <hr /> // horizontal line
+            <hr /> @*horizontal line*@
             <div class="form-group">
                 <table>
                     <tr>
@@ -170,11 +170,20 @@
                             @Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { id = "GiftCards", style = "width:35px", min = 0, max = 2 } })
                             @Html.ValidationMessageFor(model => model.GiftCards, "", new { @class = "text-danger" })
                         </td>
-                        <td>@Html.LabelFor(model => model.HolidayGiftCards, htmlAttributes: new { @class = "control-label col-md-2" })</td>
-                        <td>
-                            @Html.EditorFor(model => model.HolidayGiftCards, new { htmlAttributes = new { id = "HolidayGiftCards", style = "width:35px", min = 0, max = 2 } })
-                            @Html.ValidationMessageFor(model => model.HolidayGiftCards, "", new { @class = "text-danger" })
-                        </td>
+                        
+                        @* Only Administrators may see and edit HolidayGiftCards outside of NOV-DEC 12-30-2023*@
+                        @if (Model.DateDelivered != null)
+                        {
+                            var delMonth = Model.DateDelivered.Value.Month;
+                            if (delMonth == 11 || delMonth == 12 || User.IsInRole("Administrator"))
+                            {
+                                <td>@Html.LabelFor(model => model.HolidayGiftCards, htmlAttributes: new { @class = "control-label col-md-2" })</td>
+                                <td>
+                                    @Html.EditorFor(model => model.HolidayGiftCards, new { htmlAttributes = new { id = "HolidayGiftCards", style = "width:35px", min = 0, max = 2 } })
+                                    @Html.ValidationMessageFor(model => model.HolidayGiftCards, "", new { @class = "text-danger" })
+                                </td>
+                            }
+                        }
                     </tr>
                 </table>
                 <table>
