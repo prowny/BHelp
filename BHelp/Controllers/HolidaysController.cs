@@ -112,7 +112,7 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Holiday holiday = db.Holidays.Find(id);
+            var holiday = db.Holidays.Find(id);
             if (holiday != null) db.Holidays.Remove(holiday);
             db.SaveChanges();
             return RedirectToAction("Index");

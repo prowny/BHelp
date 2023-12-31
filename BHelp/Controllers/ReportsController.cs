@@ -969,10 +969,10 @@ namespace BHelp.Controllers
 
                 return view;
             }
-            private ReportsViewModel GetQORKReportView(DateTime endDate) // new QORK Report 02/22
+            private static ReportsViewModel GetQORKReportView(DateTime endDate) // new QORK Report 02/22
             {
                 using var db = new BHelpContext();
-                DateTime startDate = endDate.AddDays(-6);
+                var startDate = endDate.AddDays(-6);
                 var view = new ReportsViewModel()
                 {
                     BeginDate = startDate,
@@ -982,7 +982,7 @@ namespace BHelp.Controllers
                 view.DateRangeTitle = startDate.ToShortDateString() + " - " + endDate.ToShortDateString();
                 view.ReportTitle = view.EndDateString + " QORK Weekly Report";
                 view.ZipCodes = AppRoutines.GetZipCodesList();
-                // Load Counts - extra zip code is for totals row.
+                // Load Counts - extra zip code row is for totals.
                 view.Counts = new int[1, 9, view.ZipCodes.Count + 1]; // 0 (unused), Counts, Zipcodes
                 view.ZipCount = view.ZipCodes.Count;
                 var deliveries = db.Deliveries
@@ -1100,10 +1100,10 @@ namespace BHelp.Controllers
 
                 return returnDate;
             }
-            private Holiday GetHolidayData(DateTime dt)
+            private static Holiday GetHolidayData(DateTime dt)
             {
                 var holidays = HolidayRoutines.GetHolidays(dt.Year);
-                return holidays.Find(h => h.CalculatedDate == dt);
+                return holidays.Find(h => h.FixedDate == dt); // Fixed date is sole option 11/02/2023
             }
 
             [Authorize(Roles = "Reports,Administrator,Staff,Developer,Driver,OfficerOfTheDay")]

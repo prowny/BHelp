@@ -16,7 +16,7 @@ namespace BHelp
 
             foreach (var hol in _holidayList)
             {
-                // Sole option as of 11/02/2023
+                // Fixed date is sole option as of 11/02/2023
                 if (hol.FixedDate.Year == year) // Fixed Date, no repeats
                 {
                     
@@ -32,7 +32,7 @@ namespace BHelp
             return (Holidays);
         }
 
-        public static bool IsHoliday(DateTime dt, List<Holiday> holidays)
+        public static bool IsHoliday(DateTime dt, IEnumerable<Holiday> holidays)
         {
             return holidays.Any(hol => dt == hol.FixedDate);
         }

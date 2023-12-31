@@ -279,12 +279,12 @@ namespace BHelp.Controllers
             return null;
         }
 
-        private Holiday GetHolidayData(DateTime dt)
+        private static Holiday GetHolidayData(DateTime dt)
         {
             var holidays = HolidayRoutines.GetHolidays(dt.Year);
             foreach (var holiday in holidays)
             {
-                if (dt == holiday.CalculatedDate)
+                if (dt == holiday.FixedDate)  // Fixed date is sole option as of 11/02/2023
                 {
                     return holiday;
                 }

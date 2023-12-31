@@ -31,7 +31,7 @@ namespace BHelp.Models
         [NotMapped]
         public string[] WeekDayNumber { get; set; } // 1st - 4th, Last
         [NotMapped]
-        public DateTime CalculatedDate { get; set; }
+        public DateTime CalculatedDate { get; set; }  // not used as of 11/02/2023
         [NotMapped]
         public IEnumerable<SelectListItem> Repeats { get; set; }
         [NotMapped]
