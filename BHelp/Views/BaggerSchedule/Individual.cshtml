@@ -7,12 +7,6 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Individual Bagger Schedule Signup</title>
-    <style>
-        #SubmitButton {
-            background-color: blue;
-            color: white
-        }
-    </style>
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
 </head>
 <body>
@@ -140,11 +134,12 @@
                                     else // Bagger Name is not null
                                     {
                                         <br />
+                                        <span style="font-size: small">@Html.Label("Bagger: ")</span>
                                         @Html.Raw(Model.BoxBaggerName[i])
                                     }
 
                                     if (Model.BoxBaggerId[i] == Model.CurrentUserId
-                                        && User.IsInRole("Bagger")) /* && Model.BoxDay[row, col] > DateTime.Today)*/
+                                        && User.IsInRole("Bagger"))
                                     {
                                         <br />
                                         <span>
@@ -178,11 +173,13 @@
                                         </a>
                                     }
 
-                                    if (Model.BoxPartnerId[i] != "0")
+                                    if (Model.BoxPartnerId[i] != null)
                                     {
                                         <br />
+                                        <span style="font-size: small">@Html.Label("Partner: ")</span>
                                         @Html.Raw(Model.BoxPartnerName[i])
                                     }
+
 
                                     if (Model.BoxPartnerPhone[i] != null)
                                     {
@@ -198,6 +195,7 @@
 
                                     if (Model.BoxPartnerEmail[i] != null)
                                     {
+                                        <br />
                                         const string subject = "BHELP Food Program";
                                         var body = @Model.BaggersSchedule[i].Date.ToLongDateString()
                                                    + " Bagger Partner: " + @Model.BoxPartnerName[i];
@@ -207,17 +205,17 @@
                                             @Model.BoxPartnerEmail[i]
                                         </a>
                                     }
+
                                     if (Model.BoxNote[i] != null)
                                     {
                                         <br />
                                         <span style="font-size: small">
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        @Html.Label("Notes")
-                                    </span>
+                                            @Html.Label("Notes")
+                                        </span>
 
-                                    <br />
-                                    @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>"))
-
+                                        <br />
+                                        @Html.Raw(Model.BoxNote[i].Replace(Environment.NewLine, "<br/>"))
                                     }
 
                                     if (Model.BoxHoliday[i])

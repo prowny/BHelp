@@ -382,7 +382,7 @@ namespace BHelp.Controllers
         public ActionResult BaggerSignUp(int? idx, DateTime? date, bool? cancel)
         {
             var CurrentUserId = User.Identity.GetUserId();
-            var text = AppRoutines.GetUserFullName(User.Identity.GetUserId());
+            var eMailText = AppRoutines.GetUserFullName(User.Identity.GetUserId());
             // check for existing BaggerSchedules record
             using var db = new BHelpContext();
             var rec = db.BaggerSchedules
@@ -393,38 +393,113 @@ namespace BHelp.Controllers
                 {
                     rec.BaggerId = null;
                     rec.Note = null;
-                    text += " has canceled as Bagger for " + date?.ToString("MM/dd/yyyy");
+                    eMailText += " has canceled as Bagger for " + date?.ToString("MM/dd/yyyy");
                     db.BaggerSchedules.Remove(rec);
                     db.SaveChanges();
-                    SendEmailToBaggerScheduler(text);
+                    SendEmailToBaggerScheduler(eMailText);
                     return RedirectToAction("Individual", new { boxDate = date });
                 }
                 else // cancel = false:
                 {
                     rec.BaggerId = CurrentUserId;
                     rec.Note = null;
-                    text += " has signed up as Bagger for " + date?.ToString("MM/dd/yyyy");
+                    eMailText += " has signed up as Bagger for " + date?.ToString("MM/dd/yyyy");
                 }
                 db.SaveChanges();
             }
-            else  // no existing rec:
+            else  // no existing rec:   replace with individual signup verification with optional Partner & Note
             {
-                if (date != null)
+                if (date.HasValue)
                 {
-                    var newRec = new BaggerSchedule()
-                    {
-                        Date = (DateTime)date,
-                        BaggerId = CurrentUserId
-                    };
-                    db.BaggerSchedules.Add(newRec);
-                    text += " has signed up as Bagger for " + date.Value.ToString("MM/dd/yyyy");
+                    var dt = (DateTime)date;
+                    return RedirectToAction("IndividualVerification", new {date = dt});
                 }
-                db.SaveChanges();
+                //if (date != null)
+                //{
+                //    var newRec = new BaggerSchedule()
+                //    {
+                //        Date = (DateTime)date,
+                //        BaggerId = CurrentUserId
+                //    };
+                //    db.BaggerSchedules.Add(newRec);
+                //    eMailText += " has signed up as Bagger for " + date.Value.ToString("MM/dd/yyyy");
+                //}
+                //db.SaveChanges();
             }
-            SendEmailToBaggerScheduler(text);
+            SendEmailToBaggerScheduler(eMailText);
 
             return RedirectToAction("Individual", new { boxDate = date });
         }
+
+        //GET: BaggerSchedule/IndividualVerification
+        public ActionResult IndividualVerification(DateTime date)  // Get optional Partner and Note
+        {
+            var view = GetBaggerScheduleViewModel();
+            view.BaggerName = AppRoutines.GetUserFullName(User.Identity.GetUserId());
+            view.Date = date;
+            view.PartnerList = Session["BaggerSelectList"] as List<SelectListItem>;
+            if (view.PartnerList != null) // Remove current user from PartnerList:
+            {
+                for (var index = 0; index < view.PartnerList.Count; index++)
+                {
+                    var bgr = view.PartnerList[index];
+                    if (bgr.Text == view.BaggerName)
+                    {
+                        view.PartnerList.Remove(bgr);
+                    }
+                }
+                Session["BaggerSelectList"] = null; // was changed by above removal routine; reload:
+                GetBaggerLookUpLists(view.Date);
+            }
+            
+            view.BaggerDataList = Session["BaggerDataList"] as List<ApplicationUser>;
+            return View(view);
+        }
+        
+        //POST: BaggerSchedule/IndividualVerification
+        [HttpPost, AllowAnonymous, ValidateAntiForgeryToken]
+        public ActionResult IndividualVerification(BaggerScheduleViewModel model)
+        {
+            var CurrentUserId = User.Identity.GetUserId();
+            using var db = new BHelpContext();
+            {
+                var newRec = new BaggerSchedule()
+                {
+                    Date = model.Date,
+                    BaggerId = CurrentUserId,
+                    PartnerId = model.PartnerId,
+                    Note = model.Note
+                };
+                db.BaggerSchedules.Add(newRec);
+                db.SaveChanges();
+            }
+
+            var msAdd = (List<BaggerSchedule>)Session["MonthlyBaggerSchedule"];
+            if (msAdd.Count == 0)
+            {
+                var _mo = model.Date.Month;
+                var _yr = model.Date.Year;
+                SetMonthlyList(_mo, _yr); // sets Session["MonthlyBaggerSchedule"]
+            }
+            else  // update session variable:
+            {
+                var newMsAdd = new BaggerSchedule()
+                {
+                    BaggerId = CurrentUserId,
+                    PartnerId = model.PartnerId,
+                    Date = model.Date
+                };
+                msAdd.Add(newMsAdd);
+                Session["MonthlyBaggerSchedule"] = msAdd;
+            }
+
+            var eMailText = AppRoutines.GetUserFullName(User.Identity.GetUserId());
+            eMailText += " has signed up as Bagger for " + model.Date.ToString("MM/dd/yyyy");
+            SendEmailToBaggerScheduler(eMailText);
+
+            return RedirectToAction("Individual", routeValues: new { boxDate = model .Date });
+        }
+
 
         private static void SendEmailToBaggerScheduler(string text)
         {
@@ -441,7 +516,7 @@ namespace BHelp.Controllers
         {
             if (AppRoutines.IsDebug())
             {
-                address = "prowny@aol.com"; // for testing !!!!!!!!!!!!!!!!!!!!!!!
+                address = "prowny@aol.com"; // for testing during debug !!!
             }
             using var msg = new MailMessage();
             msg.From = new MailAddress("BaggerScheduler@BethesdaHelpFD.org", "BHELP Bagger Scheduler");
@@ -617,7 +692,7 @@ namespace BHelp.Controllers
                         var partnerIdx = baggerList.FindIndex(d => d.Value == monthlyList[mIdx].PartnerId);
                         if (partnerIdx >= 0)
                         {
-                            view.BoxPartnerName[idx] = baggerList[partnerIdx].Text;
+                             view.BoxPartnerName[idx] = baggerList[partnerIdx].Text;
                             view.BoxPartnerId[idx] = baggerList[partnerIdx].Value;
                             view.BoxPartnerPhone[idx] = baggerDataList[partnerIdx].PhoneNumber;
                             view.BoxPartnerPhone2[idx] = baggerDataList[partnerIdx].PhoneNumber2;

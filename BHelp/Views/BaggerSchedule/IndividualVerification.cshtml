@@ -1,0 +1,66 @@
+﻿@using System.Web.Mvc.Html
+@model BHelp.ViewModels.BaggerScheduleViewModel
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Individual Verification</title>
+    <style>
+        #SaveButton {
+            background-color: blue;
+            color: white
+        }
+    </style>
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+</head>
+<body>
+    @using (Html.BeginForm("IndividualVerification", "BaggerSchedule", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Date)
+        <h3>Individual Bagger SignUp</h3>
+        <div id="UserEditSection">
+            <table>
+                <tr>
+                    <td style="text-align: right">Date:</td>
+                    <td>@Html.Label(Model.Date.ToString("MM/dd/yyyy"))</td>
+                </tr>
+                <tr>
+                    <td style="text-align: right">Bagger:</td>
+                    <td>@Html.Label(Model.BaggerName)</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center">Partner: (optional)</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.PartnerId,
+                         new SelectList(Model.PartnerList, "Value", "Text", Model.PartnerId),
+                         new { id = "PartnerDDL" })
+                    @Html.ValidationMessageFor(m => m.PartnerId, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: center">Notes: (optional)</td>
+                <td>
+                    @Html.TextAreaFor(t => t.Note)
+                @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
+            </td>
+        </tr>
+        <tr>
+            <td>
+                &nbsp;&nbsp;
+                <input type="submit" value="Save" class="btn btn-default" id="SaveButton" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+}
+
+    <div>
+        <br />
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
+</body>
+</html>

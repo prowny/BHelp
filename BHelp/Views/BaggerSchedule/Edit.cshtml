@@ -328,13 +328,13 @@
                                     if (Model.BoxPartnerEmail[i] != null)
                                     {
                                         const string subject = "BHELP Food Program";
-                                        var body = @Model.BaggersSchedule[i].Date.ToLongDateString()
+                                        var body = Model.BaggersSchedule[i].Date.ToLongDateString()
                                                    + " Bagger: " + @Model.BoxPartnerName[i];
                                         <a href="mailto:@Uri.EscapeDataString(Model.BoxPartnerEmail[i])>
-                                            ?Subject=@Uri.EscapeDataString(subject)
-                                            &body=@Uri.EscapeDataString(body)">
+                                                        ?Subject=@Uri.EscapeDataString(subject)
+                                                        &body=@Uri.EscapeDataString(body)">
+                                            @Model.BoxPartnerEmail[i]
                                         </a>
-                                        @Model.BoxPartnerEmail[i]
                                     }
 
                                     if (Model.BoxNote[i] != null)
