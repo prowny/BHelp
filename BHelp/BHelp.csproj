@@ -858,7 +858,9 @@
     <Content Include="Views\Reports\BaggerMasterList.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\BaggerSchedule\IndividualVerification.cshtml" />
+    <Content Include="Views\BaggerSchedule\IndividualVerification.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
