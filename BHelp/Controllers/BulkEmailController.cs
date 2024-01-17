@@ -23,6 +23,9 @@ namespace BHelp.Controllers
                 ActiveDriverList = GetMasterList("Driver",
                     allActiveUsersList, true),
 
+                ActiveBaggerList = GetMasterList("Bagger",
+                    allActiveUsersList, true),
+
                 ActiveODList = GetMasterList("OfficerOfTheDay",
                     allActiveUsersList, true),
 
@@ -36,6 +39,7 @@ namespace BHelp.Controllers
 
             view.JsonActiveDrivers = JsonSerializer.Serialize(view.ActiveDriverList);
             view.JsonActiveODs = JsonSerializer.Serialize(view.ActiveODList);
+            view.JsonActiveBaggers = JsonSerializer.Serialize(view.ActiveBaggerList);
             view.JsonActiveStaff = JsonSerializer.Serialize(view.ActiveStaffList);
             return View(view);
         }
@@ -45,6 +49,7 @@ namespace BHelp.Controllers
         {
             // for Drivers / ODs, Staff / All Users
             view.ActiveDriverList=JsonSerializer.Deserialize<List<ApplicationUser>>(view.JsonActiveDrivers);
+            view.ActiveBaggerList = JsonSerializer.Deserialize<List<ApplicationUser>>(view.JsonActiveBaggers);
             view.ActiveODList = JsonSerializer.Deserialize<List<ApplicationUser>>(view.JsonActiveODs);
             view.ActiveStaffList = JsonSerializer.Deserialize<List<ApplicationUser>>(view.JsonActiveStaff);
             view.AllActiveUsersList = JsonSerializer.Deserialize<List<ApplicationUser>>(view.JsonAllActiveUsers);
@@ -57,6 +62,16 @@ namespace BHelp.Controllers
                 if (_dL != null)
                 {
                     foreach (var _user in _dL.Where(_user => !emailAddressList.Contains(_user.Email)))
+                    { emailAddressList.Add(_user.Email); }
+                }
+            }
+            
+            if (view.BaggerSelect)
+            {
+                var _bL = view.ActiveBaggerList;
+                if (_bL != null)
+                {
+                    foreach (var _user in _bL.Where(_user => !emailAddressList.Contains(_user.Email)))
                     { emailAddressList.Add(_user.Email); }
                 }
             }
@@ -122,14 +137,6 @@ namespace BHelp.Controllers
                             PhoneNumber2 = _user.PhoneNumber2,
                             EmailRoleName = roleName
                         };
-                        //if (activeOnly && addUsr.Active)
-                        //{
-                        //    listMaster.Add(addUsr);
-                        //}
-                        //if(!activeOnly)
-                        //{
-                        //    listMaster.Add(addUsr);
-                        //}
 
                         switch (activeOnly)
                         {

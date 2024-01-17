@@ -19,6 +19,7 @@
         <div>
             @Html.HiddenFor(m => m.JsonActiveODs)
             @Html.HiddenFor(m => m.JsonActiveDrivers)
+            @Html.HiddenFor(m => m.JsonActiveBaggers)
             @Html.HiddenFor(m => m.JsonActiveStaff)
             @Html.HiddenFor(m => m.JsonAllActiveUsers)
             <span><b>Get Email Address List</b></span>
@@ -34,6 +35,13 @@
                     <td style="text-align: left">
                         @Html.CheckBoxFor(m => m.DriverSelect)
                         (@Model.ActiveDriverList.Count)
+                    </td>
+                </tr>
+                <tr>
+                    <td>Baggers</td>
+                    <td style="text-align: left">
+                        @Html.CheckBoxFor(m => m.BaggerSelect)
+                        (@Model.ActiveBaggerList.Count)
                     </td>
                 </tr>
                 <tr>
