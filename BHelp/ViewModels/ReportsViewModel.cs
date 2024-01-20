@@ -18,6 +18,8 @@ namespace BHelp.ViewModels
         [Range(1, 12)] public int Month { get; set; }
         public string DateRangeTitle { get; set; }  // e.g. "April 2021 through June 2021"
         public string MMyyyy { get; set; }  // used in Bethesda Helper report
+        public string HelperReportType { get; set; }  // Monthly, Quarterly, Yearly
+        public string SelectedHelperReportType { get; set; }  // for Radio Buttons
         public string[] MonthYear { get; set; }
         public string ZipCode { get; set; }
         public List<string> ZipCodes { get; set; }

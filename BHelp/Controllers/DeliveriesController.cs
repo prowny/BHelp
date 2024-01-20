@@ -1506,7 +1506,7 @@ namespace BHelp.Controllers
                         {
                             if (member.Age <= 17) del.Children++;
                             if (member.Age >= 60) del.Seniors++;
-                            if (member.Age >= 18 && member.Age <= 59) del.Adults++;
+                            if (member.Age is >= 18 and <= 59) del.Adults++;
                         }
 
                         if (del.Status == 2) //  kill any amounts if undelivered
@@ -1588,32 +1588,77 @@ namespace BHelp.Controllers
             }
 
             [Authorize(Roles = "Administrator,Staff,Developer,Reports")]
-            public ActionResult HelperReport(string yy = "", string mm = "")
+            public ActionResult HelperReport( string typ = "", string mm = "", string qtr = "", string yy = "")
             {
-                int reportYear;
-                int reportMonth;
-                if (yy.IsNullOrEmpty() || mm.IsNullOrEmpty())  // Default to this month
-                {
-                    reportYear = Convert.ToInt32(DateTime.Now.Year.ToString());
-                    reportMonth = Convert.ToInt32(DateTime.Now.Month.ToString());
-                }
-                else
-                {
-                    reportYear = Convert.ToInt32(yy);
-                    reportMonth = Convert.ToInt32(mm);
-                }
-        
-                var view = GetHelperReportView(reportYear, reportMonth);
-                return View(view);
-            }
+                var reportType = "";
+                var reportMonth = 0;
+                var reportQuarter = 0;
+                var reportYear = 0;
 
-            public ActionResult HelperReportToExcel(string yy = "", string mm = "")
-            {
-                var year = Convert.ToInt32(yy);
-                var month = Convert.ToInt32(mm);
-                var view = GetHelperReportView(year, month);
+                 if (typ.IsNullOrEmpty())
+                {
+                    typ = "Monthly";  // Default to Monthly
+                }
+               
+                switch (typ)
+                {
+                    case "Monthly":
+                            reportType = "Monthly";
+                            if (yy.IsNullOrEmpty() || mm.IsNullOrEmpty())  // Default to previous month
+                            {
+                                var mdt = DateTime.Now.AddMonths(-1);
+                                reportMonth = Convert.ToInt32(mdt.Month.ToString());
+                                reportYear = Convert.ToInt32(mdt.Year.ToString());
+                            }
+                            else
+                            {
+                                reportYear = Convert.ToInt32(yy);
+                                reportMonth = Convert.ToInt32(mm);
+                            }
+                            break;
+                    case "Quarterly":
+                            reportType = "Quarterly";
+                            if (qtr.IsNullOrEmpty() || yy.IsNullOrEmpty()) // Default to previous quarter
+                            {
+                                var qdt = DateTime.Now.AddMonths(-3);
+                                reportYear = Convert.ToInt32(qdt.Year.ToString());
+                                switch (qdt.Month)
+                                {
+                                    case 1: case 2: case 3:
+                                        reportQuarter = 1;
+                                        break;
+                                    case 4: case 5: case 6:
+                                        reportQuarter = 2;
+                                        break;
+                                    case 7: case 8: case 9:
+                                        reportQuarter = 3;
+                                        break;
+                                    case 10: case 11: case 12:
+                                        reportQuarter = 4;
+                                        break;
+                                    default:
+                                        reportQuarter = 0;
+                                        break;
+                                }
+                            }
+                            break;
+                    case "Yearly":
+                            reportType = "Yearly";
+                            var ydt = DateTime.Now.AddYears(-1);  // default to previous year
+                            reportYear = Convert.ToInt32(ydt.Year.ToString());
+                            break;
+                }
+             
+                var view = GetHelperReportView(reportType, reportMonth, reportQuarter, reportYear);
+            return View(view);
+        }
+        public ActionResult HelperReportToExcel(string reportType, int reportMonth, int reportQuarter, int reportYear)
+        {
+                var year = Convert.ToInt32(reportYear);
+                var month = Convert.ToInt32(reportMonth);
+                var view = GetHelperReportView(reportType, reportMonth, reportQuarter, reportYear);
                 var workbook = new XLWorkbook();
-                IXLWorksheet ws = workbook.Worksheets.Add(view.ReportTitle);
+                var ws = workbook.Worksheets.Add(view.ReportTitle);
 
                 int activeRow = 1;
                 var titleDate = new DateTime(year, month, 1);
@@ -1664,30 +1709,73 @@ namespace BHelp.Controllers
                     { FileDownloadName = view.ReportTitle + ".xlsx" };
             }
 
-            public ActionResult HelperReportToCSV(string yy = "", string mm = "")
+            public ActionResult HelperReportToCSV(string reportType, int reportMonth, int reportQuarter, int reportYear )
             {
-                var year = Convert.ToInt32(yy);
-                var month = Convert.ToInt32(mm);
-                var view = GetHelperReportView(year, month);
+                //var year = Convert.ToInt32(reportYear);
+                //var month = Convert.ToInt32(reportMonth);
+                var view = GetHelperReportView(reportType, reportMonth, reportQuarter, reportYear);
    
                 var result = AppRoutines.HelperReportToCSV(view);
                 return result;
             }
 
-            private static ReportsViewModel GetHelperReportView(int year, int month)
+            private static ReportsViewModel GetHelperReportView(string type, int month, int quarter, int year)
             {
-                var view = new ReportsViewModel {Year = year, Month = month};
-                view.DateRangeTitle = DateTimeFormatInfo.CurrentInfo.GetMonthName(view.Month)
-                                      + " " + view.Year.ToString() + " Delivery Totals";
-                view.ReportTitle ="Bethesda Helper Data "
-                                  + DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(view.Month) 
-                                  + " " + view.Year;
+                var view = new ReportsViewModel { HelperReportType = type, Year = year, Quarter = quarter, Month = month };
+                view.ReportTitle = "Bethesda Helper Data ";
+                DateTime startDate = DateTime.MinValue;
+                DateTime thruDate = DateTime.MinValue;
                 view.MonthYear = new string[2];
-                var startDate = new DateTime(view.Year, view.Month, 1);
-                view.MonthYear[0] = startDate.ToShortDateString();
-                var daysInMonth = DateTime.DaysInMonth(view.Year, view.Month);
-                var thruDate = new DateTime(view.Year, view.Month, daysInMonth);
-                view.MonthYear[1] =thruDate.ToShortDateString();
+                switch (type)
+                {
+                    case "Monthly":
+                        view.DateRangeTitle = DateTimeFormatInfo.CurrentInfo.GetMonthName(view.Month)
+                                              + " " + view.Year + " Delivery Totals";
+                        view.ReportTitle += DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(view.Month)
+                                            + " " + view.Year;
+                        view.BeginDate = new DateTime(view.Year, view.Month, 1);
+                        var daysInMonth = DateTime.DaysInMonth(view.Year, view.Month);
+                        view.EndDate = new DateTime(view.Year, view.Month, daysInMonth);
+                    break;
+                    case "Quarterly":
+                        view.DateRangeTitle = view.Year + " Q" + view.Quarter + " Delivery Totals";
+                        view.ReportTitle += view.Year + " Q" + view.Quarter;
+                        switch (view.Quarter)
+                        {
+                            case 1:
+                                view.BeginDate = new DateTime(view.Year, 1, 1);
+                                view.EndDate = new DateTime(view.Year, 3, 31);
+                                break;
+                            case 2:
+                                view.BeginDate = new DateTime(view.Year, 4, 1);
+                                view.EndDate = new DateTime(view.Year, 6, 30);
+                                break;
+                            case 3:
+                                view.BeginDate = new DateTime(view.Year, 7, 1);
+                                thruDate = new DateTime(view.Year, 9, 30);
+                                break;
+                            case 4:
+                                view.BeginDate = new DateTime(view.Year, 10, 1);
+                                view.EndDate = new DateTime(view.Year, 12, 31);
+                                break;
+                            default:
+                                view.BeginDate = new DateTime(view.Year, 1, 1);
+                                view.EndDate = new DateTime(view.Year, 3, 30);
+                                break;
+                        }
+                        break;
+                    case "Yearly":
+                        view .DateRangeTitle = view.Year + " Delivery Totals";
+                        view.ReportTitle += "for " + view.Year;
+                        view.BeginDate = new DateTime(view.Year, 1, 1);
+                        view.EndDate = new DateTime(view.Year, 12, 31);
+                    break;
+                }
+
+                view.HelperReportType = type;
+                view.SelectedHelperReportType = type;
+                
+                //view.MonthYear[1] = thruDate.ToShortDateString();
                 view.HelperTitles = new string[21];
                 view.HelperTitles[1] = "# Total Food Lbs";
                 view.HelperTitles[2] = "# Deliveries";
@@ -1861,6 +1949,7 @@ namespace BHelp.Controllers
                 }
                 return familyList;
             }
+
             private static ReportsViewModel GetCountyReportView(int yy, int qtr)
             {
                 using var db = new BHelpContext();

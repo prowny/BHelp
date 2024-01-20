@@ -13,71 +13,114 @@
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
     <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
     <style>
-        #Year {
-            width: 50px;
-        }
-
-        #Month {
-            width: 30px;
-        }
+        #Year {width: 50px;}
+        #Quarter {width: 30px;}           
+        #Month {width: 30px;}
     </style>
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
 </head>
 <body>
+    <input type="hidden" name="ReportType" value="@Model.HelperReportType " Id="ReportType" />
+<table>
+    <tr><td><b>Bethesda Helper Data</b></td></tr>
     <table>
-        <tr><td><b>Bethesda Helper Data</b></td></tr>
         <tr>
-            <td style="text-align: right">Select Year:</td>
-            <td>@Html.EditorFor(m => m.Year, new { htmlAttributes = new { @min = "2020", @max = "2050" }, id = "Year" })</td>&nbsp;&nbsp;
-            <td style="text-align: right">&nbsp;Select Month:</td>
-            <td>@Html.EditorFor(m => m.Month, new { htmlAttributes = new { @min = "1", @max = "12" }, id = "Month" })</td>
+            <td style="text-align: right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Select Report Type:</td>
+            <td>@Html.Label("Monthly")</td>
+            <td>@Html.RadioButtonFor(m => m.SelectedHelperReportType, "Monthly",
+                    new { id = "Monthly" }) </td>
+            <td>&nbsp;&nbsp;@Html.Label("Quarterly")</td>
+            <td>@Html.RadioButtonFor(m => m.SelectedHelperReportType, "Quarterly",
+                    new { id = "Quarterly" })</td>
+            <td>&nbsp;&nbsp;@Html.Label("Yearly")</td>
+            <td>@Html.RadioButtonFor(m => m.SelectedHelperReportType, "Yearly",
+                    new { id = "Yearly" })</td>
         </tr>
     </table>
-    <div id="ReportBody">
-        <table>
-            <tr><td style="width: 250px">Bethesda Help, Inc.</td></tr>
-            <tr><td>@Html.Label(Model.DateRangeTitle)</td></tr>
-            <tr>
-                <td style="text-align: right">Time Period</td>
-                @foreach (var zip in Model.ZipCodes)
-                {
-                    <td style="text-align: right">@Html.Label(zip)</td>}
-                <td>Total Zip Codes</td>
-            </tr>
-            <tr><td style="text-align: right">@Html.Label(Model.MonthYear[0])</td></tr>
-            <tr><td style="text-align: right">@Html.Label(Model.MonthYear[1])</td></tr>
-
-            @for (var i = 1; i < Model.HelperTitles.Length; i++)
+    <table>
+        <tr>
+            <td style="text-align: right">Select Year:</td>
+            <td>@Html.EditorFor(m => m.Year,
+                    new { htmlAttributes = new { min = "2020", max = "2050" }, id = "Year" })</td>&nbsp;&nbsp;
+            
+            @if (Model.HelperReportType == "Quarterly")
             {
-                <tr>
-                    <td style="text-align: left">@Html.Label(Model.HelperTitles[i])</td>
-                    @for (int j = 1; j < Model.ZipCodes.Count +2; j++ )
-                    {
-                        <td style="text-align: right">@Html.Label(Model.ZipCounts[i, j].ToString())</td>
-                    }
-                </tr>
+                <td style="text-align: right">&nbsp;Select Quarter:</td>
+                <td>@Html.EditorFor(m => m.Quarter,
+                        new { htmlAttributes = new { min = "1", max = "4" }, id = "Quarter" })</td>
             }
-        </table>
-    </div>
-    <br />
-    <div>
-        @Html.ActionLink("Download to Excel File", "HelperReportToExcel", new { yy = Model.Year, mm = Model.Month }, null)
-        <br />
-        @Html.ActionLink("Download to CSV File", "HelperReportToCSV", new { yy = Model.Year, mm = Model.Month }, null)
-        <br />
-        @Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu")
-        <br />
-        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
-    </div>
+            
+            @if (Model.HelperReportType == "Monthly")
+            {
+                <td style="text-align: right">&nbsp;Select Month:</td>
+                <td>@Html.EditorFor(m => m.Month,
+                        new { htmlAttributes = new { min = "1", max = "12" }, id = "Month" })</td>
+            }
+        </tr>
+    </table>
+</table>
+<div id="ReportBody">
+    <table>
+        <tr><td style="width: 250px">Bethesda Help, Inc.</td></tr>
+        <tr><td>@Html.Label(Model.DateRangeTitle)</td></tr>
+        <tr>
+            <td style="text-align: right">Time Period</td>
+            @foreach (var zip in Model.ZipCodes)
+            {
+                <td style="text-align: right">@Html.Label(zip)</td>}
+            <td>Total Zip Codes</td>
+        </tr>
+        <tr><td style="text-align: right">@Html.Label(Model.BeginDate.ToShortDateString())</td></tr>
+        <tr><td style="text-align: right">@Html.Label(Model.EndDate.ToShortDateString() )</td></tr>
+
+        @for (var i = 1; i < Model.HelperTitles.Length; i++)
+        {
+            <tr>
+                <td style="text-align: left">@Html.Label(Model.HelperTitles[i])</td>
+                @for (var j = 1; j < Model.ZipCodes.Count + 2; j++)
+                {
+                    <td style="text-align: right">@Html.Label(Model.ZipCounts[i, j].ToString())</td>
+                }
+            </tr>
+        }
+    </table>
+</div>
+<br/>
+<div>
+    @Html.ActionLink("Download to Excel File", "HelperReportToExcel", new { yy = Model.Year, mm = Model.Month }, null)
+    <br/>
+    @Html.ActionLink("Download to CSV File", "HelperReportToCSV", new { yy = Model.Year, mm = Model.Month }, null)
+    <br/>
+    @Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu")
+    <br/>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
 </body>
 </html>
+
 <script type="text/javascript">
-    $("#Year").change(function () {
-        HelperReport();
+    $("#Monthly").change(function () {
+        HelperReport("Monthly");  /*Calls BHelpFunctions.js*/
+    });
+</script>
+<script type="text/javascript">
+    $("#Quarterly").change(function () {
+        HelperReport("Quarterly");  /*Calls BHelpFunctions.js*/
+    });
+</script><script type="text/javascript">
+    $("#Yearly").change(function () {
+        HelperReport("Yearly");  /*Calls BHelpFunctions.js*/
+    });
+</script>
+<script type="text/javascript">
+    var typ = $("#ReportType").val();
+    $("#Year").change(typ) {
+        HelperReport();   /*Calls BHelpFunctions.js*/
     });
 </script> @*Year Change*@
 <script type="text/javascript">
-    $("#Month").change(function () {
-        HelperReport();
+    var typ = $("#ReportType").val();
+    $("#Month").change(typ) {
+        HelperReport();  /*Calls BHelpFunctions.js*/
     });
 </script> @*Month Change*@

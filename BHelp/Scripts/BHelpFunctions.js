@@ -134,11 +134,11 @@ function CountyReport() {
         }
     });
 }
-
-function HelperReport() {
+bo
+function HelperReport(type) {
     window.$.ajax({
         url: "/Deliveries/HelperReport",
-        data: { yy: window.$("#Year").val(), mm: window.$("#Month").val() },
+        data: { typ: type, mm: window.$("#Month").val(), qtr: window.$("#Quarter").val(), yy: window.$("#Year").val() },
         type: "POST",
         success: function (data) {
             window.$("body").html(data); // to refresh the page

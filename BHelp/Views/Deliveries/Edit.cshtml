@@ -190,11 +190,11 @@
                     <tr>
                         <td>@Html.Label("Status:")&nbsp;</td>
                         <td>@Html.Label("Open")</td>
-                        <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Open", new { @onchange = "ToggleStatus('Open');"})&nbsp;&nbsp;</td>
+                        <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Open", new { onchange = "ToggleStatus('Open');"})&nbsp;&nbsp;</td>
                         <td>@Html.Label("Delivered")</td>
-                        <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Delivered", new { @onchange = "ToggleStatus('Delivered');"})&nbsp;&nbsp;</td>
+                        <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Delivered", new { onchange = "ToggleStatus('Delivered');"})&nbsp;&nbsp;</td>
                         <td>@Html.Label("Undelivered")</td>
-                        <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Undelivered", new{ @onchange = "ToggleStatus('Undelivered');"})</td>
+                        <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Undelivered", new{ onchange = "ToggleStatus('Undelivered');"})</td>
                     </tr>
                 </table>
             </div>
