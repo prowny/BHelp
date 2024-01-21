@@ -1591,9 +1591,9 @@ namespace BHelp.Controllers
             public ActionResult HelperReport( string typ = "", string mm = "", string qtr = "", string yy = "")
             {
                 var reportType = "";
-                var reportMonth = 0;
-                var reportQuarter = 0;
-                var reportYear = 0;
+                var reportMonth = 1;
+                var reportQuarter = 1;
+                var reportYear = 2020;
 
                  if (typ.IsNullOrEmpty())
                 {
@@ -1609,47 +1609,58 @@ namespace BHelp.Controllers
                                 var mdt = DateTime.Now.AddMonths(-1);
                                 reportMonth = Convert.ToInt32(mdt.Month.ToString());
                                 reportYear = Convert.ToInt32(mdt.Year.ToString());
+                                break;
                             }
-                            else
-                            {
-                                reportYear = Convert.ToInt32(yy);
-                                reportMonth = Convert.ToInt32(mm);
-                            }
+
+                            reportYear = Convert.ToInt32(yy);
+                            reportMonth = Convert.ToInt32(mm);
                             break;
                     case "Quarterly":
+                            DateTime qdt;
                             reportType = "Quarterly";
                             if (qtr.IsNullOrEmpty() || yy.IsNullOrEmpty()) // Default to previous quarter
                             {
-                                var qdt = DateTime.Now.AddMonths(-3);
+                                qdt = DateTime.Now.AddMonths(-3);
                                 reportYear = Convert.ToInt32(qdt.Year.ToString());
-                                switch (qdt.Month)
-                                {
-                                    case 1: case 2: case 3:
-                                        reportQuarter = 1;
-                                        break;
-                                    case 4: case 5: case 6:
-                                        reportQuarter = 2;
-                                        break;
-                                    case 7: case 8: case 9:
-                                        reportQuarter = 3;
-                                        break;
-                                    case 10: case 11: case 12:
-                                        reportQuarter = 4;
-                                        break;
-                                    default:
-                                        reportQuarter = 0;
-                                        break;
-                                }
+                            }
+                            else
+                            {
+                                qdt = new DateTime(Convert.ToInt32(yy), Convert.ToInt32(qtr) * 3, 1);
+                                reportYear = qdt.Year;
+                            }
+
+                            switch (qdt.Month)
+                            {
+                                case 1: case 2: case 3:
+                                    reportQuarter = 1;
+                                    break;
+                                case 4: case 5: case 6:
+                                    reportQuarter = 2;
+                                    break;
+                                case 7: case 8: case 9:
+                                    reportQuarter = 3;
+                                    break;
+                                case 10: case 11: case 12:
+                                    reportQuarter = 4;
+                                    break;
+                                default:
+                                    reportQuarter = 0;
+                                    break;
                             }
                             break;
                     case "Yearly":
-                            reportType = "Yearly";
-                            var ydt = DateTime.Now.AddYears(-1);  // default to previous year
-                            reportYear = Convert.ToInt32(ydt.Year.ToString());
-                            break;
+                        reportType = "Yearly";
+                        if (yy.IsNullOrEmpty())
+                        {
+                                var ydt = DateTime.Now.AddYears(-1);  // default to previous year
+                                reportYear = Convert.ToInt32(ydt.Year.ToString());
+                                break;
+                        }
+                        reportYear = Convert.ToInt32(yy);
+                        break;
                 }
              
-                var view = GetHelperReportView(reportType, reportMonth, reportQuarter, reportYear);
+            var view = GetHelperReportView(reportType, reportMonth, reportQuarter, reportYear);
             return View(view);
         }
         public ActionResult HelperReportToExcel(string reportType, int reportMonth, int reportQuarter, int reportYear)
@@ -1660,14 +1671,14 @@ namespace BHelp.Controllers
                 var workbook = new XLWorkbook();
                 var ws = workbook.Worksheets.Add(view.ReportTitle);
 
-                int activeRow = 1;
+                var activeRow = 1;
                 var titleDate = new DateTime(year, month, 1);
                 var title = "Bethesda Help, Inc. " + titleDate.ToString("MMMM") + " " + year
                             + " Delivery Totals";
                 ws.Cell(activeRow, 1).SetValue(title);
                 activeRow++;
                 ws.Cell(activeRow, 1).SetValue("Time Period");
-                for (int i = 0; i < view.ZipCodes.Count; i++)
+                for (var i = 0; i < view.ZipCodes.Count; i++)
                 { ws.Cell(activeRow, i + 2).SetValue(view.ZipCodes[i]).Style.Font.SetBold(true); }
                 ws.Cell(activeRow, view.ZipCodes.Count + 2).SetValue("Total Zip Codes")
                     .Style.Font.SetBold(true);
@@ -1721,10 +1732,13 @@ namespace BHelp.Controllers
 
             private static ReportsViewModel GetHelperReportView(string type, int month, int quarter, int year)
             {
-                var view = new ReportsViewModel { HelperReportType = type, Year = year, Quarter = quarter, Month = month };
-                view.ReportTitle = "Bethesda Helper Data ";
-                DateTime startDate = DateTime.MinValue;
-                DateTime thruDate = DateTime.MinValue;
+                var view = new ReportsViewModel { 
+                    HelperReportType = type,
+                    Year = year,
+                    Quarter = quarter,
+                    Month = month,
+                    ReportTitle = "Bethesda Helper Data "
+                };
                 view.MonthYear = new string[2];
                 switch (type)
                 {
@@ -1752,7 +1766,7 @@ namespace BHelp.Controllers
                                 break;
                             case 3:
                                 view.BeginDate = new DateTime(view.Year, 7, 1);
-                                thruDate = new DateTime(view.Year, 9, 30);
+                                view.EndDate = new DateTime(view.Year, 9, 30);
                                 break;
                             case 4:
                                 view.BeginDate = new DateTime(view.Year, 10, 1);
@@ -1820,8 +1834,8 @@ namespace BHelp.Controllers
                 {
                     var stringZip = view.ZipCodes[zip];
                     var deliveryData = db.Deliveries.Where(d =>  d.Status == 1 
-                                                                 && d.Zip == stringZip && d.DateDelivered >= startDate
-                                                                 && d.DateDelivered <= thruDate).ToList();
+                                                                 && d.Zip == stringZip && d.DateDelivered >= view.BeginDate 
+                                                                 && d.DateDelivered <= view.EndDate).ToList();
                     totalDeliveries += deliveryData.Count;
                     
                     var distinctList = new List<int>();

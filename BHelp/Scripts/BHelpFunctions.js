@@ -134,7 +134,7 @@ function CountyReport() {
         }
     });
 }
-bo
+
 function HelperReport(type) {
     window.$.ajax({
         url: "/Deliveries/HelperReport",
@@ -182,7 +182,6 @@ function EditPayments() {
         }
     });
 }
-
 
 function flagChanges() {
     window.$.ajax({
