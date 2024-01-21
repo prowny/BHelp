@@ -1703,7 +1703,7 @@ namespace BHelp.Controllers
                 ws.Range(ws.Cell(activeRow, 1), ws.Cell(activeRow, 3)).Merge();
 
                 activeRow++;
-                for (var row = activeRow; row < activeRow + 9; row++) // Last 9 data rows
+                for (var row = activeRow; row < activeRow + 10; row++) // Last 9 data rows
                 {
                     ws.Cell(row, 1).SetValue(view.HelperTitles[row - 6]);
                     for (var col = 1; col < view.ZipCodes.Count + 2; col++)
@@ -1737,9 +1737,9 @@ namespace BHelp.Controllers
                     Year = year,
                     Quarter = quarter,
                     Month = month,
-                    ReportTitle = "Bethesda Helper Data "
+                    ReportTitle = "Bethesda Helper Data ",
+                    MonthYear = new string[2]
                 };
-                view.MonthYear = new string[2];
                 switch (type)
                 {
                     case "Monthly":
@@ -1789,7 +1789,6 @@ namespace BHelp.Controllers
                 view.HelperReportType = type;
                 view.SelectedHelperReportType = type;
                 
-                //view.MonthYear[1] = thruDate.ToShortDateString();
                 view.HelperTitles = new string[21];
                 view.HelperTitles[1] = "# Total Food Lbs";
                 view.HelperTitles[2] = "# Deliveries";
@@ -1902,7 +1901,7 @@ namespace BHelp.Controllers
                     }
 
                     var col = zip + 1; 
-                    view.ZipCounts[1, col] = fullBags * 10 + halfBags *9;  // Total Food Lbs
+                    view.ZipCounts[1, col] = fullBags * 10 + halfBags * 9;  // Total Food Lbs
                     view.ZipCounts[2, col] = deliveryData.Count;    // Total Deliveries
                     view.ZipCounts[3, col] = cumulativeChildren + cumulativeAdults + cumulativeSeniors;
                     view.ZipCounts[4, col] = cumulativeChildren;

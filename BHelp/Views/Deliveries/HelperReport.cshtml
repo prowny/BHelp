@@ -87,9 +87,13 @@
 </div>
 <br/>
 <div>
-    @Html.ActionLink("Download to Excel File", "HelperReportToExcel", new { yy = Model.Year, mm = Model.Month }, null)
+    @Html.ActionLink("Download to Excel File", "HelperReportToExcel", 
+        new {reportType = Model.HelperReportType, reportMonth = Model.Month,  
+            reportQuarter = Model.Quarter, reportYear = Model.Year  }, null)
     <br/>
-    @Html.ActionLink("Download to CSV File", "HelperReportToCSV", new { yy = Model.Year, mm = Model.Month }, null)
+    @Html.ActionLink("Download to CSV File", "HelperReportToCSV",
+        new {reportType = Model.HelperReportType, reportMonth = Model.Month,  
+        reportQuarter = Model.Quarter, reportYear = Model.Year  }, null)
     <br/>
     @Html.ActionLink("Return to Reports Menu", "ReturnToReportsMenu")
     <br/>
@@ -116,7 +120,7 @@
 
 <script type="text/javascript">  /* Year Change */
     var typ = $("#ReportType").val();
-    $("#Year").change(function () {
+    $("#Year").change(function () {    
         HelperReport(typ);   /*Calls BHelpFunctions.js*/
     });
 </script> 

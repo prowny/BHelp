@@ -1418,11 +1418,9 @@ namespace BHelp
             sb.Append("Total Zip Codes");
             sb.AppendLine();
 
-            var startDate = new DateTime(view.Year, view.Month, 1);
-            var endDate = startDate.AddMonths(1).AddDays(-1);
-            sb.Append(startDate.ToString("d"));
+            sb.Append(view.BeginDate.ToString("d"));
             sb.AppendLine();
-            sb.Append(endDate.ToString("d"));
+            sb.Append(view.EndDate.ToString("d"));
             sb.AppendLine();
 
             for (var i = 1; i < 11; i++) // First 10 data rows
@@ -1442,7 +1440,7 @@ namespace BHelp
 
             sb.Append("Distinct Households and Residents Served (NOT reported in the Helper)");
             sb.AppendLine();
-            for (var i = 11; i < 20; i++) // Last 9 data rows
+            for (var i = 11; i < 21; i++) // Last 9 data rows
             {
                 sb.Append(view.HelperTitles[i] + ",");
                 for (var j = 1; j < view.ZipCodes.Count + 1; j++)
