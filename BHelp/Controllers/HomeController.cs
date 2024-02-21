@@ -60,7 +60,10 @@ namespace BHelp.Controllers
                 }
             }
 
-            ViewData["vmPassword"]  = AppRoutines.GetVoicemailPassword();
+            var _pwd_odId = AppRoutines.GetVoicemailPassword();
+            var pw_od = _pwd_odId.Split(' ');
+            ViewData["VoiceMailMessage"]  = pw_od[0] + " Call or Text " + AppRoutines.GetUserFullName(pw_od[1]) 
+                                + " " + AppRoutines.GetUserPhone(pw_od[1]);
             return View(view);
         }
 
@@ -111,13 +114,27 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Developer")]
         public ActionResult ResetVoicemailPassword()
         {
-            var _vmPassword = AppRoutines.GetVoicemailPassword();
+            var _pwd_odId = (AppRoutines.GetVoicemailPassword()).Split(' ');
+            var _VoiceMailMessage = _pwd_odId[0]; 
+            var _vmOdId = _pwd_odId[1];
             var _infoLines = AppRoutines.GetVoicemailInfoLines();
+            var _od = new BHelpContext().Users.Find(_vmOdId);
             var view = new VoicemailPasswordViewModel
             {
-                VoicemailPassword = _vmPassword,
-                InfoText = _infoLines
+                VoicemailPassword = _VoiceMailMessage,
+                OldVoicemailPassword = _VoiceMailMessage,
+                LoginKeyReceiverName = _od?.FullName,
+                LoginKeyReceiverId = _vmOdId,
+                InfoText = _infoLines,
+                UserList = AppRoutines.GetActiveUserSelectList() 
             };
+            foreach (var item in view.UserList)
+            {
+                if (item.Value == _vmOdId )
+                {
+                    item.Selected = true;
+                }
+            }
             return View(view);
         }
 
@@ -125,17 +142,24 @@ namespace BHelp.Controllers
         [HttpPost, Authorize(Roles = "Administrator,Developer")]
         [ValidateAntiForgeryToken]
         public ActionResult ResetVoicemailPassword(
-            [Bind(Include = "VoicemailPassword,InfoText")] VoicemailPasswordViewModel view)
+            [Bind(Include = "VoicemailPassword,OldVoicemailPassword,LoginKeyReceiverId,InfoText")] VoicemailPasswordViewModel view)
         {
             if (!ModelState.IsValid) return View(view);
             var file = AppDomain.CurrentDomain.BaseDirectory
                        + "/App_Data/BHelpVoicemailCredentials.txt";
+            
+            if (!view.VoicemailPassword.IsNullOrEmpty())
+            {
+                view.InfoText[4] = view.VoicemailPassword;
+            }
+            view.InfoText[6] = view.LoginKeyReceiverId;
+
             var replacementText = "";
-            foreach (string line in view.InfoText)
+            foreach (var line in view.InfoText)
             {
                 replacementText += line + "\r\n";
             }
-            replacementText += view.VoicemailPassword;
+            
             using (var sw = new System.IO.StreamWriter((file), false))
             {
              sw.Write(replacementText);
@@ -148,22 +172,18 @@ namespace BHelp.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-        private async Task SendEmail(string address, string htmlContent)   // Send individual email   
+        private static async Task SendEmail(string address, string htmlContent)   // Send individual email   
         {
-            using (MailMessage msg = new MailMessage())
-            {
-                msg.From = new MailAddress("Admin@BethesdaHelpFd.org", "BHELP Developer");
-                msg.To.Add(new MailAddress(address, "BHELP Team Member"));
-                msg.Subject = "Voicemail Password Change";
-                msg.Body = htmlContent;
-                msg.IsBodyHtml = true;
-                msg.Priority = MailPriority.Normal;
-                using (SmtpClient mailClient = new SmtpClient("BethesdaHelpFd.org", 587))
-                {
-                    mailClient.Credentials = new NetworkCredential("Admin@BethesdaHelpFd.org", "Qo3YQoyYAghL*U.W-KEU");
-                    await mailClient.SendMailAsync(msg);
-                }
-            }
+            using var msg = new MailMessage();
+            msg.From = new MailAddress("Admin@BethesdaHelpFd.org", "BHELP Developer");
+            msg.To.Add(new MailAddress(address, "BHELP Team Member"));
+            msg.Subject = "Voicemail Password Change";
+            msg.Body = htmlContent;
+            msg.IsBodyHtml = true;
+            msg.Priority = MailPriority.Normal;
+            using var mailClient = new SmtpClient("BethesdaHelpFd.org", 587);
+            mailClient.Credentials = new NetworkCredential("Admin@BethesdaHelpFd.org", "Qo3YQoyYAghL*U.W-KEU");
+            await mailClient.SendMailAsync(msg);
         }
     }
 }

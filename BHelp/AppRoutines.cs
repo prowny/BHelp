@@ -604,27 +604,34 @@ namespace BHelp
             return nextEligibleGiftCardDate;
         }
 
-        public static string GetVoicemailPassword()
+        public static string GetVoicemailPassword() // AND current OD Id
         {
             var _password = "";
+            var _odId = "";
             var lines =
                 File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/BHelpVoicemailCredentials.txt");
             foreach (var line in lines)
             {
-                if (line.Substring(0, 1) != "/")
+                if (line.Substring(0, 1) == "/") continue;
+                if(_password.IsNullOrEmpty())
+                {_password = line;}
+                else
                 {
-                    _password = line;
+                    {
+                        _odId = line;
+                    }
                 }
             }
 
-            return _password;
+            return _password + " " + _odId;
         }
 
         public static string[] GetVoicemailInfoLines()
         {
             var lines = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory
                                           + "/App_Data/BHelpVoicemailCredentials.txt");
-            lines = lines.Take(lines.Count() - 1).ToArray();
+            //lines = lines.Take(lines.Count() - 1).ToArray();
+            lines = lines.Take(lines.Count()).ToArray();
             return lines;
         }
 
@@ -1599,6 +1606,26 @@ namespace BHelp
             return allVolunteersList;
         }
 
+        public static IEnumerable<SelectListItem> GetActiveUserSelectList()
+        {
+            //foreach (var volunteer in activeVolunteersList)
+            //{
+            //    selectList.Add(new SelectListItem
+            //    {
+            //        Value = volunteer.Id,
+            //        Text = volunteer.FullName
+            //    });
+            //}
+
+            using var _db = new BHelpContext();
+            var activeUsersList = _db.Users
+                .Where(u => u.Active).OrderBy(u => u.LastName)
+                .ThenBy(u => u.FirstName).ToList();
+
+            return activeUsersList.Select(user => new SelectListItem
+                { Value = user.Id, Text = user.FullName }).ToList();
+        }
+
         public static List<string> GetUserIdsInRole(string roleId)
         {
             // Load user roles lookup table
@@ -1619,6 +1646,20 @@ namespace BHelp
             else
             {
                 return user.Email;
+            }
+        }
+
+        public static string GetUserPhone(string id)
+        {
+            using var _db = new BHelpContext();
+            var user = _db.Users.Find(id);
+            if (user == null)
+            {
+                return null;
+            }
+            else
+            {
+                return user.PhoneNumber;
             }
         }
 

@@ -1,11 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace BHelp.ViewModels
 {
     public class VoicemailPasswordViewModel
     {
-        [Required (ErrorMessage = "Password Required")]
         public string VoicemailPassword { get; set; }
+        public string OldVoicemailPassword { get; set; }
         public string[] InfoText { get; set; }
+
+        [StringLength(128)] 
+        public string LoginKeyReceiverId { get; set; } // user Id
+        public string LoginKeyReceiverName { get; set; } // Full name
+        public IEnumerable<SelectListItem> UserList { get; set; }
     }
 }

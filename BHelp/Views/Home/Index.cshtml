@@ -17,7 +17,7 @@
 <body>
     <div>
         <table>
-            @{ string userName = @User.Identity.Name + "!"; }
+            @{ var userName = @User.Identity.Name + "!"; }
             <tr><td>&nbsp;&nbsp; Welcome @userName</td></tr>
             <tr>
                 <td>
@@ -47,7 +47,7 @@
     }
     <a href="@Url.Action("MaintainUsers", "Home")">Maintain Volunteers / Website Users</a><br />
     <a href="@Url.Action("MaintainUserRoles", "Home")">Maintain User Permissions (&quot;Roles&quot;)</a><br />
-    <a href="@Url.Action("ResetVoicemailPassword", "Home")">Reset Voicemail Password</a><br />
+    <a href="@Url.Action("ResetVoicemailPassword", "Home")">Reset Voicemail Password / Login Key Receiver</a><br />
     <a href="@Url.Action("Index", "Holidays")">Maintain Holidays</a><br />
 
     <a href="@Url.Action("ResetAnyPassword", "Account")">Reset Any Password</a><br />
@@ -175,7 +175,7 @@
         <a href="@Url.Action("ViewDocumentCategory", "Documents", new{menuCat="OfficerOfTheDay"})">View OD Documents</a><br />
     }
     <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
-    <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["vmPassword"])</span><br />
+    <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["VoiceMailMessage"])</span><br />
     <a href="http://www.bethesdahelp.org/need-help/service-area" target="_blank">Go To Service Area Map</a><br />
 </div>
         <br />
@@ -189,7 +189,7 @@
     <a href="@Url.Action("Edit", "DriverSchedule")">View Driver Schedules</a><br />
     <a href="@Url.Action("Individual", "DriverSchedule")">My Schedule Signup / Edit</a><br />
     <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
-    <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["vmPassword"])</span>
+    <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["VoiceMailMessage"])</span>
     @if (Model.ShowDriverDocumentsMenu)
     {
         <br />
@@ -218,7 +218,7 @@
         @if (User.IsInRole("VoicemailAccess"))
         {
             <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
-            <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["vmPassword"])</span>
+            <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["VoiceMailMessage"])</span>
         }
         @if (Model.ShowEveryoneDocumentsMenu)
         {

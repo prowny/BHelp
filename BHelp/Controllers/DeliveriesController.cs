@@ -325,7 +325,7 @@ namespace BHelp.Controllers
             string btnReplacementDeliveryDateODId, string btnSetStatusToDelivered,
             string btnExcelOpenSelected, string btnCSVOpenSelected)
         {
-            ModelState.Clear(); // if not cleared, checkboxfor IsChecked displays incorrectly
+            ModelState.Clear(); // (if not cleared, checkboxfor IsChecked displays incorrectly)
             var view = GetOpenDeliveryViewModel(model);
             view.BtnAllCheckAll = btnAllCheckAll;
             view.BtnAllClearAll = btnAllClearAll;
@@ -1722,8 +1722,6 @@ namespace BHelp.Controllers
 
             public ActionResult HelperReportToCSV(string reportType, int reportMonth, int reportQuarter, int reportYear )
             {
-                //var year = Convert.ToInt32(reportYear);
-                //var month = Convert.ToInt32(reportMonth);
                 var view = GetHelperReportView(reportType, reportMonth, reportQuarter, reportYear);
    
                 var result = AppRoutines.HelperReportToCSV(view);
@@ -1833,8 +1831,8 @@ namespace BHelp.Controllers
                 {
                     var stringZip = view.ZipCodes[zip];
                     var deliveryData = db.Deliveries.Where(d =>  d.Status == 1 
-                                                                 && d.Zip == stringZip && d.DateDelivered >= view.BeginDate 
-                                                                 && d.DateDelivered <= view.EndDate).ToList();
+                                 && d.Zip == stringZip && d.DateDelivered >= view.BeginDate 
+                                 && d.DateDelivered <= view.EndDate).ToList();
                     totalDeliveries += deliveryData.Count;
                     
                     var distinctList = new List<int>();
@@ -1925,7 +1923,7 @@ namespace BHelp.Controllers
                 }
 
                 var totCol = view.ZipCodes.Count + 1;
-                view.ZipCounts[1, totCol] = totalFullBags * 10 + totalHalfBags *9;  // Total Food Lbs
+                view.ZipCounts[1, totCol] = totalFullBags * 10 + totalHalfBags * 9;  // Total Food Lbs
                 view.ZipCounts[2, totCol] = totalDeliveries;    // Total Deliveries
                 view.ZipCounts[3, totCol] = totalCumulativeChildren + totalCumulativeAdults + totalCumulativeSeniors;
                 view.ZipCounts[4, totCol] = totalCumulativeChildren;
