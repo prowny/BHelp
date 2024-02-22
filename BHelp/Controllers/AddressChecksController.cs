@@ -7,11 +7,12 @@ using BHelp.Models;
 
 namespace BHelp.Controllers
 {
-    public class AddressChecks : Controller
+    public class AddressChecksController : Controller
     {
         private readonly BHelpContext db = new BHelpContext();
 
         // GET: AddressChecks
+        [HttpGet]
         public ActionResult Index()
         {
             return View(db.AddressChecks.ToList());
@@ -28,14 +29,11 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Address,Note")] AddressCheck addressCheck)
         {
-            if (ModelState.IsValid)
-            {
-                db.AddressChecks.Add(addressCheck);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+            if (!ModelState.IsValid) return View(addressCheck);
+            db.AddressChecks.Add(addressCheck);
+            db.SaveChanges();
+            return RedirectToAction("Index");
 
-            return View(addressCheck);
         }
 
         // GET: AddressChecks/Edit/5
@@ -45,7 +43,7 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            AddressCheck addressCheck = db.AddressChecks.Find(id);
+            var addressCheck = db.AddressChecks.Find(id);
             if (addressCheck == null)
             {
                 return HttpNotFound();
@@ -58,13 +56,10 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Address,Note")] AddressCheck addressCheck)
         {
-            if (ModelState.IsValid)
-            {
-                db.Entry(addressCheck).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(addressCheck);
+            if (!ModelState.IsValid) return View(addressCheck);
+            db.Entry(addressCheck).State = EntityState.Modified;
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         // GET: AddressChecks/Delete/5
@@ -74,7 +69,7 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            AddressCheck addressCheck = db.AddressChecks.Find(id);
+            var addressCheck = db.AddressChecks.Find(id);
             if (addressCheck == null)
             {
                 return HttpNotFound();
@@ -87,7 +82,7 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            AddressCheck addressCheck = db.AddressChecks.Find(id);
+            var addressCheck = db.AddressChecks.Find(id);
             if (addressCheck != null) db.AddressChecks.Remove(addressCheck);
             db.SaveChanges();
             return RedirectToAction("Index");

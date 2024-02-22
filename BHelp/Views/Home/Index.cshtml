@@ -17,7 +17,7 @@
 <body>
     <div>
         <table>
-            @{ var userName = @User.Identity.Name + "!"; }
+            @{ var userName = User.Identity.Name + "!"; }
             <tr><td>&nbsp;&nbsp; Welcome @userName</td></tr>
             <tr>
                 <td>
@@ -49,7 +49,6 @@
     <a href="@Url.Action("MaintainUserRoles", "Home")">Maintain User Permissions (&quot;Roles&quot;)</a><br />
     <a href="@Url.Action("ResetVoicemailPassword", "Home")">Reset Voicemail Password / Login Key Receiver</a><br />
     <a href="@Url.Action("Index", "Holidays")">Maintain Holidays</a><br />
-
     <a href="@Url.Action("ResetAnyPassword", "Account")">Reset Any Password</a><br />
     <a href="@Url.Action("Index", "Documents")">Maintain Documents</a><br />
     <a href="@Url.Action("Index", "AddressChecks")">Maintain New Client Address Check List</a><br />
