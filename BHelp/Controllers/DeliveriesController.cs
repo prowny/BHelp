@@ -9,7 +9,6 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
-using Castle.Core.Internal;
 using ClosedXML.Excel;
 
 namespace BHelp.Controllers

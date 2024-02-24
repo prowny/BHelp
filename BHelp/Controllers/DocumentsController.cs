@@ -9,7 +9,6 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
-using Castle.Core.Internal;
 using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers

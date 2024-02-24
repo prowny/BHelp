@@ -12,8 +12,8 @@
     </div>
     <div>
         <br />
-        @{ DateTime date = DateTime.Today.AddMonths(0);}
-        @{ string monthName = date.ToString("MMMM");}
+        @{ var date = DateTime.Today.AddMonths(0);}
+        @{ var monthName = date.ToString("MMMM");}
         @Html.ActionLink("Schedule For " + monthName, "ODEmailDisplay"
             , new { year = date.Year, month = date.Month })<br />
     </div>
