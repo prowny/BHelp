@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -79,7 +80,7 @@ namespace BHelp.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (doc.Title.IsNullOrEmpty())
+                if (String.IsNullOrEmpty(doc.Title))
                 {
                     TempData["DocumentTitleError"] = "Title Required!";
                     return RedirectToAction("Upload");

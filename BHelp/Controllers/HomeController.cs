@@ -107,7 +107,7 @@ namespace BHelp.Controllers
         public ActionResult GetZipCodes()
         {
             AppRoutines.GetZipCodesSelectList();
-            return User.Identity.Name.IsNullOrEmpty() ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
+            return String.IsNullOrEmpty(User.Identity.Name) ? RedirectToAction("Login", "Account") : RedirectToAction("Index", "Home");
         }
 
         // GET: Reset Voicemail Password/Edit
@@ -148,7 +148,7 @@ namespace BHelp.Controllers
             var file = AppDomain.CurrentDomain.BaseDirectory
                        + "/App_Data/BHelpVoicemailCredentials.txt";
             
-            if (!view.VoicemailPassword.IsNullOrEmpty())
+            if (!String.IsNullOrEmpty(view.VoicemailPassword))
             {
                 view.InfoText[4] = view.VoicemailPassword;
             }

@@ -135,13 +135,13 @@ namespace BHelp.Controllers
                     }
 
                     var ODid = delivery.ODId;
-                    if (!ODid.IsNullOrEmpty() && ODid != "0")
+                    if (!String.IsNullOrEmpty(ODid) && ODid != "0")
                     {
                         var user = db.Users.Find(ODid);
                         if (user != null) deliveryView.ODName = user.FullName;
                     }
 
-                    ;
+                    
                     deliveryView.FirstName = client.FirstName;
                     deliveryView.LastName = client.LastName;
                     deliveryView.StreetNumber = client.StreetNumber;
@@ -1568,7 +1568,7 @@ namespace BHelp.Controllers
             {
                 int reportYear;
                 int reportQuarter = 0;
-                if (yy.IsNullOrEmpty() || qtr.IsNullOrEmpty())   // Default to this year, this quarter
+                if (String.IsNullOrEmpty(yy) || String.IsNullOrEmpty(qtr))   // Default to this year, this quarter
                 {
                     reportYear = Convert.ToInt32(DateTime.Now.Year.ToString());
                     var month = Convert.ToInt32(DateTime.Now.Month.ToString());
@@ -1595,7 +1595,7 @@ namespace BHelp.Controllers
                 var reportQuarter = 1;
                 var reportYear = 2020;
 
-                 if (typ.IsNullOrEmpty())
+                 if (String.IsNullOrEmpty(typ))
                 {
                     typ = "Monthly";  // Default to Monthly
                 }
@@ -1604,7 +1604,7 @@ namespace BHelp.Controllers
                 {
                     case "Monthly":
                             reportType = "Monthly";
-                            if (yy.IsNullOrEmpty() || mm.IsNullOrEmpty())  // Default to previous month
+                            if (String.IsNullOrEmpty(yy) || String.IsNullOrEmpty(mm))  // Default to previous month
                             {
                                 var mdt = DateTime.Now.AddMonths(-1);
                                 reportMonth = Convert.ToInt32(mdt.Month.ToString());
@@ -1618,7 +1618,7 @@ namespace BHelp.Controllers
                     case "Quarterly":
                             DateTime qdt;
                             reportType = "Quarterly";
-                            if (qtr.IsNullOrEmpty() || yy.IsNullOrEmpty()) // Default to previous quarter
+                            if (String.IsNullOrEmpty(qtr) || String.IsNullOrEmpty(yy)) // Default to previous quarter
                             {
                                 qdt = DateTime.Now.AddMonths(-3);
                                 reportYear = Convert.ToInt32(qdt.Year.ToString());
@@ -1650,7 +1650,7 @@ namespace BHelp.Controllers
                             break;
                     case "Yearly":
                         reportType = "Yearly";
-                        if (yy.IsNullOrEmpty())
+                        if (String.IsNullOrEmpty(yy))
                         {
                                 var ydt = DateTime.Now.AddYears(-1);  // default to previous year
                                 reportYear = Convert.ToInt32(ydt.Year.ToString());
@@ -2176,7 +2176,7 @@ namespace BHelp.Controllers
             public ActionResult QuorkReport(string endingDate = "")
             {
                 DateTime endDate;
-                if (endingDate.IsNullOrEmpty())
+                if (String.IsNullOrEmpty(endingDate))
                 {
                     // Ends on a Saturday - weekday Monday is 1, Saturday is 6
                     // If today is a  Saturday, default to this week

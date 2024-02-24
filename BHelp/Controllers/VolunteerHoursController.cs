@@ -118,7 +118,7 @@ namespace BHelp.Controllers
                 a_mCat = view.Category;
             }
 
-            if (a_mCat.IsNullOrEmpty())
+            if (String.IsNullOrEmpty(a_mCat))
             {
                 view.A_MCategory = null;
             }

@@ -613,7 +613,7 @@ namespace BHelp
             foreach (var line in lines)
             {
                 if (line.Substring(0, 1) == "/") continue;
-                if(_password.IsNullOrEmpty())
+                if(String.IsNullOrEmpty(_password))
                 {_password = line;}
                 else
                 {
@@ -637,7 +637,7 @@ namespace BHelp
 
         public static int GetAge(DateTime dob, [Optional] DateTime today)
         {
-            if (today.ToString(CultureInfo.CurrentCulture).IsNullOrEmpty() || today == DateTime.MinValue)
+            if(String.IsNullOrEmpty(today.ToString(CultureInfo.CurrentCulture)) || today == DateTime.MinValue)
             {
                 today = DateTime.Now;
             }
@@ -1670,7 +1670,7 @@ namespace BHelp
                             + "LEFT JOIN AspNetRoles ON AspNetRoles.Id = AspNetUserRoles.RoleId "
                             + "WHERE AspNetUserRoles.UserId =  '" + userId + "'";
 
-            var isEmpty = context.Database.SqlQuery<string>(sqlString).IsNullOrEmpty();
+            var isEmpty = context.Database.SqlQuery<string>(sqlString) == null;
             var roleNameString = "";
             if (!isEmpty)
             {
