@@ -1,5 +1,4 @@
-﻿@using Castle.Core.Internal
-@model BHelp.ViewModels.RegisterViewModel
+﻿@model BHelp.ViewModels.RegisterViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -19,7 +18,7 @@
         <label class="field-validation-error">@Html.ValidationSummary("", new { @class = "text-danger" })</label>
         <p style="text-decoration:underline"><strong>Bethesda Help Food Delivery Program</strong></p>
         <p><strong>Register New User</strong></p>
-        if (!Model.ErrorMessage.IsNullOrEmpty())
+        if (!String.IsNullOrEmpty(Model.ErrorMessage))
         {
             <div class="form-group">
                 @Html.LabelFor(m => m.ErrorMessage, new { @class = "col-md-2 control-label" })
