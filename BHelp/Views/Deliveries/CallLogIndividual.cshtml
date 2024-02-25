@@ -51,7 +51,10 @@
     {
         <table>
             <tr>
-                <td></td>
+                @if (Model.OkToEdit)
+                {
+                    <td></td> @*For Edit header*@
+                }
                 <td><b>Log Date</b></td>
                 <td><b>Name</b></td>
                 <td><b>Address</b></td>
@@ -73,12 +76,15 @@
             @foreach (var delivery  in Model.DeliveryList)
             {
                 <tr>
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = delivery.Id })
-                    </td>
+                    @if (Model.OkToEdit)
+                    {
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id = delivery.Id })
+                        </td>
+                    }
                     <td>@delivery.LogDateString</td>
-                    @{ string name = delivery.LastName + ", " + delivery.FirstName; }
-                    @{ string addr = delivery.StreetNumber + " " + delivery.StreetName; }
+                    @{ var name = delivery.LastName + ", " + delivery.FirstName; }
+                    @{ var addr = delivery.StreetNumber + " " + delivery.StreetName; }
                     <td>@name</td>
                     <td>@addr</td>
                     <td>@delivery.City</td>

@@ -59,7 +59,10 @@
         {
             <table>
                 <tr>
-                    <td></td>  @*// for Edit button*@
+                    @if(Model.OkToEdit)
+                    {
+                        <td></td> @*// for Edit button*@
+                    }
                     <td><b>DelivDate</b></td>
                     <td><b>Client Name</b></td>
                     <td><b>Address</b></td>
@@ -80,13 +83,9 @@
                 @foreach (var delivery in Model.DeliveryList)
                 {
             <tr>
-                @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
+                @if (Model.OkToEdit)
                 {
                     <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id })</td>
-                }
-                else
-                {
-                    <td></td>
                 }
                 <td>@delivery.DateDeliveredString</td>
                 @{ var name = delivery.LastName + ", " + delivery.FirstName; }
@@ -106,12 +105,12 @@
                 <td style="text-align: center">@delivery.GiftCards</td>
                 <td style="text-align: center">@delivery.HolidayGiftCards</td>
                 <td style="text-align: center">@delivery.PoundsOfFood</td>
-                @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
+                @if (Model.OkToEdit)
                 {
                     <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id })</td>
                 }
             </tr>
-                    }
+        }
             <tr>
                 <td>Totals</td>
                 <td></td>

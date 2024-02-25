@@ -1237,11 +1237,14 @@ namespace BHelp.Controllers
                     {
                         selListItem.Selected = true;
                     }
-
                     clientSelectList.Add(selListItem);
                 }
 
-                var callLogView = new DeliveryViewModel { ClientSelectList = clientSelectList };
+                var callLogView = new DeliveryViewModel
+                {
+                    ClientSelectList = clientSelectList,
+                    //OkToEdit = User.IsInAnyRoles("Developer", "Administrator", "Staff")
+                };
                 if (clientId == null)
                 {
                     return View(callLogView);
@@ -1300,11 +1303,6 @@ namespace BHelp.Controllers
                     del.PoundsOfFood = fullWeight;
                 }
 
-                if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
-                {
-                    callLogView.OkToEdit = true;
-                }
-
                 Session["CallLogIndividualList"] = callLogView;
                 return View(callLogView);
             }
@@ -1356,7 +1354,8 @@ namespace BHelp.Controllers
                 {
                     DeliveryList = deliveries,
                     HistoryStartDate = Convert.ToDateTime(startDate),
-                    HistoryEndDate = Convert.ToDateTime(endDate)
+                    HistoryEndDate = Convert.ToDateTime(endDate),
+                    OkToEdit = User.IsInAnyRoles("Developer", "Administrator", "Staff")
                 };
 
                 Session["CallLogStartDate"] = callLogView.HistoryStartDate;
@@ -1461,16 +1460,18 @@ namespace BHelp.Controllers
                 Session["CallLogStartDate"] = startDate;
                 Session["CallLogEndDate"] = endDate;
 
-                List<Delivery> deliveries = db.Deliveries
+                var deliveries = db.Deliveries
                     .Where(d => d.Status == 1 && d.DateDelivered >= startDate && d.DateDelivered <= endDate)
                     .OrderByDescending(d => d.DateDelivered).ToList();
+                
                 var callLogView = new DeliveryViewModel
                 {
                     DeliveryList = deliveries,
                     HistoryStartDate = Convert.ToDateTime(startDate),
                     HistoryEndDate = Convert.ToDateTime(endDate),
+                    OkToEdit = User.IsInAnyRoles("Developer", "Administrator","Staff")
                 };
-
+                
                 foreach (var del in callLogView.DeliveryList)
                 {
                     del.DriverName = AppRoutines.GetUserFullName( del.DriverId);
