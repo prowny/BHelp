@@ -24,26 +24,26 @@ namespace BHelp.Models
         [JsonProperty, DisplayName("Last Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime LastDate { get; set; } // Added PER 07/06/2021
-
-        [JsonProperty, DisplayName("Notes")] public String Notes { get; set; } // Added PER 07/06/2021
+        
+        [StringLength(8096), JsonProperty, DisplayName("Notes")] public string Notes { get; set; } // Added PER 07/06/2021
 
         [JsonProperty, StringLength(1), DisplayName("Volunteer Hours CategoryId")]
         public string VolunteerCategory { get; set; } // Added PER 01/13/2022
-
-        [JsonProperty, DisplayName("Volunteer Hours Subcategory")]
+        
+        [StringLength(256), JsonProperty, DisplayName("Volunteer Hours Subcategory")]
         public string VolunteerSubcategory { get; set; } // Added PER 01/13/2022
 
-        [JsonProperty, DisplayName("First Name")]
+        [StringLength(256), JsonProperty, DisplayName("First Name")]
         public string FirstName { get; set; }
 
-        [JsonProperty, DisplayName("Last Name")]
+        [StringLength(256), JsonProperty, DisplayName("Last Name")]
         public string LastName { get; set; }
 
-        [JsonProperty, DisplayName("Title")] public string Title { get; set; }
+        [StringLength(256), JsonProperty, DisplayName("Title")] public string Title { get; set; }
 
-        [JsonProperty, DisplayName("Address")] public string Address { get; set; } // Added PER 03/07/2022
+        [StringLength(256), JsonProperty, DisplayName("Address")] public string Address { get; set; } // Added PER 03/07/2022
 
-        [JsonProperty, DisplayName("City")] public string City { get; set; } // Added PER 03/07/2022
+        [StringLength(256), JsonProperty, DisplayName("City")] public string City { get; set; } // Added PER 03/07/2022
 
         [JsonProperty, StringLength(2), DisplayName("State")]
         public string State { get; set; } // Added PER 03/07/2022
@@ -51,7 +51,7 @@ namespace BHelp.Models
         [JsonProperty, StringLength(10), DisplayName("Zip Code")]
         public string Zip { get; set; } // Added PER 03/07/2022
 
-        [JsonProperty, DisplayName("Phone 2")] public string PhoneNumber2 { get; set; } // Added PER 03/07/2022
+        [StringLength(256), JsonProperty, DisplayName("Phone 2")] public string PhoneNumber2 { get; set; } // Added PER 03/07/2022
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {

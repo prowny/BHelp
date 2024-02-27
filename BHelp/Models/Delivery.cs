@@ -18,19 +18,35 @@ namespace BHelp.Models
         public DateTime LogDate { get; set; }
 
         // Snapshot: Client Data as of the Log Date
+        [StringLength(128)]
         public string FirstName { get; set; }
+
+        [StringLength(128)]
         public string LastName { get; set; }
+
+        [StringLength(128)]
         public string StreetNumber { get; set; }
+
+        [StringLength(128)]
         public string StreetName { get; set; }
+
+        [StringLength(128)]
         public string City { get; set; }
+
+        [StringLength(20)]
         public string Zip { get; set; }
+
+        [StringLength(128)]
         public string Phone { get; set; }
+
+        [StringLength(2048)]
         public string NamesAgesInHH { get; set; }
 
         public int Children { get; set; }  // # of children in this delivery
         public int Adults { get; set; }     // # of adults in this delivery
         public int Seniors { get; set; }    // # of seniors in this delivery
-       
+
+        [StringLength(4096)]
         public string Notes { get; set; }  // Notes entered by drivers, baggers. etc. (as opposed to OD notes or Household notes)
         public int FullBags { get; set; }
         public int HalfBags { get; set; }
@@ -49,9 +65,10 @@ namespace BHelp.Models
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime? DateDelivered { get; set; }
 
+        [StringLength(4096)]
         public string ODNotes { get; set; }
 
-        [DataType(DataType.MultilineText)]
+        [DataType(DataType.MultilineText), StringLength(4096)]
         public string DriverNotes { get; set; }
         public bool FirstDelivery { get; set; }
         public int Status { get; set; }  // 0 = Open, 1 = Completed, 2 = Undelivered

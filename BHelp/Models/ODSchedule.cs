@@ -13,7 +13,7 @@ namespace BHelp.Models
         [StringLength(128)]
         public string ODId { get; set; }
         
-        [DataType(DataType.MultilineText)]
+        [DataType(DataType.MultilineText), StringLength(4096)]
         public string Note { get; set; }
 
         public bool ODConfirmed { get; set; }

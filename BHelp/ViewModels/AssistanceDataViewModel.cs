@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web.Mvc;
-
 namespace BHelp.ViewModels
 {
     public class AssistanceDataViewModel  // For Single Client Date-Range History

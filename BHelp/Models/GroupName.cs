@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace BHelp.Models
 {
@@ -6,7 +7,7 @@ namespace BHelp.Models
     {
         public int Id { get; set; }
 
-        [DisplayName ("Group Name")]
+        [DisplayName("Group Name"), StringLength(128)]
         public string Name { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace BHelp.Models
         [StringLength(128)]
         public string PartnerId { get; set; }  // optional for husband-wife team
                                                
-        [DataType(DataType.MultilineText)]
+        [StringLength(128), DataType(DataType.MultilineText)]
         public string Note { get; set; }
     }
 }

@@ -134,8 +134,8 @@ namespace BHelp.Controllers
 
         public ActionResult GetFamilyDetails(int id /* drop down value */)
         {
-            var members = db.FamilyMembers.Where(m => m.ClientId == id).ToList();
-            members.Add(new FamilyMember()); /*add a blank additional family member*/ 
+            //var members = db.FamilyMembers.Where(m => m.ClientId == id).ToList();
+            //members.Add(new FamilyMember()); /*add a blank additional family member*/ 
 
             try
             {

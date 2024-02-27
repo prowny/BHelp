@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Web.Mvc;
 
 namespace BHelp.Models
 {
@@ -13,10 +11,10 @@ namespace BHelp.Models
         public int ClientId { get; set; }
         public bool Active { get; set; }
 
-        [DisplayName("First Name")]
+        [DisplayName("First Name"), StringLength(128)]
         public string FirstName { get; set; }
 
-        [DisplayName("Last Name")]
+        [DisplayName("Last Name"), StringLength(128)]
         public string LastName { get; set; }
 
         [DisplayName("Date of Birth")]

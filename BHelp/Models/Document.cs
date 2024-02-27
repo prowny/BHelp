@@ -12,11 +12,13 @@ namespace BHelp.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [DisplayName("Menu Title")]
+        [DisplayName("Menu Title"), StringLength(128)]
         public string Title { get; set; }
-        [DisplayName("Menu Category")]
+
+        [DisplayName("Menu Category"), StringLength(128)]
         public string MenuCategory { get; set; }
-        [DisplayName("File Name")]
+
+        [DisplayName("File Name"), StringLength(256)]
         public string FileName { get; set; }
         public byte[] FileContent { get; set; }
         [StringLength(128)] public string OriginatorId { get; set; }

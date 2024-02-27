@@ -13,9 +13,11 @@ namespace BHelp.Models
         public bool Active { get; set; }
 
         [DisplayName("Client First Name")]
+
+        [StringLength(128)]
         public string FirstName { get; set; }
 
-        [DisplayName("Client Last Name")]
+        [StringLength(128), DisplayName("Client Last Name")]
         public string LastName { get; set; }
 
         [DisplayName("Date of Birth")]
@@ -23,23 +25,28 @@ namespace BHelp.Models
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DateOfBirth { get; set; }
 
-        [Required]
-        [DisplayName("Street Number")]
+        [Required,StringLength(128), DisplayName("Street Number")]
         public string StreetNumber { get; set; }
 
-        [Required] [DisplayName("Street Name")]
+        [Required, StringLength(128)]
+        [DisplayName("Street Name")]
         public string StreetName { get; set; }
 
-        [Required] [DisplayName("City")]
+        [Required,StringLength(128)]
+        [DisplayName("City")]
         public string City { get; set; }
 
-        [Required] [DisplayName("Zip Code")]
+        [Required, StringLength(20)]
+        [DisplayName("Zip Code")]
         public string Zip { get; set; }
 
+        [StringLength(256)]
         public string Email { get; set; }
+
+        [StringLength(128)]
         public string Phone { get; set; }
 
-        [DataType(DataType.MultilineText)]
+        [DataType(DataType.MultilineText), StringLength(4096)]
         public string Notes { get; set; }
 
         [DataType(DataType.Date)]
@@ -47,7 +54,8 @@ namespace BHelp.Models
 
         [NotMapped] public string FullName
         {
-            get { return string.Format("{0} {1}", FirstName, LastName); }
+            // ReSharper disable once ArrangeAccessorOwnerBody
+            get { return $"{FirstName} {LastName}"; }
         }
 
         [NotMapped] public string LastFirstName => $"{LastName + ", "} {FirstName}";

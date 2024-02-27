@@ -25,7 +25,7 @@ namespace BHelp.Models
         [StringLength(128)]
         public string GroupDriverId { get; set; }
 
-        [DataType(DataType.MultilineText)]
+        [DataType(DataType.MultilineText), StringLength(4096)]
         public string Note { get; set; }
 
         [NotMapped] public string DriverName { get; set; }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Dynamic;
 using System.Web.Mvc;
 
 namespace BHelp.Models
@@ -10,7 +9,7 @@ namespace BHelp.Models
     public class Holiday
     {
         public int Id { get; set; }
-        [Required]
+        [Required, StringLength(256)]
         public string Description { get; set; }
         public int Repeat { get; set; } // 0: does not repeat, 1: annual day, 2: annual weekday 
         public DateTime FixedDate { get; set; } // non-repeating date

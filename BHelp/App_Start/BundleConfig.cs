@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿// ReSharper disable once RedundantUsingDirective
+using System.Web;
 using System.Web.Optimization;
 
 namespace BHelp

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BHelp.Models
@@ -8,9 +9,13 @@ namespace BHelp.Models
         public int Id { get; set; }
         public int ClientId { get; set; }
         public byte CategoryId { get; set; }
+
+        [StringLength(256)]
         public string Action { get; set; }
         //public int AmountInCents { get; set; }
         public DateTime Date { get; set; }
+
+        [StringLength(256)]
         public string Note { get; set; }
         public decimal AmountDecimal { get; set; }
 
