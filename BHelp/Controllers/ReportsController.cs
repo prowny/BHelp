@@ -7,7 +7,6 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
-using Castle.Core.Internal;
 using ClosedXML.Excel;
 
 namespace BHelp.Controllers
@@ -620,7 +619,7 @@ namespace BHelp.Controllers
             public ActionResult QORKReport(string endingDate = "") // New QORK Report 02/22
             {
                 DateTime endDate;
-                if (endingDate.IsNullOrEmpty())
+                if (String.IsNullOrEmpty(endingDate))
                 {
                     // Ends on a Sunday - weekday Monday is 1, Saturday is 6, Sunday is 0
                     // If today is a  Sunday, default to this week
@@ -644,7 +643,7 @@ namespace BHelp.Controllers
             public ActionResult QORKReportToCSV(string endingDate = "")
             {
                 DateTime endDate;
-                if (endingDate.IsNullOrEmpty())
+                if (String.IsNullOrEmpty(endingDate))
                 {
                     // Ends on a Sunday - weekday Monday is 1, Saturday is 6, Sunday is 0
                     // If today is a  Sunday, default to this week
@@ -671,7 +670,7 @@ namespace BHelp.Controllers
             public ActionResult QORKReportToExcel(string endingDate)
             {
                 DateTime endDate;
-                if (endingDate.IsNullOrEmpty())
+                if (String.IsNullOrEmpty(endingDate))
                 {
                     // Ends on a Sunday - weekday Monday is 1, Saturday is 6, Sunday is 0
                     // If today is a  Sunday, default to this week

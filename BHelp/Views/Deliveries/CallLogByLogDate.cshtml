@@ -8,10 +8,10 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Call Log By Log Date</title>
-    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery-3.7.1.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.13.2.min.js"></script>
     <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
     @*Put page javascript in a separate .js file where breaks can be set during debugging:*@
     <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
@@ -63,7 +63,10 @@
         {
             <table>
                 <tr>
-                    <td></td> @*// for Edit button*@
+                    @if (Model.OkToEdit)
+                    {
+                        <td></td> @*For Edit header*@
+                    }
                     <td><b>Log Date</b></td>
                     <td><b>Client Name</b></td>
                     <td><b>Addess</b></td>
@@ -85,13 +88,9 @@
                 @foreach (var delivery in Model.DeliveryList)
                 {
                     <tr>
-                        @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
+                        @if (Model.OkToEdit)
                         {
                             <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id })</td>
-                        }
-                        else
-                        {
-                            <td></td>
                         }
                         <td>@delivery.LogDateString</td>
                         @{ var name = delivery.LastName + ", " + delivery.FirstName; }
@@ -112,7 +111,7 @@
                         <td style="text-align: center">@delivery.GiftCards</td>
                         <td style="text-align: center">@delivery.HolidayGiftCards</td>
                         <td style="text-align: center">@delivery.PoundsOfFood</td>
-                        @if (User.IsInRole("Administrator") || User.IsInRole("Staff"))
+                        @if (Model.OkToEdit)
                         {
                             <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id })</td>
                         }

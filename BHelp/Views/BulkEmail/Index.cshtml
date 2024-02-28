@@ -1,5 +1,4 @@
-﻿@using Castle.Core.Internal
-@model BHelp.ViewModels.BulkEmailViewModel
+﻿@model BHelp.ViewModels.BulkEmailViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
 
@@ -71,7 +70,8 @@
             <br/>
             <span><input type="submit" value="Create Address List" class="btn btn-default" id="CSVButton"/></span>
         </div>
-        if (!Model.EmailString.IsNullOrEmpty())
+        //if (!Model.EmailString.IsNullOrEmpty())
+        if (!String.IsNullOrEmpty(Model.EmailString))
         {
         <div>
             <br />

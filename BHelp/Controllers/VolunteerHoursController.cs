@@ -6,7 +6,6 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
-using Castle.Core.Internal;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 
@@ -118,7 +117,7 @@ namespace BHelp.Controllers
                 a_mCat = view.Category;
             }
 
-            if (a_mCat.IsNullOrEmpty())
+            if (String.IsNullOrEmpty(a_mCat))
             {
                 view.A_MCategory = null;
             }

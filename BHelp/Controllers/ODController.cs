@@ -5,7 +5,6 @@ using System.Web.Mvc;
 using System.Web.WebPages;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
-using Castle.Core.Internal;
 using BHelp.ViewModels;
 using Microsoft.AspNet.Identity;
 
@@ -20,7 +19,7 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
         public ActionResult Index(string callLogDate, string searchString, int? selectedId)
         {
-            if (callLogDate.IsNullOrEmpty())
+            if (String.IsNullOrEmpty(callLogDate))
             {
                 var cdt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
                 var cdts = cdt.ToString("MM/dd/yyyy");

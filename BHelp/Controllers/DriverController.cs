@@ -7,7 +7,6 @@ using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
 using Microsoft.AspNet.Identity;
-using Castle.Core.Internal;
 
 namespace BHelp.Controllers
 {
@@ -39,7 +38,7 @@ namespace BHelp.Controllers
                 DeliveryList = new List<Delivery>()
             };
            
-            if (userId.IsNullOrEmpty()) { System.Web.HttpContext.Current.User.Identity.GetUserId(); }
+            if (String.IsNullOrEmpty(userId)) { System.Web.HttpContext.Current.User.Identity.GetUserId(); }
             var deliveryList = new List<Delivery>(db.Deliveries).Where(d => d.Status == 0)
                 .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
                 .ThenBy(s => s.StreetNumber)

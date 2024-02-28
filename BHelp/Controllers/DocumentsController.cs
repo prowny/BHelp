@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -8,7 +9,6 @@ using System.Web.Mvc;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
 using BHelp.ViewModels;
-using Castle.Core.Internal;
 using Microsoft.AspNet.Identity;
 
 namespace BHelp.Controllers
@@ -79,7 +79,7 @@ namespace BHelp.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (doc.Title.IsNullOrEmpty())
+                if (String.IsNullOrEmpty(doc.Title))
                 {
                     TempData["DocumentTitleError"] = "Title Required!";
                     return RedirectToAction("Upload");

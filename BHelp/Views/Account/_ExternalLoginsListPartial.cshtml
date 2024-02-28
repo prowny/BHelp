@@ -1,5 +1,4 @@
 ﻿@model BHelp.ViewModels.ExternalLoginListViewModel
-@using Castle.Core.Internal
 @using Microsoft.Owin.Security
 
 <h4>Use another service to log in.</h4>
@@ -7,7 +6,7 @@
 @{
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
     var authenticationDescriptions = loginProviders.ToList();
-    if (authenticationDescriptions.IsNullOrEmpty()) {
+    if (authenticationDescriptions.Count == 0) {     //.IsNullOrEmpty()) {
         <div>
             <p>
                 There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
