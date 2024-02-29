@@ -1243,7 +1243,7 @@ namespace BHelp.Controllers
                 var callLogView = new DeliveryViewModel
                 {
                     ClientSelectList = clientSelectList,
-                    //OkToEdit = User.IsInAnyRoles("Developer", "Administrator", "Staff")
+                    OkToEdit = User.IsInAnyRoles("Developer", "Administrator", "Staff")
                 };
                 if (clientId == null)
                 {
