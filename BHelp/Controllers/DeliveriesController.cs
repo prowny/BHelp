@@ -1215,13 +1215,13 @@ namespace BHelp.Controllers
                 return RedirectToAction("DeleteDelivery", new {_id = id, _returnURL = returnURL});
             }
 
-            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
+            [Authorize(Roles = "Developer,Administrator,Staff,Reports,Driver,OfficerOfTheDay")]
             public ActionResult CallLogMenu()
             {
                 return View();
             }
 
-            [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
+            [Authorize(Roles = "Developer,Administrator,Staff,Reports,Driver,OfficerOfTheDay")]
             public ActionResult CallLogIndividual(int? clientId)
             {
                 using var db = new BHelpContext();
@@ -1336,7 +1336,7 @@ namespace BHelp.Controllers
                 }
             }
 
-            [Authorize(Roles = "Reports,Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
+            [Authorize(Roles = "Developer,Administrator,Staff,Reports,Driver,OfficerOfTheDay")]
             public ActionResult CallLogByLogDate(DateTime? startDate, DateTime? endDate )
             {
                 using var db = new BHelpContext();
@@ -1448,7 +1448,9 @@ namespace BHelp.Controllers
                     Session["CallLogByLogDateList"] = null;
                 }
             }
-            public ActionResult CallLogByDateDelivered(DateTime? startDate, DateTime? endDate)
+
+        [Authorize(Roles = "Developer,Administrator,Staff,Reports,Driver,OfficerOfTheDay")]
+        public ActionResult CallLogByDateDelivered(DateTime? startDate, DateTime? endDate)
             {
                 using var db = new BHelpContext();
                 if (!startDate.HasValue || !endDate.HasValue) // default to today and 1 week ago
