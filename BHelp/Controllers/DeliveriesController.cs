@@ -36,166 +36,164 @@ namespace BHelp.Controllers
             foreach (var delivery in listDeliveries)
             {
                 var client = db.Clients.Find(delivery.ClientId);
-                if (client != null)
+                if (client == null) continue;
+                var deliveryView = new DeliveryViewModel
                 {
-                    var deliveryView = new DeliveryViewModel
+                    Id = delivery.Id,
+                    ClientId = client.Id,
+                    DriverId = delivery.DriverId,
+                    LogDate = delivery.LogDate,
+                    NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id),
+                    FamilyMembers = AppRoutines.GetFamilyMembers(client.Id),
+                    FamilySelectList = AppRoutines.GetFamilySelectList(client.Id),
+                    Kids = new List<FamilyMember>(),
+                    Adults = new List<FamilyMember>(),
+                    Seniors = new List<FamilyMember>()
+                };
+                foreach (var mbr in deliveryView.FamilyMembers)
+                {
+                    mbr.Age = AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
+                    if (mbr.Age < 18)
                     {
-                        Id = delivery.Id,
-                        ClientId = client.Id,
-                        DriverId = delivery.DriverId,
-                        LogDate = delivery.LogDate,
-                        NamesAgesInHH = AppRoutines.GetNamesAgesOfAllInHousehold(client.Id),
-                        FamilyMembers = AppRoutines.GetFamilyMembers(client.Id),
-                        FamilySelectList = AppRoutines.GetFamilySelectList(client.Id),
-                        Kids = new List<FamilyMember>(),
-                        Adults = new List<FamilyMember>(),
-                        Seniors = new List<FamilyMember>()
-                    };
-                    foreach (var mbr in deliveryView.FamilyMembers)
-                    {
-                        mbr.Age = AppRoutines.GetAge(mbr.DateOfBirth, DateTime.Today);
-                        if (mbr.Age < 18)
-                        {
-                            deliveryView.Kids.Add(mbr);
-                            deliveryView.KidsCount += 1;
-                        }
-
-                        if (mbr.Age is >= 18 and < 60)
-                        {
-                            deliveryView.Adults.Add(mbr);
-                            deliveryView.AdultsCount += 1;
-                        }
-
-                        if (mbr.Age >= 60)
-                        {
-                            deliveryView.Seniors.Add(mbr);
-                            deliveryView.SeniorsCount += 1;
-                        }
+                        deliveryView.Kids.Add(mbr);
+                        deliveryView.KidsCount += 1;
                     }
 
-                    deliveryView.KidsCount = deliveryView.Kids.Count();
-                    deliveryView.AdultsCount = deliveryView.Adults.Count();
-                    deliveryView.SeniorsCount = deliveryView.Seniors.Count();
-                    deliveryView.FullBags = delivery.FullBags;
-                    deliveryView.HalfBags = delivery.HalfBags;
-                    deliveryView.KidSnacks = delivery.KidSnacks;
-                    deliveryView.GiftCards = delivery.GiftCards;
-                    deliveryView.HolidayGiftCards = delivery.HolidayGiftCards;
-                    deliveryView.GiftCardsEligible = delivery.GiftCardsEligible;
-                    deliveryView.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
-                    deliveryView.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
-
-                    var dateDelivered = DateTime.Today.AddDays(-1);
-                    if (delivery.DateDelivered != null)
+                    if (mbr.Age is >= 18 and < 60)
                     {
-                        deliveryView.DateDelivered = delivery.DateDelivered;
-                        dateDelivered = delivery.DateDelivered.Value;
+                        deliveryView.Adults.Add(mbr);
+                        deliveryView.AdultsCount += 1;
                     }
 
-                    var since1 = new DateTime(dateDelivered.Year, dateDelivered.Month, 1);
-                    var thrudate = dateDelivered.AddDays(-1);
-                    deliveryView.GiftCardsThisMonth = GetGiftCardsSince(client.Id, since1, thrudate);
-
-                    if (delivery.DateDelivered != null)
+                    if (mbr.Age >= 60)
                     {
-                        deliveryView.DateDeliveredString = delivery.DateDelivered.Value.ToString("MM/dd/yyyy");
+                        deliveryView.Seniors.Add(mbr);
+                        deliveryView.SeniorsCount += 1;
                     }
+                }
 
-                    // Check for EligiibilityRulesException:
-                    deliveryView.NextDeliveryEligibleDate = AppRoutines.GetNextEligibleDeliveryDate
-                        (delivery.ClientId, DateTime.Today);
-                    if (deliveryView.DateDelivered < deliveryView.NextDeliveryEligibleDate)
-                        deliveryView.EligiibilityRulesException = true;
+                deliveryView.KidsCount = deliveryView.Kids.Count();
+                deliveryView.AdultsCount = deliveryView.Adults.Count();
+                deliveryView.SeniorsCount = deliveryView.Seniors.Count();
+                deliveryView.FullBags = delivery.FullBags;
+                deliveryView.HalfBags = delivery.HalfBags;
+                deliveryView.KidSnacks = delivery.KidSnacks;
+                deliveryView.GiftCards = delivery.GiftCards;
+                deliveryView.HolidayGiftCards = delivery.HolidayGiftCards;
+                deliveryView.GiftCardsEligible = delivery.GiftCardsEligible;
+                deliveryView.DateLastDelivery = AppRoutines.GetLastDeliveryDate(client.Id);
+                deliveryView.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
 
-                    // ReSharper disable once PossibleMultipleEnumeration
-                    var clientIds = duplicateClientIds.ToList();
-                    if (duplicateClientIds != null)
-                        foreach (var dup in clientIds)
+                var dateDelivered = DateTime.Today.AddDays(-1);
+                if (delivery.DateDelivered != null)
+                {
+                    deliveryView.DateDelivered = delivery.DateDelivered;
+                    dateDelivered = delivery.DateDelivered.Value;
+                }
+
+                var since1 = new DateTime(dateDelivered.Year, dateDelivered.Month, 1);
+                var thrudate = dateDelivered.AddDays(-1);
+                deliveryView.GiftCardsThisMonth = GetGiftCardsSince(client.Id, since1, thrudate);
+
+                if (delivery.DateDelivered != null)
+                {
+                    deliveryView.DateDeliveredString = delivery.DateDelivered.Value.ToString("MM/dd/yyyy");
+                }
+
+                // Check for EligiibilityRulesException:
+                deliveryView.NextDeliveryEligibleDate = AppRoutines.GetNextEligibleDeliveryDate
+                    (delivery.ClientId, DateTime.Today);
+                if (deliveryView.DateDelivered < deliveryView.NextDeliveryEligibleDate)
+                    deliveryView.EligiibilityRulesException = true;
+
+                // ReSharper disable once PossibleMultipleEnumeration
+                var clientIds = duplicateClientIds.ToList();
+                if (duplicateClientIds != null)
+                    foreach (var dup in clientIds)
+                    {
+                        if (dup.Id == deliveryView.ClientId && dup.Count > 1)
                         {
-                            if (dup.Id == deliveryView.ClientId && dup.Count > 1)
-                            {
-                                deliveryView.EligiibilityRulesException = true;
-                            }
-                        }
-
-                    if (deliveryView.GiftCards > 0)
-                    {
-                        deliveryView.NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate
-                            (deliveryView.ClientId, deliveryView.DateLastGiftCard);
-                        if (deliveryView.DateDelivered < deliveryView.NextGiftCardEligibleDate
-                            || deliveryView.GiftCards > deliveryView.GiftCardsEligible)
                             deliveryView.EligiibilityRulesException = true;
+                        }
                     }
 
-                    if (delivery.DriverId != null)
-                    {
-                        var driver = db.Users.Find(delivery.DriverId);
-                        deliveryView.DriverName = driver != null ? driver.FullName : "(nobody yet)";
-                    }
+                if (deliveryView.GiftCards > 0)
+                {
+                    deliveryView.NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate
+                        (deliveryView.ClientId, deliveryView.DateLastGiftCard);
+                    if (deliveryView.DateDelivered < deliveryView.NextGiftCardEligibleDate
+                        || deliveryView.GiftCards > deliveryView.GiftCardsEligible)
+                        deliveryView.EligiibilityRulesException = true;
+                }
 
-                    var ODid = delivery.ODId;
-                    if (!String.IsNullOrEmpty(ODid) && ODid != "0")
-                    {
-                        var user = db.Users.Find(ODid);
-                        if (user != null) deliveryView.ODName = user.FullName;
-                    }
+                if (delivery.DriverId != null)
+                {
+                    var driver = db.Users.Find(delivery.DriverId);
+                    deliveryView.DriverName = driver != null ? driver.FullName : "(nobody yet)";
+                }
+
+                var ODid = delivery.ODId;
+                if (!string.IsNullOrEmpty(ODid) && ODid != "0")
+                {
+                    var user = db.Users.Find(ODid);
+                    if (user != null) deliveryView.ODName = user.FullName;
+                }
 
                     
-                    deliveryView.FirstName = client.FirstName;
-                    deliveryView.LastName = client.LastName;
-                    deliveryView.StreetNumber = client.StreetNumber;
-                    deliveryView.StreetName = client.StreetName;
-                    // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
-                    deliveryView.StreetToolTip = client.StreetName.Replace(" ", "\u00a0");
-                    deliveryView.City = client.City;
-                    deliveryView.CityToolTip = client.City.Replace(" ", "\u00a0");
-                    deliveryView.Zip = client.Zip;
-                    deliveryView.Phone = client.Phone;
-                    deliveryView.PhoneToolTip = client.Phone.Replace(" ", "\u00a0");
-                    deliveryView.Email = client.Email;
-                    deliveryView.EmailToolTip = client.Email.Replace(" ", "\u00a0");
-                    string s;
-                    if (client.Notes != null)
-                    {
-                        deliveryView.Notes = client.Notes;
-                        deliveryView.NotesToolTip = client.Notes.Replace(" ", "\u00a0");
-                        s = deliveryView.Notes;
-                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
-                        deliveryView.Notes = s;
-                    }
-
-                    if (delivery.ODNotes != null)
-                    {
-                        deliveryView.ODNotes = delivery.ODNotes;
-                        deliveryView.ODNotesToolTip = delivery.ODNotes.Replace(" ", "\u00a0");
-                        s = deliveryView.ODNotes;
-                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
-                        deliveryView.ODNotes = s;
-                    }
-
-                    if (delivery.DriverNotes != null)
-                    {
-                        deliveryView.DriverNotes = delivery.DriverNotes;
-                        deliveryView.DriverNotesToolTip = deliveryView.DriverNotes.Replace(" ", "\u00a0");
-                        s = deliveryView.DriverNotes; // For display, abbreviate to 12 characters:           
-                        s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
-                        deliveryView.DriverNotes = s;
-                    }
-
-                    s = deliveryView.StreetName;
-                    s = s.Length <= 9 ? s : s.Substring(0, 9) + "...";
-                    deliveryView.StreetName = s;
-                    s = deliveryView.City; // For display, abbreviate to 11 characters:           
-                    s = s.Length <= 10 ? s : s.Substring(0, 10) + "...";
-                    deliveryView.City = s;
-                    s = deliveryView.Phone; // For display, abbreviate to 12 characters:           
+                deliveryView.FirstName = client.FirstName;
+                deliveryView.LastName = client.LastName;
+                deliveryView.StreetNumber = client.StreetNumber;
+                deliveryView.StreetName = client.StreetName;
+                // (full length on mouseover)    \u00a0 is the Unicode character for NO-BREAK-SPACE.
+                deliveryView.StreetToolTip = client.StreetName.Replace(" ", "\u00a0");
+                deliveryView.City = client.City;
+                deliveryView.CityToolTip = client.City.Replace(" ", "\u00a0");
+                deliveryView.Zip = client.Zip;
+                deliveryView.Phone = client.Phone;
+                deliveryView.PhoneToolTip = client.Phone.Replace(" ", "\u00a0");
+                deliveryView.Email = client.Email;
+                deliveryView.EmailToolTip = client.Email.Replace(" ", "\u00a0");
+                string s;
+                if (client.Notes != null)
+                {
+                    deliveryView.Notes = client.Notes;
+                    deliveryView.NotesToolTip = client.Notes.Replace(" ", "\u00a0");
+                    s = deliveryView.Notes;
                     s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
-                    deliveryView.Phone = s;
-                    s = deliveryView.Email; // For display, abbreviate to 15 characters:           
-                    s = s.Length <= 15 ? s : s.Substring(0, 15) + "...";
-                    deliveryView.Email = s;
-                    listDeliveryViewModels.Add(deliveryView);
+                    deliveryView.Notes = s;
                 }
+
+                if (delivery.ODNotes != null)
+                {
+                    deliveryView.ODNotes = delivery.ODNotes;
+                    deliveryView.ODNotesToolTip = delivery.ODNotes.Replace(" ", "\u00a0");
+                    s = deliveryView.ODNotes;
+                    s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                    deliveryView.ODNotes = s;
+                }
+
+                if (delivery.DriverNotes != null)
+                {
+                    deliveryView.DriverNotes = delivery.DriverNotes;
+                    deliveryView.DriverNotesToolTip = deliveryView.DriverNotes.Replace(" ", "\u00a0");
+                    s = deliveryView.DriverNotes; // For display, abbreviate to 12 characters:           
+                    s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                    deliveryView.DriverNotes = s;
+                }
+
+                s = deliveryView.StreetName;
+                s = s.Length <= 9 ? s : s.Substring(0, 9) + "...";
+                deliveryView.StreetName = s;
+                s = deliveryView.City; // For display, abbreviate to 11 characters:           
+                s = s.Length <= 10 ? s : s.Substring(0, 10) + "...";
+                deliveryView.City = s;
+                s = deliveryView.Phone; // For display, abbreviate to 12 characters:           
+                s = s.Length <= 12 ? s : s.Substring(0, 12) + "...";
+                deliveryView.Phone = s;
+                s = deliveryView.Email; // For display, abbreviate to 15 characters:           
+                s = s.Length <= 15 ? s : s.Substring(0, 15) + "...";
+                deliveryView.Email = s;
+                listDeliveryViewModels.Add(deliveryView);
             }
 
             return View(listDeliveryViewModels);
@@ -1569,8 +1567,8 @@ namespace BHelp.Controllers
             public ActionResult CountyReport(string yy = "", string qtr = "")
             {
                 int reportYear;
-                int reportQuarter = 0;
-                if (String.IsNullOrEmpty(yy) || String.IsNullOrEmpty(qtr))   // Default to this year, this quarter
+                var reportQuarter = 0;
+                if (string.IsNullOrEmpty(yy) || string.IsNullOrEmpty(qtr))   // Default to this year, this quarter
                 {
                     reportYear = Convert.ToInt32(DateTime.Now.Year.ToString());
                     var month = Convert.ToInt32(DateTime.Now.Month.ToString());
@@ -1597,7 +1595,7 @@ namespace BHelp.Controllers
                 var reportQuarter = 1;
                 var reportYear = 2020;
 
-                 if (String.IsNullOrEmpty(typ))
+                 if (string.IsNullOrEmpty(typ))
                 {
                     typ = "Monthly";  // Default to Monthly
                 }
@@ -1606,7 +1604,7 @@ namespace BHelp.Controllers
                 {
                     case "Monthly":
                             reportType = "Monthly";
-                            if (String.IsNullOrEmpty(yy) || String.IsNullOrEmpty(mm))  // Default to previous month
+                            if (string.IsNullOrEmpty(yy) || string.IsNullOrEmpty(mm))  // Default to previous month
                             {
                                 var mdt = DateTime.Now.AddMonths(-1);
                                 reportMonth = Convert.ToInt32(mdt.Month.ToString());
@@ -1620,7 +1618,7 @@ namespace BHelp.Controllers
                     case "Quarterly":
                             DateTime qdt;
                             reportType = "Quarterly";
-                            if (String.IsNullOrEmpty(qtr) || String.IsNullOrEmpty(yy)) // Default to previous quarter
+                            if (string.IsNullOrEmpty(qtr) || string.IsNullOrEmpty(yy)) // Default to previous quarter
                             {
                                 qdt = DateTime.Now.AddMonths(-3);
                                 reportYear = Convert.ToInt32(qdt.Year.ToString());
@@ -1652,7 +1650,7 @@ namespace BHelp.Controllers
                             break;
                     case "Yearly":
                         reportType = "Yearly";
-                        if (String.IsNullOrEmpty(yy))
+                        if (string.IsNullOrEmpty(yy))
                         {
                                 var ydt = DateTime.Now.AddYears(-1);  // default to previous year
                                 reportYear = Convert.ToInt32(ydt.Year.ToString());
@@ -2005,7 +2003,7 @@ namespace BHelp.Controllers
                 view.ZipCodes = AppRoutines.GetZipCodesList();
                 // Load Counts - extra zip code is for totals column.
                 view.Counts = new int[13, view.ZipCodes.Count + 1, 6]; //Month, ZipCodes, Counts
-                for (int i = 0; i < 3; i++)
+                for (var i = 0; i < 3; i++)
                 {
                     var mY = view.MonthYear[i].Split(' ');
                     var mo = DateTime.ParseExact(mY[0], "MMMM", CultureInfo.CurrentCulture).Month;
@@ -2075,7 +2073,7 @@ namespace BHelp.Controllers
                 activeRow ++;
                 ws.Cell(activeRow, 1).SetValue(view.DateRangeTitle);
                 activeRow += 2;
-                for(int mo = 0; mo < 3; mo++)
+                for(var mo = 0; mo < 3; mo++)
                 {
                     ws.Cell(activeRow, 1).SetValue(view.MonthYear[mo]);
                     ws.Cell(activeRow, view.ZipCodes.Count + 2).SetValue("TOTAL");
@@ -2140,7 +2138,7 @@ namespace BHelp.Controllers
                 return result;
             }
 
-            private  DateTime? GetLastGetDeliveryDate(int id)
+            private static DateTime? GetLastGetDeliveryDate(int id)
             {
                 using var db = new BHelpContext();
                 var dt = db.Deliveries.Where(d => d.DateDelivered != null
@@ -2165,10 +2163,12 @@ namespace BHelp.Controllers
                 var dList = db.Deliveries.Where(d => d.ClientId == clientId
                     && d.DateDelivered >= dt1 && d.DateDelivered <= dt2)
                     .Select(g => g.GiftCards).ToList();
-                foreach (var i in dList)
+                if (dList.Count > 0)
                 {
-                    var gc = i;
-                    total += gc;
+                    foreach (var gc in dList)
+                    {
+                        total += gc;
+                    }
                 }
 
                 return total;
@@ -2178,7 +2178,7 @@ namespace BHelp.Controllers
             public ActionResult QuorkReport(string endingDate = "")
             {
                 DateTime endDate;
-                if (String.IsNullOrEmpty(endingDate))
+                if (string.IsNullOrEmpty(endingDate))
                 {
                     // Ends on a Saturday - weekday Monday is 1, Saturday is 6
                     // If today is a  Saturday, default to this week

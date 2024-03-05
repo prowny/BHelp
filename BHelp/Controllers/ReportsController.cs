@@ -16,7 +16,7 @@ namespace BHelp.Controllers
     {
         // GET: Reports
 
-        [Authorize(Roles = "Reports,Administrator,Developer")]
+        [Authorize(Roles = "Reports,Staff,Administrator,Developer")]
    
         public ActionResult ReportsMenu()
         {
@@ -398,7 +398,7 @@ namespace BHelp.Controllers
 
             view.HistoryStartDate = startDate;
             view.HistoryEndDate = endDate;
-            List<Delivery> deliveries = db.Deliveries
+            var deliveries = db.Deliveries
                 .Where(d => d.Status == 1
                             && d.DateDelivered >= view.HistoryStartDate
                             & d.DateDelivered <= view.HistoryEndDate)
