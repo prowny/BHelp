@@ -247,7 +247,7 @@ namespace BHelp.Controllers
             var distinctDatesList = listAllOpenDeliveries.Select(d => d.DateDelivered).Distinct().ToList();
             foreach (var dt in distinctDatesList)
             {
-                int delThisDateCount = listAllOpenDeliveries.Count(d => d.DateDelivered == dt);
+                var delThisDateCount = listAllOpenDeliveries.Count(d => d.DateDelivered == dt);
                 view.DistinctDeliveryDatesList.Add(dt == null
                     ? "-none-  (" + delThisDateCount + ")"
                     : dt.Value.ToString("MM/dd/yyyy") + " (" + delThisDateCount + ")");
@@ -273,7 +273,7 @@ namespace BHelp.Controllers
             var distinctDriverIdList = listAllOpenDeliveries.Select(d => d.DriverId).Distinct().ToList();
             foreach (var drId in distinctDriverIdList)
             {
-                int delCountThisDriver = listAllOpenDeliveries.Count(d => d.DriverId == drId);
+                var delCountThisDriver = listAllOpenDeliveries.Count(d => d.DriverId == drId);
 
                 var driver = db.Users.Find(drId);
                 if (driver != null)
@@ -388,7 +388,8 @@ namespace BHelp.Controllers
                     {
                         if (rec.IsChecked)
                         {
-                            db.SetDeliveryDate(rec.Id, view.ReplacementDeliveryDate);
+                            var usrName = User.Identity.Name;
+                            db.SetDeliveryDate(rec.Id, view.ReplacementDeliveryDate, usrName);
                         }
                     }
 
@@ -1052,6 +1053,10 @@ namespace BHelp.Controllers
                         var rec = _db.Deliveries.FirstOrDefault(i => i.Id == delivery.Id);
                         if (rec != null)
                         {
+                            rec.DateModified = DateTime.Now;  // added PER 03/16/2024
+                            rec.ModifiedBy = User.Identity.Name;  // added PER 03/16/2024
+                            rec.OldDateDelivered = rec.DateDelivered;  // added PER 03/16/2024
+
                             rec.DateDelivered = delivery.DateDelivered;
                             rec.LogDate = delivery.LogDate;
                             rec.FullBags = delivery.FullBags;
@@ -1184,7 +1189,7 @@ namespace BHelp.Controllers
                     return HttpNotFound();
                 }
 
-                delivery.ClientId = model.ClientId;
+                delivery.ClientId = model.ClientId;  
                 db.SaveChanges();
 
                 if (model.ReturnURL.Contains("UpdateHousehold"))

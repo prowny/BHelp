@@ -56,11 +56,15 @@ namespace BHelp.DataAccessLayer
             }
         }
 
-        public void SetDeliveryDate(int id, DateTime dateDelivered)
+        public void SetDeliveryDate(int id, DateTime dateDelivered, string usrName)
         {
             var rec = this.Deliveries.Find(id);
             if (rec != null)
             {
+                rec.DateModified = DateTime.Now;
+                rec.ModifiedBy = usrName; 
+                rec.OldDateDelivered = rec.DateDelivered;
+
                 rec.DateDelivered = dateDelivered;
                 this.SaveChanges();
             }

@@ -73,6 +73,13 @@ namespace BHelp.Models
         public bool FirstDelivery { get; set; }
         public int Status { get; set; }  // 0 = Open, 1 = Completed, 2 = Undelivered
 
+        public DateTime? DateModified { get; set; }  // addedPER 03/16/2024
+
+        [StringLength(128)]
+        public string ModifiedBy { get; set; }  // User.Identity.Name - addedPER 03/16/2024
+        public DateTime? OldDateDelivered { get; set; }  // addedPER 03/16/2024
+
+
         [NotMapped]
         public string ODName { get; set; }
 
@@ -107,7 +114,7 @@ namespace BHelp.Models
         public string LogDateString { get; set; }
         
         [NotMapped]
-        public Boolean IsChecked { get; set; }    // for open delivery filtering
+        public bool IsChecked { get; set; }    // for open delivery filtering
 
         [NotMapped]
         public Client Client { get; set; }  // for open delivery filtering
@@ -122,9 +129,9 @@ namespace BHelp.Models
         public int PoundsOfFood { get; set; }
 
         [NotMapped]
-       public string ReturnURL { get; set; }
+        public string ReturnURL { get; set; }
 
-       [NotMapped]
-       public List<Client> Clients { get; set; }
+        [NotMapped]
+        public List<Client> Clients { get; set; }
     }
 }
