@@ -389,6 +389,18 @@ namespace BHelp.Controllers
                         if (rec.IsChecked)
                         {
                             db.SetDeliveryDate(rec.Id, view.ReplacementDeliveryDate);
+                            // now get matching ODId for new date:
+                            var odSched = AppRoutines.GetODSchedule(view.ReplacementDeliveryDate);
+                            if (odSched == null)
+                            {
+                                rec.DeliveryDateODId = null; // (nobody yet)
+                            }
+                            else
+                            {
+                                rec.DeliveryDateODId = odSched.ODId;
+                            }
+
+                            db.SetDeliveryDateODId(rec.Id, rec.DeliveryDateODId);
                         }
                     }
 
