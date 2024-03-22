@@ -46,6 +46,8 @@ namespace BHelp.DataAccessLayer
 
         public DbSet <AssistancePayment> AssistancePayments { get; set; }
 
+        public DbSet<DeliveryLog> DeliveryLogs { get; set; }
+
         public void SetDeliveryStatus(int id, int status)
         {
             var rec = this.Deliveries.Find(id);

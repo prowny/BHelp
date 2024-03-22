@@ -1078,6 +1078,25 @@ namespace BHelp.Controllers
                             rec.DeliveryDateODId = delivery.DeliveryDateODId;
                             rec.DriverId = delivery.DriverId;
                             rec.Zip = delivery.Zip;
+
+                            // insert delivery log record:
+                            var logRec = new DeliveryLog()
+                            {
+                                DateModified = DateTime.Now,
+                                ModifiedBy = User.Identity.Name,
+                                ActionSource = "EditPost",
+                                DateDelivered = delivery.DateDelivered,
+                                LogDate = delivery.LogDate,
+                                LogODId = delivery.ODId,
+                                DeliveryODId = delivery.DeliveryDateODId,
+                                DriverId = delivery.DriverId,
+                                DeliveryId = delivery.Id,
+                                FirstName = delivery.FirstName,
+                                LastName = delivery.LastName,
+                                Status = delivery.Status
+                            };
+                            _db.DeliveryLogs.Add(logRec);
+
                             _db.SaveChanges();
                         }
                     }
@@ -1132,7 +1151,25 @@ namespace BHelp.Controllers
                         }
 
                         db.Entry(updateData).State = EntityState.Modified;
-                        db.SaveChanges();
+
+                    var logRec = new DeliveryLog()
+                    {
+                        DateModified = DateTime.Now,
+                        ModifiedBy = User.Identity.Name,
+                        ActionSource = "EditPost",
+                        DateDelivered = delivery.DateDelivered,
+                        LogDate = delivery.LogDate,
+                        LogODId = delivery.ODId,
+                        DeliveryODId = delivery.DeliveryDateODId,
+                        DriverId = delivery.DriverId,
+                        DeliveryId = delivery.Id,
+                        FirstName = delivery.FirstName,
+                        LastName = delivery.LastName,
+                        Status = delivery.Status
+                    };
+                    db.DeliveryLogs.Add(logRec);
+
+                    db.SaveChanges();
                     }
 
                     if (delivery.ReturnURL.Contains("CallLogIndividual"))

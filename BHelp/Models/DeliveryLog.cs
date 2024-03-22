@@ -23,8 +23,8 @@ namespace BHelp.Models
         [StringLength(128)] public string DeliveryODId { get; set; }
         [StringLength(128)] public string DriverId { get; set; }
         public int ClientId { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        [StringLength(128)] public string FirstName { get; set; }
+        [StringLength(128)] public string LastName { get; set; }
         public int Status { get; set; }  // 0 = Open, 1 = Completed, 2 = Undelivered
     }
 }
