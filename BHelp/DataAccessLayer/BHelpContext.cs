@@ -61,10 +61,6 @@ namespace BHelp.DataAccessLayer
             var rec = this.Deliveries.Find(id);
             if (rec != null)
             {
-                rec.DateModified = DateTime.Now;
-                rec.ModifiedBy = usrName; 
-                rec.OldDateDelivered = rec.DateDelivered;
-
                 rec.DateDelivered = dateDelivered;
                 this.SaveChanges();
             }

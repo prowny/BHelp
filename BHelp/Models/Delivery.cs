@@ -73,13 +73,6 @@ namespace BHelp.Models
         public bool FirstDelivery { get; set; }
         public int Status { get; set; }  // 0 = Open, 1 = Completed, 2 = Undelivered
 
-        public DateTime? DateModified { get; set; }  // addedPER 03/16/2024
-
-        [StringLength(128)]
-        public string ModifiedBy { get; set; }  // User.Identity.Name - addedPER 03/16/2024
-        public DateTime? OldDateDelivered { get; set; }  // addedPER 03/16/2024
-
-
         [NotMapped]
         public string ODName { get; set; }
 

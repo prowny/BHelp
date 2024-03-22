@@ -1064,10 +1064,6 @@ namespace BHelp.Controllers
                         var rec = _db.Deliveries.FirstOrDefault(i => i.Id == delivery.Id);
                         if (rec != null)
                         {
-                            rec.DateModified = DateTime.Now;  // added PER 03/16/2024
-                            rec.ModifiedBy = User.Identity.Name;  // added PER 03/16/2024
-                            rec.OldDateDelivered = rec.DateDelivered;  // added PER 03/16/2024
-
                             rec.DateDelivered = delivery.DateDelivered;
                             rec.LogDate = delivery.LogDate;
                             rec.FullBags = delivery.FullBags;
