@@ -175,6 +175,15 @@ namespace BHelp
             return user.FullName;
         }
 
+        public static string GetUserName(string id)
+        {
+            using var db = new BHelpContext();
+            if (id == null) return "(nobody yet)";
+            var user = db.Users.Find(id);
+            if (user == null) return "(nobody yet)";
+            return user.UserName;
+        }
+
         public static Delivery NewDeliveryRecord(int clientId)
         {
             using var context = new BHelpContext();

@@ -45,8 +45,8 @@ namespace BHelp.Controllers
             {
                 if (mbr.ClientId == clientId)
                 {
-                    GroupMember member = db.GroupMembers.First(m => m.NameId == _gpId
-                                                                    && m.ClientId == clientId);
+                    var member = db.GroupMembers.First(m => m.NameId == _gpId
+                                                            && m.ClientId == clientId);
                     if (member != null)
                     {
                         db.GroupMembers.Remove(member);
@@ -261,6 +261,25 @@ namespace BHelp.Controllers
                 {
                     db.Deliveries.Add(delivery);
                 }
+                db.SaveChanges(); // Save the new delivery record to record the Id for the log record.
+
+                // insert delivery log record:
+                var logRec = new DeliveryLog()
+                {
+                    DeliveryId = delivery.Id,
+                    LogDate = delivery.LogDate,
+                    DateModified = DateTime.Now,
+                    ModifiedBy = User.Identity.Name,
+                    ActionSource = "GROUPCreate",
+                    DateDelivered = delivery.DateDelivered,
+                    LogOD = AppRoutines.GetUserName(delivery.ODId),
+                    DeliveryOD = AppRoutines.GetUserName(delivery.DeliveryDateODId),
+                    Driver = AppRoutines.GetUserName(delivery.DriverId),
+                    ClientId = delivery.ClientId,
+                    Client = delivery.LastName,
+                    Status = delivery.Status
+                };
+                db.DeliveryLogs.Add(logRec);
                 db.SaveChanges();
             }
             return RedirectToAction("Index", "Deliveries");
@@ -304,7 +323,7 @@ namespace BHelp.Controllers
                     ws.Cell(activeRow, 8).Style.Alignment.WrapText = true;
                 }
             }
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
             workbook.SaveAs(ms);
             ms.Position = 0;
             var fileName = "BH Client Group " + view.Name + DateTime.Now.ToShortDateString();

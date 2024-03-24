@@ -178,6 +178,26 @@ namespace BHelp.Controllers
             }
 
             db.Deliveries.Add(newDelivery);
+            db.SaveChanges(); // Save the new delivery record to record the Id for the log record.
+
+            // insert delivery log record:
+            var logRec = new DeliveryLog()
+            {
+                DeliveryId = newDelivery.Id,
+                DateModified = DateTime.Now,
+                ModifiedBy = User.Identity.Name,
+                ActionSource = "CREATE",
+                DateDelivered = newDelivery.DateDelivered,
+                LogDate = DateTime.Now,
+                LogOD = AppRoutines.GetUserName(newDelivery.ODId),
+                DeliveryOD = AppRoutines.GetUserName(newDelivery.DeliveryDateODId),
+                Driver = AppRoutines.GetUserName(newDelivery.DriverId),
+                ClientId = newDelivery.ClientId,
+                Client = newDelivery.LastName,
+                Status = newDelivery.Status
+            };
+
+            db.DeliveryLogs.Add(logRec);
             db.SaveChanges();
             db.Entry(newDelivery).GetDatabaseValues();
             return RedirectToAction("Edit", "Deliveries", new { id = newDelivery.Id });

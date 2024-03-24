@@ -19,12 +19,11 @@ namespace BHelp.Models
 
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime? DateDelivered { get; set; }
-        [StringLength(128)] public string LogODId { get; set; }
-        [StringLength(128)] public string DeliveryODId { get; set; }
-        [StringLength(128)] public string DriverId { get; set; }
+        [StringLength(128)] public string LogOD { get; set; } // user name
+        [StringLength(128)] public string DeliveryOD { get; set; } // user name
+        [StringLength(128)] public string Driver { get; set; } // user name
         public int ClientId { get; set; }
-        [StringLength(128)] public string FirstName { get; set; }
-        [StringLength(128)] public string LastName { get; set; }
+        [StringLength(128)] public string Client { get; set; } // last name
         public int Status { get; set; }  // 0 = Open, 1 = Completed, 2 = Undelivered
     }
 }

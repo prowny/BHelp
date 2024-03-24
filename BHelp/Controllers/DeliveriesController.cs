@@ -1015,8 +1015,28 @@ namespace BHelp.Controllers
             {
                 using var db = new BHelpContext();
                 var delivery = db.Deliveries.Find(_id);
-                if (delivery != null) db.Deliveries.Remove(delivery);
-                db.SaveChanges();
+                if (delivery != null)
+                {
+                    var logRec = new DeliveryLog()
+                    {
+                        DeliveryId = delivery.Id,
+                        DateModified = DateTime.Now,
+                        ModifiedBy = User.Identity.Name,
+                        ActionSource = "DELETE",
+                        DateDelivered = delivery.DateDelivered,
+                        LogDate = delivery.LogDate,
+                        LogOD = AppRoutines.GetUserName(delivery.ODId),
+                        DeliveryOD = AppRoutines.GetUserName(delivery.DeliveryDateODId),
+                        Driver = AppRoutines.GetUserName(delivery.DriverId),
+                        ClientId = delivery.ClientId,
+                        Client = delivery.LastName,
+                        Status = delivery.Status
+                    };
+                    
+                    db.DeliveryLogs.Add(logRec);
+                    db.Deliveries.Remove(delivery);
+                    db.SaveChanges();
+                }
 
                 if (_returnURL.Contains("UpdateHousehold"))
                 {
@@ -1078,25 +1098,26 @@ namespace BHelp.Controllers
                             rec.DeliveryDateODId = delivery.DeliveryDateODId;
                             rec.DriverId = delivery.DriverId;
                             rec.Zip = delivery.Zip;
-
+                            _db.Entry(rec).State = EntityState.Modified;
+                            _db.SaveChanges();
+                            
                             // insert delivery log record:
                             var logRec = new DeliveryLog()
                             {
+                                DeliveryId = rec.Id,
+                                LogDate = rec.LogDate,
                                 DateModified = DateTime.Now,
                                 ModifiedBy = User.Identity.Name,
                                 ActionSource = "EditPost",
-                                DateDelivered = delivery.DateDelivered,
-                                LogDate = delivery.LogDate,
-                                LogODId = delivery.ODId,
-                                DeliveryODId = delivery.DeliveryDateODId,
-                                DriverId = delivery.DriverId,
-                                DeliveryId = delivery.Id,
-                                FirstName = delivery.FirstName,
-                                LastName = delivery.LastName,
+                                DateDelivered = rec.DateDelivered,
+                                LogOD = AppRoutines.GetUserName(delivery.ODId),
+                                DeliveryOD = AppRoutines.GetUserName(delivery.DeliveryDateODId),
+                                Driver = AppRoutines.GetUserName(delivery.DriverId),
+                                ClientId = rec.ClientId,
+                                Client = rec.LastName,
                                 Status = delivery.Status
                             };
                             _db.DeliveryLogs.Add(logRec);
-
                             _db.SaveChanges();
                         }
                     }
@@ -1152,24 +1173,24 @@ namespace BHelp.Controllers
 
                         db.Entry(updateData).State = EntityState.Modified;
 
-                    var logRec = new DeliveryLog()
-                    {
-                        DateModified = DateTime.Now,
-                        ModifiedBy = User.Identity.Name,
-                        ActionSource = "EditPost",
-                        DateDelivered = delivery.DateDelivered,
-                        LogDate = delivery.LogDate,
-                        LogODId = delivery.ODId,
-                        DeliveryODId = delivery.DeliveryDateODId,
-                        DriverId = delivery.DriverId,
-                        DeliveryId = delivery.Id,
-                        FirstName = delivery.FirstName,
-                        LastName = delivery.LastName,
-                        Status = delivery.Status
-                    };
-                    db.DeliveryLogs.Add(logRec);
+                        var logRec = new DeliveryLog()
+                        {
+                            DeliveryId = delivery.Id,
+                            DateModified = DateTime.Now,
+                            ModifiedBy = User.Identity.Name,
+                            ActionSource = "EditPost",
+                            DateDelivered = delivery.DateDelivered,
+                            LogDate = delivery.LogDate,
+                            LogOD = AppRoutines.GetUserName(delivery.ODId),
+                            DeliveryOD = AppRoutines.GetUserName(delivery.DeliveryDateODId),
+                            Driver = AppRoutines.GetUserName(delivery.DriverId),
+                            Client = updateData.LastName,
+                            ClientId =delivery.ClientId,
+                            Status = delivery.Status
+                        };
+                        db.DeliveryLogs.Add(logRec);
 
-                    db.SaveChanges();
+                        db.SaveChanges();
                     }
 
                     if (delivery.ReturnURL.Contains("CallLogIndividual"))
@@ -1233,7 +1254,25 @@ namespace BHelp.Controllers
                     return HttpNotFound();
                 }
 
-                delivery.ClientId = model.ClientId;  
+                delivery.ClientId = model.ClientId;
+
+                // insert delivery log record:
+                var logRec = new DeliveryLog()
+                {
+                    DeliveryId = delivery.Id,
+                    DateModified = DateTime.Now,
+                    ModifiedBy = User.Identity.Name,
+                    ActionSource = "ASSIGN",
+                    DateDelivered = delivery.DateDelivered,
+                    LogDate = DateTime.Now,
+                    LogOD = AppRoutines.GetUserName(delivery.ODId),
+                    DeliveryOD = AppRoutines.GetUserName(delivery.DeliveryDateODId),
+                    Driver = AppRoutines.GetUserName(delivery.DriverId),
+                    ClientId = delivery.ClientId,
+                    Client = delivery.LastName,
+                    Status = delivery.Status
+                };
+                db.DeliveryLogs.Add(logRec);
                 db.SaveChanges();
 
                 if (model.ReturnURL.Contains("UpdateHousehold"))
@@ -1452,20 +1491,20 @@ namespace BHelp.Controllers
                         del.KidSnacks = 0;
                         del.GiftCards = 0;
                         del.HolidayGiftCards = 0;
-                }
+                    }
 
-                var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
-                del.PoundsOfFood = fullWeight;
-                callLogView.TotalHouseholdCount += del.HouseoldCount;
-                callLogView.TotalChildren += del.Children;
-                callLogView.TotalAdults += del.Adults;
-                callLogView.TotalSeniors += del.Seniors;
-                callLogView.TotalFullBags += del.FullBags;
-                callLogView.TotalHalfBags += del.HalfBags;
-                callLogView.TotalKidSnacks += del.KidSnacks;
-                callLogView.TotalGiftCards += del.GiftCards;
-                callLogView.TotalHolidayGiftCards += del.HolidayGiftCards;
-                callLogView.TotalPoundsOfFood += del.PoundsOfFood;
+                    var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
+                    del.PoundsOfFood = fullWeight;
+                    callLogView.TotalHouseholdCount += del.HouseoldCount;
+                    callLogView.TotalChildren += del.Children;
+                    callLogView.TotalAdults += del.Adults;
+                    callLogView.TotalSeniors += del.Seniors;
+                    callLogView.TotalFullBags += del.FullBags;
+                    callLogView.TotalHalfBags += del.HalfBags;
+                    callLogView.TotalKidSnacks += del.KidSnacks;
+                    callLogView.TotalGiftCards += del.GiftCards;
+                    callLogView.TotalHolidayGiftCards += del.HolidayGiftCards;
+                    callLogView.TotalPoundsOfFood += del.PoundsOfFood;
                 }
 
                 Session["CallLogByLogDateList"] = callLogView;
@@ -1496,8 +1535,8 @@ namespace BHelp.Controllers
                 }
             }
 
-        [Authorize(Roles = "Developer,Administrator,Staff,Reports,Driver,OfficerOfTheDay")]
-        public ActionResult CallLogByDateDelivered(DateTime? startDate, DateTime? endDate)
+            [Authorize(Roles = "Developer,Administrator,Staff,Reports,Driver,OfficerOfTheDay")]
+            public ActionResult CallLogByDateDelivered(DateTime? startDate, DateTime? endDate)
             {
                 using var db = new BHelpContext();
                 if (!startDate.HasValue || !endDate.HasValue) // default to today and 1 week ago
@@ -1567,8 +1606,8 @@ namespace BHelp.Controllers
                             del.HolidayGiftCards = 0;
                         }
 
-                    var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
-                    del.PoundsOfFood = fullWeight;
+                        var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
+                        del.PoundsOfFood = fullWeight;
                     }
 
                     callLogView.TotalHouseholdCount += del.HouseoldCount;
@@ -1644,7 +1683,7 @@ namespace BHelp.Controllers
                 var reportQuarter = 1;
                 var reportYear = 2020;
 
-                 if (string.IsNullOrEmpty(typ))
+                if (string.IsNullOrEmpty(typ))
                 {
                     typ = "Monthly";  // Default to Monthly
                 }
@@ -1652,68 +1691,68 @@ namespace BHelp.Controllers
                 switch (typ)
                 {
                     case "Monthly":
-                            reportType = "Monthly";
-                            if (string.IsNullOrEmpty(yy) || string.IsNullOrEmpty(mm))  // Default to previous month
-                            {
-                                var mdt = DateTime.Now.AddMonths(-1);
-                                reportMonth = Convert.ToInt32(mdt.Month.ToString());
-                                reportYear = Convert.ToInt32(mdt.Year.ToString());
-                                break;
-                            }
-
-                            reportYear = Convert.ToInt32(yy);
-                            reportMonth = Convert.ToInt32(mm);
+                        reportType = "Monthly";
+                        if (string.IsNullOrEmpty(yy) || string.IsNullOrEmpty(mm))  // Default to previous month
+                        {
+                            var mdt = DateTime.Now.AddMonths(-1);
+                            reportMonth = Convert.ToInt32(mdt.Month.ToString());
+                            reportYear = Convert.ToInt32(mdt.Year.ToString());
                             break;
+                        }
+
+                        reportYear = Convert.ToInt32(yy);
+                        reportMonth = Convert.ToInt32(mm);
+                        break;
                     case "Quarterly":
-                            DateTime qdt;
-                            reportType = "Quarterly";
-                            if (string.IsNullOrEmpty(qtr) || string.IsNullOrEmpty(yy)) // Default to previous quarter
-                            {
-                                qdt = DateTime.Now.AddMonths(-3);
-                                reportYear = Convert.ToInt32(qdt.Year.ToString());
-                            }
-                            else
-                            {
-                                qdt = new DateTime(Convert.ToInt32(yy), Convert.ToInt32(qtr) * 3, 1);
-                                reportYear = qdt.Year;
-                            }
+                        DateTime qdt;
+                        reportType = "Quarterly";
+                        if (string.IsNullOrEmpty(qtr) || string.IsNullOrEmpty(yy)) // Default to previous quarter
+                        {
+                            qdt = DateTime.Now.AddMonths(-3);
+                            reportYear = Convert.ToInt32(qdt.Year.ToString());
+                        }
+                        else
+                        {
+                            qdt = new DateTime(Convert.ToInt32(yy), Convert.ToInt32(qtr) * 3, 1);
+                            reportYear = qdt.Year;
+                        }
 
-                            switch (qdt.Month)
-                            {
-                                case 1: case 2: case 3:
-                                    reportQuarter = 1;
-                                    break;
-                                case 4: case 5: case 6:
-                                    reportQuarter = 2;
-                                    break;
-                                case 7: case 8: case 9:
-                                    reportQuarter = 3;
-                                    break;
-                                case 10: case 11: case 12:
-                                    reportQuarter = 4;
-                                    break;
-                                default:
-                                    reportQuarter = 0;
-                                    break;
-                            }
-                            break;
+                        switch (qdt.Month)
+                        {
+                            case 1: case 2: case 3:
+                                reportQuarter = 1;
+                                break;
+                            case 4: case 5: case 6:
+                                reportQuarter = 2;
+                                break;
+                            case 7: case 8: case 9:
+                                reportQuarter = 3;
+                                break;
+                            case 10: case 11: case 12:
+                                reportQuarter = 4;
+                                break;
+                            default:
+                                reportQuarter = 0;
+                                break;
+                        }
+                        break;
                     case "Yearly":
                         reportType = "Yearly";
                         if (string.IsNullOrEmpty(yy))
                         {
-                                var ydt = DateTime.Now.AddYears(-1);  // default to previous year
-                                reportYear = Convert.ToInt32(ydt.Year.ToString());
-                                break;
+                            var ydt = DateTime.Now.AddYears(-1);  // default to previous year
+                            reportYear = Convert.ToInt32(ydt.Year.ToString());
+                            break;
                         }
                         reportYear = Convert.ToInt32(yy);
                         break;
                 }
              
-            var view = GetHelperReportView(reportType, reportMonth, reportQuarter, reportYear);
-            return View(view);
-        }
-        public ActionResult HelperReportToExcel(string reportType, int reportMonth, int reportQuarter, int reportYear)
-        {
+                var view = GetHelperReportView(reportType, reportMonth, reportQuarter, reportYear);
+                return View(view);
+            }
+            public ActionResult HelperReportToExcel(string reportType, int reportMonth, int reportQuarter, int reportYear)
+            {
                 var year = Convert.ToInt32(reportYear);
                 var month = Convert.ToInt32(reportMonth);
                 var view = GetHelperReportView(reportType, reportMonth, reportQuarter, reportYear);
@@ -1797,7 +1836,7 @@ namespace BHelp.Controllers
                         view.BeginDate = new DateTime(view.Year, view.Month, 1);
                         var daysInMonth = DateTime.DaysInMonth(view.Year, view.Month);
                         view.EndDate = new DateTime(view.Year, view.Month, daysInMonth);
-                    break;
+                        break;
                     case "Quarterly":
                         view.DateRangeTitle = view.Year + " Q" + view.Quarter + " Delivery Totals";
                         view.ReportTitle += view.Year + " Q" + view.Quarter;
@@ -1830,7 +1869,7 @@ namespace BHelp.Controllers
                         view.ReportTitle += "for " + view.Year;
                         view.BeginDate = new DateTime(view.Year, 1, 1);
                         view.EndDate = new DateTime(view.Year, 12, 31);
-                    break;
+                        break;
                 }
 
                 view.HelperReportType = type;
@@ -1880,8 +1919,8 @@ namespace BHelp.Controllers
                 {
                     var stringZip = view.ZipCodes[zip];
                     var deliveryData = db.Deliveries.Where(d =>  d.Status == 1 
-                                 && d.Zip == stringZip && d.DateDelivered >= view.BeginDate 
-                                 && d.DateDelivered <= view.EndDate).ToList();
+                                                                 && d.Zip == stringZip && d.DateDelivered >= view.BeginDate 
+                                                                 && d.DateDelivered <= view.EndDate).ToList();
                     totalDeliveries += deliveryData.Count;
                     
                     var distinctList = new List<int>();
@@ -2210,7 +2249,7 @@ namespace BHelp.Controllers
                 using var db = new BHelpContext();
                 var total = 0;
                 var dList = db.Deliveries.Where(d => d.ClientId == clientId
-                    && d.DateDelivered >= dt1 && d.DateDelivered <= dt2)
+                                                     && d.DateDelivered >= dt1 && d.DateDelivered <= dt2)
                     .Select(g => g.GiftCards).ToList();
                 if (dList.Count > 0)
                 {
@@ -2386,7 +2425,7 @@ namespace BHelp.Controllers
                 var giftcardsData = data[12].Split(Convert.ToChar("="));
                 var holidaygiftcardsData = data[12].Split(Convert.ToChar("="));
 
-            return RedirectToAction("Edit", new{ id = idData[1],
+                return RedirectToAction("Edit", new{ id = idData[1],
                     _NewDateDelivered = newDateDelivered[1],
                     returnUrl = urlData[1],
                     _ODId = odidData[1], 
@@ -2405,16 +2444,16 @@ namespace BHelp.Controllers
 
             public ActionResult ChangeDeliveryClient(string parameters)
             {
-                using var _db = new BHelpContext();
+                using var db = new BHelpContext();
                 var data = parameters.Split(Convert.ToChar("|"));
                 var delRecId = Convert.ToInt32((data[0]));
                 var newClientId = Convert .ToInt32(data[1]);
                 var returnURL = data[2];
-                var delRec = _db.Deliveries.Find(delRecId);
+                var delRec = db.Deliveries.Find(delRecId);
                 if (delRec != null)
                 {
-                    var existingClient = _db.Clients.Find(delRec.ClientId);
-                    var newClient = _db.Clients.Find(newClientId);
+                    var existingClient = db.Clients.Find(delRec.ClientId);
+                    var newClient = db.Clients.Find(newClientId);
                     if (existingClient != null && newClient != null)
                     {
                         var view = new DeliveryViewModel()
@@ -2425,7 +2464,7 @@ namespace BHelp.Controllers
                             HistoryStartDate = (DateTime?)Session["CallLogStartDate"],
                             HistoryEndDate = (DateTime?)Session["CallLogEndDate"],
                             Parameters = parameters
-                    };
+                        };
                         return View(view);
                     }
                 }
@@ -2468,11 +2507,11 @@ namespace BHelp.Controllers
 
                 var startDt = Session["CallLogStartDate"];
                 var endDt = Session["CallLogEndDate"];
-            if (returnURL.Contains("Individual"))  return RedirectToAction("CallLogIndividual"); 
-            if (returnURL.Contains("LogDate")) return RedirectToAction("CallLogByLogDate", new {startDate = startDt , endDate = endDt });
-            if (returnURL.Contains("DateDelivered")) return RedirectToAction("CallLogByDateDelivered", new { startDate = startDt, endDate = endDt }); 
+                if (returnURL.Contains("Individual"))  return RedirectToAction("CallLogIndividual"); 
+                if (returnURL.Contains("LogDate")) return RedirectToAction("CallLogByLogDate", new {startDate = startDt , endDate = endDt });
+                if (returnURL.Contains("DateDelivered")) return RedirectToAction("CallLogByDateDelivered", new { startDate = startDt, endDate = endDt }); 
 
-            return RedirectToAction("CallLogMenu");
+                return RedirectToAction("CallLogMenu");
             }
     }
 }
