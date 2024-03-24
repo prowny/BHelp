@@ -9,7 +9,7 @@ namespace BHelp.DataAccessLayer
     public class BHelpContext : IdentityDbContext<ApplicationUser>
     {
         public BHelpContext() : base("BHelpContext")
-        {
+        {  
             Database.Log = msg => Debug.Write(msg);
         }
 

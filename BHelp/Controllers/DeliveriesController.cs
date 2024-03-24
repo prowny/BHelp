@@ -390,18 +390,20 @@ namespace BHelp.Controllers
                         if (rec.IsChecked)
                         {
                             db.SetDeliveryDate(rec.Id, view.ReplacementDeliveryDate, userName);
+                            // now set matching OD for this date
+                            var odSched = AppRoutines.GetODSchedule(view.ReplacementDeliveryDate);
+                            if (odSched == null)
+                            {
+                                rec.DeliveryDateODId = null; // (nobody yet)
+                            }
+                            else
+                            {
+                                rec.DeliveryDateODId = odSched.ODId;
+                            }
+
+                            db.SetDeliveryDateODId(rec.Id, rec.DeliveryDateODId);
+                            InsertDeliveryLogRecord(rec, "FilterDeliveryDate");
                         }
-                        // now set matching OD for this date
-                        var odSched = AppRoutines.GetODSchedule(view.ReplacementDeliveryDate);
-                        if (odSched == null)
-                        {
-                            rec.DeliveryDateODId = null; // (nobody yet)
-                        }
-                        else
-                        {
-                            rec.DeliveryDateODId = odSched.ODId;
-                        }
-                        db.SetDeliveryDateODId(rec.Id, rec.DeliveryDateODId);
                     }
 
                     return RedirectToAction("OpenFilters", new { btnCheckAll = "True" });
@@ -432,6 +434,7 @@ namespace BHelp.Controllers
                         }
 
                         db.SetDeliveryDriver(rec.Id, view.ReplacementDriverId);
+                        InsertDeliveryLogRecord(rec,"FilterDriver");
                     }
                 }
 
@@ -462,6 +465,7 @@ namespace BHelp.Controllers
                         }
 
                         db.SetDeliveryDateODId(rec.Id, model.ReplacementDeliveryDateODId);
+                        InsertDeliveryLogRecord(rec,"FilterDeliveryDateOD");
                     }
                 }
 
@@ -492,6 +496,7 @@ namespace BHelp.Controllers
                             if (rec.FullBags > 0 || rec.HalfBags > 0 || rec.KidSnacks > 0 || rec.GiftCards > 0)
                             {
                                 db.SetDeliveryStatus(rec.Id, 1);
+                                InsertDeliveryLogRecord(rec,"FilterStatus");
                             }
                         }
                     }
@@ -1017,25 +1022,9 @@ namespace BHelp.Controllers
                 var delivery = db.Deliveries.Find(_id);
                 if (delivery != null)
                 {
-                    var logRec = new DeliveryLog()
-                    {
-                        DeliveryId = delivery.Id,
-                        DateModified = DateTime.Now,
-                        ModifiedBy = User.Identity.Name,
-                        ActionSource = "DELETE",
-                        DateDelivered = delivery.DateDelivered,
-                        LogDate = delivery.LogDate,
-                        LogOD = AppRoutines.GetUserName(delivery.ODId),
-                        DeliveryOD = AppRoutines.GetUserName(delivery.DeliveryDateODId),
-                        Driver = AppRoutines.GetUserName(delivery.DriverId),
-                        ClientId = delivery.ClientId,
-                        Client = delivery.LastName,
-                        Status = delivery.Status
-                    };
-                    
-                    db.DeliveryLogs.Add(logRec);
                     db.Deliveries.Remove(delivery);
                     db.SaveChanges();
+                    InsertDeliveryLogRecord(delivery, "DELETE");
                 }
 
                 if (_returnURL.Contains("UpdateHousehold"))
@@ -1100,25 +1089,6 @@ namespace BHelp.Controllers
                             rec.Zip = delivery.Zip;
                             _db.Entry(rec).State = EntityState.Modified;
                             _db.SaveChanges();
-                            
-                            // insert delivery log record:
-                            var logRec = new DeliveryLog()
-                            {
-                                DeliveryId = rec.Id,
-                                LogDate = rec.LogDate,
-                                DateModified = DateTime.Now,
-                                ModifiedBy = User.Identity.Name,
-                                ActionSource = "EditPost",
-                                DateDelivered = rec.DateDelivered,
-                                LogOD = AppRoutines.GetUserName(delivery.ODId),
-                                DeliveryOD = AppRoutines.GetUserName(delivery.DeliveryDateODId),
-                                Driver = AppRoutines.GetUserName(delivery.DriverId),
-                                ClientId = rec.ClientId,
-                                Client = rec.LastName,
-                                Status = delivery.Status
-                            };
-                            _db.DeliveryLogs.Add(logRec);
-                            _db.SaveChanges();
                         }
                     }
                     // Reminder error - ODId required: 
@@ -1172,25 +1142,8 @@ namespace BHelp.Controllers
                         }
 
                         db.Entry(updateData).State = EntityState.Modified;
-
-                        var logRec = new DeliveryLog()
-                        {
-                            DeliveryId = delivery.Id,
-                            DateModified = DateTime.Now,
-                            ModifiedBy = User.Identity.Name,
-                            ActionSource = "EditPost",
-                            DateDelivered = delivery.DateDelivered,
-                            LogDate = delivery.LogDate,
-                            LogOD = AppRoutines.GetUserName(delivery.ODId),
-                            DeliveryOD = AppRoutines.GetUserName(delivery.DeliveryDateODId),
-                            Driver = AppRoutines.GetUserName(delivery.DriverId),
-                            Client = updateData.LastName,
-                            ClientId =delivery.ClientId,
-                            Status = delivery.Status
-                        };
-                        db.DeliveryLogs.Add(logRec);
-
                         db.SaveChanges();
+                        InsertDeliveryLogRecord(updateData, "EditPOST");
                     }
 
                     if (delivery.ReturnURL.Contains("CallLogIndividual"))
@@ -1255,26 +1208,9 @@ namespace BHelp.Controllers
                 }
 
                 delivery.ClientId = model.ClientId;
-
-                // insert delivery log record:
-                var logRec = new DeliveryLog()
-                {
-                    DeliveryId = delivery.Id,
-                    DateModified = DateTime.Now,
-                    ModifiedBy = User.Identity.Name,
-                    ActionSource = "ASSIGN",
-                    DateDelivered = delivery.DateDelivered,
-                    LogDate = DateTime.Now,
-                    LogOD = AppRoutines.GetUserName(delivery.ODId),
-                    DeliveryOD = AppRoutines.GetUserName(delivery.DeliveryDateODId),
-                    Driver = AppRoutines.GetUserName(delivery.DriverId),
-                    ClientId = delivery.ClientId,
-                    Client = delivery.LastName,
-                    Status = delivery.Status
-                };
-                db.DeliveryLogs.Add(logRec);
                 db.SaveChanges();
-
+                InsertDeliveryLogRecord(delivery, "ASSIGN");
+           
                 if (model.ReturnURL.Contains("UpdateHousehold"))
                 {
                     return RedirectToAction("Index", "OD");
@@ -2512,6 +2448,28 @@ namespace BHelp.Controllers
                 if (returnURL.Contains("DateDelivered")) return RedirectToAction("CallLogByDateDelivered", new { startDate = startDt, endDate = endDt }); 
 
                 return RedirectToAction("CallLogMenu");
+            }
+
+            private void InsertDeliveryLogRecord(Delivery delivery, string actionSource)
+            {
+                using var db = new BHelpContext();
+                var logRec = new DeliveryLog
+                {
+                    DeliveryId = delivery.Id,
+                    DateModified = DateTime.Now,
+                    ModifiedBy = User.Identity.Name,
+                    ActionSource = actionSource,
+                    DateDelivered = delivery.DateDelivered,
+                    LogDate = delivery.LogDate,
+                    LogOD = AppRoutines.GetUserName(delivery.ODId),
+                    DeliveryOD = AppRoutines.GetUserName(delivery.DeliveryDateODId),
+                    Driver = AppRoutines.GetUserName(delivery.DriverId),
+                    Client = delivery.LastName,
+                    ClientId =delivery.ClientId,
+                    Status = delivery.Status
+                };
+                db.DeliveryLogs.Add(logRec);
+                db.SaveChanges();
             }
     }
 }

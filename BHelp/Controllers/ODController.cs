@@ -179,7 +179,7 @@ namespace BHelp.Controllers
 
             db.Deliveries.Add(newDelivery);
             db.SaveChanges(); // Save the new delivery record to record the Id for the log record.
-
+            
             // insert delivery log record:
             var logRec = new DeliveryLog()
             {
