@@ -2463,7 +2463,7 @@ namespace BHelp.Controllers
                     LogDate = delivery.LogDate,
                     LogOD = AppRoutines.GetUserName(delivery.ODId),
                     DeliveryOD = AppRoutines.GetUserName(delivery.DeliveryDateODId),
-                    Driver = AppRoutines.GetUserName(delivery.DriverId),
+                    Driver = AppRoutines.GetDriverName(delivery.DriverId),
                     Client = delivery.LastName,
                     ClientId =delivery.ClientId,
                     Status = delivery.Status

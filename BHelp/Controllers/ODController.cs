@@ -191,7 +191,7 @@ namespace BHelp.Controllers
                 LogDate = DateTime.Now,
                 LogOD = AppRoutines.GetUserName(newDelivery.ODId),
                 DeliveryOD = AppRoutines.GetUserName(newDelivery.DeliveryDateODId),
-                Driver = AppRoutines.GetUserName(newDelivery.DriverId),
+                Driver = AppRoutines.GetDriverName(newDelivery.DriverId),
                 ClientId = newDelivery.ClientId,
                 Client = newDelivery.LastName,
                 Status = newDelivery.Status

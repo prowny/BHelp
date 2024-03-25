@@ -441,7 +441,9 @@
     <Compile Include="Models\BaggerSchedule.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Models\DeliveryLog.cs" />
+    <Compile Include="Models\DeliveryLog.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Models\Holiday.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

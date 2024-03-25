@@ -1727,7 +1727,7 @@ namespace BHelp
             var driver = _db.Users.Find(id);
             if (driver != null)
             {
-                return driver.FirstName + " " + driver.LastName;
+                return driver.LastName;
             }
             else
             {
