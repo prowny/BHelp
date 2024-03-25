@@ -2453,10 +2453,12 @@ namespace BHelp.Controllers
             private void InsertDeliveryLogRecord(Delivery delivery, string actionSource)
             {
                 using var db = new BHelpContext();
+                var dtNow = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(
+                    DateTime.UtcNow, "Eastern Standard Time");
                 var logRec = new DeliveryLog
                 {
                     DeliveryId = delivery.Id,
-                    DateModified = DateTime.Now,
+                    DateModified = dtNow,
                     ModifiedBy = User.Identity.Name,
                     ActionSource = actionSource,
                     DateDelivered = delivery.DateDelivered,

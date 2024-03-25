@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 using System.Web.WebPages;
 using BHelp.DataAccessLayer;
 using BHelp.Models;
@@ -179,16 +180,18 @@ namespace BHelp.Controllers
 
             db.Deliveries.Add(newDelivery);
             db.SaveChanges(); // Save the new delivery record to record the Id for the log record.
-            
+
             // insert delivery log record:
-            var logRec = new DeliveryLog()
+            var dtNow = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(
+                DateTime.UtcNow, "Eastern Standard Time");
+            var logRec = new DeliveryLog
             {
                 DeliveryId = newDelivery.Id,
-                DateModified = DateTime.Now,
+                DateModified = dtNow,
                 ModifiedBy = User.Identity.Name,
                 ActionSource = "CREATE",
                 DateDelivered = newDelivery.DateDelivered,
-                LogDate = DateTime.Now,
+                LogDate = dtNow,
                 LogOD = AppRoutines.GetUserName(newDelivery.ODId),
                 DeliveryOD = AppRoutines.GetUserName(newDelivery.DeliveryDateODId),
                 Driver = AppRoutines.GetDriverName(newDelivery.DriverId),

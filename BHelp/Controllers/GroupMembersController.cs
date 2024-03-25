@@ -264,11 +264,13 @@ namespace BHelp.Controllers
                 db.SaveChanges(); // Save the new delivery record to record the Id for the log record.
 
                 // insert delivery log record:
-                var logRec = new DeliveryLog()
+                var dtNow = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(
+                    DateTime.UtcNow, "Eastern Standard Time");
+                var logRec = new DeliveryLog
                 {
                     DeliveryId = delivery.Id,
                     LogDate = delivery.LogDate,
-                    DateModified = DateTime.Now,
+                    DateModified = dtNow,
                     ModifiedBy = User.Identity.Name,
                     ActionSource = "GROUPCreate",
                     DateDelivered = delivery.DateDelivered,
