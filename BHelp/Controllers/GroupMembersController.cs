@@ -290,9 +290,10 @@ namespace BHelp.Controllers
         public ActionResult GroupToExcel(int nameId)
         {
             var view = GetGroupReportView(nameId);
-            XLWorkbook workbook = new XLWorkbook();
-            IXLWorksheet ws = workbook.Worksheets.Add(view.Name  + " Member List");
-            int activeRow = 1;
+            var workbook = new XLWorkbook();
+            var ws = workbook.Worksheets.Add(view.Name  + " Member List");
+            var
+                activeRow = 1;
             ws.Cell(activeRow, 1).SetValue(view.Name + "  " + DateTime.Today.ToShortDateString());
             ws.Cell(activeRow, 1).Style.Alignment.WrapText = true;
             activeRow++;
@@ -307,23 +308,20 @@ namespace BHelp.Controllers
             ws.Cell(activeRow, 7).SetValue("Phone");
             ws.Columns("8").Width = 24;
             ws.Cell(activeRow, 8).SetValue("Notes");
-            foreach (var mbr in view.GroupMembersIdList)
+            foreach (var client in view.GroupMembersIdList
+                 .Select(mbr => db.Clients.Find(mbr)).Where(client => client != null))
             {
-                var client = db.Clients.Find(mbr);
-                if (client != null)
-                {
-                    activeRow++;
-                    ws.Cell(activeRow, 1).SetValue(client.LastName);
-                    ws.Cell(activeRow, 2).SetValue(client.FirstName);
-                    ws.Cell(activeRow, 3).SetValue(client.StreetNumber);
-                    ws.Cell(activeRow, 4).SetValue(client.StreetName);
-                    ws.Cell(activeRow, 5).SetValue(client.City);
-                    ws.Cell(activeRow, 6).SetValue(client.Zip);
-                    ws.Cell(activeRow, 7).SetValue(client.Phone);
-                    ws.Cell(activeRow, 7).Style.Alignment.WrapText = true;
-                    ws.Cell(activeRow, 8).SetValue(client.Notes);
-                    ws.Cell(activeRow, 8).Style.Alignment.WrapText = true;
-                }
+                activeRow++;
+                ws.Cell(activeRow, 1).SetValue(client.LastName);
+                ws.Cell(activeRow, 2).SetValue(client.FirstName);
+                ws.Cell(activeRow, 3).SetValue(client.StreetNumber);
+                ws.Cell(activeRow, 4).SetValue(client.StreetName);
+                ws.Cell(activeRow, 5).SetValue(client.City);
+                ws.Cell(activeRow, 6).SetValue(client.Zip);
+                ws.Cell(activeRow, 7).SetValue(client.Phone);
+                ws.Cell(activeRow, 7).Style.Alignment.WrapText = true;
+                ws.Cell(activeRow, 8).SetValue(client.Notes);
+                ws.Cell(activeRow, 8).Style.Alignment.WrapText = true;
             }
             var ms = new MemoryStream();
             workbook.SaveAs(ms);
@@ -335,22 +333,19 @@ namespace BHelp.Controllers
 
         private GroupNameViewModel GetGroupReportView(int groupId)
         {
-            if (groupId != 0)
+            if (groupId == 0) return null;
+            var view = new GroupNameViewModel()
             {
-                var view = new GroupNameViewModel()
-                {
-                    Name = db.GroupNames.Where(n => n.Id == groupId)
-                        .Select(n => n.Name).FirstOrDefault(),
-                    GroupMembersIdList = new List<int>()
-                };
-                var memberList = db.GroupMembers.Where(m => m.NameId == groupId).ToList();
-                foreach (var mbr in memberList)
-                {
-                    view.GroupMembersIdList.Add(mbr.ClientId);
-                }
-                return view;
+                Name = db.GroupNames.Where(n => n.Id == groupId)
+                    .Select(n => n.Name).FirstOrDefault(),
+                GroupMembersIdList = new List<int>()
+            };
+            var memberList = db.GroupMembers.Where(m => m.NameId == groupId).ToList();
+            foreach (var mbr in memberList)
+            {
+                view.GroupMembersIdList.Add(mbr.ClientId);
             }
-            return null;
+            return view;
         }
     }
 }

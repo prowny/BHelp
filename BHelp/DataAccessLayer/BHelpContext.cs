@@ -48,46 +48,6 @@ namespace BHelp.DataAccessLayer
 
         public DbSet<DeliveryLog> DeliveryLogs { get; set; }
 
-        public void SetDeliveryStatus(int id, int status)
-        {
-            var rec = this.Deliveries.Find(id);
-            if (rec != null)
-            {
-                rec.Status = status;
-                this.SaveChanges();
-            }
-        }
-
-        public void SetDeliveryDate(int id, DateTime dateDelivered, string usrName)
-        {
-            var rec = this.Deliveries.Find(id);
-            if (rec != null)
-            {
-                rec.DateDelivered = dateDelivered;
-                this.SaveChanges();
-            }
-        }
-
-        public void SetDeliveryDriver(int id, string driverId)
-        {
-            var rec = this.Deliveries.Find(id);
-            if (rec != null)
-            {
-                rec.DriverId = driverId;
-                this.SaveChanges();
-            }
-        }
-
-        public void SetDeliveryDateODId(int id, string odId)
-        {
-            var rec = this.Deliveries.Find(id);
-            if (rec != null)
-            {
-                rec.DeliveryDateODId = odId;
-                this.SaveChanges();
-            }
-        }
-
         internal object SqlQuery<T>(T sqlString)
         {
             throw new NotImplementedException();

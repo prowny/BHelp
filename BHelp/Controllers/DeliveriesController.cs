@@ -252,19 +252,16 @@ namespace BHelp.Controllers
                     ? "-none-  (" + delThisDateCount + ")"
                     : dt.Value.ToString("MM/dd/yyyy") + " (" + delThisDateCount + ")");
 
-                if (dt != null)
+                if (dt == null) continue;
+                // Get delDate ODIDs for each distinct del date
+                foreach (var del in listAllOpenDeliveries.Where(del => del.DateDelivered == dt && del.DeliveryDateODName != null))
                 {
-                    // Get delDate ODIDs for each distinct del date
-                    foreach (var del in listAllOpenDeliveries)
-                    {
-                        if (del.DateDelivered == dt && del.DeliveryDateODName != null)
-                            view.DistinctDeliveryDatesODList.Add(new SelectListItem()
-                                { Value = dt.Value.ToString("MM/dd/yyyy"), Text = del.DeliveryDateODName });
-                    }
-
-                    view.DistinctDeliveryDatesSelectList.Add(new SelectListItem()
-                        { Value = dt.Value.ToString("MM/dd/yyyy"), Text = dt.Value.ToString("MM/dd/yyyy") });
+                    view.DistinctDeliveryDatesODList.Add(new SelectListItem()
+                        { Value = dt.Value.ToString("MM/dd/yyyy"), Text = del.DeliveryDateODName });
                 }
+
+                view.DistinctDeliveryDatesSelectList.Add(new SelectListItem()
+                    { Value = dt.Value.ToString("MM/dd/yyyy"), Text = dt.Value.ToString("MM/dd/yyyy") });
             }
 
             Session["DistinctDeliveryDatesList"] = view.DistinctDeliveryDatesList;
@@ -375,7 +372,6 @@ namespace BHelp.Controllers
                 var selectedDeliveries = (List<Delivery>)TempData["SelectedDeliveriesList"];
                 if (selectedDeliveries != null)
                 {
-                    var userName = User.Identity.Name;
                     for (var i = 0; i < selectedDeliveries.Count; i++)
                     {
                         // selected deliveries count may have changed
@@ -385,25 +381,22 @@ namespace BHelp.Controllers
                         }
                     }
 
-                    foreach (var rec in selectedDeliveries)
+                    foreach (var rec in selectedDeliveries.Where(rec => rec.IsChecked))
                     {
-                        if (rec.IsChecked)
+                        rec.DateDelivered = view.ReplacementDeliveryDate;
+                        // now set matching OD for this date:
+                        var odSched = AppRoutines.GetODSchedule(view.ReplacementDeliveryDate);
+                        if (odSched == null)
                         {
-                            db.SetDeliveryDate(rec.Id, view.ReplacementDeliveryDate, userName);
-                            // now set matching OD for this date
-                            var odSched = AppRoutines.GetODSchedule(view.ReplacementDeliveryDate);
-                            if (odSched == null)
-                            {
-                                rec.DeliveryDateODId = null; // (nobody yet)
-                            }
-                            else
-                            {
-                                rec.DeliveryDateODId = odSched.ODId;
-                            }
-
-                            db.SetDeliveryDateODId(rec.Id, rec.DeliveryDateODId);
-                            InsertDeliveryLogRecord(rec, "FilterDeliveryDate");
+                            rec.DeliveryDateODId = null; // (nobody yet)
                         }
+                        else
+                        {
+                            rec.DeliveryDateODId = odSched.ODId;
+                        }
+                        
+                        db.SaveChanges();
+                        InsertDeliveryLogRecord(rec, "FilterDeliveryDate");
                     }
 
                     return RedirectToAction("OpenFilters", new { btnCheckAll = "True" });
@@ -433,7 +426,8 @@ namespace BHelp.Controllers
                                 view.ReplacementDriverId = null;
                         }
 
-                        db.SetDeliveryDriver(rec.Id, view.ReplacementDriverId);
+                        db.SaveChanges() ;
+                        rec.DriverId = view.ReplacementDriverId;
                         InsertDeliveryLogRecord(rec,"FilterDriver");
                     }
                 }
@@ -464,7 +458,9 @@ namespace BHelp.Controllers
                                 model.ReplacementDeliveryDateODId = null;
                         }
 
-                        db.SetDeliveryDateODId(rec.Id, model.ReplacementDeliveryDateODId);
+                        //db.SetDeliveryDateODId(rec.Id, model.ReplacementDeliveryDateODId);
+                        rec.DeliveryDateODId = model.ReplacementDeliveryDateODId;
+                        db.SaveChanges();                          
                         InsertDeliveryLogRecord(rec,"FilterDeliveryDateOD");
                     }
                 }
@@ -495,7 +491,8 @@ namespace BHelp.Controllers
                             // Don't mark as delivered if no products:
                             if (rec.FullBags > 0 || rec.HalfBags > 0 || rec.KidSnacks > 0 || rec.GiftCards > 0)
                             {
-                                db.SetDeliveryStatus(rec.Id, 1);
+                                //db.SetDeliveryStatus(rec.Id, 1);
+                                db.SaveChanges();
                                 InsertDeliveryLogRecord(rec,"FilterStatus");
                             }
                         }

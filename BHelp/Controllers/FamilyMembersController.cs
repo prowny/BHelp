@@ -13,7 +13,7 @@ namespace BHelp.Controllers
     [Authorize]
     public class FamilyMembersController : Controller
     {
-        private BHelpContext db = new BHelpContext();
+        private readonly BHelpContext db = new BHelpContext();
 
         // GET: FamilyMembers
         [Authorize(Roles = "Administrator,Staff,Developer,OfficerOfTheDay")]
