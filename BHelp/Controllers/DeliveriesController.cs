@@ -1086,6 +1086,7 @@ namespace BHelp.Controllers
                             rec.Zip = delivery.Zip;
                             _db.Entry(rec).State = EntityState.Modified;
                             _db.SaveChanges();
+                            InsertDeliveryLogRecord(rec, "EditPOST");
                         }
                     }
                     // Reminder error - ODId required: 
