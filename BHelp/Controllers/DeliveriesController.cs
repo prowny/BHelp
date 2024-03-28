@@ -491,12 +491,13 @@ namespace BHelp.Controllers
                         if (dlv != null)
                         {
                             // Don't mark as delivered if no products:
-                            if (rec.FullBags > 0 || rec.HalfBags > 0 || rec.KidSnacks > 0 || rec.GiftCards > 0)
+                            if (dlv.FullBags > 0 || dlv.HalfBags > 0 || dlv.KidSnacks > 0 || dlv.GiftCards > 0)
                             {
-                                rec.Status = 1;
-                                db.Entry(rec).State = EntityState.Modified;
+
+                                dlv.Status = 1;
+                                db.Entry(dlv).State = EntityState.Modified;
                                 db.SaveChanges();
-                                InsertDeliveryLogRecord(rec,"FilterStatus");
+                                InsertDeliveryLogRecord(dlv,"FilterStatus");
                             }
                         }
                     }
