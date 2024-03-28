@@ -394,7 +394,8 @@ namespace BHelp.Controllers
                         {
                             rec.DeliveryDateODId = odSched.ODId;
                         }
-                        
+
+                        db.Entry(rec).State = EntityState.Modified;
                         db.SaveChanges();
                         InsertDeliveryLogRecord(rec, "FilterDeliveryDate");
                     }
@@ -426,8 +427,9 @@ namespace BHelp.Controllers
                                 view.ReplacementDriverId = null;
                         }
 
-                        db.SaveChanges() ;
                         rec.DriverId = view.ReplacementDriverId;
+                        db.Entry(rec).State = EntityState.Modified;  
+                        db.SaveChanges() ;
                         InsertDeliveryLogRecord(rec,"FilterDriver");
                     }
                 }
@@ -458,8 +460,8 @@ namespace BHelp.Controllers
                                 model.ReplacementDeliveryDateODId = null;
                         }
 
-                        //db.SetDeliveryDateODId(rec.Id, model.ReplacementDeliveryDateODId);
                         rec.DeliveryDateODId = model.ReplacementDeliveryDateODId;
+                        db.Entry(rec).State = EntityState.Modified;
                         db.SaveChanges();                          
                         InsertDeliveryLogRecord(rec,"FilterDeliveryDateOD");
                     }
@@ -491,7 +493,8 @@ namespace BHelp.Controllers
                             // Don't mark as delivered if no products:
                             if (rec.FullBags > 0 || rec.HalfBags > 0 || rec.KidSnacks > 0 || rec.GiftCards > 0)
                             {
-                                //db.SetDeliveryStatus(rec.Id, 1);
+                                rec.Status = 1;
+                                db.Entry(rec).State = EntityState.Modified;
                                 db.SaveChanges();
                                 InsertDeliveryLogRecord(rec,"FilterStatus");
                             }
@@ -1020,6 +1023,7 @@ namespace BHelp.Controllers
                 if (delivery != null)
                 {
                     db.Deliveries.Remove(delivery);
+                    db.Entry(delivery).State = EntityState.Modified;
                     db.SaveChanges();
                     InsertDeliveryLogRecord(delivery, "DELETE");
                 }
@@ -1084,6 +1088,7 @@ namespace BHelp.Controllers
                             rec.DeliveryDateODId = delivery.DeliveryDateODId;
                             rec.DriverId = delivery.DriverId;
                             rec.Zip = delivery.Zip;
+
                             _db.Entry(rec).State = EntityState.Modified;
                             _db.SaveChanges();
                             InsertDeliveryLogRecord(rec, "EditPOST");
@@ -1206,6 +1211,7 @@ namespace BHelp.Controllers
                 }
 
                 delivery.ClientId = model.ClientId;
+                db.Entry(delivery).State = EntityState.Modified;
                 db.SaveChanges();
                 InsertDeliveryLogRecord(delivery, "ASSIGN");
            
