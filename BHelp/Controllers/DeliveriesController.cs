@@ -1024,7 +1024,6 @@ namespace BHelp.Controllers
                 if (delivery != null)
                 {
                     db.Deliveries.Remove(delivery);
-                    db.Entry(delivery).State = EntityState.Modified;
                     db.SaveChanges();
                     InsertDeliveryLogRecord(delivery, "DELETE");
                 }
