@@ -110,18 +110,7 @@
                 }
             }
             </table>
-
-            <table>
-                <tr>
-                    <td>@Html.Label("Status:")</td>
-                    <td>@Html.Label("Open")</td>
-                    <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Open")&nbsp;&nbsp;&nbsp;</td>
-                    <td>@Html.Label("Delivered")</td>
-                    <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Delivered")&nbsp;&nbsp;&nbsp;</td>
-                    <td>@Html.Label("Undelivered")</td>
-                    <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Undelivered")</td>
-                </tr>
-            </table>
+            
             <table>
                 <tr>
                     <td>Driver Notes:&nbsp;</td>
@@ -131,6 +120,26 @@
                     </td>
                 </tr>
             </table>
+
+             <br/>
+             <table>
+                 <tr>
+                     <td style="text-align:center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>@Html.Label("Status:")</b></td>
+                 </tr>
+                 <tr >
+                     <td style = "text-align:right">@Html.Label("Open")</td>
+                     <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Open", new { onchange = "ToggleStatus('Open');" })</td>
+                 </tr>
+                 <tr>
+                     <td style = "text-align:right">@Html.Label("Delivered")</td>
+                     <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Delivered", new { onchange = "ToggleStatus('Delivered');" })</td>
+                 </tr>
+                 <tr >
+                     <td style = "text-align:right">@Html.Label("Undelivered")</td>
+                     <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Undelivered", new { onchange = "ToggleStatus('Undelivered');" })</td>
+                 </tr>
+             </table>
+           
             <br/>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
