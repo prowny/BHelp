@@ -2363,7 +2363,7 @@ namespace BHelp.Controllers
                 var halfbagsData = data[10].Split(Convert.ToChar("="));
                 var kidsnacksData = data[11].Split(Convert.ToChar("="));
                 var giftcardsData = data[12].Split(Convert.ToChar("="));
-                var holidaygiftcardsData = data[12].Split(Convert.ToChar("="));
+                var holidaygiftcardsData = data[13].Split(Convert.ToChar("="));
 
                 return RedirectToAction("Edit", new{ id = idData[1],
                     _NewDateDelivered = newDateDelivered[1],

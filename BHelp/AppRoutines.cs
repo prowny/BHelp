@@ -189,17 +189,8 @@ namespace BHelp
             using var context = new BHelpContext();
             var client = context.Clients.Find(clientId);
             if (client == null) return null;
-            var delDate = DateTime.Today.AddDays(1);
-            if (DateTime.Today.DayOfWeek == DayOfWeek.Saturday)
-            {
-                delDate = DateTime.Today.AddDays(2);
-            }
 
-            if (DateTime.Today.DayOfWeek == DayOfWeek.Friday)
-            {
-                delDate = DateTime.Today.AddDays(3);
-            }
-
+            var delDate = GetDefaultDeliveryDate(); // (based on Today) checks for Holidays
             var delivery = new Delivery
             {
                 ODId = HttpContext.Current.User.Identity.GetUserId(),
@@ -294,6 +285,28 @@ namespace BHelp
 
             return delivery;
 
+        }
+
+        private static DateTime GetDefaultDeliveryDate()
+        {
+            var delDate = DateTime.Today.AddDays(1); // default
+
+            if (DateTime.Today.DayOfWeek == DayOfWeek.Saturday)
+            { delDate = DateTime.Today.AddDays(2); }
+            if (DateTime.Today.DayOfWeek == DayOfWeek.Friday)
+            { delDate = DateTime.Today.AddDays(3); }
+
+            // Check for delDate is Holiday
+            var holidays = HolidayRoutines.GetHolidays(delDate.Year);
+            if (HolidayRoutines.IsHoliday(delDate, holidays))
+            {
+                delDate = delDate.AddDays(1);
+                if (delDate.DayOfWeek == DayOfWeek.Saturday)
+                { delDate = delDate.AddDays(2); }
+                if (delDate.DayOfWeek == DayOfWeek.Friday)
+                { delDate = delDate.AddDays(3); }
+            }
+            return delDate;
         }
 
         public static DateTime GetLastDeliveryDate(int clientId)
