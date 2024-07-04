@@ -303,8 +303,6 @@ namespace BHelp
                 delDate = delDate.AddDays(1);
                 if (delDate.DayOfWeek == DayOfWeek.Saturday)
                 { delDate = delDate.AddDays(2); }
-                if (delDate.DayOfWeek == DayOfWeek.Friday)
-                { delDate = delDate.AddDays(3); }
             }
             return delDate;
         }
