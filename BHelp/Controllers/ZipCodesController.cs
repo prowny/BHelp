@@ -13,8 +13,7 @@ namespace BHelp.Controllers
         // GET: ZipCodes
         public ActionResult Index()
         {
-            var zipcodeList = AppRoutines.GetZipCodesListNew(); 
-            return View(zipcodeList);
+            return View(db.ZipCodes.OrderBy(z => z.Zip).ToList());
         }
         
         // GET: ZipCodes/Create
@@ -29,8 +28,8 @@ namespace BHelp.Controllers
         public ActionResult Create([Bind(Include = "Id,Zip")] ZipCode zipCode)
         {
             if (!ModelState.IsValid) return View(zipCode);
-            var zipCodeList = AppRoutines .GetZipCodesListNew();
-            if (zipCodeList.Any(z => z.Zip == zipCode.Zip)) // check for duplicates
+            var zipCodeList = AppRoutines .GetZipCodesList();
+            if (zipCodeList.Any(z => z == zipCode.Zip)) // check for duplicates
             {
                 return View(zipCode);
             }
@@ -48,12 +47,13 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var zipCode = db.ZipCodes.Find(id);
-            if (zipCode == null)
+
+            var zipRec = db.ZipCodes.Find(id);
+            if (zipRec == null)
             {
                 return HttpNotFound();
             }
-            return View(zipCode);
+            return View(zipRec);
         }
 
         // POST: ZipCodes/Delete/5

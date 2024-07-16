@@ -583,12 +583,10 @@
     <Compile Include="ViewModels\VolunteerHoursViewModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="ViewModels\ZipCodeViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\BHelpVoicemailCredentials.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Data\BHelpZipCodes.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\bootstrap-datepicker.css" />

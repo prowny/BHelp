@@ -365,44 +365,48 @@ namespace BHelp
             return eligible;
         }
 
+        //public static List<string> GetZipCodesList() *** deprecated 07/16/2024
+        //{
+        //    var getZipCodesList = new List<string>();
+        //    var lines =
+        //        File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/BHelpZipCodes.txt");
+        //    foreach (var line in lines)
+        //    {
+        //        if (line.Substring(0, 1) != "/")
+        //        {
+        //            getZipCodesList.Add(line);
+        //        }
+        //    }
+        //    return getZipCodesList;
+        //}
+
+        //public static List<SelectListItem> GetZipCodesSelectList() *** deprecated 07/16/2024
+        //{
+        //    List<SelectListItem> getZipCodesSelectList = new List<SelectListItem>();
+        //    string[] lines =
+        //        File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/BHelpZipCodes.txt");
+        //    foreach (var line in lines)
+        //    {
+        //        if (line.Substring(0, 1) != "/")
+        //        {
+        //            var selListItem = new SelectListItem() { Value = line, Text = line };
+        //            getZipCodesSelectList.Add(selListItem);
+        //        }
+        //    }
+        //    return getZipCodesSelectList;
+        //}
+
         public static List<string> GetZipCodesList()
         {
-            var getZipCodesList = new List<string>();
-            var lines =
-                File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/BHelpZipCodes.txt");
-            foreach (var line in lines)
-            {
-                if (line.Substring(0, 1) != "/")
-                {
-                    getZipCodesList.Add(line);
-                }
-            }
-
-            return getZipCodesList;
+            using var db = new BHelpContext();
+            var zipRecs = db.ZipCodes.OrderBy(z => z.Zip).ToList();
+            return zipRecs.Select(z => z.Zip).ToList();
         }
-
         public static List<SelectListItem> GetZipCodesSelectList()
         {
-            List<SelectListItem> getZipCodesSelectList = new List<SelectListItem>();
-            string[] lines =
-                File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/BHelpZipCodes.txt");
-            foreach (var line in lines)
-            {
-                if (line.Substring(0, 1) != "/")
-                {
-                    var selListItem = new SelectListItem() { Value = line, Text = line };
-                    getZipCodesSelectList.Add(selListItem);
-                }
-            }
-
-            return getZipCodesSelectList;
-        }
-
-        public static List<ZipCode> GetZipCodesListNew()
-        {
-            using var db = new BHelpContext();
-            var zipcodeList = db.ZipCodes.OrderBy(z => z.Zip).ToList();
-            return zipcodeList;
+            var zipList = GetZipCodesList();
+            return zipList.Select(z => new SelectListItem()
+                { Value = z, Text = z }).ToList();
         }
 
         public static List<string> GetAssistanceCategoriesList()
