@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
@@ -15,16 +13,9 @@ namespace BHelp.Controllers
         // GET: ZipCodes
         public ActionResult Index()
         {
-            var zipcodeList = new List<ZipCode>();
-            if (db.ZipCodes.Any())
-            {
-                zipcodeList = db.ZipCodes.ToList();
-                zipcodeList = zipcodeList.OrderBy(z => z.Zip).ToList();
-            }
-
+            var zipcodeList = AppRoutines.GetZipCodesListNew(); 
             return View(zipcodeList);
         }
-
         
         // GET: ZipCodes/Create
         public ActionResult Create()
@@ -37,48 +28,19 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Zip")] ZipCode zipCode)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(zipCode);
+            var zipCodeList = AppRoutines .GetZipCodesListNew();
+            if (zipCodeList.Any(z => z.Zip == zipCode.Zip)) // check for duplicates
             {
-                var newZipCode = new ZipCode { Zip = zipCode.Zip };
+                return View(zipCode);
+            }
+
+            var newZipCode = new ZipCode { Zip = zipCode.Zip };
                 db.ZipCodes.Add(newZipCode);
                 db.SaveChanges();
                 return RedirectToAction("Index");
-            }
-
-            return View(zipCode);
         }
-
-        // GET: ZipCodes/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ZipCode zipCode = db.ZipCodes.Find(id);
-            if (zipCode == null)
-            {
-                return HttpNotFound();
-            }
-            return View(zipCode);
-        }
-
-        // POST: ZipCodes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Zip")] ZipCode zipCode)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(zipCode).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(zipCode);
-        }
-
+      
         // GET: ZipCodes/Delete/5
         public ActionResult Delete(int? id)
         {
@@ -86,7 +48,7 @@ namespace BHelp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ZipCode zipCode = db.ZipCodes.Find(id);
+            var zipCode = db.ZipCodes.Find(id);
             if (zipCode == null)
             {
                 return HttpNotFound();

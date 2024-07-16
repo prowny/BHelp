@@ -1,9 +1,5 @@
 ﻿@model IEnumerable<BHelp.Models.ZipCode>
-
-@{
-    Layout = null;
-}
-
+@{ Layout = null; }
 <!DOCTYPE html>
 
 <html>
@@ -15,13 +11,13 @@
     <p>
         @Html.ActionLink("Create New", "Create")
     </p>
-    <table class="table">
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Zip)
-            </th>
-            <th></th>
-        </tr>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Zip)
+        </th>
+        <th></th>
+    </tr>
     
     @foreach (var item in Model) {
         <tr>
@@ -29,13 +25,15 @@
                 @Html.DisplayFor(modelItem => item.Zip)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-       
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+                @Html.ActionLink("Delete", "Delete", 
+    new { id=item.Id }, new { style = "color:red" })
             </td>
         </tr>
     }
-    
-    </table>
+</table>
+<br/>
+<div>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
 </body>
 </html>

@@ -367,8 +367,8 @@ namespace BHelp
 
         public static List<string> GetZipCodesList()
         {
-            List<string> getZipCodesList = new List<string>();
-            string[] lines =
+            var getZipCodesList = new List<string>();
+            var lines =
                 File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/BHelpZipCodes.txt");
             foreach (var line in lines)
             {
@@ -396,6 +396,13 @@ namespace BHelp
             }
 
             return getZipCodesSelectList;
+        }
+
+        public static List<ZipCode> GetZipCodesListNew()
+        {
+            using var db = new BHelpContext();
+            var zipcodeList = db.ZipCodes.OrderBy(z => z.Zip).ToList();
+            return zipcodeList;
         }
 
         public static List<string> GetAssistanceCategoriesList()

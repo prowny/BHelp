@@ -1043,7 +1043,6 @@
     </Content>
     <Content Include="Views\ZipCodes\Create.cshtml" />
     <Content Include="Views\ZipCodes\Delete.cshtml" />
-    <Content Include="Views\ZipCodes\Edit.cshtml" />
     <Content Include="Views\ZipCodes\Index.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
