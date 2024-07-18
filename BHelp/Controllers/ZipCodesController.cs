@@ -34,10 +34,12 @@ namespace BHelp.Controllers
                 return View(zipCode);
             }
 
+            if (zipCode.Zip == null || zipCode.Zip.Length != 5) return RedirectToAction("Index");
             var newZipCode = new ZipCode { Zip = zipCode.Zip };
-                db.ZipCodes.Add(newZipCode);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+            db.ZipCodes.Add(newZipCode);
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
       
         // GET: ZipCodes/Delete/5

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Globalization;
 using System.IO; 
 using System.Linq;
@@ -1764,5 +1765,19 @@ namespace BHelp
             if (dayOfWeek == 6) dt = dt.AddDays(2); // change from Sat to Mon
             return dt;
         }
+
+        public static void UpdateBagWeights(BagWeight bagWeight)
+        {
+            using var db = new BHelpContext();
+            if (db.BagWeights != null)
+            {
+                var updateRec = db.BagWeights.Find(bagWeight.Id);
+                updateRec.APounds = bagWeight.APounds;
+                updateRec.BPounds = bagWeight.BPounds;
+                updateRec.EffectiveDate = bagWeight.EffectiveDate;
+                db.SaveChanges();
+            }
+        }
+
     }
 }

@@ -1,0 +1,52 @@
+﻿@model IEnumerable<BHelp.Models.BagWeight>
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+<table class="table">
+    <tr>
+        <td>
+            <b>@Html.DisplayNameFor(model => model.APounds)</b> &nbsp;&nbsp;
+        </td>
+        <th>
+            <b>@Html.DisplayNameFor(model => model.BPounds)</b> &nbsp;&nbsp;
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EffectiveDate)
+        </th>
+        <th></th>
+    </tr>
+    
+    @foreach (var item in Model) {
+        <tr>
+            <td style ="text-align:center">
+                @Html.DisplayFor(modelItem => item.APounds )
+            </td>
+            <td style ="text-align:center">
+                @Html.DisplayFor(modelItem => item.BPounds)
+            </td>
+            <td style ="text-align:center">
+                @Html.DisplayFor(modelItem => item.EffectiveDateString)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id=item.Id}, new { style = "color:red"})
+            </td>
+        </tr>
+    }
+    
+</table>
+<br />
+<div>
+    @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+</div>
+</body>
+</html>

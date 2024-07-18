@@ -1,0 +1,100 @@
+﻿@model BHelp.Models.BagWeight
+@{ Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Create</title>
+    <script src="~/Scripts/jquery-3.7.1.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.13.2.min.js"></script>
+    <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
+    <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+    <style>
+        #CreateButton { background-color: green; color: white }
+        .weightwidth { width: 40px }
+        .datewidth { width: 75px }
+    </style>
+</head>
+<body>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-horizontal">
+            <h4>Create New Bag Weights Record</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.APounds, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(model => model.APounds,
+    new { onkeypress = "return OnlyNumeric(event)", @class = "weightwidth", autofocus="autofocus" })
+                    @Html.ValidationMessageFor(model => model.APounds, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.BPounds, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(model => model.BPounds,
+    new { onkeypress = "return OnlyNumeric(event)", @class = "weightwidth" })
+                    @Html.ValidationMessageFor(model => model.BPounds, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EffectiveDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(model => model.EffectiveDate,
+                        "{0:MM/dd/yyyy}",
+                        new { id = "EffectiveDate", @class = "datewidth" })
+                    <a style="color: darkmagenta"> &#8592;Click to change</a>
+
+                    @Html.ValidationMessageFor(model => model.EffectiveDate, "", new { @class = "text-danger" })
+                </div>
+
+            </div>
+            <br />
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-default" , id="CreateButton" />
+                </div>
+            </div>
+        </div>
+    }
+    <br />
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>
+    <br />
+    <div>
+        @Html.ActionLink("Return to Dashboard", "Index", "Home", new { }, null)
+    </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    function OnlyNumeric(e) {
+        var charCode = (e.which) ? e.which : e.keyCode;
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+</script>
+
+<script>
+    $(function () {
+        window.$("#EffectiveDate").datepicker();
+    });
+</script> @*EffectiveDate datepicker*@
+<script>
+    $(document).ready(function () {
+        ".datepicker".datepicker({
+            dateFormat: "dd-mm-yy",
+            changemonth: true,
+            changeyear: true
+        });
+    });
+</script>
