@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Globalization;
 using System.IO; 
 using System.Linq;
@@ -1712,12 +1711,8 @@ namespace BHelp
                 }
             }
 
-            if (roleNameString.Length > 0)
-            {
-                return roleNameString.Substring(0, roleNameString.Length - 1);
-            }
-
-            return roleNameString;
+            return roleNameString.Length > 0 ? roleNameString
+                .Substring(0, roleNameString.Length - 1) : roleNameString;
         }
 
         public static ODSchedule GetODSchedule(DateTime date)
@@ -1761,22 +1756,97 @@ namespace BHelp
         {
             var dt = new DateTime(year, month, 1);
             var dayOfWeek = (int)dt.DayOfWeek;
-            if (dayOfWeek == 0) dt = dt.AddDays(1); // change from Sun to Mon 
-            if (dayOfWeek == 6) dt = dt.AddDays(2); // change from Sat to Mon
+            dt = dayOfWeek switch
+            {
+                0 => dt.AddDays(1),
+                6 => dt.AddDays(2),
+                _ => dt
+            };
             return dt;
         }
 
         public static void UpdateBagWeights(BagWeight bagWeight)
         {
             using var db = new BHelpContext();
-            if (db.BagWeights != null)
+            var updateRec = db.BagWeights?.Find(bagWeight.Id);
+            if (updateRec == null) return;
+            updateRec.APounds = bagWeight.APounds;
+            updateRec.BPounds = bagWeight.BPounds;
+            updateRec.EffectiveDate = bagWeight.EffectiveDate;
+            db.SaveChanges();
+        }
+
+        public static decimal GetTotalPounds(DateTime date, int Abags, int Bbags)
+        {
+            var bagWeightList = (List<BagWeight>)HttpContext.Current.Session["BagWeightList"];
+            // Bracket weights by date: (List is ordered by EffectiveDate) 
+            if (bagWeightList == null) return 0;
+            var maxDateRec =new BagWeight
             {
-                var updateRec = db.BagWeights.Find(bagWeight.Id);
-                updateRec.APounds = bagWeight.APounds;
-                updateRec.BPounds = bagWeight.BPounds;
-                updateRec.EffectiveDate = bagWeight.EffectiveDate;
-                db.SaveChanges();
+                APounds = 0,
+                BPounds = 0,
+                EffectiveDate = DateTime.MaxValue
+            };
+            bagWeightList.Add(maxDateRec);
+            for (var i = 0; i < bagWeightList.Count - 1; i++)
+            {
+                if ( date >= bagWeightList[i].EffectiveDate
+                    && date < bagWeightList[i + 1].EffectiveDate)
+                {
+                    return bagWeightList[i].APounds * Abags
+                           + bagWeightList[i].BPounds * Bbags;
+                };
             }
+
+            return 0;
+        }
+
+        public static decimal GetABagWeight(DateTime date)
+        {
+            var bagWeightList = (List<BagWeight>)HttpContext.Current.Session["BagWeightList"];
+            // Bracket weights by date: (List is ordered by EffectiveDate) 
+            if (bagWeightList == null) return 0;
+            var maxDateRec = new BagWeight
+            {
+                APounds = 0,
+                BPounds = 0,
+                EffectiveDate = DateTime.MaxValue
+            };
+            bagWeightList.Add(maxDateRec);
+            for (var i = 0; i < bagWeightList.Count - 1; i++)
+            {
+                if (date >= bagWeightList[i].EffectiveDate
+                    && date < bagWeightList[i + 1].EffectiveDate)
+                {
+                    return bagWeightList[i].APounds;
+                };
+            }
+
+            return 0;
+        }
+
+        public static decimal GetBBagWeight(DateTime date)
+        {
+            var bagWeightList = (List<BagWeight>)HttpContext.Current.Session["BagWeightList"];
+            // Bracket weights by date: (List is ordered by EffectiveDate) 
+            if (bagWeightList == null) return 0;
+            var maxDateRec = new BagWeight
+            {
+                APounds = 0,
+                BPounds = 0,
+                EffectiveDate = DateTime.MaxValue
+            };
+            bagWeightList.Add(maxDateRec);
+            for (var i = 0; i < bagWeightList.Count - 1; i++)
+            {
+                if (date >= bagWeightList[i].EffectiveDate
+                    && date < bagWeightList[i + 1].EffectiveDate)
+                {
+                    return bagWeightList[i].BPounds;
+                };
+            }
+
+            return 0;
         }
 
     }

@@ -1602,8 +1602,8 @@ namespace BHelp.Controllers
                     var month = Convert.ToInt32(DateTime.Now.Month.ToString());
                     if (month is >= 1 and <= 3) { reportQuarter = 1;}     
                     if (month is >= 4 and <= 6) { reportQuarter = 2;}     
-                    if (month is >= 7 and <= 9) { reportQuarter = 3; }    
-                    if (month is >= 10 and <= 12) { reportQuarter = 4; }
+                    if (month is >= 7 and <= 9) { reportQuarter = 3;}    
+                    if (month is >= 10 and <= 12) { reportQuarter = 4;}
                 }
                 else
                 {
@@ -1822,8 +1822,8 @@ namespace BHelp.Controllers
                 view.HelperTitles[4] = "# Cumulative Residents Children <18";
                 view.HelperTitles[5] = "# Cumulative Residents Adults 18-59";
                 view.HelperTitles[6] = "# Cumulative Residents Seniors 60+";
-                view.HelperTitles[7] = "# A Bags (10 lbs per bag)";
-                view.HelperTitles[8] = "# B Bags (9 lbs per bag)";
+                view.HelperTitles[7] = "# A Bags";
+                view.HelperTitles[8] = "# B Bags";
                 view.HelperTitles[9] = "# Snacks";
                 view.HelperTitles[10] = "# Giant Gift Cards Disbursed";
                 view.HelperTitles[11] = "# Households Distinct Served";
@@ -1852,6 +1852,9 @@ namespace BHelp.Controllers
                 var totalHouseholds2GiftCards = 0;  
                 var totalFullBags = 0;
                 var totalHalfBags = 0;
+                decimal totalCumulativeAPounds = 0;
+                decimal totalCumulativeBPounds = 0;
+            decimal totalCumulativePounds = 0;
                 var totalSnacks = 0;
                 var totalCards = 0;
                 using var db = new BHelpContext();
@@ -1894,6 +1897,9 @@ namespace BHelp.Controllers
                     var households2GiftCards = 0;
                     var fullBags = 0;
                     var halfBags = 0;
+                    decimal cumulativeAbagsPounds = 0;
+                    decimal cumulativeBbagsPounds = 0;
+                    decimal cumulativePounds = 0;
                     var snacks = 0;
                     var cards = 0;
                     foreach (var del in deliveryData)
@@ -1916,18 +1922,28 @@ namespace BHelp.Controllers
                         totalCumulativeAdults += del.Adults;
                         cumulativeSeniors += del.Seniors;
                         totalCumulativeSeniors += del.Seniors;
+
+                        var dDate = del.DateDelivered.GetValueOrDefault(DateTime.Now);
+                        var Apounds = AppRoutines.GetABagWeight(dDate);
+                        cumulativeAbagsPounds += del .FullBags * Apounds;
+                        totalCumulativeAPounds += del.FullBags * Apounds; 
+                        var Bpounds = AppRoutines.GetBBagWeight(dDate);
+                        cumulativeBbagsPounds += del.HalfBags * Bpounds;
+                        totalCumulativePounds += del.HalfBags * Bpounds; 
+                        cumulativePounds += Apounds + Bpounds;
                         fullBags += del.FullBags;
                         totalFullBags += del.FullBags;
                         halfBags += del.HalfBags;
                         totalHalfBags += del.HalfBags;
+                        totalCumulativePounds += Apounds + Bpounds;
                         snacks += del.KidSnacks;
                         totalSnacks += del.KidSnacks;
                         cards += del.GiftCards + del.HolidayGiftCards;
                         totalCards += del.GiftCards + del.HolidayGiftCards;
                     }
 
-                    var col = zip + 1; 
-                    view.ZipCounts[1, col] = fullBags * 10 + halfBags * 9;  // Total Food Lbs
+                    var col = zip + 1;
+                    view.ZipCounts[1, col] = (int)(cumulativePounds + (decimal).5);  // Total Food Lbs
                     view.ZipCounts[2, col] = deliveryData.Count;    // Total Deliveries
                     view.ZipCounts[3, col] = cumulativeChildren + cumulativeAdults + cumulativeSeniors;
                     view.ZipCounts[4, col] = cumulativeChildren;
@@ -1946,12 +1962,12 @@ namespace BHelp.Controllers
                     view.ZipCounts[16, col] = totalRepeatDeliveries; // Repeat Deliveries
                     view.ZipCounts[17, col] = totalFirstDeliveries; // First-Time Deliveries
                     view.ZipCounts[18, col] = households2GiftCards;
-                    view.ZipCounts[19, col] = fullBags * 10;
-                    view.ZipCounts[20, col] = halfBags * 9;
+                    view.ZipCounts[19, col] = (int)(cumulativeAbagsPounds + (decimal).5); // round to nearest whole number for display
+                    view.ZipCounts[20, col] = (int)(cumulativeBbagsPounds + (decimal).5); // round to nearest whole number for display
                 }
 
                 var totCol = view.ZipCodes.Count + 1;
-                view.ZipCounts[1, totCol] = totalFullBags * 10 + totalHalfBags * 9;  // Total Food Lbs
+                view.ZipCounts[1, totCol] = (int)(totalCumulativePounds + (decimal).5); // round to nearest whole number for display
                 view.ZipCounts[2, totCol] = totalDeliveries;    // Total Deliveries
                 view.ZipCounts[3, totCol] = totalCumulativeChildren + totalCumulativeAdults + totalCumulativeSeniors;
                 view.ZipCounts[4, totCol] = totalCumulativeChildren;
@@ -1970,11 +1986,12 @@ namespace BHelp.Controllers
                 view.ZipCounts[16, totCol] = totalCumulativeRepeatDeliveries; // Repeat Deliveries
                 view.ZipCounts[17, totCol] = totalCumulativeFirstDeliveries; // First-Time Deliveries
                 view.ZipCounts[18, totCol] = totalHouseholds2GiftCards;
-                view.ZipCounts[19, totCol] = totalFullBags * 10;
-                view.ZipCounts[20, totCol] = totalHalfBags * 9;
+                view.ZipCounts[19, totCol] = (int)(totalCumulativeAPounds + (decimal).5);
+                view.ZipCounts[20, totCol] = (int)(totalCumulativeBPounds + (decimal).5);
 
-                return view;
+            return view;
             }
+
             private static List<SelectListItem> GetSnapshotFamily(string listHH)
             {
                 var i = 0;
@@ -2071,9 +2088,11 @@ namespace BHelp.Controllers
                                 view.Counts[mo, t, 3] += s;
                                 view.Counts[mo, j, 4] += (a + c + s);
                                 view.Counts[mo, t, 4] += (a + c + s); // # of residents
-                                var lbs = Convert.ToInt32(delivery.FullBags * 10 + delivery.HalfBags * 9);
-                                view.Counts[mo, j, 5] += lbs;
-                                view.Counts[mo, t, 5] += lbs; // pounds of food
+                                var lbs = AppRoutines.GetTotalPounds(
+                                    delivery.DateDelivered.GetValueOrDefault(DateTime.Now),
+                                    delivery.FullBags, delivery.HalfBags);
+                                view.Counts[mo, j, 5] += (int)(lbs + (decimal).5); // round to nearest whole number for display;
+                                view.Counts[mo, t, 5] += (int)(lbs + (decimal).5); //pounds distributed
                             }
                         }
                     }
@@ -2255,9 +2274,11 @@ namespace BHelp.Controllers
                     {
                         if (delivery.Zip == view.ZipCodes[j])
                         {
-                            var lbs = Convert.ToInt32(delivery.FullBags * 10 + delivery.HalfBags * 9);
-                            view.Counts[0, j, 0] += lbs;
-                            view.Counts[0, zipCount, 0] += lbs; //pounds of food
+                            var lbs = AppRoutines.GetTotalPounds(
+                                delivery.DateDelivered.GetValueOrDefault(DateTime.Now),
+                                delivery.FullBags, delivery.HalfBags);
+                            view.Counts[0, j, 0] += (int)(lbs + (decimal).5); // round to nearest whole number for display;
+                            view.Counts[0,zipCount, 0] += (int)(lbs + (decimal).5); //pounds distributed
                             view.Counts[0, j, 1]++;
                             view.Counts[0, zipCount, 1]++; //# unique households served
                             var c = Convert.ToInt32(delivery.Children);

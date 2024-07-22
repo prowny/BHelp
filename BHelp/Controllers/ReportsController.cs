@@ -968,7 +968,7 @@ namespace BHelp.Controllers
 
                 return view;
             }
-            private static ReportsViewModel GetQORKReportView(DateTime endDate) // new QORK Report 02/22
+            private ReportsViewModel GetQORKReportView(DateTime endDate) // new QORK Report 02/22
             {
                 using var db = new BHelpContext();
                 var startDate = endDate.AddDays(-6);
@@ -1006,9 +1006,10 @@ namespace BHelp.Controllers
                             view.Counts[0, 3, zipCount] += s; //# seniors
                             view.Counts[0, 4, zip]++;
                             view.Counts[0, 4, zipCount]++; //#  households served
-                            var lbs = Convert.ToInt32(delivery.FullBags * 10 + delivery.HalfBags * 9);
-                            view.Counts[0, 5, zip] += lbs;
-                            view.Counts[0, 5, zipCount] += lbs; //pounds distributed
+                            var delDate = delivery.DateDelivered.GetValueOrDefault(DateTime.Now);
+                            var lbs = AppRoutines.GetTotalPounds(delDate, delivery.FullBags, delivery.HalfBags);
+                            view.Counts[0, 5, zip] += (int)(lbs + (decimal).5); // round to nearest whole number for display
+                            view.Counts[0, 5, zipCount] += (int)(lbs + (decimal).5) ; //pounds distributed
                             // column 6 - prepared meals served
                             view.Counts[0, 7, zip] += (a + c + s);
                             view.Counts[0, 7, zipCount] += (a + c + s); //# individuals served

@@ -18,7 +18,7 @@ namespace BHelp.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        readonly BHelpContext db = new BHelpContext();
+        private readonly BHelpContext db = new BHelpContext();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
@@ -73,6 +73,7 @@ namespace BHelp.Controllers
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe,
                 shouldLockout: false);
+            SetSessionBagweightList();
             WriteToLoginTable(model.UserName, result.ToString());
             switch (result)
             {
@@ -113,15 +114,20 @@ namespace BHelp.Controllers
                 login.LastName = user.LastName;
             }
 
-            TimeZoneInfo localZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+            var localZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
             var dt1 = DateTime.Now;
-            DateTime localStandard = TimeZoneInfo.ConvertTime(dt1, TimeZoneInfo.Local, localZone);
+            var localStandard = TimeZoneInfo.ConvertTime(dt1, TimeZoneInfo.Local, localZone);
             login.DateTime = localStandard;
             login.Status = status;
             //if (status == "Success") { user.LastDate = dt1; }   //Added 07/07/2021 REMOVED 11/28/2021
 
             db.Logins.Add(login);
             db.SaveChanges();
+        }
+
+        private void SetSessionBagweightList()
+        {
+            Session["BagWeightList"] = db.BagWeights.OrderBy(d => d.EffectiveDate).ToList();
         }
 
         // GET: /Account/VerifyCode

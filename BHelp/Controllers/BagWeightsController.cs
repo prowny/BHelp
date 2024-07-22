@@ -13,7 +13,8 @@ namespace BHelp.Controllers
         // GET: BagWeights
         public ActionResult Index()
         {
-            var weightlist = db.BagWeights.ToList();
+            var weightlist = db.BagWeights
+                .OrderBy(d => d.EffectiveDate ).ToList();
             foreach (var item in weightlist)
             {
                 item.EffectiveDateString = item.EffectiveDate.ToString("MM/dd/yyyy");
