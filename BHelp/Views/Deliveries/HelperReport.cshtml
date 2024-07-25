@@ -70,8 +70,8 @@
                 <td style="text-align: right">@Html.Label(zip)</td>}
             <td>Total Zip Codes</td>
         </tr>
-        <tr><td style="text-align: right">@Html.Label(Model.BeginDate.ToShortDateString())</td></tr>
-        <tr><td style="text-align: right">@Html.Label(Model.EndDate.ToShortDateString() )</td></tr>
+        <tr><td style="text-align: right">@Html.Label(Model.BeginDate.ToString("MM/dd/yyyy"))</td></tr>
+        <tr><td style="text-align: right">@Html.Label(Model.EndDate.ToString( "MM/dd/yyyy"))</td></tr>
 
         @for (var i = 1; i < Model.HelperTitles.Length; i++)
         {

@@ -1850,11 +1850,11 @@ namespace BHelp.Controllers
                 var totalCumulativeAdults = 0;
                 var totalCumulativeSeniors = 0;
                 var totalHouseholds2GiftCards = 0;  
-                var totalFullBags = 0;
-                var totalHalfBags = 0;
+                var totalABags = 0;
+                var totalBBags = 0;
                 decimal totalCumulativeAPounds = 0;
                 decimal totalCumulativeBPounds = 0;
-            decimal totalCumulativePounds = 0;
+                decimal totalCumulativePounds = 0;
                 var totalSnacks = 0;
                 var totalCards = 0;
                 using var db = new BHelpContext();
@@ -1895,11 +1895,10 @@ namespace BHelp.Controllers
                     var cumulativeAdults = 0;
                     var cumulativeSeniors = 0;
                     var households2GiftCards = 0;
-                    var fullBags = 0;
-                    var halfBags = 0;
+                    var ABags = 0;
+                    var BBags = 0;
                     decimal cumulativeAbagsPounds = 0;
                     decimal cumulativeBbagsPounds = 0;
-                    decimal cumulativePounds = 0;
                     var snacks = 0;
                     var cards = 0;
                     foreach (var del in deliveryData)
@@ -1922,20 +1921,22 @@ namespace BHelp.Controllers
                         totalCumulativeAdults += del.Adults;
                         cumulativeSeniors += del.Seniors;
                         totalCumulativeSeniors += del.Seniors;
+                        ABags += del.FullBags;
+                        totalABags += del.FullBags;
+                        BBags += del.HalfBags;
+                        totalBBags += del.HalfBags;
 
                         var dDate = del.DateDelivered.GetValueOrDefault(DateTime.Now);
-                        var Apounds = AppRoutines.GetABagWeight(dDate);
-                        cumulativeAbagsPounds += del .FullBags * Apounds;
-                        totalCumulativeAPounds += del.FullBags * Apounds; 
-                        var Bpounds = AppRoutines.GetBBagWeight(dDate);
-                        cumulativeBbagsPounds += del.HalfBags * Bpounds;
-                        totalCumulativePounds += del.HalfBags * Bpounds; 
-                        cumulativePounds += Apounds + Bpounds;
-                        fullBags += del.FullBags;
-                        totalFullBags += del.FullBags;
-                        halfBags += del.HalfBags;
-                        totalHalfBags += del.HalfBags;
-                        totalCumulativePounds += Apounds + Bpounds;
+                        var ABagWeight = AppRoutines.GetABagWeight(dDate);
+                        var _AbagWeights = del.FullBags * ABagWeight;
+                        cumulativeAbagsPounds += _AbagWeights;
+                        totalCumulativeAPounds += _AbagWeights;
+                        var BBagWeight = AppRoutines.GetBBagWeight(dDate);
+                        var _BbagWeights = del.HalfBags * BBagWeight;
+                        cumulativeBbagsPounds += _BbagWeights;
+                        totalCumulativeBPounds += _BbagWeights;
+                        totalCumulativePounds +=   _AbagWeights + _BbagWeights;
+
                         snacks += del.KidSnacks;
                         totalSnacks += del.KidSnacks;
                         cards += del.GiftCards + del.HolidayGiftCards;
@@ -1943,14 +1944,14 @@ namespace BHelp.Controllers
                     }
 
                     var col = zip + 1;
-                    view.ZipCounts[1, col] = (int)(cumulativePounds + (decimal).5);  // Total Food Lbs
+                    view.ZipCounts[1, col] = (int)(cumulativeAbagsPounds + cumulativeBbagsPounds + (decimal).5);  // Total Food Lbs
                     view.ZipCounts[2, col] = deliveryData.Count;    // Total Deliveries
                     view.ZipCounts[3, col] = cumulativeChildren + cumulativeAdults + cumulativeSeniors;
                     view.ZipCounts[4, col] = cumulativeChildren;
                     view.ZipCounts[5, col] = cumulativeAdults;
                     view.ZipCounts[6, col] = cumulativeSeniors;
-                    view.ZipCounts[7, col] = fullBags;
-                    view.ZipCounts[8, col] = halfBags;
+                    view.ZipCounts[7, col] = ABags;
+                    view.ZipCounts[8, col] = BBags;
                     view.ZipCounts[9, col] = snacks;
                     view.ZipCounts[10, col] = cards;
 
@@ -1973,8 +1974,8 @@ namespace BHelp.Controllers
                 view.ZipCounts[4, totCol] = totalCumulativeChildren;
                 view.ZipCounts[5, totCol] = totalCumulativeAdults;
                 view.ZipCounts[6, totCol] = totalCumulativeSeniors;
-                view.ZipCounts[7, totCol] = totalFullBags;
-                view.ZipCounts[8, totCol] = totalHalfBags;
+                view.ZipCounts[7, totCol] = totalABags;
+                view.ZipCounts[8, totCol] = totalBBags;
                 view.ZipCounts[9, totCol] = totalSnacks;
                 view.ZipCounts[10, totCol] = totalCards;
 
