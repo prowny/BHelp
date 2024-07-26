@@ -36,11 +36,20 @@
             <td style ="text-align:center">
                 @Html.DisplayFor(modelItem => item.EffectiveDateString)
             </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id}, new { style = "color:red"})
-            </td>
-        </tr>
+            @if (item.EffectiveDate > DateTime.Today.AddDays(-14))
+            {
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { style = "color:red" })
+                </td>
+            }
+            else
+            {
+                <td>
+                    <a style="color: darkmagenta">  (cannot alter record that is two weeks older than today)</a>
+                </td>
+            }
+    </tr>
     }
     
 </table>

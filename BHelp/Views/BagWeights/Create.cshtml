@@ -48,7 +48,7 @@
                     @Html.TextBoxFor(model => model.EffectiveDate,
                         "{0:MM/dd/yyyy}",
                         new { id = "EffectiveDate", @class = "datewidth" })
-                    <a style="color: darkmagenta"> &#8592;Click to change</a>
+                    <a style="color: darkmagenta"> &#8592;Click to change (cannot create record that is two weeks older than today)</a>
 
                     @Html.ValidationMessageFor(model => model.EffectiveDate, "", new { @class = "text-danger" })
                 </div>
@@ -86,7 +86,9 @@
 
 <script>
     $(function () {
-        window.$("#EffectiveDate").datepicker();
+        window.$("#EffectiveDate").datepicker({
+            minDate: -13  @*cannot create record that is two weks older than today*@
+        });
     });
 </script> @*EffectiveDate datepicker*@
 <script>
