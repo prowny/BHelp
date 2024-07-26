@@ -40,8 +40,8 @@
                 @Html.LabelFor(model => model.APounds, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.TextBoxFor(model => model.APounds,
-                        new { onkeypress = "return OnlyNumeric(event)",
-                            @class = "weightwidth", autofocus="autofocus" })
+                        new{ onkeypress = "return OnlyNumeric(event)",
+                            @class = "weightwidth", autofocus = "autofocus" })
                     @Html.ValidationMessageFor(model => model.APounds, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -50,8 +50,11 @@
                 @Html.LabelFor(model => model.BPounds, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.TextBoxFor(model => model.BPounds,
-                        new { onkeypress = "return OnlyNumeric(event)",
-                        @class = "weightwidth" })
+                        new
+                             {
+                                 onkeypress = "return OnlyNumeric(event)",
+                        @class = "weightwidth"
+                             })
                     @Html.ValidationMessageFor(model => model.BPounds, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -97,7 +100,8 @@
         window.$("#EffectiveDate").datepicker();
     });
 </script> @*EffectiveDate datepicker*@
-<script>
+
+@*<script>
     $(document).ready(function () {
         ".datepicker".datepicker({
             dateFormat: "dd-mm-yy",
@@ -105,4 +109,4 @@
             changeyear: true
         });
     });
-</script>
+</script>*@

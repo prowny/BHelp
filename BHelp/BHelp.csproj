@@ -1043,8 +1043,8 @@
     <Content Include="Views\ZipCodes\Index.cshtml" />
     <Content Include="Views\BagWeights\Create.cshtml" />
     <Content Include="Views\BagWeights\Delete.cshtml" />
-    <Content Include="Views\BagWeights\Edit.cshtml" />
     <Content Include="Views\BagWeights\Index.cshtml" />
+    <Content Include="Views\BagWeights\Edit.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

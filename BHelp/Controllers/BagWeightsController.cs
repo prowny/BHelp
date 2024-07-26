@@ -82,7 +82,7 @@ namespace BHelp.Controllers
                 }
             }
 
-            AppRoutines .UpdateBagWeights(bagWeight);
+            AppRoutines.UpdateBagWeights(bagWeight);
             return RedirectToAction("Index");
         }
 
