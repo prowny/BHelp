@@ -35,8 +35,7 @@
             </td>
             <td style ="text-align:center">
                 @Html.DisplayFor(modelItem => item.EffectiveDateString)
-            </td>
-            @if (item.EffectiveDate > DateTime.Today.AddDays(-14))
+            </td>@if (item.EffectiveDate > DateTime.Today.AddDays(-13))
             {
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
