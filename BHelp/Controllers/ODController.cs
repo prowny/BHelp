@@ -95,7 +95,6 @@ namespace BHelp.Controllers
                     LastName = client.LastName,
                     StreetNumber = client.StreetNumber,
                     StreetName = client.StreetName,
-                    //Apartment = new string(client.StreetName.Where(char.IsDigit).ToArray()),
                     Apartment = apt,
                     StreetToolTip = client.StreetName.Replace(" ", "\u00a0"),
                     City = client.City,
@@ -140,6 +139,24 @@ namespace BHelp.Controllers
             if (btnSave != null) // Button Save and Exit was pressed
             {
                 SaveHouseholdData(household);
+                if (TempData.ContainsKey("UpdateHouseholdDirty"))
+                {
+                    if(TempData["UpdateHouseholdDirty"].ToString() == "true")
+                    {
+                        // Household data has changed - go to review open delivery
+                        // Get open delivery of this client:
+                        var id = Convert.ToInt32(household.ClientId);
+                        var del = db.Deliveries.Single(c => c.ClientId == id && c.Status == 0);
+                        if (del != null)
+                        {
+                            // create a warning message and redirect to Edit the delivery: 
+                            TempData["UpdateHouseholdDirty"] = "Changes made to Client record!";
+                            return RedirectToAction("Edit", "Deliveries", new { del.Id });
+                        }
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+
                 return RedirectToAction("Index","Home");
             }  // Button Save and Exit was pressed
 
