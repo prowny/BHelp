@@ -146,12 +146,14 @@ namespace BHelp.Controllers
                         // Household data has changed - go to review open delivery
                         // Get open delivery of this client:
                         var id = Convert.ToInt32(household.ClientId);
-                        var del = db.Deliveries.Single(c => c.ClientId == id && c.Status == 0);
+                        var del = db.Deliveries.Single(c => c.ClientId == id);
                         if (del != null)
                         {
-                            // create a warning message and redirect to Edit the delivery: 
-                            TempData["UpdateHouseholdDirty"] = "Changes made to Client record!";
-                            return RedirectToAction("Edit", "Deliveries", new { del.Id });
+                            if(del.Status == 0)
+                            { // create a warning message and redirect to Edit the delivery: 
+                                TempData["UpdateHouseholdDirty"] = "Changes made to Client record!";
+                                return RedirectToAction("Edit", "Deliveries", new { del.Id });
+                            }
                         }
                         return RedirectToAction("Index", "Home");
                     }

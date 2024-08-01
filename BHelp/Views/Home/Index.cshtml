@@ -226,7 +226,7 @@
             for (var i = 0; i < Model.EveryoneDocTitles.Length; i++)
             {
                 <span id ="btnView" style = "color: blue" >@Html.Label(Model.EveryoneDocTitles[i]):</span>
-
+                
                 <input type="image" src="~/Images/PDF10.png" alt="Submit" width="16" height="16"
                     onclick="window.open('@Url.Action("ViewDocument", "Documents",
                                                  new { id = Model.EveryoneDocIds[i] })')" />
