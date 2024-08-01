@@ -114,6 +114,7 @@
         <div>
             <strong>Pantry Coordinator Menu</strong><br />
             <a href="@Url.Action("Index", "Deliveries")">View Open Deliveries</a><br />
+            <a href="@Url.Action("Edit", "DriverSchedule")">View Driver Schedules</a><br />
             @if (Model.ShowPantryCoordinatorDocumentsMenu)
             {
                 <a href="@Url.Action("ViewDocumentCategory", "Documents", new {menuCat="PantryCoordinator"})">View Pantry Coordinator Documents</a><br />
