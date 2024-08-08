@@ -36,11 +36,21 @@
             <div class="form-horizontal">
                 <table>
                     <tr>
-                        <td style="color: darkmagenta">
-                            @Html.Label(" (Snapshot of client when the delivery was created " +
-                                        Model.LogDate.ToString("MM/dd/yyyy") + ":)")
-                        </td>
                         <td style="display: none" id="Id">@Html.Label(Model.Id.ToString())</td>
+                        @if (TempData["UpdateHouseholdDirty"] != null)
+                        {
+                            <td style="color:red">
+                                @Html.Label(" (Snapshot of updated client data:)")
+                             </td>
+                        }
+                        else
+                        {
+                            <td style="color: darkmagenta">
+                                @Html.Label(" (Snapshot of client when the delivery was created " +
+                                            Model.LogDate.ToString("MM/dd/yyyy") + ":)")
+                            </td>
+                        }
+
                     </tr>
                 </table>
                 <span><b>Client:&nbsp;</b></span>@Model.ClientNameAddress&nbsp; 
