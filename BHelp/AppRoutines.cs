@@ -365,37 +365,6 @@ namespace BHelp
             return eligible;
         }
 
-        //public static List<string> GetZipCodesList() *** deprecated 07/16/2024
-        //{
-        //    var getZipCodesList = new List<string>();
-        //    var lines =
-        //        File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/BHelpZipCodes.txt");
-        //    foreach (var line in lines)
-        //    {
-        //        if (line.Substring(0, 1) != "/")
-        //        {
-        //            getZipCodesList.Add(line);
-        //        }
-        //    }
-        //    return getZipCodesList;
-        //}
-
-        //public static List<SelectListItem> GetZipCodesSelectList() *** deprecated 07/16/2024
-        //{
-        //    List<SelectListItem> getZipCodesSelectList = new List<SelectListItem>();
-        //    string[] lines =
-        //        File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/BHelpZipCodes.txt");
-        //    foreach (var line in lines)
-        //    {
-        //        if (line.Substring(0, 1) != "/")
-        //        {
-        //            var selListItem = new SelectListItem() { Value = line, Text = line };
-        //            getZipCodesSelectList.Add(selListItem);
-        //        }
-        //    }
-        //    return getZipCodesSelectList;
-        //}
-
         public static List<string> GetZipCodesList()
         {
             using var db = new BHelpContext();
@@ -633,41 +602,10 @@ namespace BHelp
 
             return nextEligibleGiftCardDate;
         }
-
-        public static string GetVoicemailPassword() // AND current OD Id
-        {
-            var _password = "";
-            var _odId = "";
-            var lines =
-                File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "/App_Data/BHelpVoicemailCredentials.txt");
-            foreach (var line in lines)
-            {
-                if (line.Substring(0, 1) == "/") continue;
-                if(String.IsNullOrEmpty(_password))
-                {_password = line;}
-                else
-                {
-                    {
-                        _odId = line;
-                    }
-                }
-            }
-
-            return _password + " " + _odId;
-        }
-
-        public static string[] GetVoicemailInfoLines()
-        {
-            var lines = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory
-                                          + "/App_Data/BHelpVoicemailCredentials.txt");
-            //lines = lines.Take(lines.Count() - 1).ToArray();
-            lines = lines.Take(lines.Count()).ToArray();
-            return lines;
-        }
-
+        
         public static int GetAge(DateTime dob, [Optional] DateTime today)
         {
-            if(String.IsNullOrEmpty(today.ToString(CultureInfo.CurrentCulture)) || today == DateTime.MinValue)
+            if(string.IsNullOrEmpty(today.ToString(CultureInfo.CurrentCulture)) || today == DateTime.MinValue)
             {
                 today = DateTime.Now;
             }
@@ -1230,14 +1168,11 @@ namespace BHelp
                 switch (d.Status)
                 {
                     case 0:
-                        status = "Open";
-                        break;
+                        status = "Open"; break;
                     case 1:
-                        status = "Delivered";
-                        break;
+                        status = "Delivered"; break;
                     case 2:
-                        status = "Undelivered";
-                        break;
+                        status = "Undelivered"; break;
                 }
 
                 sb.Append(status + ",");
@@ -1638,15 +1573,6 @@ namespace BHelp
 
         public static IEnumerable<SelectListItem> GetActiveUserSelectList()
         {
-            //foreach (var volunteer in activeVolunteersList)
-            //{
-            //    selectList.Add(new SelectListItem
-            //    {
-            //        Value = volunteer.Id,
-            //        Text = volunteer.FullName
-            //    });
-            //}
-
             using var _db = new BHelpContext();
             var activeUsersList = _db.Users
                 .Where(u => u.Active).OrderBy(u => u.LastName)
@@ -1678,21 +1604,7 @@ namespace BHelp
                 return user.Email;
             }
         }
-
-        public static string GetUserPhone(string id)
-        {
-            using var _db = new BHelpContext();
-            var user = _db.Users.Find(id);
-            if (user == null)
-            {
-                return null;
-            }
-            else
-            {
-                return user.PhoneNumber;
-            }
-        }
-
+        
         public static string GetStringAllRolesForUser(string userId)
         {
             using var context = new BHelpContext();

@@ -47,7 +47,7 @@
     }
     <a href="@Url.Action("MaintainUsers", "Home")">Maintain Volunteers / Website Users</a><br />
     <a href="@Url.Action("MaintainUserRoles", "Home")">Maintain User Permissions (&quot;Roles&quot;)</a><br />
-    <a href="@Url.Action("ResetVoicemailPassword", "Home")">Reset Voicemail Password / Login Key Receiver</a><br />
+    @*<a href="@Url.Action("ResetVoicemailPassword", "Home")">Reset Voicemail Password / Login Key Receiver</a><br />*@
     <a href="@Url.Action("Index", "Holidays")">Maintain Holidays</a><br />
     <a href="@Url.Action("Index", "ZipCodes")">Maintain ZipCodes</a><br />
     <a href="@Url.Action("Index", "BagWeights")">Maintain Bag Weights</a><br />
@@ -156,7 +156,6 @@
         <a href="@Url.Action("Edit", "BaggerSchedule")">Maintain Bagger Schedules</a><br />
     }
 
-    @*<a href="@Url.Action("Index", "ODEmail")">OD Schedule Email</a><br />*@
     <a href="@Url.Action("Index", "Holidays")">Maintain Holidays</a><br />
 </div>
     <br />
@@ -174,11 +173,9 @@
     <a href="@Url.Action("CallLogMenu", "Deliveries")">View Call Log History</a><br />
     @if (Model.ShowODDocumentsMenu)
     {
-        <a href="@Url.Action("ViewDocumentCategory", "Documents", new{menuCat="OfficerOfTheDay"})">View OD Documents</a><br />
+        <a href="@Url.Action("ViewDocumentCategory", "Documents", new{menuCat="OfficerOfTheDay"})">View OD Documents</a>
     }
-    <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
-    <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["VoiceMailMessage"])</span><br />
-    <a href="http://www.bethesdahelp.org/need-help/service-area" target="_blank">Go To Service Area Map</a><br />
+    <span style="font-style: italic; color: darkmagenta">&nbsp;(includes voicemail instructions and link to service area map)</span><br />
 </div>
         <br />
     }
@@ -190,12 +187,11 @@
     <a href="@Url.Action("Index", "Driver")">Call Log - Driver Section</a><br />
     <a href="@Url.Action("Edit", "DriverSchedule")">View Driver Schedules</a><br />
     <a href="@Url.Action("Individual", "DriverSchedule")">My Schedule Signup / Edit</a><br />
-    <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
-    <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["VoiceMailMessage"])</span>
     @if (Model.ShowDriverDocumentsMenu)
     {
+        <a href="@Url.Action("ViewDocumentCategory", "Documents", new{menuCat="Driver"})">View Driver Documents</a>
+        <span style="font-style: italic; color: darkmagenta">&nbsp;(includes voicemail instructions)</span>
         <br />
-        <a href="@Url.Action("ViewDocumentCategory", "Documents", new{menuCat="Driver"})">View Driver Documents</a><br />
     }
 </div>
     }
@@ -205,8 +201,6 @@
         @{ var AllowHours = false; }
         @if (User.IsInRole("Driver") || User.IsInRole("Administrator") || User.IsInRole("Developer")
             || User.IsInRole("Staff")) { AllowHours = true; }
-        @*@if (!User.IsInRole("Administrator") && (!User.IsInRole("Staff") || User.IsInRole("Trainer")))
-        {AllowHours = true;}*@
         @if (!(User.IsInRole("OfficerOfTheDay") && !User.IsInRole("Administrator") && !User.IsInRole("Staff")) || User.IsInRole("Trainer"))
         { AllowHours = true; }
         @if (AllowHours)
@@ -216,12 +210,7 @@
         }
         <a href="@Url.Action("UpdateMyProfile", "Home")">Update My Profile</a><br />
         <a href="@Url.Action("ChangeMyPassword", "Home")">Change My Password</a><br />
-        @*<a href="http://www.bethesdahelp.org" target="_blank">Go To Bethesda Help Website</a><br />*@
-        @if (User.IsInRole("VoicemailAccess"))
-        {
-            <a href="https://sso.godaddy.com/v1/login?app=email&realm=pass" target="_blank">Go To Voicemail Login</a>
-            <span style="font-style: italic; color: darkmagenta">&nbsp;(Username: voicemail@BethesdaHelp.org&nbsp;&nbsp;Password:&nbsp;@ViewData["VoiceMailMessage"])</span>
-        }
+       
         @if (Model.ShowEveryoneDocumentsMenu)
         {
             for (var i = 0; i < Model.EveryoneDocTitles.Length; i++)

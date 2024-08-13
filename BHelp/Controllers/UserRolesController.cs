@@ -49,10 +49,10 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Developer")]
         public ActionResult Create()
         {
-            AddEditUserRolesViewModel viewModel = new AddEditUserRolesViewModel();
+            var viewModel = new AddEditUserRolesViewModel();
 
             var userRoles = (from r in _db.Roles.OrderBy(n => n.Name) select r).ToList();
-            List<SelectListItem> rolesList = new List<SelectListItem>();
+            var rolesList = new List<SelectListItem>();
             foreach (var role in userRoles)
             {
                 if (role.Name != "Developer")
@@ -62,7 +62,7 @@ namespace BHelp.Controllers
             }
 
             var users = (from u in _db.Users.OrderBy(n => n.LastName) select u).ToList();
-            List<SelectListItem> usersList = new List<SelectListItem>();
+            var usersList = new List<SelectListItem>();
             foreach (var user in users)
             {
                 usersList.Add(new SelectListItem() { Text = user.UserName + @" " + user.FirstName + @" " + user.LastName, Value = user.Id });
@@ -120,12 +120,8 @@ namespace BHelp.Controllers
                 return HttpNotFound();
             }
             var model = new AddEditUserRolesViewModel();
-
             var user = _db.Users.Find(userId);
             model.Name = user.FirstName + " " + user.LastName;
-
-            //List<SelectListItem> listRoles = new List<SelectListItem>();
-            //var userRoles = (from r in _db.Roles select r).ToList();
             return View(model);
         }
 

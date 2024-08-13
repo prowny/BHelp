@@ -587,9 +587,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\BHelpVoicemailCredentials.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\bootstrap-datepicker.css" />
     <Content Include="Content\bootstrap-datepicker.min.css" />
     <Content Include="Content\bootstrap-datepicker.standalone.css" />
@@ -675,14 +672,10 @@
     <Content Include="..\.editorconfig">
       <Link>.editorconfig</Link>
     </Content>
-    <Content Include="App_Data\AssistancePayments.csv" />
-    <Content Include="App_Data\AsstPymnts.csv" />
     <Content Include="Content\bootstrap.rtl.min.css.map" />
     <Content Include="Content\bootstrap.rtl.css.map" />
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Content\bootstrap.css.map" />
-    <Content Include="App_Data\AssistancePayments.csv" />
-    <Content Include="App_Data\AsstPymnts.csv" />
     <Content Include="HostGator\Web.config" />
     <Content Include="HostGator\test\Web.config" />
     <None Include="Properties\PublishProfiles\BhelpHostGator.pubxml" />
@@ -878,9 +871,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\VolunteerHours\CreateSuccess.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Home\ResetVoicemailPassword.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Documents\Upload.cshtml">
@@ -1241,6 +1231,7 @@
     <Analyzer Include="packages\xunit.analyzers.1.0.0\analyzers\dotnet\cs\xunit.analyzers.fixes.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
   <PropertyGroup>
