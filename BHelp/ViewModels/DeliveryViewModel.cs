@@ -46,6 +46,9 @@ namespace BHelp.ViewModels
         public int HalfBags { get; set; } // now called "B Bags"
 
         [Range(0, 20)]
+        public int CBags { get; set; }
+
+        [Range(0, 20)]
         public int KidSnacks { get; set; }
 
         [Range(0, 20)]

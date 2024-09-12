@@ -15,6 +15,9 @@ namespace BHelp.Models
         [DisplayName("B Bag Weight in Pounds")]
         public decimal BPounds { get; set; }
 
+        [DisplayName("C Bag Weight in Pounds")]
+        public decimal CPounds { get; set; }
+
         [DisplayName("Effective Date")] 
         public DateTime EffectiveDate { get; set; }
 

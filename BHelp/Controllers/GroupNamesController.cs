@@ -35,7 +35,7 @@ namespace BHelp.Controllers
         {
             if (ModelState.IsValid)
             {
-                GroupName gpNm = new GroupName { Name = groupName.Name.Trim() };
+                var gpNm = new GroupName { Name = groupName.Name.Trim() };
                 db.GroupNames.Add(gpNm);
                 db.SaveChanges();
                 return RedirectToAction("Index");

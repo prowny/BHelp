@@ -31,7 +31,7 @@ namespace BHelp.Controllers
         // POST: BagWeights/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,APounds,BPounds,EffectiveDate")] BagWeight bagWeight)
+        public ActionResult Create([Bind(Include = "Id,APounds,BPounds,CPounds,EffectiveDate")] BagWeight bagWeight)
         {
             if (!ModelState.IsValid) return View(bagWeight);
             var checkList = db.BagWeights.ToList();
@@ -67,7 +67,7 @@ namespace BHelp.Controllers
         // POST: BagWeights/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,APounds,BPounds,EffectiveDate")] BagWeight bagWeight)
+        public ActionResult Edit([Bind(Include = "Id,APounds,BPounds,CPounds,EffectiveDate")] BagWeight bagWeight)
         {
             if (!ModelState.IsValid) return View(bagWeight);
 

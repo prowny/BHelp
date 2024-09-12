@@ -48,8 +48,9 @@ namespace BHelp.Models
 
         [StringLength(4096)]
         public string Notes { get; set; }  // Notes entered by drivers, baggers. etc. (as opposed to OD notes or Household notes)
-        public int FullBags { get; set; }
-        public int HalfBags { get; set; }
+        public int FullBags { get; set; }  // renamed on screen as "A Bags"
+        public int HalfBags { get; set; }  // renamed on screen as "B Bags"
+        public int CBags { get; set; }
         public int KidSnacks { get; set; }
         public int GiftCardsEligible { get; set; }
         public int GiftCards { get; set; }

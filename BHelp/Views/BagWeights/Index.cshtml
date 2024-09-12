@@ -16,8 +16,11 @@
         <td>
             <b>@Html.DisplayNameFor(model => model.APounds)</b> &nbsp;&nbsp;
         </td>
-        <th>
+        <td>
             <b>@Html.DisplayNameFor(model => model.BPounds)</b> &nbsp;&nbsp;
+        </td>
+        <th>
+            <b>@Html.DisplayNameFor(model => model.CPounds)</b> &nbsp;&nbsp;
         </th>
         <th>
             @Html.DisplayNameFor(model => model.EffectiveDate)
@@ -32,6 +35,9 @@
             </td>
             <td style ="text-align:center">
                 @Html.DisplayFor(modelItem => item.BPounds)
+            </td>
+            <td style ="text-align:center">
+                @Html.DisplayFor(modelItem => item.CPounds)
             </td>
             <td style ="text-align:center">
                 @Html.DisplayFor(modelItem => item.EffectiveDateString)

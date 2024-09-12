@@ -1852,8 +1852,10 @@ namespace BHelp.Controllers
                 var totalHouseholds2GiftCards = 0;  
                 var totalABags = 0;
                 var totalBBags = 0;
+                var totalCBags = 0;
                 decimal totalCumulativeAPounds = 0;
                 decimal totalCumulativeBPounds = 0;
+                decimal totalCumulativeCPounds = 0;
                 decimal totalCumulativePounds = 0;
                 var totalSnacks = 0;
                 var totalCards = 0;
@@ -1897,8 +1899,10 @@ namespace BHelp.Controllers
                     var households2GiftCards = 0;
                     var ABags = 0;
                     var BBags = 0;
+                    var CBags = 0;
                     decimal cumulativeAbagsPounds = 0;
                     decimal cumulativeBbagsPounds = 0;
+                    decimal cumulativeCbagsPounds = 0;
                     var snacks = 0;
                     var cards = 0;
                     foreach (var del in deliveryData)
@@ -1925,16 +1929,21 @@ namespace BHelp.Controllers
                         totalABags += del.FullBags;
                         BBags += del.HalfBags;
                         totalBBags += del.HalfBags;
+                        CBags += del.CBags;
+                        totalCBags += del.CBags;
 
-                        var dDate = del.DateDelivered.GetValueOrDefault(DateTime.Now);
+                    var dDate = del.DateDelivered.GetValueOrDefault(DateTime.Now);
                         var ABagWeight = AppRoutines.GetABagWeight(dDate);
                         var _AbagWeights = del.FullBags * ABagWeight;
                         cumulativeAbagsPounds += _AbagWeights;
                         totalCumulativeAPounds += _AbagWeights;
                         var BBagWeight = AppRoutines.GetBBagWeight(dDate);
                         var _BbagWeights = del.HalfBags * BBagWeight;
-                        cumulativeBbagsPounds += _BbagWeights;
+                        var CBagWeight = AppRoutines.GetCBagWeight(dDate);
+                        var _CbagWeights = del.CBags * CBagWeight;
+                    cumulativeBbagsPounds += _BbagWeights;
                         totalCumulativeBPounds += _BbagWeights;
+                        totalCumulativeCPounds += _CbagWeights;
                         totalCumulativePounds +=   _AbagWeights + _BbagWeights;
 
                         snacks += del.KidSnacks;
@@ -2091,7 +2100,7 @@ namespace BHelp.Controllers
                                 view.Counts[mo, t, 4] += (a + c + s); // # of residents
                                 var lbs = AppRoutines.GetTotalPounds(
                                     delivery.DateDelivered.GetValueOrDefault(DateTime.Now),
-                                    delivery.FullBags, delivery.HalfBags);
+                                    delivery.FullBags, delivery.HalfBags, delivery.CBags );
                                 view.Counts[mo, j, 5] += (int)(lbs + (decimal).5); // round to nearest whole number for display;
                                 view.Counts[mo, t, 5] += (int)(lbs + (decimal).5); //pounds distributed
                             }
@@ -2277,7 +2286,7 @@ namespace BHelp.Controllers
                         {
                             var lbs = AppRoutines.GetTotalPounds(
                                 delivery.DateDelivered.GetValueOrDefault(DateTime.Now),
-                                delivery.FullBags, delivery.HalfBags);
+                                delivery.FullBags, delivery.HalfBags, delivery.CBags );
                             view.Counts[0, j, 0] += (int)(lbs + (decimal).5); // round to nearest whole number for display;
                             view.Counts[0,zipCount, 0] += (int)(lbs + (decimal).5); //pounds distributed
                             view.Counts[0, j, 1]++;

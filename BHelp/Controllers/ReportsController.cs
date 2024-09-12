@@ -1007,8 +1007,8 @@ namespace BHelp.Controllers
                             view.Counts[0, 4, zip]++;
                             view.Counts[0, 4, zipCount]++; //#  households served
                             var delDate = delivery.DateDelivered.GetValueOrDefault(DateTime.Now);
-                            var lbs = AppRoutines.GetTotalPounds(delDate, delivery.FullBags, delivery.HalfBags);
-                            view.Counts[0, 5, zip] += (int)(lbs + (decimal).5); // round to nearest whole number for display
+                            var lbs = AppRoutines.GetTotalPounds(delDate, delivery.FullBags, delivery.HalfBags, delivery.CBags );
+                            view.Counts[0, 5, zip] += (int)(lbs + (decimal).5); // round to nearest whole number for display purposes  
                             view.Counts[0, 5, zipCount] += (int)(lbs + (decimal).5) ; //pounds distributed
                             // column 6 - prepared meals served
                             view.Counts[0, 7, zip] += (a + c + s);

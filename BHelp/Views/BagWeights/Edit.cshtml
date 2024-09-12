@@ -49,6 +49,19 @@
                     @Html.ValidationMessageFor(model => model.BPounds, "", new { @class = "text-danger" })
                 </div>
             </div>
+            
+            <div class="form-group">
+                @Html.LabelFor(model => model.CPounds, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(model => model.CPounds,
+                        new
+                        {
+                            onkeypress = "return OnlyNumeric(event)",
+                            @class = "weightwidth"
+                        })
+                    @Html.ValidationMessageFor(model => model.CPounds, "", new { @class = "text-danger" })
+                </div>
+            </div>
 
             <div class="form-group">
                 @Html.LabelFor(model => model.EffectiveDate, htmlAttributes: new { @class = "control-label col-md-2" })

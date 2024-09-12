@@ -1684,11 +1684,12 @@ namespace BHelp
             if (updateRec == null) return;
             updateRec.APounds = bagWeight.APounds;
             updateRec.BPounds = bagWeight.BPounds;
+            updateRec.CPounds = bagWeight.CPounds;
             updateRec.EffectiveDate = bagWeight.EffectiveDate;
             db.SaveChanges();
         }
 
-        public static decimal GetTotalPounds(DateTime date, int Abags, int Bbags)
+        public static decimal GetTotalPounds(DateTime date, int Abags, int Bbags, int Cbags)
         {
             var bagWeightList = (List<BagWeight>)HttpContext.Current.Session["BagWeightList"];
             // Bracket weights by date: (List is ordered by EffectiveDate) 
@@ -1697,6 +1698,7 @@ namespace BHelp
             {
                 APounds = 0,
                 BPounds = 0,
+                CPounds = 0,
                 EffectiveDate = DateTime.MaxValue
             };
             bagWeightList.Add(maxDateRec);
@@ -1706,7 +1708,8 @@ namespace BHelp
                     && date < bagWeightList[i + 1].EffectiveDate)
                 {
                     return bagWeightList[i].APounds * Abags
-                           + bagWeightList[i].BPounds * Bbags;
+                           + bagWeightList[i].BPounds * Bbags
+                           + bagWeightList[i].CPounds * Cbags;
                 };
             }
 
@@ -1761,5 +1764,29 @@ namespace BHelp
             return 0;
         }
 
+        public static decimal GetCBagWeight(DateTime date)
+        {
+            var bagWeightList = (List<BagWeight>)HttpContext.Current.Session["BagWeightList"];
+            // Bracket weights by date: (List is ordered by EffectiveDate) 
+            if (bagWeightList == null) return 0;
+            var maxDateRec = new BagWeight
+            {
+                APounds = 0,
+                BPounds = 0,
+                CPounds = 0,
+                EffectiveDate = DateTime.MaxValue
+            };
+            bagWeightList.Add(maxDateRec);
+            for (var i = 0; i < bagWeightList.Count - 1; i++)
+            {
+                if (date >= bagWeightList[i].EffectiveDate
+                    && date < bagWeightList[i + 1].EffectiveDate)
+                {
+                    return bagWeightList[i].CPounds;
+                };
+            }
+
+            return 0;
+        }
     }
 }
