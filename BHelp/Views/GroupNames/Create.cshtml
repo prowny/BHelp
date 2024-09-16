@@ -28,6 +28,10 @@
                 @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
             </div>
+            <br />
+            @Html.LabelFor(model => model.CBagDelivery, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.CheckBoxFor(model => model.CBagDelivery, new { htmlAttributes = new { @class = "form-control" } })
+
         </div>
         <div>
 

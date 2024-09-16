@@ -240,11 +240,14 @@ namespace BHelp.Controllers
             };
             return Json(model, JsonRequestBehavior.AllowGet);
         }
-
+      
         public ActionResult CreateDeliveries(int nameId)
-        {
+        {   // reference: Called from GroupMembers / MaintainGroupMembers.cshtml
             var openDeliveries = db.Deliveries.Where(s => s.Status == 0).ToList();
             var openDeliveryIds = string.Empty;
+            // Check if this GroupName has CBagDeliveries:
+            var group = db.GroupNames.Find(nameId);
+            var CBagDelivery = group is { CBagDelivery: true };
             foreach (var del in openDeliveries)
             {
                 openDeliveryIds += del.ClientId + " " + del.DateDelivered;
@@ -255,7 +258,7 @@ namespace BHelp.Controllers
                 .Select(n => n.ClientId).ToList();
             foreach (var clientId in clientIdList)
             {
-                var delivery = AppRoutines.NewDeliveryRecord(clientId);
+                var delivery = AppRoutines.NewDeliveryRecord(clientId, CBagDelivery);
 
                 if (!openDeliveryIds.Contains(delivery.ClientId + " " + delivery.DateDelivered))
                 {

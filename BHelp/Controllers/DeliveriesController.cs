@@ -77,6 +77,7 @@ namespace BHelp.Controllers
                 deliveryView.SeniorsCount = deliveryView.Seniors.Count();
                 deliveryView.FullBags = delivery.FullBags;
                 deliveryView.HalfBags = delivery.HalfBags;
+                deliveryView.CBags = delivery.CBags; 
                 deliveryView.KidSnacks = delivery.KidSnacks;
                 deliveryView.GiftCards = delivery.GiftCards;
                 deliveryView.HolidayGiftCards = delivery.HolidayGiftCards;
@@ -1731,7 +1732,7 @@ namespace BHelp.Controllers
                 ws.Range(ws.Cell(activeRow, 1), ws.Cell(activeRow, 3)).Merge();
 
                 activeRow++;
-                for (var row = activeRow; row < activeRow + 10; row++) // Last 9 data rows
+                for (var row = activeRow; row < activeRow + 12; row++) // Last 12 data rows
                 {
                     ws.Cell(row, 1).SetValue(view.HelperTitles[row - 6]);
                     for (var col = 1; col < view.ZipCodes.Count + 2; col++)
@@ -1815,7 +1816,7 @@ namespace BHelp.Controllers
                 view.HelperReportType = type;
                 view.SelectedHelperReportType = type;
                 
-                view.HelperTitles = new string[21];
+                view.HelperTitles = new string[23];
                 view.HelperTitles[1] = "# Total Food Lbs";
                 view.HelperTitles[2] = "# Deliveries";
                 view.HelperTitles[3] = "# Cumulative Residents Served Daily";
@@ -1824,21 +1825,23 @@ namespace BHelp.Controllers
                 view.HelperTitles[6] = "# Cumulative Residents Seniors 60+";
                 view.HelperTitles[7] = "# A Bags";
                 view.HelperTitles[8] = "# B Bags";
-                view.HelperTitles[9] = "# Snacks";
-                view.HelperTitles[10] = "# Giant Gift Cards Disbursed";
-                view.HelperTitles[11] = "# Households Distinct Served";
-                view.HelperTitles[12] = "# Distinct Residents Served";
-                view.HelperTitles[13] = "# Distinct Residents <18";
-                view.HelperTitles[14] = "# Distinct Adults 18-59";
-                view.HelperTitles[15] = "# Distinct Residents 60+";
-                view.HelperTitles[16] = "# Repeat Deliveries";
-                view.HelperTitles[17] = "# First-Time Deliveries";
-                view.HelperTitles[18] = "# Households Receiving 2 Gift Cards";
-                view.HelperTitles[19] = "# Total Lbs of A Bags";
-                view.HelperTitles[20] = "# Total Lbs of B Bags";
-
+                view.HelperTitles[9] = "# C Bags";
+                view.HelperTitles[10] = "# Snacks";
+                view.HelperTitles[11] = "# Giant Gift Cards Disbursed";
+                view.HelperTitles[12] = "# Households Distinct Served";
+                view.HelperTitles[13] = "# Distinct Residents Served";
+                view.HelperTitles[14] = "# Distinct Residents <18";
+                view.HelperTitles[15] = "# Distinct Adults 18-59";
+                view.HelperTitles[16] = "# Distinct Residents 60+";
+                view.HelperTitles[17] = "# Repeat Deliveries";
+                view.HelperTitles[18] = "# First-Time Deliveries";
+                view.HelperTitles[19] = "# Households Receiving 2 Gift Cards";
+                view.HelperTitles[20] = "# Total Lbs of A Bags";
+                view.HelperTitles[21] = "# Total Lbs of B Bags";
+                view.HelperTitles[22] = "# Total Lbs of C Bags";
+                
                 view.ZipCodes = AppRoutines.GetZipCodesList();
-                view.ZipCounts = new int[21, view.ZipCodes.Count + 2]; // ZipCodes, Counts
+                view.ZipCounts = new int[23, view.ZipCodes.Count + 2]; // ZipCodes, Counts
                 var totalDistinctHouseholds = 0;
                 var totalCumulativeRepeatDeliveries = 0;
                 var totalCumulativeFirstDeliveries = 0;
@@ -1932,19 +1935,24 @@ namespace BHelp.Controllers
                         CBags += del.CBags;
                         totalCBags += del.CBags;
 
-                    var dDate = del.DateDelivered.GetValueOrDefault(DateTime.Now);
+                        var dDate = del.DateDelivered.GetValueOrDefault(DateTime.Now);
+
                         var ABagWeight = AppRoutines.GetABagWeight(dDate);
                         var _AbagWeights = del.FullBags * ABagWeight;
                         cumulativeAbagsPounds += _AbagWeights;
                         totalCumulativeAPounds += _AbagWeights;
+
                         var BBagWeight = AppRoutines.GetBBagWeight(dDate);
                         var _BbagWeights = del.HalfBags * BBagWeight;
+                        cumulativeBbagsPounds += _BbagWeights;
+                        totalCumulativeBPounds += _BbagWeights;
+
                         var CBagWeight = AppRoutines.GetCBagWeight(dDate);
                         var _CbagWeights = del.CBags * CBagWeight;
-                    cumulativeBbagsPounds += _BbagWeights;
-                        totalCumulativeBPounds += _BbagWeights;
+                        cumulativeCbagsPounds += _CbagWeights;
                         totalCumulativeCPounds += _CbagWeights;
-                        totalCumulativePounds +=   _AbagWeights + _BbagWeights;
+
+                        totalCumulativePounds +=   _AbagWeights + _BbagWeights + _CbagWeights;
 
                         snacks += del.KidSnacks;
                         totalSnacks += del.KidSnacks;
@@ -1961,43 +1969,47 @@ namespace BHelp.Controllers
                     view.ZipCounts[6, col] = cumulativeSeniors;
                     view.ZipCounts[7, col] = ABags;
                     view.ZipCounts[8, col] = BBags;
-                    view.ZipCounts[9, col] = snacks;
-                    view.ZipCounts[10, col] = cards;
+                    view.ZipCounts[9, col] = CBags;
+                    view.ZipCounts[10, col] = snacks;
+                    view.ZipCounts[11, col] = cards;
 
-                    view.ZipCounts[11, col] = distinctList.Count;
-                    view.ZipCounts[12, col] = distinctChildren + distinctAdults + distinctSeniors; // Distinct Residents
-                    view.ZipCounts[13, col] = distinctChildren;
-                    view.ZipCounts[14, col] = distinctAdults;
-                    view.ZipCounts[15, col] = distinctSeniors;
-                    view.ZipCounts[16, col] = totalRepeatDeliveries; // Repeat Deliveries
-                    view.ZipCounts[17, col] = totalFirstDeliveries; // First-Time Deliveries
-                    view.ZipCounts[18, col] = households2GiftCards;
-                    view.ZipCounts[19, col] = (int)(cumulativeAbagsPounds + (decimal).5); // round to nearest whole number for display
-                    view.ZipCounts[20, col] = (int)(cumulativeBbagsPounds + (decimal).5); // round to nearest whole number for display
-                }
+                    view.ZipCounts[12, col] = distinctList.Count;
+                    view.ZipCounts[13, col] = distinctChildren + distinctAdults + distinctSeniors; // Distinct Residents
+                    view.ZipCounts[14, col] = distinctChildren;
+                    view.ZipCounts[15, col] = distinctAdults;
+                    view.ZipCounts[16, col] = distinctSeniors;
+                    view.ZipCounts[17, col] = totalRepeatDeliveries; // Repeat Deliveries
+                    view.ZipCounts[18, col] = totalFirstDeliveries; // First-Time Deliveries
+                    view.ZipCounts[19, col] = households2GiftCards;
+                    view.ZipCounts[20, col] = (int)(cumulativeAbagsPounds + (decimal).5); // round to nearest whole number for display
+                    view.ZipCounts[21, col] = (int)(cumulativeBbagsPounds + (decimal).5); // round to nearest whole number for display
+                    view.ZipCounts[22, col] = (int)(cumulativeCbagsPounds + (decimal).5); // round to nearest whole number for display
+            }
 
-                var totCol = view.ZipCodes.Count + 1;
-                view.ZipCounts[1, totCol] = (int)(totalCumulativePounds + (decimal).5); // round to nearest whole number for display
-                view.ZipCounts[2, totCol] = totalDeliveries;    // Total Deliveries
-                view.ZipCounts[3, totCol] = totalCumulativeChildren + totalCumulativeAdults + totalCumulativeSeniors;
-                view.ZipCounts[4, totCol] = totalCumulativeChildren;
-                view.ZipCounts[5, totCol] = totalCumulativeAdults;
-                view.ZipCounts[6, totCol] = totalCumulativeSeniors;
-                view.ZipCounts[7, totCol] = totalABags;
-                view.ZipCounts[8, totCol] = totalBBags;
-                view.ZipCounts[9, totCol] = totalSnacks;
-                view.ZipCounts[10, totCol] = totalCards;
+            var totCol = view.ZipCodes.Count + 1;
+            view.ZipCounts[1, totCol] = (int)(totalCumulativePounds + (decimal).5); // round to nearest whole number for display
+            view.ZipCounts[2, totCol] = totalDeliveries;    // Total Deliveries
+            view.ZipCounts[3, totCol] = totalCumulativeChildren + totalCumulativeAdults + totalCumulativeSeniors;
+            view.ZipCounts[4, totCol] = totalCumulativeChildren;
+            view.ZipCounts[5, totCol] = totalCumulativeAdults;
+            view.ZipCounts[6, totCol] = totalCumulativeSeniors;
+            view.ZipCounts[7, totCol] = totalABags;
+            view.ZipCounts[8, totCol] = totalBBags;
+            view.ZipCounts[9, totCol] = totalCBags;
+            view.ZipCounts[10, totCol] = totalSnacks;
+            view.ZipCounts[11, totCol] = totalCards;
 
-                view.ZipCounts[11, totCol] = totalDistinctHouseholds; // Distinct Households
-                view.ZipCounts[12, totCol] = totalDistinctChildren + totalDistinctAdults + totalDistinctSeniors; // Distinct Residents
-                view.ZipCounts[13, totCol] = totalDistinctChildren;
-                view.ZipCounts[14, totCol] = totalDistinctAdults;
-                view.ZipCounts[15, totCol] = totalDistinctSeniors;
-                view.ZipCounts[16, totCol] = totalCumulativeRepeatDeliveries; // Repeat Deliveries
-                view.ZipCounts[17, totCol] = totalCumulativeFirstDeliveries; // First-Time Deliveries
-                view.ZipCounts[18, totCol] = totalHouseholds2GiftCards;
-                view.ZipCounts[19, totCol] = (int)(totalCumulativeAPounds + (decimal).5);
-                view.ZipCounts[20, totCol] = (int)(totalCumulativeBPounds + (decimal).5);
+            view.ZipCounts[12, totCol] = totalDistinctHouseholds; // Distinct Households
+            view.ZipCounts[13, totCol] = totalDistinctChildren + totalDistinctAdults + totalDistinctSeniors; // Distinct Residents
+            view.ZipCounts[14, totCol] = totalDistinctChildren;
+            view.ZipCounts[15, totCol] = totalDistinctAdults;
+            view.ZipCounts[16, totCol] = totalDistinctSeniors;
+            view.ZipCounts[17, totCol] = totalCumulativeRepeatDeliveries; // Repeat Deliveries
+            view.ZipCounts[18, totCol] = totalCumulativeFirstDeliveries; // First-Time Deliveries
+            view.ZipCounts[19, totCol] = totalHouseholds2GiftCards;
+            view.ZipCounts[20, totCol] = (int)(totalCumulativeAPounds + (decimal).5);
+            view.ZipCounts[21, totCol] = (int)(totalCumulativeBPounds + (decimal).5);
+            view.ZipCounts[22, totCol] = (int)(totalCumulativeCPounds + (decimal).5);
 
             return view;
             }

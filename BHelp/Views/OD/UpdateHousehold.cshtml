@@ -247,7 +247,8 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        window.$("#deleteMember").live("click", function () {
+        //window.$("#deleteMember").live("click", function () {
+        window.$("#deleteMember").on("click", function () {
             window.$("#deleteCheckboxHidden").attr("value", "True");
         });
     });

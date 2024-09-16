@@ -15,6 +15,7 @@
 <table class="table">
     <tr>
         <th>@Html.DisplayNameFor(model => model.Name)</th>
+        <th>C Bag Delivery</th>
     </tr>
     
     @foreach (var item in Model.GroupNameList)
@@ -23,7 +24,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
-            <td>
+            <td style ="text-align: center">
                 @Html.DisplayFor(modelItem => item.CBagDelivery)
             </td>
             <td>

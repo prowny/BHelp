@@ -31,7 +31,7 @@
             @Html.HiddenFor(model => Model.Id, new { id = "DeliveryId" })
             @Html.HiddenFor(model => Model.SelectedStatus, new { id = "SelectedStatus" })
 
-            <h4>Edit Delivery <span style ="color: red"> @TempData["UpdateHouseholdDirty"]</span></h4> 
+            <h4>Edit Delivery</h4> 
             <hr /> // horizontal line
             <div class="form-horizontal">
                 <table>
@@ -169,6 +169,11 @@
                         <td>
                             @Html.EditorFor(model => model.HalfBags, new { htmlAttributes = new { id = "HalfBags", style = "width:35px", min = 0, max = 3 } })
                             @Html.ValidationMessageFor(model => model.HalfBags, "", new { @class = "text-danger" })
+                        </td>
+                        <td>@Html.Label("C Bags", new { @class = "control-label col-md-2" })</td>
+                        <td>
+                            @Html.EditorFor(model => model.CBags, new { htmlAttributes = new { id = "HalfBags", style = "width:35px", min = 0, max = 3 } })
+                            @Html.ValidationMessageFor(model => model.CBags, "", new { @class = "text-danger" })
                         </td>
                         <td>@Html.LabelFor(model => model.KidSnacks, htmlAttributes: new { @class = "control-label col-md-2" })</td>
                         <td>

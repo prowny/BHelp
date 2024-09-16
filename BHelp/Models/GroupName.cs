@@ -10,7 +10,6 @@ namespace BHelp.Models
         [DisplayName("Group Name"), StringLength(128)]
         public string Name { get; set; }
 
-        //[DisplayName("CBag Delivery"), StringLength(16)]
         public bool CBagDelivery { get; set; } 
     }
 }

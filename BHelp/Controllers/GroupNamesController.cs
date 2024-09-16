@@ -31,11 +31,15 @@ namespace BHelp.Controllers
 
         // POST: Group/Create
         [HttpPost, Authorize(Roles = "Administrator,Staff,Developer")]
-        public ActionResult Create([Bind(Include = "Id,Name")] GroupNameViewModel groupName)
+        public ActionResult Create([Bind(Include = "Id,Name,CBagDelivery")] GroupNameViewModel groupName)
         {
             if (ModelState.IsValid)
             {
-                var gpNm = new GroupName { Name = groupName.Name.Trim() };
+                var gpNm = new GroupName
+                {
+                    Name = groupName.Name.Trim(),
+                    CBagDelivery = groupName.CBagDelivery
+                };
                 db.GroupNames.Add(gpNm);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -48,16 +52,20 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Staff,Developer")]
         public ActionResult Edit(int id)
         {
-            GroupName groupName = db.GroupNames.Find(id);
+            var groupName = db.GroupNames.Find(id);
             if (groupName == null) return HttpNotFound();
             
-            var groupNameView = new GroupNameViewModel { Name = groupName.Name };
+            var groupNameView = new GroupNameViewModel
+            {
+                Name = groupName.Name,
+                CBagDelivery =groupName.CBagDelivery
+            };
             return View(groupNameView);
         }
 
         // POST: Group/Edit/5I
         [HttpPost, Authorize(Roles = "Administrator,Staff,Developer")]
-        public ActionResult Edit([Bind(Include = "Id, Name")] GroupNameViewModel groupName)
+        public ActionResult Edit([Bind(Include = "Id, Name,CBagDelivery ")] GroupNameViewModel groupName)
         {
             if (!ModelState.IsValid) return View(groupName);
             var groupNameRec = db.GroupNames.Find(groupName.Id);
@@ -71,6 +79,7 @@ namespace BHelp.Controllers
                     return View(groupName);
                 }
                 groupNameRec.Name = groupName.Name.Trim();
+                groupNameRec.CBagDelivery = groupName.CBagDelivery;
                 db.SaveChanges();
             }
             
@@ -84,9 +93,10 @@ namespace BHelp.Controllers
             var groupName = db.GroupNames.Find(id);
             if (groupName == null) return View();
             var view = new GroupNameViewModel()
-            {
+            {  
                 Id =id,
-                Name = groupName.Name
+                Name = groupName.Name,
+                CBagDelivery = groupName.CBagDelivery 
             };
             return View(view);
         }

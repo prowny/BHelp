@@ -184,7 +184,7 @@ namespace BHelp
             return user.UserName;
         }
 
-        public static Delivery NewDeliveryRecord(int clientId)
+        public static Delivery NewDeliveryRecord(int clientId, [Optional] bool CBagDelivery)
         {
             using var context = new BHelpContext();
             var client = context.Clients.Find(clientId);
@@ -209,6 +209,9 @@ namespace BHelp
                 Children = 0,
                 Adults = 0,
                 Seniors = 0,
+                FullBags = 0,
+                HalfBags = 0,
+                CBags = 0,
                 DateDelivered = delDate
             };
 
@@ -239,7 +242,14 @@ namespace BHelp
             var numberInHousehold = delivery.Children + delivery.Adults + delivery.Seniors;
             if (numberInHousehold <= 2)
             {
-                delivery.FullBags = 1;
+                if (CBagDelivery)
+                {
+                    delivery.FullBags = 0; delivery.CBags = 1;
+                }
+                else
+                {
+                    delivery.FullBags = 1;
+                }
             }
 
             if (numberInHousehold is >= 3 and <= 4)
@@ -265,17 +275,17 @@ namespace BHelp
             // Half Bags:
             if (numberInHousehold <= 4)
             {
-                delivery.HalfBags = 1;
+                if (!CBagDelivery) delivery.HalfBags = 1;
             }
 
             if (numberInHousehold is >= 5 and <= 8)
             {
-                delivery.HalfBags = 2;
+                if (!CBagDelivery) delivery.HalfBags = 2;
             }
 
             if (numberInHousehold >= 9)
             {
-                delivery.HalfBags = 3;
+                if(!CBagDelivery) delivery.HalfBags = 3;
             }
 
             // Kid Snacks:
