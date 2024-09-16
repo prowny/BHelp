@@ -410,6 +410,7 @@ namespace BHelp.Controllers
             var driverResidentsCount = 0;
             var driverFullBagCount = 0;
             var driverHalfBagCount = 0;
+            var driverCBagCount = 0;
             var driverKidSnackCount = 0;
             var driverPounds = 0;
             var driverGiftCardCount = 0;
@@ -419,6 +420,7 @@ namespace BHelp.Controllers
             var dateResidentsCount = 0;
             var dateFullBagCount = 0;
             var dateHalfBagCount = 0;
+            var dateCBagCount = 0;
             var dateKidSnackCount = 0;
             var datePounds = 0;
             var dateGiftCardCount = 0;
@@ -428,6 +430,7 @@ namespace BHelp.Controllers
             var totalResidentsCount = 0;
             var totalFullBagCount = 0;
             var totalHalfBagCount = 0;
+            var totalCBagCount = 0;
             var totalKidSnackCount = 0;
             var totalPounds = 0;
             var totalGiftCardCount = 0;
@@ -463,6 +466,7 @@ namespace BHelp.Controllers
                             driverResidentsCount += del.HouseoldCount;
                             driverFullBagCount += del.FullBags;
                             driverHalfBagCount += del.HalfBags;
+                            driverCBagCount += del.CBags;
                             driverKidSnackCount += del.KidSnacks;
                             driverPounds += Convert.ToInt32(del.FullBags * 10 + del.HalfBags * 9);
                             driverGiftCardCount += del.GiftCards;
@@ -472,6 +476,7 @@ namespace BHelp.Controllers
                             dateResidentsCount += del.HouseoldCount;
                             dateFullBagCount += del.FullBags;
                             dateHalfBagCount += del.HalfBags;
+                            dateCBagCount += del.CBags;
                             dateKidSnackCount += del.KidSnacks; 
                             datePounds += Convert.ToInt32(del.FullBags * 10 + del.HalfBags * 9);
                             dateGiftCardCount += del.GiftCards;
@@ -481,6 +486,7 @@ namespace BHelp.Controllers
                             totalResidentsCount += del.HouseoldCount;
                             totalFullBagCount += del.FullBags;
                             totalHalfBagCount += del.HalfBags;
+                            totalCBagCount += del.CBags;    
                             totalKidSnackCount += del.KidSnacks;
                             totalPounds += Convert.ToInt32(del.FullBags * 10 + del.HalfBags * 9);
                             totalGiftCardCount += del.GiftCards;
@@ -496,6 +502,7 @@ namespace BHelp.Controllers
                             HouseholdCount = driverResidentsCount,
                             FullBagCount =driverFullBagCount,
                             HalfBagCount = driverHalfBagCount,
+                            CBagCount = driverCBagCount,    
                             KidSnackCount  =driverKidSnackCount,
                             PoundsOfFood = driverPounds, 
                             GiftCardCount = driverGiftCardCount,
@@ -506,6 +513,7 @@ namespace BHelp.Controllers
                         driverResidentsCount = 0;
                         driverFullBagCount = 0;
                         driverHalfBagCount = 0;
+                        driverCBagCount = 0;
                         driverKidSnackCount = 0;
                         driverPounds = 0;
                         driverGiftCardCount = 0;
@@ -521,6 +529,7 @@ namespace BHelp.Controllers
                         HouseholdCount = dateResidentsCount,
                         FullBagCount = dateFullBagCount, 
                         HalfBagCount = dateHalfBagCount,
+                        CBagCount = dateCBagCount,
                         KidSnackCount =dateKidSnackCount, 
                         PoundsOfFood = datePounds, 
                         GiftCardCount = dateGiftCardCount,
@@ -534,6 +543,7 @@ namespace BHelp.Controllers
                     dateResidentsCount = 0;
                     dateFullBagCount = 0;
                     dateHalfBagCount = 0;
+                    dateCBagCount = 0;
                     dateKidSnackCount =0;
                     datePounds = 0;
                     dateGiftCardCount = 0;
@@ -549,6 +559,7 @@ namespace BHelp.Controllers
                 HouseholdCount = totalResidentsCount,
                 FullBagCount = totalFullBagCount,
                 HalfBagCount = totalHalfBagCount,
+                CBagCount = totalCBagCount,
                 KidSnackCount = totalKidSnackCount, 
                 PoundsOfFood = totalPounds, 
                 GiftCardCount = totalGiftCardCount,
@@ -595,6 +606,7 @@ namespace BHelp.Controllers
                 sb.Append(del.HouseholdCount + ",");
                 sb.Append(del.FullBagCount + ",");
                 sb.Append(del.HalfBagCount + ",");
+                sb.Append(del.CBagCount + ",");
                 sb.Append(del.KidSnackCount + ",");
                 sb.Append(del.PoundsOfFood + ","); 
                 sb.Append(del.GiftCardCount  + ",");

@@ -1442,6 +1442,7 @@ namespace BHelp.Controllers
                     callLogView.TotalSeniors += del.Seniors;
                     callLogView.TotalFullBags += del.FullBags;
                     callLogView.TotalHalfBags += del.HalfBags;
+                    callLogView.TotalCBags += del.CBags;
                     callLogView.TotalKidSnacks += del.KidSnacks;
                     callLogView.TotalGiftCards += del.GiftCards;
                     callLogView.TotalHolidayGiftCards += del.HolidayGiftCards;
@@ -1557,6 +1558,7 @@ namespace BHelp.Controllers
                     callLogView.TotalSeniors += del.Seniors;
                     callLogView.TotalFullBags += del.FullBags;
                     callLogView.TotalHalfBags += del.HalfBags;
+                    callLogView.TotalCBags += del.CBags;
                     callLogView.TotalKidSnacks += del.KidSnacks;
                     callLogView.TotalGiftCards += del.GiftCards;
                     callLogView.TotalHolidayGiftCards += del.HolidayGiftCards;

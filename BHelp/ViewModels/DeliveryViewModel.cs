@@ -122,6 +122,7 @@ namespace BHelp.ViewModels
         public int TotalSeniors { get; set; }  // Total in DeliveryList
         public int TotalFullBags { get; set; }  // Total in DeliveryList
         public int TotalHalfBags { get; set; }  // Total in DeliveryList
+        public int TotalCBags { get; set; }  // Total in DeliveryList
         public int TotalKidSnacks { get; set; }  // Total in DeliveryList
         public int TotalGiftCards { get; set; }  // Total in DeliveryList
         public int TotalHolidayGiftCards { get; set; }  // Total in DeliveryList
@@ -135,6 +136,7 @@ namespace BHelp.ViewModels
         public int? DeliveryCount { get; set; }
         public int? FullBagCount { get; set; }
         public int? HalfBagCount { get; set; }
+        public int? CBagCount { get; set; }
         public int? KidSnackCount { get; set; }
         public int? GiftCardCount { get; set; }
         public int? HolidayGiftCardCount { get; set; }

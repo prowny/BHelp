@@ -12,6 +12,7 @@ using BHelp.Models;
 using BHelp.ViewModels;
 using ClosedXML.Excel;
 using Microsoft.AspNet.Identity;
+using Microsoft.Extensions.Primitives;
 
 namespace BHelp
 {
@@ -878,7 +879,7 @@ namespace BHelp
             ws.Cell(1, 2).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
             var key = "K = Kids 0-17, A = Adults 18-59, S = Adults 60+,";
-            key += " HH = Household, Abags = A Bags, Bbags = B Bags,";
+            key += " HH = Household, Abags = A Bags, Bbags = B Bags, C Bags = CBags";
             key += " KS = Kids Snacks for ages 2-17, GC = Gift Cards,";
             key += " HGC = Holiday Gift Cards";
             ws.Cell(1, 8).SetValue(key);
@@ -1084,7 +1085,7 @@ namespace BHelp
             sb.Append(DateTime.Today.ToShortDateString() + ',');
             sb.Append(",,,,,");
             var key = "K = Kids 0-17, A = Adults 18-59, S = Adults 60+,";
-            key += "HH = Household,Abags = A Bags, Bbags = B Bags,";
+            key += "HH = Household,ABags = A Bags, BBags = B Bags, Cbags = CBags";
             key += "KS = Kids Snacks for ages 2-17, GC = Gift Cards,";
             key += "HGC = Holiday Gift Cards";
             sb.Append("\"" + key + "\"");
@@ -1092,7 +1093,7 @@ namespace BHelp
 
             sb.Append("Delivery Date,Driver,ZipCode,Client,Address,City,Phone,");
             sb.Append("#K,#A,#S,# in HH,All Household Members/Ages,");
-            sb.Append("#ABags,#Bbags,#KS,#GC,#HGC,");
+            sb.Append("#ABags,#Bbags,#CBags,#KS,#GC,#HGC,");
             sb.Append("Client Permanent Notes,OD & Driver Delivery Notes");
             sb.AppendLine();
 
@@ -1141,7 +1142,7 @@ namespace BHelp
             sb.Append("\n");
 
             sb.Append("Log Date,Name,Address,Driver,Delivery Date,ZipCode,Status,# in HH,#Children,");
-            sb.Append("#Adults 18-59,# Seniors >=60,#A Bags,#B Bags,#Kid Snacks,");
+            sb.Append("#Adults 18-59,# Seniors >=60,#A Bags,#B Bags,#C Bags,#Kid Snacks,");
             sb.Append("#Gift Cards,#HolidayGift Cards,#Pounds of Food");
             if (allData)
             {
@@ -1157,6 +1158,7 @@ namespace BHelp
             var totalSeniors = 0;
             var totalFullBags = 0;
             var totalHalfBags = 0;
+            var totalCBags = 0;
             var totalKidSnacks = 0;
             var totalGiftCards = 0;
             var totalHolidayGiftCards = 0;
@@ -1195,6 +1197,7 @@ namespace BHelp
                 totalSeniors += d.Seniors;
                 totalFullBags += d.FullBags;
                 totalHalfBags += d.HalfBags;
+                totalCBags += d.CBags;
                 totalKidSnacks += d.KidSnacks;
                 totalGiftCards += d.GiftCards;
                 totalHolidayGiftCards += d.HolidayGiftCards;
@@ -1247,7 +1250,7 @@ namespace BHelp
 
             sb.Append("Totals,,,,,,,");
             sb.Append(totalHHCount + "," + totalChildren + "," + totalAdults + "," + totalSeniors + ",");
-            sb.Append(totalFullBags + "," + totalHalfBags + "," + totalKidSnacks + ",");
+            sb.Append(totalFullBags + "," + totalHalfBags + "," + totalCBags + "," + totalKidSnacks + ",");
             sb.Append(totalGiftCards + "," + totalHolidayGiftCards + "," + totalPoundsOfFood);
 
             var response = HttpContext.Current.Response;
