@@ -12,7 +12,6 @@ using BHelp.Models;
 using BHelp.ViewModels;
 using ClosedXML.Excel;
 using Microsoft.AspNet.Identity;
-using Microsoft.Extensions.Primitives;
 
 namespace BHelp
 {

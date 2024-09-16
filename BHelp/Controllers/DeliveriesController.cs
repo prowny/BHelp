@@ -1429,13 +1429,18 @@ namespace BHelp.Controllers
                     {
                         del.FullBags = 0;
                         del.HalfBags = 0;
+                        del.CBags = 0;
                         del.KidSnacks = 0;
                         del.GiftCards = 0;
                         del.HolidayGiftCards = 0;
                     }
 
-                    var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
-                    del.PoundsOfFood = fullWeight;
+                    var d = del.DateDelivered ?? DateTime.Now;
+                    var _ABagWeight = AppRoutines.GetABagWeight(d);
+                    var _BBagWeight = AppRoutines.GetBBagWeight(d);
+                    var _CBagWeight = AppRoutines.GetCBagWeight(d);
+                    var fullWeight = del.FullBags * _ABagWeight + del.HalfBags * _BBagWeight + del.CBags * _CBagWeight;
+                    del.PoundsOfFood = Convert .ToInt32(fullWeight);
                     callLogView.TotalHouseholdCount += del.HouseoldCount;
                     callLogView.TotalChildren += del.Children;
                     callLogView.TotalAdults += del.Adults;
@@ -1543,13 +1548,18 @@ namespace BHelp.Controllers
                         {
                             del.FullBags = 0;
                             del.HalfBags = 0;
+                            del.CBags = 0;
                             del.KidSnacks = 0;
                             del.GiftCards = 0;
                             del.HolidayGiftCards = 0;
                         }
 
-                        var fullWeight = del.FullBags * 10 + del.HalfBags * 9;
-                        del.PoundsOfFood = fullWeight;
+                        var d = del.DateDelivered ?? DateTime.Now;
+                        var _ABagWeight = AppRoutines.GetABagWeight(d);
+                        var _BBagWeight = AppRoutines.GetBBagWeight(d);
+                        var _CBagWeight = AppRoutines.GetCBagWeight(d);
+                        var fullWeight = del.FullBags * _ABagWeight  + del.HalfBags * _BBagWeight + del.CBags * _CBagWeight;
+                        del.PoundsOfFood = Convert.ToInt32(fullWeight);
                     }
 
                     callLogView.TotalHouseholdCount += del.HouseoldCount;
