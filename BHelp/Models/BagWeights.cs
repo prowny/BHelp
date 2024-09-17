@@ -18,7 +18,9 @@ namespace BHelp.Models
         [DisplayName("C Bag Weight in Pounds")]
         public decimal CPounds { get; set; }
 
-        [DisplayName("Effective Date")] 
+        [DisplayName("Effective Date")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime EffectiveDate { get; set; }
 
         [NotMapped]

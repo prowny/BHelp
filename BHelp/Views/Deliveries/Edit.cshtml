@@ -4,8 +4,15 @@
 <!DOCTYPE html>
 
 <style>
-    #SaveButton {background-color: blue;color: white}
-    #DeleteButton {background-color: red;color: white}
+    #SaveButton {
+        background-color: blue;
+        color: white
+    }
+
+    #DeleteButton {
+        background-color: red;
+        color: white
+    }
 </style>
 <html>
 <head>
@@ -16,6 +23,10 @@
     <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
     <script src="@Url.Content("/Scripts/BHelpFunctions.js")"></script>
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
+    <script>
+        // Release the $ variable
+        var jq = jQuery.noConflict();
+    </script>
 </head>
 <body>
     <section id="editForm">
@@ -31,7 +42,7 @@
             @Html.HiddenFor(model => Model.Id, new { id = "DeliveryId" })
             @Html.HiddenFor(model => Model.SelectedStatus, new { id = "SelectedStatus" })
 
-            <h4>Edit Delivery</h4> 
+            <h4>Edit Delivery</h4>
             <hr /> // horizontal line
             <div class="form-horizontal">
                 <table>
@@ -41,7 +52,7 @@
                         {
                             <td style="color:red">
                                 @Html.Label(" (Snapshot of updated client data:)")
-                             </td>
+                            </td>
                         }
                         else
                         {
@@ -53,11 +64,13 @@
 
                     </tr>
                 </table>
-                <span><b>Client:&nbsp;</b></span>@Model.ClientNameAddress&nbsp; 
+                <span><b>Client:&nbsp;</b></span>@Model.ClientNameAddress&nbsp;
                 <span><b>Phone:</b>&nbsp;@Html.Label(Model.Phone)&nbsp;</span>
                 <span><b>Email:</b>&nbsp;@Model.Email</span>
-                <span><b>Permanent Notes:</b>&nbsp;@Html.TextBoxFor(n => n.Notes,
-                    new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip })</span>
+                <span>
+                    <b>Permanent Notes:</b>&nbsp;@Html.TextBoxFor(n => n.Notes,
+new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip })
+                </span>
             </div>
             <span>
                 <b>Family:</b>&nbsp;
@@ -89,14 +102,12 @@
                             @Html.TextBoxFor(model => model.LogDate, Model.LogDate.ToString("MM/dd/yyyy"),
                                 new { id = "LogDate", style = "width: 75px;" })
                         </td>
-                        @*<td style="color: darkmagenta"> &#8592;Click to change</td>*@
                         <td style="color: darkmagenta"></td>
-
                         <td> &nbsp;&nbsp;&nbsp;&nbsp;Delivery Date:</td>
                         <td>
                             @Html.TextBoxFor(model => model.DateDelivered,
                                 "{0:MM/dd/yyyy}",
-                            new { id = "DateDelivered", style = "width: 75px;" })
+                                new { id = "DateDelivered", style = "width: 75px;" })
                         </td>
                         <td style="color: darkmagenta"> &#8592;Click to change</td>
                         @if (User.IsInRole("Administrator"))
@@ -104,7 +115,7 @@
                             <td style="color: red">
                                 &nbsp;&nbsp;&nbsp;&nbsp;Administrator - Change Client:
                             </td>
-                            <td >
+                            <td>
                                 @Html.DropDownListFor(m => m.ClientId, new SelectList(Model.ClientSelectList,
                                     "Value", "Text"), new { id = "NewClientId" })
                                 @Html.ValidationMessageFor(model => model.ODId, "", new { @class = "text-danger" })
@@ -185,7 +196,7 @@
                             @Html.EditorFor(model => model.GiftCards, new { htmlAttributes = new { id = "GiftCards", style = "width:35px", min = 0, max = 2 } })
                             @Html.ValidationMessageFor(model => model.GiftCards, "", new { @class = "text-danger" })
                         </td>
-                        
+
                         @* Only Administrators may see and edit HolidayGiftCards outside of NOV-DEC 12-30-2023*@
                         @if (Model.DateDelivered != null)
                         {
@@ -201,21 +212,21 @@
                         }
                     </tr>
                 </table>
-                <br/>
+                <br />
                 <table>
                     <tr>
                         <td style="text-align:center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>@Html.Label("Status:")</b></td>
                     </tr>
-                    <tr >
-                        <td style = "text-align:right">@Html.Label("Open")</td>
+                    <tr>
+                        <td style="text-align:right">@Html.Label("Open")</td>
                         <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Open", new { onchange = "ToggleStatus('Open');" })</td>
                     </tr>
                     <tr>
-                        <td style = "text-align:right">@Html.Label("Delivered")</td>
+                        <td style="text-align:right">@Html.Label("Delivered")</td>
                         <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Delivered", new { onchange = "ToggleStatus('Delivered');" })</td>
                     </tr>
-                    <tr >
-                        <td style = "text-align:right">@Html.Label("Undelivered")</td>
+                    <tr>
+                        <td style="text-align:right">@Html.Label("Undelivered")</td>
                         <td>@Html.RadioButtonFor(m => m.SelectedStatus, "Undelivered", new { onchange = "ToggleStatus('Undelivered');" })</td>
                     </tr>
                 </table>
@@ -261,78 +272,82 @@
     </section>
 </body>
 </html>
+
 <script>
-    $(function () {
-        window.$("#LogDate").datepicker();
+    jq(function () {
+        jq("#LogDate").datepicker();
     });
 </script> @*LogDate datepicker*@
 
 <script>
-    $(function () {
-        window.$("#DateDelivered").datepicker();
+    jq(function () {
+        jq("#DateDelivered").datepicker();
     });
 </script> @*DateDelivered datepicker*@
-<script>
-    $(document).ready(function () {
-        ".datepicker".datepicker({
-            dateFormat: "dd-mm-yy",
-            changemonth: true,
-            changeyear: true
+
+@*Causes datepicker error:*@
+@*<script>
+        jq(document).ready(function () {
+            ".datepicker".datepicker({
+                dateFormat: "dd-mm-yy",
+                changemonth: true,
+                changeyear: true
+            });
         });
-    });
-</script>
+    </script>*@
+
 <script>
-    window.$("#DateDelivered").change(function () {
-        var Id = window.$("#DeliveryId").val();
-        var newdatedelivered = window.$("#DateDelivered").val();
-        var returnurl = window.$("#ReturnURL").val();
-        var odid = window.$("#ODId").val();
-        var deliverydateodid = window.$("#DeliveryDateODId").val();
-        var odnotes = window.$("#ODNotes").val();
-        var drivernotes = window.$("#DriverNotes").val();
-        var zip = window.$("#Zip").val();
-        var status = window.$("#SelectedStatus").val();
-        var fullbags = window.$("#FullBags").val();
-        var halfbags = window.$("#HalfBags").val();
-        var kidsnacks = window.$("#KidSnacks").val();
-        var giftcards = window.$("#GiftCards").val();
-        var holidaygiftcards = window.$("#HolidayGiftCards").val();
+    jq("#DateDelivered").change(function () {
+        var Id = jq("#DeliveryId").val();
+        var newdatedelivered = jq("#DateDelivered").val();
+        var returnurl = jq("#ReturnURL").val();
+        var odid = jq("#ODId").val();
+        var deliverydateodid = jq("#DeliveryDateODId").val();
+        var odnotes = jq("#ODNotes").val();
+        var drivernotes = jq("#DriverNotes").val();
+        var zip = jq("#Zip").val();
+        var status = jq("#SelectedStatus").val();
+        var fullbags = jq("#FullBags").val();
+        var halfbags = jq("#HalfBags").val();
+        var cbags = jq("#CBags").val();
+        var kidsnacks = jq("#KidSnacks").val();
+        var giftcards = jq("#GiftCards").val();
+        var holidaygiftcards = jq("#HolidayGiftCards").val();
 
         var data = "id=" + Id + "|" + "newdatedelivered=" + newdatedelivered + "|";
         data += "returnurl=" + returnurl + "|" + "odid=" + odid + "|";
         data += "deliverydateodid=" + deliverydateodid + "|" + "odnotes=" + odnotes + "|";
         data += "drivernotes=" + drivernotes + "|" + "zip=" + zip + "|" + "status=" + status + "|";
-        data += "fullbags =" + fullbags + "|" + "halfbags=" + halfbags + "|";
+        data += "fullbags =" + fullbags + "|" + "halfbags=" + halfbags + "|" + "cbags=" + "|" + cbags + "|";
         data += "kidsnacks=" + kidsnacks + "|" + "giftcards=" + giftcards + "|";
-        data += "holidaygiftcards=" + holidaygiftcards;     
-        window.$.ajax({
+        data += "holidaygiftcards=" + holidaygiftcards;
+        jq.ajax({
             type: "Get",
             url: "/Deliveries/EditDateDeliveredChange?parameters=" + data,
-            success: function(data) {
-                window.$("body").html(data);
+            success: function (data) {
+                jq("body").html(data);
             },
-            error: function(response) {
+            error: function (response) {
                 console.log(response.responseText);
             }
         });
     });
 </script>
 <script>
-    function ToggleStatus(status)
-    {
-        window.$("#SelectedStatus").val(status);
+    function ToggleStatus(status) {
+        jq("#SelectedStatus").val(status);
     };
 </script>
-<script >
-    window.$("#NewClientId").change(function () {
-        var RecId = window.$("#DeliveryId").val().toString();
-        var NewClientId = window.$("#NewClientId").val().toString();
-        var data = RecId + "|" + NewClientId + "|" + window.$("#ReturnURL").val();
-        window.$.ajax({
+<script>
+    jq("#NewClientId").change(function () {
+        var RecId = jq("#DeliveryId").val().toString();
+        var NewClientId = jq("#NewClientId").val().toString();
+        var data = RecId + "|" + NewClientId + "|" + jq("#ReturnURL").val();
+        jq.ajax({
             type: "Get",
             url: "/Deliveries/ChangeDeliveryClient?parameters=" + data,
             success: function (data) {
-                window.$("body").html(data);
+                jq("body").html(data);
             },
             error: function (response) {
                 console.log(response.responseText);

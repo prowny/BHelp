@@ -11,9 +11,18 @@
     <link rel="stylesheet" href="~/Content/themes/base/jquery-ui.min.css" /> @*// for date-picker*@
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
     <style>
-        #CreateButton { background-color: green; color: white }
-        .weightwidth { width: 40px }
-        .datewidth { width: 75px }
+        #CreateButton {
+            background-color: green;
+            color: white
+        }
+
+        .weightwidth {
+            width: 40px
+        }
+
+        .datewidth {
+            width: 75px
+        }
     </style>
 </head>
 <body>
@@ -28,7 +37,7 @@
                 @Html.LabelFor(model => model.APounds, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.TextBoxFor(model => model.APounds,
-    new { onkeypress = "return OnlyNumeric(event)", @class = "weightwidth", autofocus="autofocus" })
+                        new { onkeypress = "return OnlyNumeric(event)", @class = "weightwidth", autofocus = "autofocus" })
                     @Html.ValidationMessageFor(model => model.APounds, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -37,11 +46,11 @@
                 @Html.LabelFor(model => model.BPounds, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.TextBoxFor(model => model.BPounds,
-    new { onkeypress = "return OnlyNumeric(event)", @class = "weightwidth" })
+                        new { onkeypress = "return OnlyNumeric(event)", @class = "weightwidth" })
                     @Html.ValidationMessageFor(model => model.BPounds, "", new { @class = "text-danger" })
                 </div>
             </div>
-            
+
             <div class="form-group">
                 @Html.LabelFor(model => model.CPounds, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
@@ -54,8 +63,8 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.EffectiveDate, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.TextBoxFor(model => model.EffectiveDate,
-                        "{0:MM/dd/yyyy}",
+                    @*@Html.EditorFor(model => model.EffectiveDate)*@
+                    @Html.TextBoxFor(model => model.EffectiveDate, "{0:MM/dd/yyyy}",
                         new { id = "EffectiveDate", @class = "datewidth" })
                     <a style="color: darkmagenta"> &#8592;Click to change (cannot create record that is two weeks older than today)</a>
 
@@ -86,6 +95,17 @@
 </body>
 </html>
 
+@*Causes datepicker error:*@
+@*<script>
+        window.$(document).ready(function () {
+            ".datepicker".datepicker({
+                dateFormat: "dd-mm-yy",
+                changemonth: true,
+                changeyear: true
+            });
+        });
+    </script>*@
+
 <script type="text/javascript">
     function OnlyNumeric(e) {
         var charCode = (e.which) ? e.which : e.keyCode;
@@ -100,16 +120,12 @@
 <script>
     $(function () {
         window.$("#EffectiveDate").datepicker({
-            minDate: -13  @*cannot create record that is two weeks older than today*@
-        });
-    });
-</script> @*EffectiveDate datepicker*@
-<script>
-    $(document).ready(function () {
-        ".datepicker".datepicker({
-            dateFormat: "dd-mm-yy",
-            changemonth: true,
-            changeyear: true
-        });
+            minDate: -13;  @*cannot create record that is two weeks older than today*@
     });
 </script>
+
+<script>
+    $(function () {
+        window.$("#EffectiveDate").datepicker();
+    });
+</script> @*EffectiveDate datepicker*@

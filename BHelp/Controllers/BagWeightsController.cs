@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using BHelp.DataAccessLayer;
@@ -25,7 +26,15 @@ namespace BHelp.Controllers
         // GET: BagWeights/Create
         public ActionResult Create()
         {
-            return View();
+            var view = new BagWeight
+            {
+                APounds = 0,
+                BPounds = 0,
+                CPounds = 0,
+                EffectiveDate = DateTime.Today
+            };
+              
+            return View(view);
         }
 
         // POST: BagWeights/Create

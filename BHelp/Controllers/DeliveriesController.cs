@@ -781,7 +781,7 @@ namespace BHelp.Controllers
             public ActionResult Edit(int? id, string returnURL,
                 DateTime? _NewDateDelivered, string _ODId, string _DeliveryDateODId,
                 string _ODNotes, string _DriverNotes, string _Zip,
-                string _Status, int? _FullBags, int? _HalfBags, int? _KidSnacks,
+                string _Status, int? _FullBags, int? _HalfBags, int? _CBags, int? _KidSnacks,
                 int? _GiftCards, int? _HolidayGiftCards,
                 DateTime? _HistoryStartDate, DateTime? _HistoryEndDate )
             {
@@ -800,6 +800,7 @@ namespace BHelp.Controllers
                     if (_Status != null) _view.SelectedStatus = _Status;
                     if (_FullBags != null) _view.FullBags = (int)_FullBags;
                     if (_HalfBags != null) _view.HalfBags = (int)_HalfBags;
+                    if (_CBags != null) _view.CBags = (int)_CBags;
                     if (_KidSnacks != null) _view.KidSnacks = (int)_KidSnacks;
                     if (_GiftCards != null) _view.GiftCards = (int)_GiftCards;
                     if (_HolidayGiftCards != null) _view.HolidayGiftCards = (int)_HolidayGiftCards;
