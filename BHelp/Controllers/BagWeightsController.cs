@@ -48,10 +48,19 @@ namespace BHelp.Controllers
             {
                 if (item.EffectiveDate == bagWeight.EffectiveDate)
                 {
-                    ModelState.AddModelError("EffectiveDate", "Date Already Exists in Another Record!");
+                    ModelState.AddModelError("EffectiveDate",
+                   "Date Already Exists in Another Record!");
                     return View(bagWeight);
                 }
             }
+
+            if (bagWeight.EffectiveDate < DateTime.Today.AddDays(-13))
+            {
+                ModelState.AddModelError("EffectiveDate",
+                    "Cannot create record that is two weeks older than today!");
+                return View(bagWeight);
+            }
+
             db.BagWeights.Add(bagWeight);
             db.SaveChanges();
             return RedirectToAction("Index");

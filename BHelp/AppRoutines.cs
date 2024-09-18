@@ -1737,6 +1737,7 @@ namespace BHelp
             {
                 APounds = 0,
                 BPounds = 0,
+                CPounds = 0,
                 EffectiveDate = DateTime.MaxValue
             };
             bagWeightList.Add(maxDateRec);
@@ -1761,6 +1762,7 @@ namespace BHelp
             {
                 APounds = 0,
                 BPounds = 0,
+                CPounds = 0,
                 EffectiveDate = DateTime.MaxValue
             };
             bagWeightList.Add(maxDateRec);
