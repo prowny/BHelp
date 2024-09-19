@@ -9,6 +9,7 @@ using BHelp.DataAccessLayer;
 using BHelp.Models;
 using System.Collections.Generic;
 using System;
+using System.Data.SqlClient;
 using System.Net.Mail;
 using BHelp.ViewModels;
 using System.Net;
@@ -55,6 +56,10 @@ namespace BHelp.Controllers
                 model.ErrorMessage = errorMessage;
             }
 
+            var builder = new SqlConnectionStringBuilder(db.Database.Connection.ConnectionString);
+            model.ServerName = builder.DataSource;
+            model.DatabaseName = builder.InitialCatalog;
+
             return View(model);
         }
 
@@ -73,7 +78,8 @@ namespace BHelp.Controllers
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe,
                 shouldLockout: false);
-            SetSessionBagweightList();
+
+            Session["BagWeightList"] = db.BagWeights.OrderBy(d => d.EffectiveDate).ToList();
             WriteToLoginTable(model.UserName, result.ToString());
             switch (result)
             {
@@ -124,12 +130,7 @@ namespace BHelp.Controllers
             db.Logins.Add(login);
             db.SaveChanges();
         }
-
-        private void SetSessionBagweightList()
-        {
-            Session["BagWeightList"] = db.BagWeights.OrderBy(d => d.EffectiveDate).ToList();
-        }
-
+        
         // GET: /Account/VerifyCode
         [AllowAnonymous]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)

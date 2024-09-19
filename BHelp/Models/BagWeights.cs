@@ -22,9 +22,8 @@ namespace BHelp.Models
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime EffectiveDate { get; set; }
-
-        [NotMapped]
+        
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
-        public string EffectiveDateString { get; set; }
+        [NotMapped] public string EffectiveDateString { get; set; }
     }
 }
