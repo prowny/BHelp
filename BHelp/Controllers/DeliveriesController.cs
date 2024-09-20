@@ -960,6 +960,7 @@ namespace BHelp.Controllers
 
                 viewModel.FullBags = delivery.FullBags;
                 viewModel.HalfBags = delivery.HalfBags;
+                viewModel.CBags = delivery.CBags;
                 viewModel.KidSnacks = delivery.KidSnacks;
                 viewModel.GiftCards = delivery.GiftCards;
                 viewModel.HolidayGiftCards = delivery.HolidayGiftCards;
@@ -1080,6 +1081,7 @@ namespace BHelp.Controllers
                             rec.LogDate = delivery.LogDate;
                             rec.FullBags = delivery.FullBags;
                             rec.HalfBags = delivery.HalfBags;
+                            rec.CBags = delivery.CBags;
                             rec.KidSnacks = delivery.KidSnacks;
                             rec.HolidayGiftCards = delivery.HolidayGiftCards;
                             rec.GiftCards = delivery.GiftCards;
@@ -1113,6 +1115,7 @@ namespace BHelp.Controllers
                         updateData.LogDate = delivery.LogDate;
                         updateData.FullBags = delivery.FullBags;
                         updateData.HalfBags = delivery.HalfBags;
+                        updateData.CBags = delivery.CBags;
                         updateData.KidSnacks = delivery.KidSnacks;
                         updateData.GiftCards = delivery.GiftCards;
                         updateData .HolidayGiftCards= delivery.HolidayGiftCards;    
@@ -1139,7 +1142,7 @@ namespace BHelp.Controllers
                         }
 
                         if (updateData.Status == 1 && updateData.FullBags == 0 && updateData.HalfBags == 0
-                            && updateData.KidSnacks == 0 && updateData.GiftCards == 0
+                            && updateData.CBags == 0  && updateData.KidSnacks == 0 && updateData.GiftCards == 0
                             && updateData.HolidayGiftCards == 0)
                         {
                             // Cannot save delivery as completed with zero products: 

@@ -631,7 +631,7 @@ namespace BHelp.Controllers
             public ActionResult QORKReport(string endingDate = "") // New QORK Report 02/22
             {
                 DateTime endDate;
-                if (String.IsNullOrEmpty(endingDate))
+                if (string.IsNullOrEmpty(endingDate))
                 {
                     // Ends on a Sunday - weekday Monday is 1, Saturday is 6, Sunday is 0
                     // If today is a  Sunday, default to this week
@@ -655,7 +655,7 @@ namespace BHelp.Controllers
             public ActionResult QORKReportToCSV(string endingDate = "")
             {
                 DateTime endDate;
-                if (String.IsNullOrEmpty(endingDate))
+                if (string.IsNullOrEmpty(endingDate))
                 {
                     // Ends on a Sunday - weekday Monday is 1, Saturday is 6, Sunday is 0
                     // If today is a  Sunday, default to this week
@@ -710,7 +710,7 @@ namespace BHelp.Controllers
                 var activeRow = 1;
                 ws.Cell(activeRow, 1).SetValue(view.ReportTitle);
                 activeRow++;
-                for (int i = 0; i < view.QORKTitles.Length; i++)
+                for (var i = 0; i < view.QORKTitles.Length; i++)
                 {
                     ws.Cell(activeRow, i + 1).SetValue(view.QORKTitles[i]);
                 }
@@ -980,7 +980,7 @@ namespace BHelp.Controllers
 
                 return view;
             }
-            private ReportsViewModel GetQORKReportView(DateTime endDate) // new QORK Report 02/22
+            private static ReportsViewModel GetQORKReportView(DateTime endDate) // new QORK Report 02/22
             {
                 using var db = new BHelpContext();
                 var startDate = endDate.AddDays(-6);
