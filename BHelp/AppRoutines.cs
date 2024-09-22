@@ -195,7 +195,7 @@ namespace BHelp
             {
                 ODId = HttpContext.Current.User.Identity.GetUserId(),
                 DeliveryDateODId = GetODIdForDate(delDate),
-                //DriverId = GetDriverIdForDate(delDate),  // Leave null for drivers to choose delivery
+                //DriverId = GetDriverIdForDate(delDate),  // Leave null for drivers to choose driver
                 ClientId = clientId,
                 LogDate = DateTime.Today,
                 FirstName = client.FirstName,
@@ -960,27 +960,31 @@ namespace BHelp
             ws.Cell(3, 14).SetValue("#Bbags").Style.Font.SetBold(true);
             ws.Cell(3, 14).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
-            ws.Columns("15").Width = 4;
-            ws.Cell(3, 15).SetValue("#KS").Style.Font.SetBold(true);
-            ws.Cell(3, 15).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Columns("15").Width = 5;
+            ws.Cell(3, 14).SetValue("#Cbags").Style.Font.SetBold(true);
+            ws.Cell(3, 14).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
             ws.Columns("16").Width = 4;
-            ws.Cell(3, 16).SetValue("#GC").Style.Font.SetBold(true);
+            ws.Cell(3, 16).SetValue("#KS").Style.Font.SetBold(true);
             ws.Cell(3, 16).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
             ws.Columns("17").Width = 4;
-            ws.Cell(3, 17).SetValue("#HGC").Style.Font.SetBold(true);
+            ws.Cell(3, 17).SetValue("#GC").Style.Font.SetBold(true);
             ws.Cell(3, 17).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
-
-            ws.Columns("18").Width = 15;
-            ws.Cell(3, 18).SetValue("Client Permanent Notes").Style.Font.SetBold(true);
-            ws.Cell(3, 18).Style.Alignment.WrapText = true;
+            ws.Columns("18").Width = 4;
+            ws.Cell(3, 18).SetValue("#HGC").Style.Font.SetBold(true);
             ws.Cell(3, 18).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            
             ws.Columns("19").Width = 15;
-            ws.Cell(3, 19).SetValue("OD & Driver Delivery Notes").Style.Font.SetBold(true);
+            ws.Cell(3, 19).SetValue("Client Permanent Notes").Style.Font.SetBold(true);
             ws.Cell(3, 19).Style.Alignment.WrapText = true;
             ws.Cell(3, 19).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            
+            ws.Columns("20").Width = 15;
+            ws.Cell(3, 20).SetValue("OD & Driver Delivery Notes").Style.Font.SetBold(true);
+            ws.Cell(3, 20).Style.Alignment.WrapText = true;
+            ws.Cell(3, 20).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
             var activeRow = 3;
             for (var i = 0; i < view.OpenDeliveryCount; i++)
@@ -1300,8 +1304,8 @@ namespace BHelp
             {
                 if (j == 6)
                 {
-                    sb.Append("N/A,");
-                } // prepared meals column
+                    sb.Append("N/A,"); // prepared meals column
+                } 
                 else
                 {
                     sb.Append(view.Counts[0, j, view.ZipCount] + ",");
