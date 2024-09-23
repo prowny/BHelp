@@ -961,8 +961,8 @@ namespace BHelp
             ws.Cell(3, 14).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
             ws.Columns("15").Width = 5;
-            ws.Cell(3, 14).SetValue("#Cbags").Style.Font.SetBold(true);
-            ws.Cell(3, 14).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+            ws.Cell(3, 15).SetValue("#Cbags").Style.Font.SetBold(true);
+            ws.Cell(3, 15).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
             ws.Columns("16").Width = 4;
             ws.Cell(3, 16).SetValue("#KS").Style.Font.SetBold(true);
@@ -1059,16 +1059,17 @@ namespace BHelp
                     odv.OpenDeliveries[i, 11] = (familyMembers.Count + 1).ToString();
                     odv.OpenDeliveries[i, 12] = GetNamesAgesOfAllInHousehold(client.Id);
 
-                    odv.OpenDeliveries[i, 18] = client.Notes;
+                    odv.OpenDeliveries[i, 19] = client.Notes;
                 }
 
                 odv.OpenDeliveries[i, 13] = del.FullBags.ToString();
                 odv.OpenDeliveries[i, 14] = del.HalfBags.ToString();
-                odv.OpenDeliveries[i, 15] = del.KidSnacks.ToString();
-                odv.OpenDeliveries[i, 16] = del.GiftCards.ToString();
-                odv.OpenDeliveries[i, 17] = del.HolidayGiftCards.ToString();
-                // Client Notes [i, 18] already set above
-                odv.OpenDeliveries[i, 19] = del.ODNotes + " " + del.DriverNotes;
+                odv.OpenDeliveries[i, 15] = del.CBags.ToString();
+                odv.OpenDeliveries[i, 16] = del.KidSnacks.ToString();
+                odv.OpenDeliveries[i, 17] = del.GiftCards.ToString();
+                odv.OpenDeliveries[i, 18] = del.HolidayGiftCards.ToString();
+                // Client Notes [i, 19] already set above
+                odv.OpenDeliveries[i, 20] = del.ODNotes + " " + del.DriverNotes;
                
                 i++;
             }

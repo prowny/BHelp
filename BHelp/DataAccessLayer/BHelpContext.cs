@@ -53,7 +53,7 @@ namespace BHelp.DataAccessLayer
             throw new NotImplementedException();
         }
 
-        public System.Data.Entity.DbSet<BHelp.Models.ZipCode> ZipCodes { get; set; }
+        public DbSet<ZipCode> ZipCodes { get; set; }
 
         public DbSet<BagWeight> BagWeights { get; set; }
     }

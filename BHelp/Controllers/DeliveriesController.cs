@@ -542,7 +542,7 @@ namespace BHelp.Controllers
                 var odv = new OpenDeliveryViewModel
                 {
                     SelectedDeliveriesList = new List<Delivery>(),
-                    OpenDeliveries = new string[selectedDeliveries.Count, 20],
+                    OpenDeliveries = new string[selectedDeliveries.Count, 21],
                     ReportTitle = "Bethesda Help Open Deliveries",
                     OpenDeliveryCount = selectedDeliveries.Count
                 };
@@ -583,11 +583,12 @@ namespace BHelp.Controllers
                         odv.OpenDeliveries[j, 12] = AppRoutines.GetNamesAgesOfAllInHousehold(rec.Client.Id);
                         odv.OpenDeliveries[j, 13] = rec.FullBags.ToString();
                         odv.OpenDeliveries[j, 14] = rec.HalfBags.ToString();
-                        odv.OpenDeliveries[j, 15] = rec.KidSnacks.ToString();
-                        odv.OpenDeliveries[j, 16] = rec.GiftCards.ToString();
-                        odv.OpenDeliveries[j, 17] = rec.HolidayGiftCards.ToString(); 
-                        odv.OpenDeliveries[j, 18] = rec.Client.Notes;
-                        odv.OpenDeliveries[j, 19] = rec.ODNotes + " " + rec.DriverNotes;
+                        odv.OpenDeliveries[j, 15] = rec.CBags.ToString();
+                        odv.OpenDeliveries[j, 16] = rec.KidSnacks.ToString();
+                        odv.OpenDeliveries[j, 17] = rec.GiftCards.ToString();
+                        odv.OpenDeliveries[j, 18] = rec.HolidayGiftCards.ToString(); 
+                        odv.OpenDeliveries[j, 19] = rec.Client.Notes;
+                        odv.OpenDeliveries[j, 20] = rec.ODNotes + " " + rec.DriverNotes;
 
                         checkedSelectedDeliveries.Add(rec); // for get distinct OD list
                     }
@@ -646,8 +647,8 @@ namespace BHelp.Controllers
                             del.EligiibilityRulesException = true;
                     }
 
-                    if (del.FullBags == 0 && del.HalfBags == 0 && del.KidSnacks == 0 
-                        && del.GiftCards == 0 && del.HolidayGiftCards == 0)
+                    if (del.FullBags == 0 && del.HalfBags == 0 && del.CBags == 0 
+                        && del.KidSnacks == 0&& del.GiftCards == 0 && del.HolidayGiftCards == 0)
                     {
                         del.AllZeroProducts = true;
                     }
