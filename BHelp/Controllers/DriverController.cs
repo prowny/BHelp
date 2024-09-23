@@ -165,7 +165,7 @@ namespace BHelp.Controllers
         [Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         public ActionResult ExcelOpenDeliveries()
         {
-            var result = AppRoutines.ExcelOpenDeliveries(null);
+            var result = AppRoutines.OpenDeliveriesToExcel(null);
             return result;
         }
 

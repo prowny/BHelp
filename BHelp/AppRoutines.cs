@@ -861,7 +861,7 @@ namespace BHelp
             return seniorsCount;
         }
 
-        public static FileStreamResult ExcelOpenDeliveries(OpenDeliveryViewModel view)
+        public static FileStreamResult OpenDeliveriesToExcel(OpenDeliveryViewModel view)
         {
             // view Parameter contains data only from Filtered Opens 
             if (view == null) view = GetOpenDeliveriesViewModel();
