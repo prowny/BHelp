@@ -54,6 +54,7 @@ namespace BHelp.Models
         public int KidSnacks { get; set; }
         public int GiftCardsEligible { get; set; }
         public int GiftCards { get; set; }
+        [NotMapped] public int HolidayGiftCardsEligible { get; set; }
         public int HolidayGiftCards { get; set; }
 
         [StringLength(128)]

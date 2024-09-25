@@ -117,6 +117,7 @@
                         <td><b>C</b></td>
                         <td><b>S</b></td>
                         <td><b>G</b></td>
+                        <td><b>HGC</b></td>
                     </tr>
                     @for (int i = 0; i < Model.SelectedDeliveriesList.Count; i++)
                     {
@@ -143,6 +144,7 @@
                         <td style="text-align: center; color: red; font-weight: bold">@Model.SelectedDeliveriesList[i].CBags</td>
                         <td style="text-align: center; color: red; font-weight: bold">@Model.SelectedDeliveriesList[i].KidSnacks</td>
                         <td style="text-align: center; color: red; font-weight: bold">@Model.SelectedDeliveriesList[i].GiftCards</td>
+                        <td style="text-align: center; color: red; font-weight: bold">@Model.SelectedDeliveriesList[i].HolidayGiftCards</td>
                     }
                     else
                     {
@@ -151,6 +153,7 @@
                         <td style="text-align: center">@Model.SelectedDeliveriesList[i].CBags</td>
                         <td style="text-align: center">@Model.SelectedDeliveriesList[i].KidSnacks</td>
                         <td style="text-align: center">@Model.SelectedDeliveriesList[i].GiftCards</td>
+                        <td style="text-align: center">@Model.SelectedDeliveriesList[i].HolidayGiftCards</td>
                     }
 
                 </tr>

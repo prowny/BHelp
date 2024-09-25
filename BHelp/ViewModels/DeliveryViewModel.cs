@@ -79,6 +79,7 @@ namespace BHelp.ViewModels
         public DateTime? DateLastDelivery { get; set; }
         public DateTime DateLastGiftCard { get; set; }
         public int GiftCardsThisMonth { get; set; }
+        public int HolidayGiftCardsThisMonth { get; set; }
         public string DriverId { get; set; }
         public string DriverName { get; set; }
 

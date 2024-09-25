@@ -1,4 +1,5 @@
 ﻿﻿@using DocumentFormat.OpenXml.Bibliography
+@using System.Activities.Statements
 @model BHelp.ViewModels.LoginViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
@@ -69,18 +70,18 @@
                 </section>
             </div>*@
 </div>
-@*For use during major changes:*@
-<br />
-<br />
-<br />
-<br />
-@*<details>
-    <summary>Database Info</summary>
-    <p>Server: @Model.ServerName</p>
-    <p>Database: @Model.DatabaseName</p>
-</details>*@
 
-    @*@Scripts.Render("~/bundles/jqueryval")*@
-
+<div>  @*For use during major changes:*@
+    @if(AppRoutines.IsDebug())
+    {
+        <br />
+        <br />
+        <details>
+            <summary>Database Info</summary>
+            <p>Server: @Model.ServerName</p>
+            <p>Database: @Model.DatabaseName</p>
+        </details>
+    }
+</div>
 </body>
 </html>

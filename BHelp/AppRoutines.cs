@@ -212,6 +212,7 @@ namespace BHelp
                 FullBags = 0,
                 HalfBags = 0,
                 CBags = 0,
+                HolidayGiftCards = 0,
                 DateDelivered = delDate
             };
 
@@ -237,6 +238,9 @@ namespace BHelp
 
             delivery.GiftCardsEligible = GetGiftCardsEligible(delivery.ClientId, delivery.DateDelivered.Value);
             delivery.GiftCards = delivery.GiftCardsEligible;
+
+            var HolidayGiftCardsEligible = GetHolidayGiftCardsEligible(delivery.ClientId, delivery.DateDelivered.Value);
+            delivery.HolidayGiftCards = HolidayGiftCardsEligible;
 
             // Full Bags (A Bags):
             var numberInHousehold = delivery.Children + delivery.Adults + delivery.Seniors;
@@ -375,6 +379,30 @@ namespace BHelp
             return eligible;
         }
 
+        private static int GetHolidayGiftCardsEligible(int clientId, DateTime dt)
+        {
+            // HOLIDAY GIFT CARDS ELIGIBLE, based on DesiredDeliveryDate:
+            // 1 per household of 2 or fewer; 1 per household each November max
+            // 1 per household each December max
+            if (dt.Month == 11)
+            {
+                var firstOfMonth = new DateTime(dt.Year,11, 1);
+                var totalThisMonth = GetAllHolidayGiftCardsThisMonth(clientId, firstOfMonth);
+                if (totalThisMonth > 0) return 0;
+                if (totalThisMonth == 0) return 1; // only ONE per household
+            }
+
+            if (dt.Month == 12)
+            {
+                var firstOfMonth = new DateTime(dt.Year, 12, 1);
+                var totalThisMonth = GetAllHolidayGiftCardsThisMonth(clientId, firstOfMonth);
+                if (totalThisMonth > 0) return 0;
+                if (totalThisMonth == 0) return 1; // only ONE per household
+            }
+
+            return 0;
+        }
+
         public static List<string> GetZipCodesList()
         {
             using var db = new BHelpContext();
@@ -501,6 +529,18 @@ namespace BHelp
             return giftCardCount;
         }
 
+        private static int GetAllHolidayGiftCardsThisMonth(int clientId, DateTime dt)
+        {
+            var holidayGiftCardCount = 0;
+            var delList = GetAllDeliveriesThisMonth(clientId, dt);
+            foreach (var del in delList)
+            {
+                var hCards = Convert.ToInt32(del.HolidayGiftCards) + Convert.ToInt32(del.HolidayGiftCards);
+                holidayGiftCardCount += hCards;
+            }
+
+            return holidayGiftCardCount;
+        }
         public static DateTime GetDateLastGiftCard(int clientId, DateTime toDate)
         {
             using var db = new BHelpContext();

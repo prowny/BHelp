@@ -492,7 +492,7 @@ namespace BHelp.Controllers
                         if (dlv != null)
                         {
                             // Don't mark as delivered if no products:
-                            if (dlv.FullBags > 0 || dlv.HalfBags > 0 || dlv.KidSnacks > 0 || dlv.GiftCards > 0)
+                            if (dlv.FullBags > 0 || dlv.HalfBags > 0 || dlv.KidSnacks > 0 || dlv.GiftCards > 0 || dlv.HolidayGiftCards > 0)
                             {
 
                                 dlv.Status = 1;
@@ -1084,8 +1084,8 @@ namespace BHelp.Controllers
                             rec.HalfBags = delivery.HalfBags;
                             rec.CBags = delivery.CBags;
                             rec.KidSnacks = delivery.KidSnacks;
-                            rec.HolidayGiftCards = delivery.HolidayGiftCards;
                             rec.GiftCards = delivery.GiftCards;
+                            rec.HolidayGiftCards = delivery.HolidayGiftCards;
                             rec.ODId = delivery.ODId;
                             rec.Status = delivery.Status;
                             rec.ODNotes = delivery.ODNotes;
