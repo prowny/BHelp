@@ -924,8 +924,8 @@ namespace BHelp
             ws.Cell(1, 8).SetValue(key);
             ws.Cell(1, 8).Style.Alignment.WrapText = true;
             ws.Cell(1, 8).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            ws.Range(ws.Cell(1, 8), ws.Cell(1, 16)).Merge();
-
+            ws.Range(ws.Cell(1, 8), ws.Cell(1, 18)).Merge();
+            
             var deliveryDateODs = "";
             if (view.DistinctDeliveryDatesODList.Count > 0)
             {
