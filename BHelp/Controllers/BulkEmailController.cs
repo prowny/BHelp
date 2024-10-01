@@ -47,7 +47,7 @@ namespace BHelp.Controllers
         [HttpPost]  
         public ActionResult Index(BulkEmailViewModel view)
         {
-            // for Drivers / ODs, Staff / All Users
+            // for Drivers, Baggers, ODs, Staff, All Users
             view.ActiveDriverList=JsonSerializer.Deserialize<List<ApplicationUser>>(view.JsonActiveDrivers);
             view.ActiveBaggerList = JsonSerializer.Deserialize<List<ApplicationUser>>(view.JsonActiveBaggers);
             view.ActiveODList = JsonSerializer.Deserialize<List<ApplicationUser>>(view.JsonActiveODs);
@@ -106,7 +106,7 @@ namespace BHelp.Controllers
                 }
             }
 
-            for (var i = 1; i < emailAddressList.Count; i++) // item [0] is null
+            for (var i = 0; i < emailAddressList.Count; i++) 
             {
                 view.EmailString += emailAddressList[i] + ",";
             }
