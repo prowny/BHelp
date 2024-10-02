@@ -57,7 +57,7 @@ namespace BHelp
                 view.ClientStrings[i, 18] = cli.Notes;
                 var deliverySubList = deliveryList
                     .Where(d => d.ClientId == cli.Id && d.Status == 1
-                                                     && d.DateDelivered != null).ToList();
+                                                     && d.DeliveryDate != null).ToList();
                 var lastDD = GetLastDeliveryDate(deliverySubList);
                 if (lastDD.Year < 2000)
                 {
@@ -229,8 +229,8 @@ namespace BHelp
         private static DateTime GetLastDeliveryDate(List<Delivery> deliverySubList)
         {
             var dt = DateTime.MinValue;
-            var delivery = deliverySubList.OrderByDescending(d => d.DateDelivered).FirstOrDefault();
-            if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
+            var delivery = deliverySubList.OrderByDescending(d => d.DeliveryDate).FirstOrDefault();
+            if (delivery?.DeliveryDate != null) return (DateTime)delivery.DeliveryDate;
             return dt;
         }
 
@@ -268,21 +268,21 @@ namespace BHelp
             var startDate = new DateTime(dt.Year, dt.Month, 1);
             var endDate = new DateTime(dt.Year, dt.Month, DateTime.DaysInMonth(dt.Year, dt.Month));
 
-            var dtm = deliverySubList.Count(i => i.DateDelivered >= startDate
-                                                 && i.DateDelivered <= endDate);
+            var dtm = deliverySubList.Count(i => i.DeliveryDate >= startDate
+                                                 && i.DeliveryDate <= endDate);
             return dtm;
         }
 
         private static DateTime GetDateLastGiftCard(List<Delivery> deliverySubList)
         {
-            var delList = deliverySubList.Where(d => d.DateDelivered < DateTime.Today
-                                                     && d.GiftCards > 0).OrderByDescending(d => d.DateDelivered).ToList();
+            var delList = deliverySubList.Where(d => d.DeliveryDate < DateTime.Today
+                                                     && d.GiftCards > 0).OrderByDescending(d => d.DeliveryDate).ToList();
             if (delList.Count != 0)
             {
                 var delivery = delList[0];
-                if (delivery.DateDelivered.HasValue)
+                if (delivery.DeliveryDate.HasValue)
                 {
-                    return (DateTime)delivery.DateDelivered;
+                    return (DateTime)delivery.DeliveryDate;
                 }
             }
             return DateTime.MinValue;
@@ -344,8 +344,8 @@ namespace BHelp
             var dt = DateTime.Today;
             var startDate = new DateTime(dt.Year, dt.Month, 1);
             var endDate = new DateTime(dt.Year, dt.Month, DateTime.DaysInMonth(dt.Year, dt.Month));
-            return deliverySubList.Where(i => i.DateDelivered >= startDate
-                                              && i.DateDelivered <= endDate).ToList();
+            return deliverySubList.Where(i => i.DeliveryDate >= startDate
+                                              && i.DeliveryDate <= endDate).ToList();
         }
         
         public static List<SelectListItem> GetAddressCheckSelectList()

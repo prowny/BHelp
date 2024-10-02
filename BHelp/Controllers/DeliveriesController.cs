@@ -23,7 +23,7 @@ namespace BHelp.Controllers
             using var db = new BHelpContext();
             var listDeliveries = new List<Delivery>(db.Deliveries)
                 .Where(d => d.Status == 0)
-                .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
+                .OrderBy(d => d.DeliveryDate).ThenBy(z => z.Zip)
                 .ThenBy(n => n.StreetNumber).ThenBy(s => s.StreetName).ToList();
 
             var duplicateClientIds = from x in listDeliveries
@@ -86,25 +86,25 @@ namespace BHelp.Controllers
                 deliveryView.DateLastGiftCard = AppRoutines.GetDateLastGiftCard(client.Id);
 
                 var dateDelivered = DateTime.Today.AddDays(-1);
-                if (delivery.DateDelivered != null)
+                if (delivery.DeliveryDate != null)
                 {
-                    deliveryView.DateDelivered = delivery.DateDelivered;
-                    dateDelivered = delivery.DateDelivered.Value;
+                    deliveryView.DeliveryDate = delivery.DeliveryDate;
+                    dateDelivered = delivery.DeliveryDate.Value;
                 }
 
                 var since1 = new DateTime(dateDelivered.Year, dateDelivered.Month, 1);
                 var thrudate = dateDelivered.AddDays(-1);
                 deliveryView.GiftCardsThisMonth = GetGiftCardsSince(client.Id, since1, thrudate);
 
-                if (delivery.DateDelivered != null)
+                if (delivery.DeliveryDate != null)
                 {
-                    deliveryView.DateDeliveredString = delivery.DateDelivered.Value.ToString("MM/dd/yyyy");
+                    deliveryView.DateDeliveredString = delivery.DeliveryDate.Value.ToString("MM/dd/yyyy");
                 }
 
                 // Check for EligiibilityRulesException:
                 deliveryView.NextDeliveryEligibleDate = AppRoutines.GetNextEligibleDeliveryDate
                     (delivery.ClientId, DateTime.Today);
-                if (deliveryView.DateDelivered < deliveryView.NextDeliveryEligibleDate)
+                if (deliveryView.DeliveryDate < deliveryView.NextDeliveryEligibleDate)
                     deliveryView.EligiibilityRulesException = true;
 
                 // ReSharper disable once PossibleMultipleEnumeration
@@ -122,7 +122,7 @@ namespace BHelp.Controllers
                 {
                     deliveryView.NextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate
                         (deliveryView.ClientId, deliveryView.DateLastGiftCard);
-                    if (deliveryView.DateDelivered < deliveryView.NextGiftCardEligibleDate
+                    if (deliveryView.DeliveryDate < deliveryView.NextGiftCardEligibleDate
                         || deliveryView.GiftCards > deliveryView.GiftCardsEligible)
                         deliveryView.EligiibilityRulesException = true;
                 }
@@ -220,7 +220,7 @@ namespace BHelp.Controllers
         {
             using var db = new BHelpContext();
             var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0)
-                .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
+                .OrderBy(d => d.DeliveryDate).ThenBy(z => z.Zip)
                 .ThenBy(n => n.LastName).ToList(); // get all open deliveries
             var view = new OpenDeliveryViewModel()
             {
@@ -245,17 +245,17 @@ namespace BHelp.Controllers
                 }
             }
 
-            var distinctDatesList = listAllOpenDeliveries.Select(d => d.DateDelivered).Distinct().ToList();
+            var distinctDatesList = listAllOpenDeliveries.Select(d => d.DeliveryDate).Distinct().ToList();
             foreach (var dt in distinctDatesList)
             {
-                var delThisDateCount = listAllOpenDeliveries.Count(d => d.DateDelivered == dt);
+                var delThisDateCount = listAllOpenDeliveries.Count(d => d.DeliveryDate == dt);
                 view.DistinctDeliveryDatesList.Add(dt == null
                     ? "-none-  (" + delThisDateCount + ")"
                     : dt.Value.ToString("MM/dd/yyyy") + " (" + delThisDateCount + ")");
 
                 if (dt == null) continue;
                 // Get delDate ODIDs for each distinct del date
-                foreach (var del in listAllOpenDeliveries.Where(del => del.DateDelivered == dt && del.DeliveryDateODName != null))
+                foreach (var del in listAllOpenDeliveries.Where(del => del.DeliveryDate == dt && del.DeliveryDateODName != null))
                 {
                     view.DistinctDeliveryDatesODList.Add(new SelectListItem()
                         { Value = dt.Value.ToString("MM/dd/yyyy"), Text = del.DeliveryDateODName });
@@ -301,7 +301,7 @@ namespace BHelp.Controllers
             if (btnAllCheckAll != "True") return View(view);
             {
                 var selectedDeliveries = db.Deliveries
-                    .Where(d => d.Status == 0).OrderBy(d => d.DateDelivered)
+                    .Where(d => d.Status == 0).OrderBy(d => d.DeliveryDate)
                     .ThenBy(z => z.Zip).ThenBy(n => n.LastName).ToList();
                 view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnAllCheckAll);
                 view.ButtonGroupName = "All";
@@ -333,7 +333,7 @@ namespace BHelp.Controllers
             if (btnAllCheckAll != null || btnAllClearAll != null)
             {
                 var selectedDeliveries = db.Deliveries
-                    .Where(d => d.Status == 0).OrderBy(d => d.DateDelivered)
+                    .Where(d => d.Status == 0).OrderBy(d => d.DeliveryDate)
                     .ThenBy(z => z.Zip).ThenBy(n => n.LastName).ToList();
                 view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnAllCheckAll);
                 view.ButtonGroupName = $"All";
@@ -343,7 +343,7 @@ namespace BHelp.Controllers
             if (btnByDateCheckAll != null || btnByDateClearAll != null)
             {
                 var selectedDeliveries = db.Deliveries.Where(d => d.Status == 0
-                                                                  && d.DateDelivered ==
+                                                                  && d.DeliveryDate ==
                                                                   model.SelectedDistinctDeliveryDate)
                     .OrderBy(z => z.Zip).ThenBy(n => n.LastName).ToList();
                 view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnByDateCheckAll);
@@ -360,7 +360,7 @@ namespace BHelp.Controllers
                 }
                 
                 var selectedDeliveries = db.Deliveries
-                    .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
+                    .OrderBy(d => d.DeliveryDate).ThenBy(z => z.Zip)
                     .ThenBy(n => n.LastName)
                     .Where(d => d.Status == 0 && d.DriverId == selDistinctDriverId).ToList();
                 view = LoadSelectedDeliveriesIntoView(view, selectedDeliveries, btnByDriverCheckAll);
@@ -384,7 +384,7 @@ namespace BHelp.Controllers
 
                     foreach (var rec in selectedDeliveries.Where(rec => rec.IsChecked))
                     {
-                        rec.DateDelivered = view.ReplacementDeliveryDate;
+                        rec.DeliveryDate = view.ReplacementDeliveryDate;
                         // now set matching OD for this date:
                         var odSched = AppRoutines.GetODSchedule(view.ReplacementDeliveryDate);
                         if (odSched == null)
@@ -562,9 +562,9 @@ namespace BHelp.Controllers
                     if (rec.IsChecked)
                     {
                         j++;
-                        if (rec.DateDelivered != null)
+                        if (rec.DeliveryDate != null)
                         {
-                            odv.OpenDeliveries[j, 1] = rec.DateDelivered.Value.ToString("MM/dd/yyyy");
+                            odv.OpenDeliveries[j, 1] = rec.DeliveryDate.Value.ToString("MM/dd/yyyy");
                         }
 
                         odv.OpenDeliveries[j, 2] = rec.DriverName;
@@ -614,7 +614,7 @@ namespace BHelp.Controllers
                 {
                     del.IsChecked = btnCheckAll != null;
 
-                    del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                    del.DateDeliveredString = $"{del.DeliveryDate:MM/dd/yyyy}";
                     del.DeliveryDateODName = AppRoutines.GetUserFullName(del.DeliveryDateODId);
                     del.DriverName = AppRoutines.GetUserFullName(del.DriverId);
                     del.Client = GetClientData(del.ClientId);
@@ -623,7 +623,7 @@ namespace BHelp.Controllers
                     // Check for EligiibilityRulesException:
                     var nextDeliveryEligibleDate = AppRoutines.GetNextEligibleDeliveryDate
                         (del.ClientId, DateTime.Today);
-                    if (del.DateDelivered < nextDeliveryEligibleDate)
+                    if (del.DeliveryDate < nextDeliveryEligibleDate)
                         del.EligiibilityRulesException = true;
 
                     // ReSharper disable once PossibleMultipleEnumeration
@@ -641,9 +641,9 @@ namespace BHelp.Controllers
                         var dateLastGiftCard = AppRoutines.GetDateLastGiftCard(del.ClientId);
                         var nextGiftCardEligibleDate = AppRoutines.GetNextGiftCardEligibleDate
                             (del.ClientId, dateLastGiftCard);
-                        var dt = del.DateDelivered ?? DateTime.Now;
+                        var dt = del.DeliveryDate ?? DateTime.Now;
                         var giftCardsEligible = AppRoutines.GetGiftCardsEligible(del.ClientId, dt);
-                        if (del.DateDelivered < nextGiftCardEligibleDate || del.GiftCards > giftCardsEligible)
+                        if (del.DeliveryDate < nextGiftCardEligibleDate || del.GiftCards > giftCardsEligible)
                             del.EligiibilityRulesException = true;
                     }
 
@@ -668,7 +668,7 @@ namespace BHelp.Controllers
             {
                 using var db = new BHelpContext();
                 var listAllOpenDeliveries = db.Deliveries.Where(d => d.Status == 0)
-                    .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
+                    .OrderBy(d => d.DeliveryDate).ThenBy(z => z.Zip)
                     .ThenBy(n => n.StreetNumber).ThenBy(s => s.StreetName) // added 10/13/2022
                     .ThenBy(n => n.LastName).ToList(); // get all open deliveries
                 if (view.ReplacementDriverId == "0") view.ReplacementDriverId = null;
@@ -780,7 +780,7 @@ namespace BHelp.Controllers
             // GET: Deliveries/Edit/5
             [HttpGet, Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
             public ActionResult Edit(int? id, string returnURL,
-                DateTime? _NewDateDelivered, string _ODId, string _DeliveryDateODId,
+                DateTime? _NewDeliveryDate, string _ODId, string _DeliveryDateODId,
                 string _ODNotes, string _DriverNotes, string _Zip,
                 string _Status, int? _FullBags, int? _HalfBags, int? _CBags, int? _KidSnacks,
                 int? _GiftCards, int? _HolidayGiftCards,
@@ -788,11 +788,11 @@ namespace BHelp.Controllers
             {
                 if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 
-                // ================= routine to handle DateDelivered change:
-                if (_NewDateDelivered != null)
+                // ================= routine to handle DeliveryDate change:
+                if (_NewDeliveryDate != null)
                 {
                     var _view = (DeliveryViewModel)Session["CurrentDeliveryViewModel"];
-                    _view.DateDelivered = _NewDateDelivered;
+                    _view.DeliveryDate = _NewDeliveryDate;
                     if(_ODId != null) _view.ODId = _ODId;
                     if(_DeliveryDateODId != null) _view.DeliveryDateODId = _DeliveryDateODId;
                     if(_ODNotes != null) _view.ODNotes = _ODNotes;
@@ -808,7 +808,7 @@ namespace BHelp.Controllers
                     if (_HistoryStartDate != null) _view.HistoryStartDate = _HistoryStartDate;
                     if (_HistoryEndDate != null) _view.HistoryEndDate = _HistoryEndDate;
 
-                    var odSched = AppRoutines.GetODSchedule((DateTime)_NewDateDelivered);
+                    var odSched = AppRoutines.GetODSchedule((DateTime)_NewDeliveryDate);
                     if (odSched == null)
                     {
                         _view.DeliveryDateODId = null; // (nobody yet)
@@ -861,7 +861,7 @@ namespace BHelp.Controllers
 
                     Session["CurrentDeliveryViewModel"] = _view;
                     return View(_view);
-                } //===================== ( _NewDateDelivered != null) =============
+                } //===================== ( _NewDeliveryDate != null) =============
            
                 Session["CurrentDeliveryId"] = id.ToString();
                 var delivery = AppRoutines.GetDeliveryRecord((int)id);
@@ -887,7 +887,7 @@ namespace BHelp.Controllers
                     FamilySelectList = AppRoutines.GetFamilySelectList(delivery.ClientId),
                     DatePriorDelivery = AppRoutines.GetPriorDeliveryDate(delivery.ClientId, delivery.LogDate),
                     DateLastDelivery = GetLastGetDeliveryDate(delivery.Id),
-                    DateDelivered = delivery.DateDelivered,
+                    DeliveryDate = delivery.DeliveryDate,
                     Status = delivery.Status,
                     HistoryStartDate = Convert.ToDateTime(Session["CallLogStartDate"]),
                     HistoryEndDate = Convert.ToDateTime(Session["CallLogEndDate"]),
@@ -996,7 +996,7 @@ namespace BHelp.Controllers
                 }
 
                 viewModel.Zip = delivery.Zip;
-                Session["CurrentDeliveryViewModel"] = viewModel; // save for returning with new DateDelivered
+                Session["CurrentDeliveryViewModel"] = viewModel; // save for returning with new DeliveryDate
                 return View(viewModel);
             }
 
@@ -1017,7 +1017,7 @@ namespace BHelp.Controllers
                 }
 
                 view.ClientSelectList = clientSelectList;
-                view.DateDeliveredString = $"{view.DateDelivered:MM/dd/yyyy}";
+                view.DateDeliveredString = $"{view.DeliveryDate:MM/dd/yyyy}";
                 return View(view);
             }
 
@@ -1078,7 +1078,7 @@ namespace BHelp.Controllers
                         var rec = _db.Deliveries.FirstOrDefault(i => i.Id == delivery.Id);
                         if (rec != null)
                         {
-                            rec.DateDelivered = delivery.DateDelivered;
+                            rec.DeliveryDate = delivery.DeliveryDate;
                             rec.LogDate = delivery.LogDate;
                             rec.FullBags = delivery.FullBags;
                             rec.HalfBags = delivery.HalfBags;
@@ -1112,7 +1112,7 @@ namespace BHelp.Controllers
                     {
                         var client = db.Clients.Find(updateData.ClientId);
                         if (client != null) updateData.Zip = client.Zip;
-                        updateData.DateDelivered = delivery.DateDelivered;
+                        updateData.DeliveryDate = delivery.DeliveryDate;
                         updateData.LogDate = delivery.LogDate;
                         updateData.FullBags = delivery.FullBags;
                         updateData.HalfBags = delivery.HalfBags;
@@ -1126,7 +1126,7 @@ namespace BHelp.Controllers
                         updateData.ODId = delivery.ODId;
                         updateData.DeliveryDateODId = delivery.DeliveryDateODId;
                         updateData.DriverNotes = delivery.DriverNotes;
-                        updateData.DateDelivered = delivery.DateDelivered;
+                        updateData.DeliveryDate = delivery.DeliveryDate;
                         updateData.SelectedStatus = delivery.SelectedStatus;
                         updateData.Zip = delivery.Zip;
                         switch (delivery.SelectedStatus)
@@ -1283,7 +1283,7 @@ namespace BHelp.Controllers
                 }
 
                 var deliveryList = db.Deliveries.Where(d => d.ClientId == clientId)
-                    .OrderByDescending(d => d.DateDelivered).ToList();
+                    .OrderByDescending(d => d.DeliveryDate).ToList();
                 callLogView.DeliveryList = deliveryList;
                 callLogView.ClientId = (int)clientId;
 
@@ -1294,9 +1294,9 @@ namespace BHelp.Controllers
                     del.DriverName = AppRoutines.GetUserFullName(del.DriverId);
                     if (del.Status == 1) // Show delivery date
                     {
-                        if (del.DateDelivered.HasValue)
+                        if (del.DeliveryDate.HasValue)
                         {
-                            del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                            del.DateDeliveredString = $"{del.DeliveryDate:MM/dd/yyyy}";
                         }
                     } // Show delivery date
 
@@ -1381,7 +1381,7 @@ namespace BHelp.Controllers
 
                 var deliveries = db.Deliveries
                     .Where(d => d.LogDate >= startDate && d.LogDate <= endDate)
-                    .OrderByDescending(d => d.DateDelivered).ToList();
+                    .OrderByDescending(d => d.DeliveryDate).ToList();
                 var callLogView = new DeliveryViewModel
                 {
                     DeliveryList = deliveries,
@@ -1396,9 +1396,9 @@ namespace BHelp.Controllers
                 foreach (var del in callLogView.DeliveryList)
                 {
                     del.DriverName = AppRoutines.GetUserFullName(del.DriverId);
-                    if (del.DateDelivered.HasValue)
+                    if (del.DeliveryDate.HasValue)
                     {
-                        del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                        del.DateDeliveredString = $"{del.DeliveryDate:MM/dd/yyyy}";
                     }
 
                     del.LogDateString = $"{del.LogDate:MM/dd/yyyy}";
@@ -1440,7 +1440,7 @@ namespace BHelp.Controllers
                         del.HolidayGiftCards = 0;
                     }
 
-                    var d = del.DateDelivered ?? DateTime.Now;
+                    var d = del.DeliveryDate ?? DateTime.Now;
                     var _ABagWeight = AppRoutines.GetABagWeight(d);
                     var _BBagWeight = AppRoutines.GetBBagWeight(d);
                     var _CBagWeight = AppRoutines.GetCBagWeight(d);
@@ -1501,8 +1501,8 @@ namespace BHelp.Controllers
                 Session["CallLogEndDate"] = endDate;
 
                 var deliveries = db.Deliveries
-                    .Where(d => d.Status == 1 && d.DateDelivered >= startDate && d.DateDelivered <= endDate)
-                    .OrderByDescending(d => d.DateDelivered).ToList();
+                    .Where(d => d.Status == 1 && d.DeliveryDate >= startDate && d.DeliveryDate <= endDate)
+                    .OrderByDescending(d => d.DeliveryDate).ToList();
                 
                 var callLogView = new DeliveryViewModel
                 {
@@ -1515,9 +1515,9 @@ namespace BHelp.Controllers
                 foreach (var del in callLogView.DeliveryList)
                 {
                     del.DriverName = AppRoutines.GetUserFullName( del.DriverId);
-                    if (del.DateDelivered.HasValue)
+                    if (del.DeliveryDate.HasValue)
                     {
-                        del.DateDeliveredString = $"{del.DateDelivered:MM/dd/yyyy}";
+                        del.DateDeliveredString = $"{del.DeliveryDate:MM/dd/yyyy}";
                     }
 
                     switch (del.Status)
@@ -1559,7 +1559,7 @@ namespace BHelp.Controllers
                             del.HolidayGiftCards = 0;
                         }
 
-                        var d = del.DateDelivered ?? DateTime.Now;
+                        var d = del.DeliveryDate ?? DateTime.Now;
                         var _ABagWeight = AppRoutines.GetABagWeight(d);
                         var _BBagWeight = AppRoutines.GetBBagWeight(d);
                         var _CBagWeight = AppRoutines.GetCBagWeight(d);
@@ -1884,8 +1884,8 @@ namespace BHelp.Controllers
                 {
                     var stringZip = view.ZipCodes[zip];
                     var deliveryData = db.Deliveries.Where(d =>  d.Status == 1 
-                                                                 && d.Zip == stringZip && d.DateDelivered >= view.BeginDate 
-                                                                 && d.DateDelivered <= view.EndDate).ToList();
+                                                                 && d.Zip == stringZip && d.DeliveryDate >= view.BeginDate 
+                                                                 && d.DeliveryDate <= view.EndDate).ToList();
                     totalDeliveries += deliveryData.Count;
                     
                     var distinctList = new List<int>();
@@ -1952,7 +1952,7 @@ namespace BHelp.Controllers
                         CBags += del.CBags;
                         totalCBags += del.CBags;
 
-                        var dDate = del.DateDelivered.GetValueOrDefault(DateTime.Now);
+                        var dDate = del.DeliveryDate.GetValueOrDefault(DateTime.Now);
 
                         var ABagWeight = AppRoutines.GetABagWeight(dDate);
                         var _AbagWeights = del.FullBags * ABagWeight;
@@ -2104,8 +2104,8 @@ namespace BHelp.Controllers
                     }
 
                     var deliveries = db.Deliveries
-                        .Where(d => d.Status == 1 && d.DateDelivered >= startDate
-                                                  && d.DateDelivered < endDate).ToList();
+                        .Where(d => d.Status == 1 && d.DeliveryDate >= startDate
+                                                  && d.DeliveryDate < endDate).ToList();
 
                     foreach (var delivery in deliveries)
                     {
@@ -2128,7 +2128,7 @@ namespace BHelp.Controllers
                                 view.Counts[mo, j, 4] += (a + c + s);
                                 view.Counts[mo, t, 4] += (a + c + s); // # of residents
                                 var lbs = AppRoutines.GetTotalPounds(
-                                    delivery.DateDelivered.GetValueOrDefault(DateTime.Now),
+                                    delivery.DeliveryDate.GetValueOrDefault(DateTime.Now),
                                     delivery.FullBags, delivery.HalfBags, delivery.CBags );
                                 view.Counts[mo, j, 5] += (int)(lbs + (decimal).5); // round to nearest whole number for display;
                                 view.Counts[mo, t, 5] += (int)(lbs + (decimal).5); //pounds distributed
@@ -2227,9 +2227,9 @@ namespace BHelp.Controllers
             private static DateTime? GetLastGetDeliveryDate(int id)
             {
                 using var db = new BHelpContext();
-                var dt = db.Deliveries.Where(d => d.DateDelivered != null
+                var dt = db.Deliveries.Where(d => d.DeliveryDate != null
                                                   && d.Id == id)
-                    .OrderByDescending(x => x.DateDelivered).Select(d => d.DateDelivered)
+                    .OrderByDescending(x => x.DeliveryDate).Select(d => d.DeliveryDate)
                     .FirstOrDefault();
 
                 // ReSharper disable once UseNullPropagation
@@ -2247,7 +2247,7 @@ namespace BHelp.Controllers
                 using var db = new BHelpContext();
                 var total = 0;
                 var dList = db.Deliveries.Where(d => d.ClientId == clientId
-                                                     && d.DateDelivered >= dt1 && d.DateDelivered <= dt2)
+                                                     && d.DeliveryDate >= dt1 && d.DeliveryDate <= dt2)
                     .Select(g => g.GiftCards).ToList();
                 if (dList.Count > 0)
                 {
@@ -2303,8 +2303,8 @@ namespace BHelp.Controllers
                 // Load Counts - extra zip code is for totals column.
                 view.Counts = new int[1, view.ZipCodes.Count + 1, 8]; // 0 (unused), ZipCodes, Counts
                 var deliveries = db.Deliveries
-                    .Where(d => d.Status == 1 && d.DateDelivered >= startDate
-                                              && d.DateDelivered < endDate).ToList();
+                    .Where(d => d.Status == 1 && d.DeliveryDate >= startDate
+                                              && d.DeliveryDate < endDate).ToList();
 
                 foreach (var delivery in deliveries)
                 {
@@ -2314,7 +2314,7 @@ namespace BHelp.Controllers
                         if (delivery.Zip == view.ZipCodes[j])
                         {
                             var lbs = AppRoutines.GetTotalPounds(
-                                delivery.DateDelivered.GetValueOrDefault(DateTime.Now),
+                                delivery.DeliveryDate.GetValueOrDefault(DateTime.Now),
                                 delivery.FullBags, delivery.HalfBags, delivery.CBags );
                             view.Counts[0, j, 0] += (int)(lbs + (decimal).5); // round to nearest whole number for display;
                             view.Counts[0,zipCount, 0] += (int)(lbs + (decimal).5); //pounds distributed
@@ -2411,31 +2411,36 @@ namespace BHelp.Controllers
                 var data = parameters.Split(Convert.ToChar("|"));
                 
                 var idData = data[0].Split(Convert.ToChar("="));
-                var newDateDelivered = data[1].Split(Convert.ToChar("="));
+                var newDeliveryDate = data[1].Split(Convert.ToChar("="));
                 var urlData = data[2].Split(Convert.ToChar("="));
                 var odidData =data[3].Split(Convert.ToChar("="));
-                var deliverydateodidData = data[4].Split(Convert.ToChar("="));
+            
+                var newDeliveryDateODid = AppRoutines.GetODIdForDate(DateTime.Parse(newDeliveryDate[1]));
+                //var deliverydateodidData = data[4].Split(Convert.ToChar("="));
+
                 var odnotesData = data[5].Split(Convert.ToChar("="));
                 var drivernotesData = data[6].Split(Convert.ToChar("="));
                 var zipData = data[7].Split(Convert.ToChar("="));
                 var statusData = data[8].Split(Convert.ToChar("="));
                 var fullbagsData = data[9].Split(Convert.ToChar("="));
                 var halfbagsData = data[10].Split(Convert.ToChar("="));
-                var kidsnacksData = data[11].Split(Convert.ToChar("="));
-                var giftcardsData = data[12].Split(Convert.ToChar("="));
-                var holidaygiftcardsData = data[13].Split(Convert.ToChar("="));
+                var cbagsData = data[11].Split(Convert.ToChar("="));
+                var kidsnacksData = data[12].Split(Convert.ToChar("="));
+                var giftcardsData = data[13].Split(Convert.ToChar("="));
+                var holidaygiftcardsData = data[14].Split(Convert.ToChar("="));
 
                 return RedirectToAction("Edit", new{ id = idData[1],
-                    _NewDateDelivered = newDateDelivered[1],
+                    _NewDeliveryDate = newDeliveryDate[1],
                     returnUrl = urlData[1],
                     _ODId = odidData[1], 
-                    _DeliveryDateOID = deliverydateodidData[1],
+                    _DeliveryDateOID = newDeliveryDateODid,
                     _ODNotes = odnotesData[1],
                     _DriverNotes = drivernotesData[1],
                     _Zip = zipData[1],
                     _Status = statusData[1],
                     _FullBags = fullbagsData[1],
                     _HalfBags = halfbagsData[1],
+                    _CBags = cbagsData[1],
                     _KidSnacks = kidsnacksData[1],
                     _GiftCards = giftcardsData[1],
                     _HolidayGiftCards = holidaygiftcardsData[1]
@@ -2525,7 +2530,7 @@ namespace BHelp.Controllers
                     DateModified = dtNow,
                     ModifiedBy = User.Identity.Name,
                     ActionSource = actionSource,
-                    DateDelivered = delivery.DateDelivered,
+                    DateDelivered = delivery.DeliveryDate,
                     LogDate = delivery.LogDate,
                     LogOD = AppRoutines.GetUserName(delivery.ODId),
                     DeliveryOD = AppRoutines.GetUserName(delivery.DeliveryDateODId),

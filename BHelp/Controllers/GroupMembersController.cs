@@ -250,7 +250,7 @@ namespace BHelp.Controllers
             var CBagDelivery = group is { CBagDelivery: true };
             foreach (var del in openDeliveries)
             {
-                openDeliveryIds += del.ClientId + " " + del.DateDelivered;
+                openDeliveryIds += del.ClientId + " " + del.DeliveryDate;
             }
 
             var clientIdList = db.GroupMembers
@@ -260,7 +260,7 @@ namespace BHelp.Controllers
             {
                 var delivery = AppRoutines.NewDeliveryRecord(clientId, CBagDelivery);
 
-                if (!openDeliveryIds.Contains(delivery.ClientId + " " + delivery.DateDelivered))
+                if (!openDeliveryIds.Contains(delivery.ClientId + " " + delivery.DeliveryDate))
                 {
                     db.Deliveries.Add(delivery);
                 }
@@ -276,7 +276,7 @@ namespace BHelp.Controllers
                     DateModified = dtNow,
                     ModifiedBy = User.Identity.Name,
                     ActionSource = "GROUPCreate",
-                    DateDelivered = delivery.DateDelivered,
+                    DateDelivered = delivery.DeliveryDate,
                     LogOD = AppRoutines.GetUserName(delivery.ODId),
                     DeliveryOD = AppRoutines.GetUserName(delivery.DeliveryDateODId),
                     Driver = AppRoutines.GetDriverName(delivery.DriverId),

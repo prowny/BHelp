@@ -40,7 +40,7 @@ namespace BHelp.Controllers
            
             if (String.IsNullOrEmpty(userId)) { System.Web.HttpContext.Current.User.Identity.GetUserId(); }
             var deliveryList = new List<Delivery>(db.Deliveries).Where(d => d.Status == 0)
-                .OrderBy(d => d.DateDelivered).ThenBy(z => z.Zip)
+                .OrderBy(d => d.DeliveryDate).ThenBy(z => z.Zip)
                 .ThenBy(s => s.StreetNumber)
                 .ThenBy(n => n.StreetName).ToList();  // changed 11/21/2022
             foreach (var delivery in deliveryList)
@@ -116,7 +116,7 @@ namespace BHelp.Controllers
         [HttpPost, Authorize(Roles = "Administrator,Staff,Developer,Driver,OfficerOfTheDay")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,FullBags,HalfBags,KidSnacks, " 
-                     + "GiftCards,HolidayGiftCards,DateDelivered, "
+                     + "GiftCards,HolidayGiftCards,DeliveryDate, "
                      + "DriverNotes,DriverId,SelectedStatus")] Delivery delivery)
         {
             if (ModelState.IsValid)
@@ -132,9 +132,9 @@ namespace BHelp.Controllers
                     del.HolidayGiftCards = delivery.HolidayGiftCards;
 
                     // Only Administrators may see and edit HolidayGiftCards outside of NOV-DEC  12-30-2023
-                    if (delivery.DateDelivered != null)
+                    if (delivery.DeliveryDate != null)
                     {
-                        var delMonth = delivery.DateDelivered.Value.Month;
+                        var delMonth = delivery.DeliveryDate.Value.Month;
                         if (delMonth != 11 && delMonth != 12 && !User.IsInRole("Administrator")) 
                         {
                             del.HolidayGiftCards = 0;
@@ -142,7 +142,7 @@ namespace BHelp.Controllers
                     }
 
                     del.DriverNotes = delivery.DriverNotes;
-                    del.DateDelivered = delivery.DateDelivered;
+                    del.DeliveryDate = delivery.DeliveryDate;
                     switch (delivery.SelectedStatus)
                     {
                         case "Open":

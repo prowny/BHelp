@@ -213,7 +213,7 @@ namespace BHelp
                 HalfBags = 0,
                 CBags = 0,
                 HolidayGiftCards = 0,
-                DateDelivered = delDate
+                DeliveryDate = delDate
             };
 
             var familyList = GetFamilyMembers(clientId);
@@ -236,10 +236,10 @@ namespace BHelp
                 }
             }
 
-            delivery.GiftCardsEligible = GetGiftCardsEligible(delivery.ClientId, delivery.DateDelivered.Value);
+            delivery.GiftCardsEligible = GetGiftCardsEligible(delivery.ClientId, delivery.DeliveryDate.Value);
             delivery.GiftCards = delivery.GiftCardsEligible;
 
-            var HolidayGiftCardsEligible = GetHolidayGiftCardsEligible(delivery.ClientId, delivery.DateDelivered.Value);
+            var HolidayGiftCardsEligible = GetHolidayGiftCardsEligible(delivery.ClientId, delivery.DeliveryDate.Value);
             delivery.HolidayGiftCards = HolidayGiftCardsEligible;
 
             // Full Bags (A Bags):
@@ -326,9 +326,9 @@ namespace BHelp
             var dt = DateTime.MinValue;
             using var db = new BHelpContext();
             var delivery = db.Deliveries.Where(i => i.ClientId == clientId
-                                                    && i.Status == 1 && i.DateDelivered != null)
-                .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
-            if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
+                                                    && i.Status == 1 && i.DeliveryDate != null)
+                .OrderByDescending(d => d.DeliveryDate).FirstOrDefault();
+            if (delivery?.DeliveryDate != null) return (DateTime)delivery.DeliveryDate;
 
             return dt;
         }
@@ -338,9 +338,9 @@ namespace BHelp
             var dt = DateTime.MinValue;
             using var db = new BHelpContext();
             var delivery = db.Deliveries.Where(i => i.ClientId == clientId
-                                                    && i.Status == 1 && i.DateDelivered <= callLogDate)
-                .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
-            if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
+                                                    && i.Status == 1 && i.DeliveryDate <= callLogDate)
+                .OrderByDescending(d => d.DeliveryDate).FirstOrDefault();
+            if (delivery?.DeliveryDate != null) return (DateTime)delivery.DeliveryDate;
             return dt;
         }
 
@@ -350,8 +350,8 @@ namespace BHelp
             using var db = new BHelpContext();
             var delivery = db.Deliveries.Where(i => i.ClientId == clientId 
                 && (i.GiftCards > 0 || i.HolidayGiftCards >0) && i.Status == 1)
-                .OrderByDescending(d => d.DateDelivered).FirstOrDefault();
-            if (delivery?.DateDelivered != null) return (DateTime)delivery.DateDelivered;
+                .OrderByDescending(d => d.DeliveryDate).FirstOrDefault();
+            if (delivery?.DeliveryDate != null) return (DateTime)delivery.DeliveryDate;
             return dt;
         }
 
@@ -511,8 +511,8 @@ namespace BHelp
 
             using var db = new BHelpContext();
             var dtm = db.Deliveries.Count(i => i.ClientId == clientId && i.Status == 1
-                                                                      && i.DateDelivered >= startDate &&
-                                                                      i.DateDelivered <= endDate);
+                                                                      && i.DeliveryDate >= startDate &&
+                                                                      i.DeliveryDate <= endDate);
             return dtm;
         }
 
@@ -545,14 +545,14 @@ namespace BHelp
         {
             using var db = new BHelpContext();
             var delList = db.Deliveries.Where(d => d.ClientId == clientId
-                && d.Status == 1 && d.DateDelivered < toDate 
+                && d.Status == 1 && d.DeliveryDate < toDate 
                 && (d.GiftCards > 0 || d.HolidayGiftCards > 0))
-                .OrderByDescending(d => d.DateDelivered).ToList();
+                .OrderByDescending(d => d.DeliveryDate).ToList();
             if (delList.Count == 0) return DateTime.MinValue;
             var delivery = delList[0];
-            if (delivery.DateDelivered.HasValue)
+            if (delivery.DeliveryDate.HasValue)
             {
-                return (DateTime)delivery.DateDelivered;
+                return (DateTime)delivery.DeliveryDate;
             }
 
             return DateTime.MinValue;
@@ -562,7 +562,7 @@ namespace BHelp
         {
             var delList = GetAllDeliveriesThisMonth(clientId, dt);
 
-            return delList.Where(del => del.DateDelivered < dt)
+            return delList.Where(del => del.DeliveryDate < dt)
                 .Sum(del => del.GiftCards + del.HolidayGiftCards);
         }
 
@@ -573,8 +573,8 @@ namespace BHelp
             using var db = new BHelpContext();
             return db.Deliveries
                 .Where(i => i.ClientId == clientId && i.Status == 1
-                && i.DateDelivered >= startDate
-                && i.DateDelivered <= endDate).ToList();
+                && i.DeliveryDate >= startDate
+                && i.DeliveryDate <= endDate).ToList();
         }
 
         public static DateTime GetNextEligibleDeliveryDate(int clientId, DateTime dt)
@@ -667,7 +667,7 @@ namespace BHelp
             return years;
         }
 
-        private static string GetODIdForDate(DateTime delDate)
+        public static string GetODIdForDate(DateTime delDate)
         {
             using var db = new BHelpContext();
             var rec = db.ODSchedules.FirstOrDefault(d => d.Date == delDate);
@@ -761,7 +761,7 @@ namespace BHelp
             foreach (var user in userList)
             {
                 if (!UserIsInRole(user.Id, "OfficerOfTheDay")) continue;
-                var newListItem = new SelectListItem() { Value = user.Id, Text = user.FullName };
+                var newListItem = new SelectListItem() { Value = user.Id, Text = user.FullName + " " + user.PhoneNumber};
                 odList.Add(newListItem);
             }
 
@@ -903,8 +903,16 @@ namespace BHelp
 
         public static FileStreamResult OpenDeliveriesToExcel(OpenDeliveryViewModel view)
         {
-            // view Parameter contains data only from Filtered Opens 
-            if (view == null) view = GetOpenDeliveriesViewModel();
+            // view Parameter contains data  from Filtered Opens 
+            var fromFiltered = false;
+            if (view == null)
+            {
+                view = GetOpenDeliveriesViewModel();
+            }
+            else
+            {
+                fromFiltered = true;
+            }
 
             var workbook = new XLWorkbook();
             var ws = workbook.Worksheets.Add(view.ReportTitle);
@@ -918,32 +926,47 @@ namespace BHelp
             ws.Cell(1, 2).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
             var key = "K = Kids 0-17, A = Adults 18-59, S = Adults 60+,";
-            key += " HH = Household, Abags = A Bags, Bbags = B Bags, C Bags = CBags";
+            key += " HH = Household, Abags = A Bags, Bbags = B Bags, C Bags = C Bags";
             key += " KS = Kids Snacks for ages 2-17, GC = Gift Cards,";
             key += " HGC = Holiday Gift Cards";
             ws.Cell(1, 8).SetValue(key);
             ws.Cell(1, 8).Style.Alignment.WrapText = true;
             ws.Cell(1, 8).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
             ws.Range(ws.Cell(1, 8), ws.Cell(1, 18)).Merge();
-            
+
             var deliveryDateODs = "";
             if (view.DistinctDeliveryDatesODList.Count > 0)
             {
                 foreach (var delDtOD in view.DistinctDeliveryDatesODList)
                 {
-                    deliveryDateODs += " OD on " + delDtOD.Value + ": " + delDtOD.Text + ";";
+                    if (fromFiltered)
+                    {
+                        //  Add PhoneNumber to OD Name:
+                        var _ODId = GetODIdForDate(DateTime.Parse(delDtOD.Value));
+                        using var _db = new BHelpContext();
+                        var _ODrec = _db.Users.Find(_ODId);
+                        if (_ODrec != null)
+                        {
+                            deliveryDateODs += " OD on " + delDtOD.Value + ": " + delDtOD.Text + " " +
+                                               _ODrec.PhoneNumber + ";";
+                        }
+                    }
+                    else
+                    {
+                        deliveryDateODs += " OD on " + delDtOD.Value + ": " + delDtOD.Text + ";";
+                    }
                 }
 
                 if (deliveryDateODs.Substring(deliveryDateODs.Length - 1, 1) == ";")
                 {
                     deliveryDateODs = deliveryDateODs.Remove(deliveryDateODs.Length - 1);
                 }
-
-                ws.Cell(2, 1).SetValue(deliveryDateODs);
-                ws.Cell(2, 1).Style.Alignment.WrapText = true;
-                ws.Cell(2, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                ws.Range(ws.Cell(2, 1), ws.Cell(2, 18)).Merge();
             }
+
+            ws.Cell(2, 1).SetValue(deliveryDateODs);
+            ws.Cell(2, 1).Style.Alignment.WrapText = true;
+            ws.Cell(2, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            ws.Range(ws.Cell(2, 1), ws.Cell(2, 18)).Merge();
 
             ws.Columns("1").Width = 10;
             ws.Cell(3, 1).SetValue("Delivery Date").Style.Font.SetBold(true);
@@ -1015,12 +1038,12 @@ namespace BHelp
             ws.Columns("18").Width = 4;
             ws.Cell(3, 18).SetValue("#HGC").Style.Font.SetBold(true);
             ws.Cell(3, 18).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            
+
             ws.Columns("19").Width = 15;
             ws.Cell(3, 19).SetValue("Client Permanent Notes").Style.Font.SetBold(true);
             ws.Cell(3, 19).Style.Alignment.WrapText = true;
             ws.Cell(3, 19).Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-            
+
             ws.Columns("20").Width = 15;
             ws.Cell(3, 20).SetValue("OD & Driver Delivery Notes").Style.Font.SetBold(true);
             ws.Cell(3, 20).Style.Alignment.WrapText = true;
@@ -1043,9 +1066,9 @@ namespace BHelp
             workbook.SaveAs(ms);
             ms.Position = 0;
             return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                { FileDownloadName = "OpenDeliveries" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
+            { FileDownloadName = "OpenDeliveries" + DateTime.Today.ToString("MM-dd-yy") + ".xlsx" };
         }
-     
+
         private static OpenDeliveryViewModel GetOpenDeliveriesViewModel()
         {
             var odv = new OpenDeliveryViewModel
@@ -1055,7 +1078,7 @@ namespace BHelp
             using var db = new BHelpContext();
             var deliveryList = new List<Delivery>(db.Deliveries)
                 .Where(d => d.Status == 0)
-                .OrderBy(d => d.DateDelivered)
+                .OrderBy(d => d.DeliveryDate)
                 .ThenBy(z => z.Zip)
                 .ThenBy(s => s.StreetNumber)
                 .ThenBy(n => n.StreetName)
@@ -1067,8 +1090,8 @@ namespace BHelp
             foreach (var del in deliveryList)
             {
                 var client = db.Clients.Find(del.ClientId);
-                if (del.DateDelivered != null)
-                    odv.OpenDeliveries[i, 1] = del.DateDelivered.Value.ToShortDateString();
+                if (del.DeliveryDate != null)
+                    odv.OpenDeliveries[i, 1] = del.DeliveryDate.Value.ToShortDateString();
 
                 if (del.DeliveryDateODId != null && del.DeliveryDateODId != "0")
                 {
@@ -1129,9 +1152,9 @@ namespace BHelp
             sb.Append(DateTime.Today.ToShortDateString() + ',');
             sb.Append(",,,,,");
             var key = "K = Kids 0-17, A = Adults 18-59, S = Adults 60+,";
-            key += "HH = Household,ABags = A Bags, BBags = B Bags, Cbags = CBags";
-            key += "KS = Kids Snacks for ages 2-17, GC = Gift Cards,";
-            key += "HGC = Holiday Gift Cards";
+            key += " HH = Household, ABags = A Bags, BBags = B Bags, Cbags = C Bags";
+            key += " KS = Kids Snacks for ages 2-17, GC = Gift Cards,";
+            key += " HGC = Holiday Gift Cards";
             sb.Append("\"" + key + "\"");
             sb.AppendLine();
 
@@ -1217,7 +1240,7 @@ namespace BHelp
                 sb.Append(address + ",");
                 sb.Append(d.DriverName + ",");
                 var dtDel = "";
-                if (d.DateDelivered != null) dtDel = d.DateDelivered.Value.ToString("MM/dd/yyyy");
+                if (d.DeliveryDate != null) dtDel = d.DeliveryDate.Value.ToString("MM/dd/yyyy");
                 sb.Append(dtDel + ",");
                 sb.Append(d.Zip + ",");
                 var status = "";
@@ -1234,7 +1257,7 @@ namespace BHelp
                 sb.Append(status + ",");
                 sb.Append(d.HouseoldCount + "," + d.Children + "," + d.Adults + "," + d.Seniors + ",");
                 sb.Append(d.FullBags + "," + d.HalfBags + "," + d.KidSnacks + "," + d.GiftCards + ",");
-                sb.Append(d.HolidayGiftCards +"," + d.PoundsOfFood);
+                sb.Append(d.HolidayGiftCards + "," + d.PoundsOfFood + ",");
                 totalHHCount += d.HouseoldCount;
                 totalChildren += d.Children;
                 totalAdults += d.Adults;
@@ -1498,7 +1521,7 @@ namespace BHelp
         public static List<SelectListItem> GetDistinctDeliveryDatesOdList(List<Delivery> deliveryList)
         {
             var distinctDeliveryDatesOdList = new List<SelectListItem>();
-            var distinctDatesList = deliveryList.Select(d => d.DateDelivered).Distinct().ToList();
+            var distinctDatesList = deliveryList.Select(d => d.DeliveryDate).Distinct().ToList();
             var distinctDates = "";
             foreach (var dt in distinctDatesList)
             {
@@ -1508,7 +1531,7 @@ namespace BHelp
                     for (var i = 0; i < deliveryList.Count; i++)
                     {
                         var del = deliveryList[i];
-                        if (del.DateDelivered == dt && del.DeliveryDateODName != null)
+                        if (del.DeliveryDate == dt && del.DeliveryDateODName != null)
                         {
                             if (!distinctDates.Contains(dt.Value.ToString("MM/dd/yyyy")))
                             {

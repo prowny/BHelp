@@ -65,8 +65,8 @@
                 <tr>
                     <td>Delivery Date:</td>
                     <td>
-                        @Html.TextBoxFor(model => model.DateDelivered, "{0:MM/dd/yyyy}",
-                            new { id = "DateDelivered", style = "width: 75px;" })
+                        @Html.TextBoxFor(model => model.DeliveryDate, "{0:MM/dd/yyyy}",
+                            new { id = "DeliveryDate", style = "width: 75px;" })
                     </td>
                     <td style="color: darkmagenta">&#8592;Click to change</td>
                 </tr>
@@ -97,9 +97,9 @@
                 </tr>
                 
             @* Only Administrators may see and edit HolidayGiftCards outside of NOV-DEC*@
-            @if (Model.DateDelivered != null)
+            @if (Model.DeliveryDate != null)
             {
-                var delMonth = Model.DateDelivered.Value.Month;
+                var delMonth = Model.DeliveryDate.Value.Month;
                 if (delMonth == 11 || delMonth == 12 || User.IsInRole("Administrator"))
                 {
                     <tr>
@@ -159,7 +159,7 @@
 </div>
 <script>
     $(function () {
-        window.$("#DateDelivered").datepicker();
+        window.$("#DeliveryDate").datepicker();
     });
 </script> @*DeliveryDate datepicker*@
 </body>

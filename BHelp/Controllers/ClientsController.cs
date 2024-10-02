@@ -280,7 +280,7 @@ namespace BHelp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            var openDeliveries = db.Deliveries.Where(d => d.ClientId == id && d.DateDelivered == null).ToList();
+            var openDeliveries = db.Deliveries.Where(d => d.ClientId == id && d.DeliveryDate == null).ToList();
             if (openDeliveries.Count > 0)
             {
                 ModelState.AddModelError("", @"Client has open deliveries that must be removed first.");
@@ -470,10 +470,10 @@ namespace BHelp.Controllers
             var query = from c in db.Clients
                 from d in db.Deliveries
                     .Where(e => e.ClientId == c.Id && e.Status == 1 && c.Active)
-                    .OrderByDescending( f => f.DateDelivered).Take(1)
+                    .OrderByDescending( f => f.DeliveryDate).Take(1)
                 select new
                 {
-                    d.DateDelivered,
+                    DateDelivered = d.DeliveryDate,
                     c.Id,
                     c.LastName,
                     c.FirstName,
@@ -574,7 +574,7 @@ namespace BHelp.Controllers
         //    foreach (var cli in uniqueClientIdList)
         //    {
         //        var dt = db.Deliveries.Where(r => r.ClientId == cli)
-        //            .Select(d => d.DateDelivered).Min();
+        //            .Select(d => d.DeliveryDate).Min();
                 
         //        if (dt != null)
         //        {

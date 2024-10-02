@@ -38,38 +38,38 @@ namespace BHelp
             using var db = new BHelpContext();
             var startDt = new DateTime(2022, 01, 01);
             var endDt = new DateTime(2022, 03, 01);
-            var recs = db.Deliveries.Where(d => d.DateDelivered >= startDt
-                                                && d.DateDelivered <= endDt
+            var recs = db.Deliveries.Where(d => d.DeliveryDate >= startDt
+                                                && d.DeliveryDate <= endDt
                                                 && d.DeliveryDateODId != null
                                                 && d.Status == 1).ToList();
-            var result = recs.GroupBy(x => x.DateDelivered)
+            var result = recs.GroupBy(x => x.DeliveryDate)
                 .Select(x => x.First()).ToList();
             foreach (var del in result)
             {
-                if (del.DateDelivered != null)
+                if (del.DeliveryDate != null)
                 {
                     var addODRec = new ODSchedule()
                     {
-                        Date = (DateTime)del.DateDelivered,
+                        Date = (DateTime)del.DeliveryDate,
                         ODId = del.DeliveryDateODId
                     };
                     db.ODSchedules.Add(addODRec);
                 }
             }
 
-            recs = db.Deliveries.Where(d => d.DateDelivered >= startDt
-                                            && d.DateDelivered <= endDt
+            recs = db.Deliveries.Where(d => d.DeliveryDate >= startDt
+                                            && d.DeliveryDate <= endDt
                                             && d.DriverId != null
                                             && d.Status == 1).ToList();
-            result = recs.GroupBy(x => x.DateDelivered)
+            result = recs.GroupBy(x => x.DeliveryDate)
                 .Select(x => x.First()).ToList();
             foreach (var dlv in result)
             {
-                if (dlv.DateDelivered != null)
+                if (dlv.DeliveryDate != null)
                 {
                     var addDrRec = new DriverSchedule()
                     {
-                        Date = (DateTime)dlv.DateDelivered,
+                        Date = (DateTime)dlv.DeliveryDate,
                         DriverId = dlv.DriverId
                     };
                     db.DriverSchedules.Add(addDrRec);

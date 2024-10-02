@@ -105,9 +105,9 @@ new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip 
                         <td style="color: darkmagenta"></td>
                         <td> &nbsp;&nbsp;&nbsp;&nbsp;Delivery Date:</td>
                         <td>
-                            @Html.TextBoxFor(model => model.DateDelivered,
+                            @Html.TextBoxFor(model => model.DeliveryDate,
                                 "{0:MM/dd/yyyy}",
-                                new { id = "DateDelivered", style = "width: 75px;" })
+                                new { id = "DeliveryDate", style = "width: 75px;" })
                         </td>
                         <td style="color: darkmagenta"> &#8592;Click to change</td>
                         @if (User.IsInRole("Administrator"))
@@ -183,7 +183,7 @@ new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip 
                         </td>
                         <td>@Html.Label("C Bags", new { @class = "control-label col-md-2" })</td>
                         <td>
-                            @Html.EditorFor(model => model.CBags, new { htmlAttributes = new { id = "HalfBags", style = "width:35px", min = 0, max = 3 } })
+                            @Html.EditorFor(model => model.CBags, new { htmlAttributes = new { id = "CBags", style = "width:35px", min = 0, max = 3 } })
                             @Html.ValidationMessageFor(model => model.CBags, "", new { @class = "text-danger" })
                         </td>
                         <td>@Html.LabelFor(model => model.KidSnacks, htmlAttributes: new { @class = "control-label col-md-2" })</td>
@@ -198,9 +198,9 @@ new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip 
                         </td>
 
                         @* Only Administrators may see and edit HolidayGiftCards outside of NOV-DEC 12-30-2023*@
-                        @if (Model.DateDelivered != null)
+                        @if (Model.DeliveryDate != null)
                         {
-                            var delMonth = Model.DateDelivered.Value.Month;
+                            var delMonth = Model.DeliveryDate.Value.Month;
                             if (delMonth == 11 || delMonth == 12 || User.IsInRole("Administrator"))
                             {
                                 <td>@Html.LabelFor(model => model.HolidayGiftCards, htmlAttributes: new { @class = "control-label col-md-2" })</td>
@@ -281,9 +281,9 @@ new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip 
 
 <script>
     jq(function () {
-        jq("#DateDelivered").datepicker();
+        jq("#DeliveryDate").datepicker();
     });
-</script> @*DateDelivered datepicker*@
+</script> @*DeliveryDate datepicker*@
 
 @*Causes datepicker error:*@
 @*<script>
@@ -297,9 +297,9 @@ new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip 
     </script>*@
 
 <script>
-    jq("#DateDelivered").change(function () {
+    jq("#DeliveryDate").change(function () {
         var Id = jq("#DeliveryId").val();
-        var newdatedelivered = jq("#DateDelivered").val();
+        var newdatedelivered = jq("#DeliveryDate").val();
         var returnurl = jq("#ReturnURL").val();
         var odid = jq("#ODId").val();
         var deliverydateodid = jq("#DeliveryDateODId").val();
@@ -318,7 +318,7 @@ new { @readonly = "readonly", style = "width: 90px", title = Model.NotesToolTip 
         data += "returnurl=" + returnurl + "|" + "odid=" + odid + "|";
         data += "deliverydateodid=" + deliverydateodid + "|" + "odnotes=" + odnotes + "|";
         data += "drivernotes=" + drivernotes + "|" + "zip=" + zip + "|" + "status=" + status + "|";
-        data += "fullbags =" + fullbags + "|" + "halfbags=" + halfbags + "|" + "cbags=" + "|" + cbags + "|";
+        data += "fullbags =" + fullbags + "|" + "halfbags=" + halfbags + "|" + "cbags=" + cbags + "|";
         data += "kidsnacks=" + kidsnacks + "|" + "giftcards=" + giftcards + "|";
         data += "holidaygiftcards=" + holidaygiftcards;
         jq.ajax({

@@ -176,12 +176,12 @@ namespace BHelp.Controllers
             var clientId = household.ClientId;
 
             var newDelivery = AppRoutines.NewDeliveryRecord(clientId);
-            if (newDelivery.DateDelivered != null)
+            if (newDelivery.DeliveryDate != null)
             {
                 var openCount = db.Deliveries.Count(d => d.ClientId == clientId && d.Status == 0);
                 var nextDeliveryEligible =
-                    AppRoutines.GetNextEligibleDeliveryDate(clientId, newDelivery.DateDelivered.Value);
-                if (newDelivery.DateDelivered < nextDeliveryEligible || openCount > 0)
+                    AppRoutines.GetNextEligibleDeliveryDate(clientId, newDelivery.DeliveryDate.Value);
+                if (newDelivery.DeliveryDate < nextDeliveryEligible || openCount > 0)
                 { // go to confirm page
                     TempData["NextEligibleDeliveryDate"] = nextDeliveryEligible;
                     Session["ConfirmHousehold"] = household;
@@ -209,7 +209,7 @@ namespace BHelp.Controllers
                 DateModified = dtNow,
                 ModifiedBy = User.Identity.Name,
                 ActionSource = "CREATE",
-                DateDelivered = newDelivery.DateDelivered,
+                DateDelivered = newDelivery.DeliveryDate,
                 LogDate = dtNow,
                 LogOD = AppRoutines.GetUserName(newDelivery.ODId),
                 DeliveryOD = AppRoutines.GetUserName(newDelivery.DeliveryDateODId),
@@ -298,7 +298,7 @@ namespace BHelp.Controllers
                 FullName = client.LastName + ", " + client.FirstName,
                 StreetNumber = client.StreetNumber,
                 StreetName = client.StreetName,
-                DateDelivered = (DateTime)dt
+                DeliveryDate = (DateTime)dt
             };
             return View(newDeliveryView);
         }

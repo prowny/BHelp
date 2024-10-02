@@ -400,9 +400,9 @@ namespace BHelp.Controllers
             view.HistoryEndDate = endDate;
             var deliveries = db.Deliveries
                 .Where(d => d.Status == 1
-                            && d.DateDelivered >= view.HistoryStartDate
-                            & d.DateDelivered <= view.HistoryEndDate)
-                .OrderBy(d => d.DateDelivered)
+                            && d.DeliveryDate >= view.HistoryStartDate
+                            & d.DeliveryDate <= view.HistoryEndDate)
+                .OrderBy(d => d.DeliveryDate)
                 .ThenBy(d => d.DriverId).ToList();
 
             // Seed the report loops:
@@ -444,7 +444,7 @@ namespace BHelp.Controllers
             // Get group of deliveries by date:
             for (var date = start; date <= end; date = date.AddDays(1))
             {
-                var singleDateList = deliveries.Where(d => d.DateDelivered == date).ToList();
+                var singleDateList = deliveries.Where(d => d.DeliveryDate == date).ToList();
                 if (singleDateList.Count == 0) continue;
                 {
                     // Get # of Residents for each delivery
@@ -452,7 +452,7 @@ namespace BHelp.Controllers
                     {
                         del.HouseoldCount = del.Children + del.Adults + del.Seniors;
                     }
-                    var currentDateDelivered = singleDateList[0].DateDelivered;
+                    var currentDateDelivered = singleDateList[0].DeliveryDate;
                     
                     var distinctDriverList = singleDateList
                         .Select(d => d.DriverId).Distinct();
@@ -496,7 +496,7 @@ namespace BHelp.Controllers
                         // Summarize driver:
                         var newDrv = new DeliveryViewModel
                         {
-                            DateDelivered = currentDateDelivered,
+                            DeliveryDate = currentDateDelivered,
                             DriverName = AppRoutines.GetDriverName(dtDrvId),
                             DeliveryCount = driverDeliveryCount,
                             HouseholdCount = driverResidentsCount,
@@ -523,7 +523,7 @@ namespace BHelp.Controllers
                     // Summarize the date:
                     var newDt = new DeliveryViewModel
                     {
-                        DateDelivered = null,
+                        DeliveryDate = null,
                         DriverName = "Totals for " + currentDateDelivered?.ToString("MM/dd/yyyy"),
                         DeliveryCount = dateDeliveryCount,
                         HouseholdCount = dateResidentsCount,
@@ -537,7 +537,7 @@ namespace BHelp.Controllers
                     };
                     reportDeliveryList.Add(newDt);
                     newDt = new DeliveryViewModel() // blank line
-                        { DateDelivered = null, DriverName = "", DeliveryCount = null, GiftCardCount = null };
+                        { DeliveryDate = null, DriverName = "", DeliveryCount = null, GiftCardCount = null };
                     reportDeliveryList.Add(newDt); // add blank line
                     dateDeliveryCount = 0;
                     dateResidentsCount = 0;
@@ -553,7 +553,7 @@ namespace BHelp.Controllers
 
             var totalDel = new DeliveryViewModel()
             {
-                DateDelivered = null,
+                DeliveryDate = null,
                 DriverName = "Grand Totals",
                 DeliveryCount = totalDeliveryCount,
                 HouseholdCount = totalResidentsCount,
@@ -592,13 +592,13 @@ namespace BHelp.Controllers
 
             foreach (var del in reportDeliveryList)
             {
-                if (del.DateDelivered == null)
+                if (del.DeliveryDate == null)
                 {
                     sb.Append(",");
                 }
                 else
                 {
-                    sb.Append(Convert.ToDateTime(del.DateDelivered).ToString("MM/dd/yyyy") + ",");
+                    sb.Append(Convert.ToDateTime(del.DeliveryDate).ToString("MM/dd/yyyy") + ",");
                 }
 
                 sb.Append(del.DriverName + ",");
@@ -997,8 +997,8 @@ namespace BHelp.Controllers
                 view.Counts = new int[1, 9, view.ZipCodes.Count + 1]; // 0 (unused), Counts, Zipcodes
                 view.ZipCount = view.ZipCodes.Count;
                 var deliveries = db.Deliveries
-                    .Where(d => d.Status == 1 && d.DateDelivered >= startDate
-                                              && d.DateDelivered < endDate).ToList();
+                    .Where(d => d.Status == 1 && d.DeliveryDate >= startDate
+                                              && d.DeliveryDate < endDate).ToList();
 
                 foreach (var delivery in deliveries)
                 {
@@ -1018,7 +1018,7 @@ namespace BHelp.Controllers
                             view.Counts[0, 3, zipCount] += s; //# seniors
                             view.Counts[0, 4, zip]++;
                             view.Counts[0, 4, zipCount]++; //#  households served
-                            var delDate = delivery.DateDelivered.GetValueOrDefault(DateTime.Now);
+                            var delDate = delivery.DeliveryDate.GetValueOrDefault(DateTime.Now);
                             var lbs = AppRoutines.GetTotalPounds(delDate, delivery.FullBags, delivery.HalfBags, delivery.CBags );
                             view.Counts[0, 5, zip] += (int)(lbs + (decimal).5); // round to nearest whole number for display purposes  
                             view.Counts[0, 5, zipCount] += (int)(lbs + (decimal).5) ; //pounds distributed

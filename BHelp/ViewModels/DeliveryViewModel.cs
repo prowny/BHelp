@@ -23,7 +23,7 @@ namespace BHelp.ViewModels
         [DisplayName("Desired Delivery Date")]
         [Column(TypeName = "Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateTime DeliveryDate { get; set; }
+        public DateTime? DeliveryDate { get; set; }
         public int Status { get; set; }  // 0 = Open, 1 = Completed, 2 = Undelivered
         public string SelectedStatus { get; set; }
 
@@ -62,9 +62,9 @@ namespace BHelp.ViewModels
         
         public Client Client { get; set; }
 
-        [Column(TypeName = "Date")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateTime? DateDelivered { get; set; }
+        //[Column(TypeName = "Date")]
+        //[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
+        //public DateTime? DeliveryDate { get; set; }
         public DateTime DatePriorDelivery { get; set; }
         public List<FamilyMember> FamilyMembers { get; set; }
         public List<SelectListItem> FamilySelectList { get; set; }  // For display onlly
@@ -129,7 +129,7 @@ namespace BHelp.ViewModels
         public int TotalHolidayGiftCards { get; set; }  // Total in DeliveryList
         public int TotalPoundsOfFood { get; set; }  // Total in DeliveryList
 
-        // For change in Edit DateDelivered
+        // For change in Edit DeliveryDate
         // which calls Ajax Function UpdateDeliveryDateOD
         public DateTime? NewDeliveryDate { get; set; }
 

@@ -65,7 +65,7 @@ namespace BHelp.Models
 
         [Column(TypeName = "Date")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateTime? DateDelivered { get; set; }
+        public DateTime? DeliveryDate { get; set; }
 
         [StringLength(4096)]
         public string ODNotes { get; set; }
