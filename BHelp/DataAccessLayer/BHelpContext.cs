@@ -56,5 +56,7 @@ namespace BHelp.DataAccessLayer
         public DbSet<ZipCode> ZipCodes { get; set; }
 
         public DbSet<BagWeight> BagWeights { get; set; }
+
+        public System.Data.Entity.DbSet<BHelp.Models.NewDocument> NewDocuments { get; set; }
     }
 }

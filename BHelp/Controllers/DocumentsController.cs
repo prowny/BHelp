@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -68,7 +67,6 @@ namespace BHelp.Controllers
             selList.Add(role);
             role = new SelectListItem() { Value = "Trainer", Text = "Trainer" };
             selList.Add(role);
-            selList.Add(role);
             return selList;
         }
 
@@ -79,7 +77,7 @@ namespace BHelp.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (String.IsNullOrEmpty(doc.Title))
+                if (string.IsNullOrEmpty(doc.Title))
                 {
                     TempData["DocumentTitleError"] = "Title Required!";
                     return RedirectToAction("Upload");
@@ -114,12 +112,9 @@ namespace BHelp.Controllers
         public ActionResult ViewDocument(int? id)
         {
             var doc = db.Documents.Find(id);
-            if (doc != null)
-            {
-                var contentType = MimeMapping.GetMimeMapping(doc.FileName);
-                return new FileContentResult(doc.FileContent, contentType);
-            }
-            return null;
+            if (doc == null) return null;
+            var contentType = MimeMapping.GetMimeMapping(doc.FileName);
+            return new FileContentResult(doc.FileContent, contentType);
         }
 
         // GET: Documents/Edit/5

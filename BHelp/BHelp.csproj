@@ -350,6 +350,9 @@
     <Compile Include="Controllers\LoginsController.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Controllers\NewDocumentsController.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Controllers\ODEmailController.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
@@ -359,6 +362,7 @@
     <Compile Include="Controllers\ZipCodesController.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="DocumentRoutines.cs" />
     <Compile Include="EnforceTrueAttribute.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -459,6 +463,7 @@
     <Compile Include="Models\Holiday.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Models\NewDocument.cs" />
     <Compile Include="Models\ODSchedule.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
@@ -682,6 +687,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="HostGator\Web.config" />
     <Content Include="HostGator\test\Web.config" />
+    <Content Include="Documents\Oz-Bali route 2.pdf" />
     <None Include="Properties\PublishProfiles\BhelpHostGator.pubxml" />
     <None Include="Properties\PublishProfiles\Test.BhelpHostGator.pubxml" />
     <None Include="Properties\PublishProfiles\od-calllogProfile.pubxml">
@@ -1037,6 +1043,18 @@
     <Content Include="Views\BagWeights\Delete.cshtml" />
     <Content Include="Views\BagWeights\Index.cshtml" />
     <Content Include="Views\BagWeights\Edit.cshtml" />
+    <Content Include="Views\NewDocuments\Create.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\NewDocuments\Delete.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\NewDocuments\Edit.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\NewDocuments\Index.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

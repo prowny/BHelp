@@ -660,6 +660,7 @@ namespace BHelp
                 today = DateTime.Now;
             }
             
+            if (dob > today) return 0;
             var span = today - dob;
             // Because we start at year 1 for the Gregorian
             // calendar, we must subtract a year here.
