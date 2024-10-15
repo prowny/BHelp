@@ -51,7 +51,7 @@ namespace BHelp.ViewModels
         [DisplayName("Permanent Notes")]
         [DataType(DataType.MultilineText)]
         public string Notes { get; set; }
-        
+
         // For display use:
         public int Age { get; set; }
 
@@ -71,6 +71,6 @@ namespace BHelp.ViewModels
         public DateTime NextDeliveryEligibleDate { get; set; }
         public DateTime NextGiftCardEligibleDate { get; set; }
         public DateTime DesiredDeliveryDate { get; set; }
-        public Boolean OpenDeliveryExists { get; set; }
+        public bool OpenDeliveryExists { get; set; }
     }
 }

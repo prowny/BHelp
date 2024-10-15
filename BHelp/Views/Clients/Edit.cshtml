@@ -5,10 +5,24 @@
 <html>
 <head>
     <style>
-        #SaveButton { background-color: blue; color: white }
-        #DeleteButton { background-color: red; color: white }
-        .agewidth { width: 10px }
+        #SaveButton {
+            background-color: blue;
+            color: white
+        }
+
+        #DeleteButton {
+            background-color: red;
+            color: white
+        }
+
+        .agewidth {
+            width: 10px
+        }
     </style>
+    <script src="~/Scripts/jquery-3.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.13.2.min.js"></script>
     <link rel="icon" href="~/images/bhlogo.ico" type="image/x-icon" />
 </head>
 <body>
@@ -55,8 +69,8 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Age, htmlAttributes: new {@class = "control-label col-md-2"})
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Age, 
-                    new {htmlAttributes = new{style ="width: 40px", @class = "form-control"}})
+                @Html.EditorFor(model => model.Age,
+                    new {htmlAttributes = new{style = "width: 40px", type = "number", min = "0", max = "110", @class = "form-control"}})
                 @Html.ValidationMessageFor(model => model.Age, "", new {@class = "text-danger"})
             </div>
         </div>

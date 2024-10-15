@@ -1257,8 +1257,8 @@ namespace BHelp
 
                 sb.Append(status + ",");
                 sb.Append(d.HouseoldCount + "," + d.Children + "," + d.Adults + "," + d.Seniors + ",");
-                sb.Append(d.FullBags + "," + d.HalfBags + "," + d.KidSnacks + "," + d.GiftCards + ",");
-                sb.Append(d.HolidayGiftCards + "," + d.PoundsOfFood + ",");
+                sb.Append(d.FullBags + "," + d.HalfBags + "," + d.CBags + "," + d.KidSnacks + ",");
+                sb.Append(d.GiftCards + "," + d.HolidayGiftCards + "," + d.PoundsOfFood + ",");
                 totalHHCount += d.HouseoldCount;
                 totalChildren += d.Children;
                 totalAdults += d.Adults;

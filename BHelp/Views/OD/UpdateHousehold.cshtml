@@ -173,7 +173,8 @@
                                     {
                                         <td>@Html.EditorFor(mbr => Model.FamilyMembers[i].FirstName, new { htmlAttributes = new { @class = "form-control" } })</td>
                                         <td>@Html.EditorFor(m => Model.FamilyMembers[i].LastName, new { htmlAttributes = new { @class = "form-control" } })</td>
-                                        <td>@Html.EditorFor(m => Model.FamilyMembers[i].Age, new { htmlAttributes = new { type = "number", min = "0", max = "110" } }) </td>
+                                        <td>@Html.EditorFor(m => Model.FamilyMembers[i].Age, new { htmlAttributes = new { type = "number", min = "0", max = "110", @class = "form-control" } }) 
+                                            @Html.ValidationMessageFor(model => model.Age, "", new {@class = "text-danger"}) </td>
                                         <td>
                                             @Html.EditorFor(model => model.FamilyMembers[i].Delete, new { htmlAttributes = new { @class = "form-control" } })
                                             Delete
