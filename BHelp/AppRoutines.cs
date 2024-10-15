@@ -198,8 +198,8 @@ namespace BHelp
                 //DriverId = GetDriverIdForDate(delDate),  // Leave null for drivers to choose driver
                 ClientId = clientId,
                 LogDate = DateTime.Today,
-                FirstName = client.FirstName,
-                LastName = client.LastName,
+                FirstName = client.FirstName.Replace(",",""),
+                LastName = client.LastName.Replace(",", ""),
                 StreetNumber = client.StreetNumber,
                 StreetName = client.StreetName,
                 Phone = client.Phone,
@@ -1235,7 +1235,7 @@ namespace BHelp
             {
                 if (d == null) continue;
                 sb.Append(d.LogDate.ToShortDateString() + ",");
-                var clientName = d.FirstName + " " + d.LastName;
+                var clientName = d.FirstName + " " + d.LastName.Replace(",", " ");
                 sb.Append(clientName + ",");
                 var address = (d.StreetNumber + " " + d.StreetName).Replace(",", " ");
                 sb.Append(address + ",");
@@ -1282,7 +1282,7 @@ namespace BHelp
                     var _city = "";
                     if (d.City != null) _city = d.City.Replace("\n", "")
                         .Replace("\r", "").Replace(",", " ");
-                    sb.Append("," +_city + "," + _phone + "," + _namesAges + ",");
+                    sb.Append(_city + "," + _phone + "," + _namesAges + ",");
                     if (d.ODId != null)
                     {
                         var _usr = db.Users.Find(d.ODId);

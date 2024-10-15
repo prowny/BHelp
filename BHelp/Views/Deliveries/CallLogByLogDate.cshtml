@@ -93,6 +93,10 @@
                             <td>@Html.ActionLink("Edit", "Edit", new { id = delivery.Id })</td>
                         }
                         <td>@delivery.LogDateString</td>
+                        @if (delivery.FirstName == "Karla")
+                        {
+                            delivery.FirstName = "Karla";
+                        }
                         @{ var name = delivery.LastName + ", " + delivery.FirstName; }
                         @{ var addr = delivery.StreetNumber + " " + delivery.StreetName; }
                         <td>@name</td>
