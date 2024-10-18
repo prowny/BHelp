@@ -685,6 +685,7 @@ namespace BHelp
                 NamesAges += familyMember.FirstName + " " + familyMember.LastName + "/" + age + ", ";
             }
 
+            if(NamesAges .Length<3) return NamesAges;
             NamesAges = NamesAges.Substring(0, NamesAges.Length - 2); // remove last ", "
             return NamesAges;
         }
@@ -958,9 +959,12 @@ namespace BHelp
                     }
                 }
 
-                if (deliveryDateODs.Substring(deliveryDateODs.Length - 1, 1) == ";")
+                if (deliveryDateODs.Length > 0)
                 {
-                    deliveryDateODs = deliveryDateODs.Remove(deliveryDateODs.Length - 1);
+                    if (deliveryDateODs.Substring(deliveryDateODs.Length - 1, 1) == ";")
+                    {
+                        deliveryDateODs = deliveryDateODs.Remove(deliveryDateODs.Length - 1);
+                    }
                 }
             }
 
